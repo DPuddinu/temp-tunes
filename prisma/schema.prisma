@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model User {
+  id                String             @id @default(cuid())
+  name              String?
+  email             String?            @unique
+  emailVerified     DateTime?
+  image             String?
+  tokenExpires      DateTime           @default(now())
+  playlistTemplates PlaylistTemplate[]
+  Tag               Tag[]
+}
+
+
+model PlaylistTemplate {
+  id              String          @id @default(cuid())
+  userId          String
+  name            String?
+  stars           Float
+  templateEntries TemplateEntry[]
+  author          User            @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model TemplateEntry {
+  id               String           @id @default(cuid())
+  templateId       String
+  playlistTemplate PlaylistTemplate @relation(fields: [templateId], references: [id])
+  entry            String
+
+  @@index([templateId])
+}
+
+model Tag {
+  id          String @id @default(cuid())
+  userId      String
+  spotifyId   String
+  spotifyType String
+  user        User   @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
