@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@next/font': ^13.2.3
   '@prisma/client': ^4.11.0
   '@tanstack/react-query': ^4.20.2
   '@trpc/client': ^10.9.0
@@ -15,7 +16,7 @@ specifiers:
   '@typescript-eslint/eslint-plugin': ^5.53.0
   '@typescript-eslint/parser': ^5.53.0
   autoprefixer: ^10.4.7
-  daisyui: ^2.43.0
+  daisyui: ^2.51.3
   eslint: ^8.34.0
   eslint-config-next: ^13.2.1
   i18next: ^22.4.9
@@ -35,6 +36,7 @@ specifiers:
   zod: ^3.20.6
 
 dependencies:
+  '@next/font': 13.2.3
   '@prisma/client': 4.11.0_prisma@4.11.0
   '@tanstack/react-query': 4.24.10_biqbaboplfbrettd7655fr4n2y
   '@trpc/client': 10.13.2_@trpc+server@10.13.2
@@ -129,6 +131,10 @@ packages:
     dependencies:
       glob: 7.1.7
     dev: true
+
+  /@next/font/13.2.3:
+    resolution: {integrity: sha512-7EHzk0f7FVYICLUZTpyPk93IfcTUao++Xt1Sgb+Zk5dVOCYHabqLtlF5ywSoXIqyFlo0qlshEBxsrzHAGTWkDw==}
+    dev: false
 
   /@next/swc-android-arm-eabi/13.2.3:
     resolution: {integrity: sha512-mykdVaAXX/gm+eFO2kPeVjnOCKwanJ9mV2U0lsUGLrEdMUifPUjiXKc6qFAIs08PvmTMOLMNnUxqhGsJlWGKSw==}

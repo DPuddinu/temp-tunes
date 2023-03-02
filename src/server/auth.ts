@@ -40,7 +40,6 @@ declare module "next-auth" {
 export const authOptions: NextAuthOptions = {
   callbacks: {
     session({ session, token }) {
-      console.log(token.expiresIn);
 
       const now = new Date();
       session.accessToken = token.accessToken as string;
