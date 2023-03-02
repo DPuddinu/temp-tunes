@@ -1,10 +1,11 @@
 import { type GetServerSidePropsContext } from "next";
 import {
   getServerSession,
-  type NextAuthOptions,
   type DefaultSession,
+  type NextAuthOptions,
 } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
+import SpotifyProvider from "next-auth/providers/spotify";
+
 import { env } from "~/env.mjs";
 
 /**
@@ -15,10 +16,13 @@ import { env } from "~/env.mjs";
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: {
+    accessToken: string;
+    refreshToken: string;
+    expiresIn: Date;
+    tokenExpired: boolean;
+    user?: {
       id: string;
-      // ...other properties
-      // role: UserRole;
+      tokenExpired?: boolean;
     } & DefaultSession["user"];
   }
 
@@ -35,19 +39,35 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-        // session.user.role = user.role; <-- put other properties on the session here
-      }
+    session({ session, token }) {
+      console.log(token.expiresIn);
+
+      const now = new Date();
+      session.accessToken = token.accessToken as string;
+      session.refreshToken = token.refreshToken as string;
+      session.expiresIn = token.expiresIn as Date;
+      session.tokenExpired = now.getTime() > new Date(session.expiresIn).getTime() + 3600 * 1000;
       return session;
+    },
+    jwt({ token, account }) {
+      // Persist the OAuth access_token and or the user id to the token right after signin
+      if (account) {
+        token.accessToken = account.access_token;
+        token.refreshToken = account.refresh_token;
+        token.expiresIn = new Date();
+      }
+      return token;
     },
   },
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
+    SpotifyProvider({
+      clientId: env.SPOTIFY_CLIENT_ID,
+      clientSecret: env.SPOTIFY_CLIENT_SECRET,
+      authorization: {
+        params: { scope: env.SPOTIFY_SCOPES, show_dialog: true },
+      },
     }),
+
     /**
      * ...add more providers here.
      *
@@ -58,6 +78,9 @@ export const authOptions: NextAuthOptions = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
+  pages: {
+    signIn: "/",
+  },
 };
 
 /**
