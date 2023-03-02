@@ -143,13 +143,24 @@ export type TopUser = {
 };
 
 export type Mood = {
-  acousticness: number;
   danceability: number;
-  duration_ms: number;
   energy: number;
+  key: number;
+  loudness: number;
+  mode: number;
+  speechiness: number;
+  acousticness: number;
   instrumentalness: number;
-  tempo: number;
+  liveness: number;
   valence: number;
+  tempo: number;
+  type: string;
+  id: string;
+  uri: string;
+  track_href: string;
+  analysis_url: string;
+  duration_ms: number;
+  time_signature: number;
 };
 
 export type TopTracks = {
@@ -177,4 +188,10 @@ export type RecapSelectItemPropsType = { onClick?: () => void } & VariantProps<
 >;
 
 export const TagSpotifyTypeArray = ["track", "playlist"] as const;
-export type TagSpotifyType = typeof TagSpotifyTypeArray[number];
+export type TagSpotifyType = (typeof TagSpotifyTypeArray)[number];
+
+export interface AudioFeatures {
+  audio_features: Mood[];
+}
+
+

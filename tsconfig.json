@@ -21,7 +21,7 @@
       "~/*": ["./src/*"],
       "@ui/*": ["./src/components/ui/*"],
       "@components/*": ["./src/components/*"],
-      "@trpc": ["./src/utils/trpc"]
+      "@trpc": ["./src/utils/api"]
     },
     "plugins": [
       {

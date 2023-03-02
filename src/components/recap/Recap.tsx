@@ -1,5 +1,5 @@
 import MoodContainer from "@components/mood/MoodContainer";
-import { trpc } from "@trpc";
+import { api } from "@trpc";
 import SingleRowSkeleton from "@ui/skeletons/SingleRowSkeleton";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
@@ -28,16 +28,29 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
   const { t } = useTranslation("home");
 
   // prettier-ignore
-  const { data: recapData, fetchNextPage, isLoading: isRecapLoading, isError: topError } = trpc.spotify_user.getTop.useInfiniteQuery({
+  const {
+    data: recapData,
+    fetchNextPage,
+    isLoading: isRecapLoading,
+    isError: topError,
+  } = api.spotify_user.getTop.useInfiniteQuery({
     type: selectedType,
     timeRange: timeRange,
   });
 
   // prettier-ignore
-  const { data: moodData, isLoading: isMoodLoading, isError: moodError } = trpc.spotify_user.getMood.useQuery();
+  const {
+    data: moodData,
+    isLoading: isMoodLoading,
+    isError: moodError,
+  } = api.spotify_user.getMood.useQuery();
 
   // prettier-ignore
-  const { data: recommendedData, isLoading: isRecommendedLoading, isError: isRecommendedError } = trpc.spotify_user.getRecommendedations.useQuery();
+  const {
+    data: recommendedData,
+    isLoading: isRecommendedLoading,
+    isError: isRecommendedError,
+  } = api.spotify_user.getRecommendedations.useQuery();
 
   return (
     <div className="md:grid md:grid-cols-3 md:gap-3">

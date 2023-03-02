@@ -9,6 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.12",
     "@next/font": "^13.2.3",
     "@prisma/client": "^4.11.0",
     "@tanstack/react-query": "^4.20.2",
