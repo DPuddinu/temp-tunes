@@ -1,6 +1,5 @@
 import { cva } from "cva";
 
-// prettier-ignore
 export const RecapCardCva = cva(
   ["bg-base-300 mt-4 rounded-xl sm:mt-8 p-2 h-fit shadow"],
   {

@@ -66,12 +66,7 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
               onClick={() => setSelectedType(type)}
               intent={selectedType === type ? "selected" : "primary"}
             >
-              <p
-                className={`${
-                  selectedType === type &&
-                  "border  border-transparent border-b-white"
-                } pb-2 md:text-lg`}
-              >
+              <p className={`${ selectedType === type ? "border  border-transparent border-b-white":''} pb-2 md:text-lg`}>
                 {t(getTranslationByType(type))}
               </p>
             </RecapCardHeader>

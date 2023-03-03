@@ -34,7 +34,7 @@ export default Landing;
 
 const Features = () => {
   const { t } = useTranslation("landing");
-
+  
   return (
     <section className="flex grow flex-col text-center text-gray-800 md:text-left">
       <div className=" diagonal grid grow place-items-center p-10 pb-16 text-white">

@@ -19,9 +19,9 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const openDrawer = useRef<HTMLInputElement>(null);
 
-  if (sessionData?.user?.tokenExpired || status === "unauthenticated") {
-    router.push("/");
-  }
+  // if (sessionData?.user?.tokenExpired || status === "unauthenticated") {
+  //   router.push("/");
+  // }
 
   return (
     <div className="drawer">

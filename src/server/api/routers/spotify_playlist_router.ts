@@ -18,8 +18,8 @@ export const spotifyPlaylistRouter = createTRPCRouter({
       const baseUrl = "/me/playlists";
       const params = cursor;
 
-      const url = cursor ? `${baseUrl}${params}` : baseUrl;
-      const results = await (await spotifyGET(url, ctx.session?.accessToken ?? ''x)).json() as GetPlaylistType;
+      const url = cursor ? `${baseUrl}${params?? ''}` : baseUrl;
+      const results = await (await spotifyGET(url, ctx.session?.accessToken ?? '')).json() as GetPlaylistType;
 
       const nextCursor: typeof cursor = results.next
         ? results.next.split("playlists")[1]
