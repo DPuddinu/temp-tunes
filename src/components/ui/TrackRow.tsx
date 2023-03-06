@@ -1,6 +1,10 @@
 import { TagModal } from "@components/modals/TagModal";
+import { type Tag } from "@prisma/client";
+import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { type TagType } from "~/types/user-types";
+import { api } from "~/utils/api";
 import { getMedalByPosition } from "../recap/helpers/recap-helpers";
 import { DropdownMenu } from "./DropdownMenu";
 
@@ -8,19 +12,43 @@ type Props = {
   label: string;
   artists: string[];
   position?: number;
+  spotifyId: string;
+  spotifyType: TagType;
   showMedals?: boolean;
+  trackTags: Tag[];
 };
 
 const TrackRow = ({
   label,
   position = 3,
   artists,
+  spotifyId,
+  spotifyType,
   showMedals = false,
+  trackTags,
 }: Props) => {
   const { t } = useTranslation("common");
+  const session = useSession();
 
   const [isHovering, setIsHovering] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const tagApi = api.prisma_router.createTags.useMutation();
+  const [tags, setTags] = useState<Tag[]>(trackTags ?? []);
+
+  const onConfirm = useCallback(() => {
+    tagApi.mutate(tags);
+    console.log(tags);
+  }, [tags.length]);
+
+  const onAdd = (tagName: string) => {
+    const newTag = {
+      name: tagName,
+      spotifyId: spotifyId,
+      spotifyType: spotifyType,
+      userId: session.data?.user?.id ?? "",
+    };
+    setTags((tagList) => [...tagList, newTag]);
+  };
 
   return (
     <div
@@ -46,11 +74,12 @@ const TrackRow = ({
         </li>
       </DropdownMenu>
       <TagModal
-        onConfirm={() => console.log("CONFIRM")}
+        onAdd={onAdd}
+        onConfirm={onConfirm}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        tagType="track"
-      ></TagModal>
+        tags={tags}
+      />
     </div>
   );
 };

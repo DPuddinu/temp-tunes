@@ -3,13 +3,13 @@ import { useState } from "react";
 import { z } from "zod";
 
 interface Props {
-  onAdd: (value: string) => void;
+  onAdd: (tagName: string) => void;
 }
 const AddTagComponent = ({ onAdd }: Props) => {
   const [tagName, setTagName] = useState("");
   const { t } = useTranslation("modals");
 
-  function handleAddTad(tag: string) {
+  function handleAddTag(tag: string) {
     setTagName("");
     onAdd(tag);
   }
@@ -33,7 +33,7 @@ const AddTagComponent = ({ onAdd }: Props) => {
       <button
         disabled={!validTag(tagName)}
         className="btn-circle btn border-transparent bg-accent-focus"
-        onClick={() => handleAddTad(tagName)}
+        onClick={() => handleAddTag(tagName)}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

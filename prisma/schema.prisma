@@ -45,6 +45,7 @@ model TemplateEntry {
 
 model Tag {
   id          String @id @default(cuid())
+  name        String
   userId      String
   spotifyId   String
   spotifyType String

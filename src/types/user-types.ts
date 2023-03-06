@@ -1,8 +1,15 @@
 import z from 'zod'
 
-export const ITag = z.object( {
+export const TagType = ["track", "playlist"] as const;
+
+
+export const TagSchema = z.object({
   spotifyId: z.string(),
-  spotifyType: z.string(),
-  userId: z.string()
-})
-export type ITagType = z.infer<typeof ITag>;
+  spotifyType: z.enum(TagType),
+  userId: z.string(),
+  name: z.string(),
+});
+
+
+export const TagTypeEnum = z.enum(TagType);
+export type TagType = z.infer<typeof TagTypeEnum>;

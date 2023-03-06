@@ -82,7 +82,7 @@ const BaseModal = ({
                 <button
                   type="button"
                   className="bg- inline-flex justify-center rounded-md border border-transparent bg-accent-focus px-4 py-2 text-white duration-300 "
-                  onClick={onClose}
+                  onClick={onConfirm}
                 >
                   {t("confirm")}
                 </button>

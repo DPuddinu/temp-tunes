@@ -1,20 +1,19 @@
+import type { Tag } from "@prisma/client";
 import AddTagComponent from "@ui/AddTagComponent";
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
-import type { TagSpotifyType } from "src/types/spotify-types";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
 
 type Props = {
-  tagType: TagSpotifyType;
+  tags: Tag[];
+  onAdd: (tagName: string) => void;
 } & BaseModalProps;
 
-export function TagModal({ isOpen, tagType, onClose }: Props) {
+export function TagModal({ isOpen, onClose, tags, onConfirm, onAdd }: Props) {
   const { t } = useTranslation("modals");
-  const [tagList, setTagList] = useState<string[]>([]);
 
-  const handleConfirm = () => {
-    //TODO handle confirmation
+  const handleAdd = (tagName: string) => {
+    onAdd(tagName);
   };
 
   return (
@@ -22,22 +21,20 @@ export function TagModal({ isOpen, tagType, onClose }: Props) {
       isOpen={isOpen}
       onClose={onClose}
       title={t("new_tag")}
-      onConfirm={handleConfirm}
+      onConfirm={onConfirm}
     >
       <div className="flex flex-row flex-wrap gap-2 pb-2">
-        {tagList.map((tag, i) => (
+        {tags.map((tag, i) => (
           <p
             key={self.crypto.randomUUID()}
             className="w-fit rounded-3xl bg-warning pr-3 pl-3 text-white"
           >
-            {tag}
+            {tag.name}
           </p>
         ))}
       </div>
 
-      <AddTagComponent
-        onAdd={(newTag) => setTagList((tagList) => [...tagList, newTag])}
-      ></AddTagComponent>
+      <AddTagComponent onAdd={handleAdd} />
     </BaseModal>
   );
 }
