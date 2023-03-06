@@ -16,7 +16,7 @@ const Landing = () => {
         <section className="flex grow flex-col pb-0">
           <div className="p-10 sm:p-16">
             <h1 className="tracking-super-wide m-0 text-center text-2xl font-bold sm:mb-16 sm:text-6xl md:text-5xl">
-              <span className="text-slate-100 ">Advanced </span>
+              <span className="text-slate-100 ">Next </span>
               <span className="text-primary">Spotify </span>
               <span className="text-slate-100 ">Manager</span>
             </h1>

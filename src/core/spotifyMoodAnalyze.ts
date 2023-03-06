@@ -8,7 +8,7 @@ export function averageMood(moods: Mood[] | undefined) {
     instrumentalness: 0,
     duration_ms: 0,
     tempo: 0,
-    valence: 0,
+    valence: 0
   };
   if (!moods) return;
 

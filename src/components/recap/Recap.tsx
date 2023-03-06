@@ -1,13 +1,16 @@
 import MoodContainer from "@components/mood/MoodContainer";
 import { api } from "@trpc";
 import SingleRowSkeleton from "@ui/skeletons/SingleRowSkeleton";
+import type { GetServerSideProps } from "next";
+import type { Session } from "next-auth";
+import { getSession, useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
 import type {
   Artist,
   TimeRangeType,
   TopType,
-  Track,
+  Track
 } from "../../types/spotify-types";
 import { TopTypeArray } from "../../types/spotify-types";
 import TrackRow from "../ui/TrackRow";
@@ -18,15 +21,15 @@ import { RecapCardHeader } from "./RecapSelectItem";
 
 export type RecapPropsType = {
   timeRange: TimeRangeType;
+  sessionData: Session | null;
 };
 
-const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
+const Recap = ({ timeRange = "short_term", sessionData }: RecapPropsType) => {
   // prettier-ignore
   const [selectedType, setSelectedType] = useState<TopType>("tracks");
   const [topPage, setTopPage] = useState(0);
 
   const { t } = useTranslation("home");
-
   // prettier-ignore
   const {
     data: recapData,
@@ -38,14 +41,12 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
     timeRange: timeRange,
   });
 
-  // prettier-ignore
   const {
     data: moodData,
     isLoading: isMoodLoading,
     isError: moodError,
   } = api.spotify_user.getMood.useQuery();
 
-  // prettier-ignore
   const {
     data: recommendedData,
     isLoading: isRecommendedLoading,
@@ -66,7 +67,13 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
               onClick={() => setSelectedType(type)}
               intent={selectedType === type ? "selected" : "primary"}
             >
-              <p className={`${ selectedType === type ? "border  border-transparent border-b-white":''} pb-2 md:text-lg`}>
+              <p
+                className={`${
+                  selectedType === type
+                    ? "border  border-transparent border-b-white"
+                    : ""
+                } pb-2 md:text-lg`}
+              >
                 {t(getTranslationByType(type))}
               </p>
             </RecapCardHeader>

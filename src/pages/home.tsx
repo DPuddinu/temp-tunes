@@ -22,7 +22,7 @@ const Home: NextPageWithLayout = () => {
         timeRange={selectedTimeRange}
         selectTimeRange={setSelectedTimeRange}
       />
-      <Recap key={"recap"} timeRange={selectedTimeRange} />
+      <Recap key={"recap"} timeRange={selectedTimeRange} sessionData={sessionData}/>
     </div>
   );
 };
