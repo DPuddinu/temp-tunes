@@ -39,11 +39,16 @@ declare module "next-auth" {
 export const authOptions: NextAuthOptions = {
   callbacks: {
     session({ session, token }) {
-
+      //
+      console.log(token);
       const now = new Date();
+      if (session.user) {
+        session.user.id = token.userId as string;
+      }
       session.accessToken = token.accessToken as string;
       session.refreshToken = token.refreshToken as string;
       session.expiresIn = token.expiresIn as Date;
+      //prettier-ignore
       session.tokenExpired = now.getTime() > new Date(session.expiresIn).getTime() + 3600 * 1000;
       return session;
     },
@@ -53,6 +58,7 @@ export const authOptions: NextAuthOptions = {
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
         token.expiresIn = new Date();
+        token.userId = account.providerAccountId;
       }
       return token;
     },
