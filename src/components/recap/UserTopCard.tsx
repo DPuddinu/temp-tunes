@@ -3,8 +3,10 @@ import { useState } from "react";
 import type { TagsObject } from "~/server/api/routers/prisma_router";
 import {
   TopTypeArray,
-  type Artist, type TimeRangeType, type TopType,
-  type Track
+  type Artist,
+  type TimeRangeType,
+  type TopType,
+  type Track,
 } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 import TrackRow from "../ui/TrackRow";
@@ -15,13 +17,13 @@ import { RecapCardHeader } from "./RecapSelectItem";
 
 export type RecapPropsType = {
   timeRange: TimeRangeType;
-  tags: TagsObject | undefined
+  tags: TagsObject | undefined;
 };
 const UserTopCard = ({ timeRange = "short_term", tags }: RecapPropsType) => {
   const [selectedType, setSelectedType] = useState<TopType>("tracks");
   const [topPage, setTopPage] = useState(0);
   const { t } = useTranslation("home");
-  
+
   const {
     data: recapData,
     fetchNextPage,
@@ -73,7 +75,7 @@ const UserTopCard = ({ timeRange = "short_term", tags }: RecapPropsType) => {
                 ) : (
                   <TrackRow
                     spotifyId={item.id}
-                    spotifyType={"track"}
+                    tagType={"track"}
                     trackTags={tags ? tags[item.id] ?? [] : []}
                     showMedals
                     artists={(item as Track).artists.map(

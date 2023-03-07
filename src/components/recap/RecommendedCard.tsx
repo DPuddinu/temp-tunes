@@ -24,9 +24,7 @@ const RecommendedCard = ({ tags }: { tags: TagsObject | undefined }) => {
       <RecapContainer key={"container-recommended"} error={isError}>
         {isLoading && (
           <div className="flex flex-col gap-2">
-            <RowsSkeleton />
-            <RowsSkeleton />
-            <RowsSkeleton />
+            <RowsSkeleton rowsNumber={3}/>
           </div>
         )}
         {data &&
@@ -34,7 +32,7 @@ const RecommendedCard = ({ tags }: { tags: TagsObject | undefined }) => {
           data.tracks.map((track) => (
             <TrackRow
               spotifyId={track.id}
-              spotifyType={"track"}
+              tagType={"track"}
               trackTags={tags ? tags[track.id] ?? [] : []}
               key={track.id}
               artists={track.artists.map((artist) => artist.name)}

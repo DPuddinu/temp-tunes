@@ -1,8 +1,7 @@
 import { RecapCardCva } from "@components/cva/RecapCardCva";
-import CardSkeleton from "@ui/skeletons/CardSkeleton";
 import type { VariantProps } from "cva";
 import type { PropsWithChildren } from "react";
-import React from "react";
+import RowsSkeleton from "../ui/skeletons/SingleRowSkeleton";
 
 type Props = {
   loading?: boolean;
@@ -11,7 +10,7 @@ type Props = {
 const RecapCard = ({ children, intent, loading }: Props) => {
   return (
     <div className={RecapCardCva({ intent })}>
-      {loading ? <CardSkeleton /> : children}
+      {loading ? <RowsSkeleton rowsNumber={4} /> : children}
     </div>
   );
 };

@@ -11,17 +11,12 @@ const MoodCard = () => {
   const { t } = useTranslation("home");
 
   return (
-    <RecapCard key={"card-moody"} intent={"moody"}>
+    <RecapCard key={"card-moody"} intent={"moody"} loading={isLoading}>
       <RecapCardHeader key={"mood-header"} intent={"singleCard"}>
         <p>{t("recap.mood")}</p>
       </RecapCardHeader>
       <RecapContainer key={"container-mood"} error={isError}>
-        {isLoading && (
-          <div className="flex flex-col gap-2">
-            <RowsSkeleton rowsNumber={5} />
-          </div>
-        )}
-        {data && <MoodContainer mood={data}></MoodContainer>}
+        {data && <MoodContainer mood={data} />}
       </RecapContainer>
     </RecapCard>
   );

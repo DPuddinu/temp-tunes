@@ -13,7 +13,7 @@ type Props = {
   artists: string[];
   position?: number;
   spotifyId: string;
-  spotifyType: TagType;
+  tagType: TagType;
   showMedals?: boolean;
   trackTags: Tag[];
 };
@@ -23,7 +23,7 @@ const TrackRow = ({
   position = 3,
   artists,
   spotifyId,
-  spotifyType,
+  tagType,
   showMedals = false,
   trackTags,
 }: Props) => {
@@ -32,38 +32,16 @@ const TrackRow = ({
 
   const [isHovering, setIsHovering] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const tagApi = api.prisma_router.createTags.useMutation();
   const [tags, setTags] = useState<Tag[]>(trackTags ?? []);
+  const { isLoading, isSuccess, mutate, isError} = api.prisma_router.createTags.useMutation();
 
   const saveTags = useCallback(() => {
-    tagApi.mutate(tags);
+    mutate(tags);
   }, [tags.length]);
-
-  const onAdd = (tagName: string) => {
-    const newTag = {
-      name: tagName,
-      spotifyId: spotifyId,
-      spotifyType: spotifyType,
-      userId: session.data?.user?.id ?? "",
-    };
-    setTags((tagList) => [...tagList, newTag]);
-  };
-
-  const onRemove = (tagIndex: number): void => {
-    setTags(() => {
-
-      const newTagList = [...tags ]
-      if (tagIndex > -1) {
-      newTagList.splice(tagIndex, 1);
-}
-      return newTagList
-    })
-  }
-
 
   return (
     <div
-      className="flex rounded-xl p-3 text-accent-content hover:bg-neutral"
+      className="flex rounded-xl px-3 text-accent-content hover:bg-neutral"
       onMouseOver={() => setIsHovering(true)}
       onMouseOut={() => setIsHovering(false)}
     >
@@ -85,8 +63,18 @@ const TrackRow = ({
         </li>
       </DropdownMenu>
       <TagModal
-        onAdd={onAdd}
-        onRemove={onRemove}
+        onAdd={(tagName) =>
+          setTags(
+            addTag(
+              tagName,
+              spotifyId,
+              tagType,
+              session.data?.user?.id ?? "",
+              tags
+            )
+          )
+        }
+        onRemove={(i) => setTags(removeTag(i, tags))}
         onConfirm={saveTags}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -97,3 +85,27 @@ const TrackRow = ({
 };
 
 export default TrackRow;
+
+function addTag(
+  tagName: string,
+  spotifyId: string,
+  spotifyType: TagType,
+  userId: string,
+  tags: Tag[]
+): Tag[] {
+  const newTag = {
+    name: tagName,
+    spotifyId: spotifyId,
+    spotifyType: spotifyType,
+    userId: userId,
+  };
+  return [...tags, newTag];
+}
+
+function removeTag(tagIndex: number, tags: Tag[]): Tag[] {
+  const newTagList = [...tags];
+  if (tagIndex > -1) {
+    newTagList.splice(tagIndex, 1);
+  }
+  return newTagList;
+}
