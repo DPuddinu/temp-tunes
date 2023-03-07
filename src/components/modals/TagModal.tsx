@@ -34,7 +34,7 @@ export function TagModal({ isOpen, onClose, tags, onConfirm, onAdd }: Props) {
         ))}
       </div>
 
-      <AddTagComponent onAdd={handleAdd} />
+      <AddTagComponent onAdd={handleAdd} tags={tags}/>
     </BaseModal>
   );
 }

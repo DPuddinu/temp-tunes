@@ -1,19 +1,44 @@
+import type { Tag } from "@prisma/client";
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { z } from "zod";
 
 interface Props {
   onAdd: (tagName: string) => void;
+  tags: Tag[];
 }
-const AddTagComponent = ({ onAdd }: Props) => {
+const AddTagComponent = ({ onAdd, tags }: Props) => {
   const [tagName, setTagName] = useState("");
+  const [error, setError] = useState("");
   const { t } = useTranslation("modals");
 
   function handleAddTag(tag: string) {
     setTagName("");
     onAdd(tag);
   }
+  //prettier-ignore
+  const validateTag = useCallback((tagName: string) => {
+      setError("");
 
+      if (!z.string().min(3).safeParse(tagName).success) {
+        setError("tag_errors.short");
+      }
+      if (!z.string().max(18).safeParse(tagName).success) {
+        setError("tag_errors.long");
+      }
+      if (tags.map((tag) => tag.name.toLowerCase()).includes(tagName.toLowerCase())) {
+        setError("tag_errors.used");
+      }
+    },
+    [tagName, tags.length]
+  );
+
+  const handleTagChange = (tagName: string) => {
+    setTagName(() => {
+      validateTag(tagName);
+      return tagName;
+    });
+  };
   return (
     <div className="flex gap-2">
       <div className="w-full">
@@ -21,17 +46,19 @@ const AddTagComponent = ({ onAdd }: Props) => {
           type="text"
           placeholder=""
           className="input w-full max-w-xs"
-          onChange={(t) => setTagName(t.target.value)}
+          onChange={(t) => handleTagChange(t.target.value)}
         />
-        {!validTag(tagName) && (
-          <label className="label">
-            <span className="label-text-alt">{t("tag_errors.generic")}</span>
+        {!!error && (
+          <label className="label text-red-700">
+            <span className="label-text-alt font-bold text-base-100">
+              {t(error)}
+            </span>
           </label>
         )}
       </div>
 
       <button
-        disabled={!validTag(tagName)}
+        disabled={!!error}
         className="btn-circle btn border-transparent bg-accent-focus"
         onClick={() => handleAddTag(tagName)}
       >
@@ -53,9 +80,6 @@ const AddTagComponent = ({ onAdd }: Props) => {
     </div>
   );
 };
-function validTag(tag: string) {
-  return z.string().min(3).max(18).safeParse(tag).success;
-}
 
 export default AddTagComponent;
 

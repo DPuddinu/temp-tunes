@@ -22,7 +22,6 @@ declare module "next-auth" {
     tokenExpired: boolean;
     user?: {
       id: string;
-      tokenExpired?: boolean;
     } & DefaultSession["user"];
   }
 

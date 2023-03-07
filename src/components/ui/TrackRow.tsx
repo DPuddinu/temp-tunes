@@ -37,7 +37,6 @@ const TrackRow = ({
 
   const onConfirm = useCallback(() => {
     tagApi.mutate(tags);
-    console.log(tags);
   }, [tags.length]);
 
   const onAdd = (tagName: string) => {
