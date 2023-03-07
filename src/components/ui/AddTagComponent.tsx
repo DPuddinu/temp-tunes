@@ -46,6 +46,7 @@ const AddTagComponent = ({ onAdd, tags }: Props) => {
           type="text"
           placeholder=""
           className="input w-full max-w-xs"
+          value={tagName}
           onChange={(t) => handleTagChange(t.target.value)}
         />
         {!!error && (

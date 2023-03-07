@@ -35,7 +35,7 @@ const TrackRow = ({
   const tagApi = api.prisma_router.createTags.useMutation();
   const [tags, setTags] = useState<Tag[]>(trackTags ?? []);
 
-  const onConfirm = useCallback(() => {
+  const saveTags = useCallback(() => {
     tagApi.mutate(tags);
   }, [tags.length]);
 
@@ -48,6 +48,18 @@ const TrackRow = ({
     };
     setTags((tagList) => [...tagList, newTag]);
   };
+
+  const onRemove = (tagIndex: number): void => {
+    setTags(() => {
+
+      const newTagList = [...tags ]
+      if (tagIndex > -1) {
+      newTagList.splice(tagIndex, 1);
+}
+      return newTagList
+    })
+  }
+
 
   return (
     <div
@@ -74,7 +86,8 @@ const TrackRow = ({
       </DropdownMenu>
       <TagModal
         onAdd={onAdd}
-        onConfirm={onConfirm}
+        onRemove={onRemove}
+        onConfirm={saveTags}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         tags={tags}
