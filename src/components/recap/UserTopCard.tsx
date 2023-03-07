@@ -72,14 +72,14 @@ const UserTopCard = ({ timeRange = "short_term", tags }: RecapPropsType) => {
                   />
                 ) : (
                   <TrackRow
-                    spotifyId={(item as Track).id}
+                    spotifyId={item.id}
                     spotifyType={"track"}
-                    trackTags={tags ? tags[(item as Track).id] ?? [] : []}
+                    trackTags={tags ? tags[item.id] ?? [] : []}
                     showMedals
                     artists={(item as Track).artists.map(
                       (artist) => artist.name
                     )}
-                    label={(item as Track).name}
+                    label={item.name}
                     position={i}
                     key={i}
                   />
@@ -93,6 +93,7 @@ const UserTopCard = ({ timeRange = "short_term", tags }: RecapPropsType) => {
 };
 
 export default UserTopCard;
+
 function getTranslationByType(type: TopType) {
   switch (type) {
     case "artists":

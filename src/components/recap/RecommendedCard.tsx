@@ -1,40 +1,41 @@
 import { useTranslation } from "next-i18next";
+import type { TagsObject } from "~/server/api/routers/prisma_router";
 import { api } from "~/utils/api";
-import SingleRowSkeleton from "../ui/skeletons/SingleRowSkeleton";
+import RowsSkeleton from "../ui/skeletons/SingleRowSkeleton";
 import TrackRow from "../ui/TrackRow";
 import RecapCard from "./RecapCard";
 import { RecapContainer } from "./RecapCardContainer";
 import { RecapCardHeader } from "./RecapSelectItem";
 
-const RecommendedCard = () => {
-  const {
-    data: recommendedData,
-    isLoading: isRecommendedLoading,
-    isError: isRecommendedError,
-  } = api.spotify_user.getRecommendedations.useQuery();
+const RecommendedCard = ({ tags }: { tags: TagsObject | undefined }) => {
+  //prettier-ignore
+  const { data, isLoading, isError } = api.spotify_user.getRecommendedations.useQuery();
   const { t } = useTranslation("home");
 
   return (
     <RecapCard
       key={"card-recommended"}
       intent={"recommended"}
-      loading={isRecommendedLoading}
+      loading={isLoading}
     >
       <RecapCardHeader key={"card-recommended"} intent={"singleCard"}>
         <p>{t("recap.for_you")}</p>
       </RecapCardHeader>
-      <RecapContainer key={"container-recommended"} error={isRecommendedError}>
-        {isRecommendedLoading && (
+      <RecapContainer key={"container-recommended"} error={isError}>
+        {isLoading && (
           <div className="flex flex-col gap-2">
-            <SingleRowSkeleton />
-            <SingleRowSkeleton />
-            <SingleRowSkeleton />
+            <RowsSkeleton />
+            <RowsSkeleton />
+            <RowsSkeleton />
           </div>
         )}
-        {recommendedData &&
-          recommendedData.tracks.length > 0 &&
-          recommendedData.tracks.map((track) => (
+        {data &&
+          data.tracks.length > 0 &&
+          data.tracks.map((track) => (
             <TrackRow
+              spotifyId={track.id}
+              spotifyType={"track"}
+              trackTags={tags ? tags[track.id] ?? [] : []}
               key={track.id}
               artists={track.artists.map((artist) => artist.name)}
               label={track.name}

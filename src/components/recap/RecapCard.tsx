@@ -5,7 +5,7 @@ import type { PropsWithChildren } from "react";
 import React from "react";
 
 type Props = {
-  loading: boolean;
+  loading?: boolean;
 } & PropsWithChildren &
   VariantProps<typeof RecapCardCva>;
 const RecapCard = ({ children, intent, loading }: Props) => {
