@@ -25,13 +25,22 @@ const BaseModal = ({
   const { t } = useTranslation("modals");
 
   return (
-    <Transition appear show={isOpen} as={Fragment}>
+    <Transition
+      appear
+      show={isOpen}
+      enter="transition ease-in-out duration-300 transform"
+      enterFrom="opacity-0 translate-y-full"
+      enterTo="opacity-100  translate-y-0"
+      leave="transition ease-in-out duration-300 transform"
+      leaveFrom="opacity-100 translate-y-0"
+      leaveTo="opacity-0 translate-y-full"
+    >
       <Dialog
         as="div"
-        className="fixed inset-0 z-10 overflow-y-auto"
+        className="fixed inset-0 z-10 overflow-y-auto "
         onClose={onClose}
       >
-        <div className="min-h-screen px-4 text-center backdrop-blur-sm">
+        <div className="flex min-h-screen place-items-center justify-center text-center backdrop-blur-sm">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -44,13 +53,6 @@ const BaseModal = ({
             <Dialog.Overlay className="fixed inset-0" />
           </Transition.Child>
 
-          {/* This element is to trick the browser into centering the modal contents. */}
-          <span
-            className="inline-block h-screen align-middle"
-            aria-hidden="true"
-          >
-            &#8203;
-          </span>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -60,11 +62,8 @@ const BaseModal = ({
             leaveFrom="opacity-100 scale-10 0"
             leaveTo="opacity-0 scale-95"
           >
-            <div className="my-8 inline-block w-full max-w-md transform overflow-hidden rounded-2xl bg-base-content p-6 text-left align-middle shadow-xl transition-all">
-              <Dialog.Title
-                as="h3"
-                className="text-lg font-medium leading-6 text-base-100"
-              >
+            <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-base-content p-6 text-left shadow-xl">
+              <Dialog.Title className="text-lg font-medium leading-6 text-base-100">
                 {title}
               </Dialog.Title>
               {description && (

@@ -3,7 +3,6 @@ import { api } from "~/utils/api";
 import RecapCard from "../recap/RecapCard";
 import { RecapContainer } from "../recap/RecapCardContainer";
 import { RecapCardHeader } from "../recap/RecapSelectItem";
-import RowsSkeleton from "../ui/skeletons/SingleRowSkeleton";
 import MoodContainer from "./MoodContainer";
 
 const MoodCard = () => {

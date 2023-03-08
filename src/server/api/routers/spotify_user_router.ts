@@ -3,12 +3,12 @@ import { spotifyGET } from "~/core/spotifyFetch";
 import { averageMood } from "~/core/spotifyMoodAnalyze";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import {
-  type AudioFeatures,
   TimeRangeEnum,
   TopTypeEnum,
+  type AudioFeatures,
   type Recommendations,
   type TopArtists,
-  type TopTracks
+  type TopTracks,
 } from "~/types/spotify-types";
 
 export const spotifyUserRouter = createTRPCRouter({
@@ -23,7 +23,7 @@ export const spotifyUserRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { cursor, type, timeRange } = input;
       const urlParams = new URLSearchParams({
-        limit: "10",
+        limit: "5",
         time_range: timeRange,
       });
       const baseUrl = `/me/top/${type}?${urlParams.toString()}`;
@@ -53,7 +53,7 @@ export const spotifyUserRouter = createTRPCRouter({
 
     // prettier-ignore
     const results = (await spotifyGET(moodUrl, ctx.session?.accessToken ?? "").then((res) => res.json())) as AudioFeatures;
-    const analysis = results.audio_features ;
+    const analysis = results.audio_features;
 
     return averageMood(analysis);
   }),
@@ -76,10 +76,12 @@ export const spotifyUserRouter = createTRPCRouter({
 
     const baseUrl = `/recommendations`;
     const params = new URLSearchParams({
-      seed_artists: `${artists.items[0]?.id ?? ''},${artists.items[1]?.id ?? ''}`,
-      seed_tracks: `${tracks.items[0]?.id ?? ''},${tracks.items[1]?.id ?? ''}`,
-      seed_genres: `${artists.items[0]?.genres[0] ?? ''}`,
-      limit: "10",
+      seed_artists: `${artists.items[0]?.id ?? ""},${
+        artists.items[1]?.id ?? ""
+      }`,
+      seed_tracks: `${tracks.items[0]?.id ?? ""},${tracks.items[1]?.id ?? ""}`,
+      seed_genres: `${artists.items[0]?.genres[0] ?? ""}`,
+      limit: "5",
     });
 
     // prettier-ignore
