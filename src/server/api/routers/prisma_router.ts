@@ -53,9 +53,8 @@ export const prismaRouter = createTRPCRouter({
 
         tagsToAdd = onlyIn(tags, oldTags, sameTag);
         tagsToRemove = onlyIn(oldTags, tags, sameTag);
-        console.log(tagsToAdd);
-        console.log(tagsToRemove);
 
+        // ADDING NEW TAGS
         try {
           await ctx.prisma.tag.createMany({
             data: tagsToAdd,
@@ -63,7 +62,8 @@ export const prismaRouter = createTRPCRouter({
         } catch (e) {
           throw e;
         }
-
+        
+        // REMOVING DELETED TAGS
         try {
           await ctx.prisma.$transaction(
             tagsToRemove.map((tag) =>

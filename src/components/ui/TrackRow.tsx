@@ -5,7 +5,6 @@ import { useTranslation } from "next-i18next";
 import { useCallback, useEffect, useState } from "react";
 import { type TagType } from "~/types/user-types";
 import { api } from "~/utils/api";
-import LoadingModal from "../modals/LoadingModal";
 import { getMedalByPosition } from "../recap/helpers/recap-helpers";
 import { DropdownMenu } from "./DropdownMenu";
 
@@ -34,19 +33,25 @@ const TrackRow = ({
   const [isHovering, setIsHovering] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tags, setTags] = useState<Tag[]>(trackTags ?? []);
-  const { isLoading, isSuccess, mutate, isError } =
-    api.prisma_router.setTags.useMutation();
+
+  // prettier-ignore
+  const { data, isLoading, isSuccess, mutate, isError } = api.prisma_router.setTags.useMutation();
 
   const saveTags = useCallback(() => {
     mutate({
-      userId: session.data.user?.id ?? '',
-      tags
+      userId: session?.data?.user?.id ?? "",
+      tags,
     });
   }, [tags.length]);
 
   useEffect(() => {
-    setIsModalOpen(false)
+    setIsModalOpen(false);
   }, [isSuccess]);
+
+  const onClose = () => {
+    setIsModalOpen(false);
+    setTimeout(() => setTags(trackTags), 300); // restore tags after animation finishes
+  };
 
   return (
     <div
@@ -83,11 +88,11 @@ const TrackRow = ({
             )
           )
         }
-        loading={isLoading}
+        isLoading={isLoading}
         onRemove={(i) => setTags(removeTag(i, tags))}
         onConfirm={saveTags}
         isOpen={isModalOpen}
-        
+        onClose={onClose}
         tags={tags}
       />
     </div>

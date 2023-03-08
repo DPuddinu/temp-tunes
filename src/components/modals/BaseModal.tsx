@@ -1,7 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { useTranslation } from "next-i18next";
 import { Fragment } from "react";
-import { LoadingSpinner } from "../ui/LoadingSpinner";
 
 type Props = {
   title: string;
@@ -11,7 +9,7 @@ type Props = {
 
 export type BaseModalProps = {
   isOpen?: boolean;
-  loading?: boolean;
+  isLoading?: boolean;
   onClose?: () => void;
   onConfirm?: () => void;
 };
@@ -21,9 +19,7 @@ const BaseModal = ({
   title,
   description,
   children,
-  onConfirm,
   onClose,
-  loading,
 }: Props) => {
   return (
     <Transition
@@ -39,7 +35,7 @@ const BaseModal = ({
       <Dialog
         as="div"
         className="fixed inset-0 z-10 overflow-y-auto "
-        onClose={onClose ? onClose : () => {return}}
+        onClose={/* prettier-ignore */ onClose ? onClose : () => {return}}
       >
         <div className="flex min-h-screen place-items-center justify-center text-center backdrop-blur-sm">
           <Transition.Child
@@ -78,13 +74,6 @@ const BaseModal = ({
               <Dialog.Panel className="mt-2 mb-2 pt-4 pb-4">
                 {children}
               </Dialog.Panel>
-              <div
-                className="flex justify-between"
-                style={{ justifyContent: loading ? "space-between" : "end" }}
-              >
-                {loading && <LoadingSpinner />}
-                <ConfirmButtonGroup onConfirm={onConfirm} onClose={onClose} />
-              </div>
             </div>
           </Transition.Child>
         </div>
@@ -94,25 +83,3 @@ const BaseModal = ({
 };
 
 export default BaseModal;
-
-function ConfirmButtonGroup({ onConfirm, onClose }: BaseModalProps) {
-  const { t } = useTranslation("modals");
-  return (
-    <div className="mt-4 flex flex-row-reverse gap-2">
-      <button
-        type="button"
-        className="bg- inline-flex justify-center rounded-md border border-transparent bg-accent-focus px-4 py-2 text-white duration-300 "
-        onClick={onConfirm}
-      >
-        {t("confirm")}
-      </button>
-      <button
-        type="button"
-        className="inline-flex justify-center rounded-md border border-transparent  bg-error px-4 py-2 text-white duration-300 "
-        onClick={onClose}
-      >
-        {t("cancel")}
-      </button>
-    </div>
-  );
-}

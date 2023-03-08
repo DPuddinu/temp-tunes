@@ -4,6 +4,7 @@ import { useTranslation } from "next-i18next";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
+import { ConfirmButtonGroup } from "./ConfirmButtonGroup";
 
 type Props = {
   tags: Tag[];
@@ -18,6 +19,7 @@ export function TagModal({
   onConfirm,
   onAdd,
   onRemove,
+  isLoading,
 }: Props) {
   const { t } = useTranslation("modals");
 
@@ -26,12 +28,7 @@ export function TagModal({
   };
 
   return (
-    <BaseModal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={t("new_tag")}
-      onConfirm={onConfirm}
-    >
+    <BaseModal isOpen={isOpen} title={t("new_tag")} onConfirm={onConfirm}>
       <div className="flex flex-row flex-wrap gap-2 pb-2">
         {tags.map((tag, i) => (
           <div className="indicator" key={self.crypto.randomUUID()}>
@@ -49,6 +46,13 @@ export function TagModal({
       </div>
 
       <AddTagComponent onAdd={handleAdd} tags={tags} />
+      <div
+        className="flex justify-between"
+        style={{ justifyContent: isLoading ? "space-between" : "end" }}
+      >
+        {isLoading && <LoadingSpinner />}
+        <ConfirmButtonGroup onConfirm={onConfirm} onClose={onClose} />
+      </div>
     </BaseModal>
   );
 }
