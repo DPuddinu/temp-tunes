@@ -2,6 +2,7 @@ import type { Tag } from "@prisma/client";
 import { useTranslation } from "next-i18next";
 import { useCallback, useState } from "react";
 import { z } from "zod";
+import LoadingModal from "../modals/LoadingModal";
 
 interface Props {
   onAdd: (tagName: string) => void;

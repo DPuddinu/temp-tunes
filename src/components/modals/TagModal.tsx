@@ -1,6 +1,7 @@
 import type { Tag } from "@prisma/client";
 import AddTagComponent from "@ui/AddTagComponent";
 import { useTranslation } from "next-i18next";
+import { LoadingSpinner } from "../ui/LoadingSpinner";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
 
