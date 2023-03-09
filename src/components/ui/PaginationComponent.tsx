@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { PaginationItemCva } from "../cva/PaginationItemCva";
 
 interface Props {
@@ -19,92 +20,61 @@ const PaginationComponent = ({
   setActivePage,
   itemsPerPage,
 }: Props) => {
+
+  const [cursor, setCursor] = useState(0)
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   function nextPage() {
-    if (activePage < totalPages) setActivePage(activePage + 1);
+    if (activePage < totalPages -1) selectPageByIndex(activePage + 1);
   }
 
   function prevPage() {
-    if (activePage - 1 >= 0) setActivePage(activePage - 1);
+    if (activePage - 1 >= 0) selectPageByIndex(activePage - 1);
   }
 
   function selectPageByIndex(index: number) {
-    setActivePage(index);
+    if (index >= 0) setActivePage(index);
+    if (index - 1 >= 0) setCursor(index - 1);
+    if (index === 0) setCursor(0);
   }
-  const pages = [...Array(totalPages).keys()];
-  
-  const PaginationButtons = () => {
-    if (activePage > 2) {
-      return (
-        <>
-          <button className="btn" onClick={() => setActivePage(activePage - 2)}>
-            ...
-          </button>
-          <button
-            className="btn-active btn"
-            onClick={() => {
-              return;
-            }}
-          >
-            {activePage}
-          </button>
-          <button className="btn" onClick={() => setActivePage(activePage + 2)}>
-            ...
-          </button>
-        </>
-      );
-    } else {
-      const pagesBeforeCurrent = [...Array(activePage).keys()];
 
-      return (
-        <>
-          {pagesBeforeCurrent.map((page) => (
-            <PaginationButton
-              key={page}
-              index={page}
-              isActive={false}
-              selectPage={() => selectPageByIndex(page)}
-            />
-          ))}
-          <PaginationButton
-            index={activePage}
-            isActive={true}
-            selectPage={() => {
-              return;
-            }}
-          />
-          <PaginationButton
-            index={activePage + 1}
-            isActive={false}
-            selectPage={() => setActivePage(activePage + 1)}
-          />
-        </>
-      );
-    }
+  const PaginationButtons = () => {
+
+    return (
+      <>
+        <PaginationButton
+          index={cursor}
+          isActive={cursor === activePage}
+          selectPage={() => selectPageByIndex(cursor)}
+        />
+        <PaginationButton
+          index={cursor + 1}
+          isActive={cursor + 1 === activePage}
+          selectPage={() => selectPageByIndex(cursor + 1)}
+        />
+        {cursor + 2 < totalPages && <PaginationButton
+          index={cursor + 2}
+          isActive={cursor + 2 === activePage}
+          selectPage={() => selectPageByIndex(cursor+2)}
+        />}
+      </>
+    );
+    
   };
 
   return (
     <div className="btn-group mt-3">
-      <button className="btn" onClick={() => setActivePage(0)}>
+      <button className="btn" onClick={() => selectPageByIndex(0)}>
         {"<<"}
       </button>
       <button className="btn" onClick={() => prevPage()}>
         {"<"}
       </button>
-      <PaginationButtons></PaginationButtons>
-      {/* {pages.map((page) => (
-        <PaginationButton
-          key={page}
-          index={page}
-          isActive={activePage === page}
-          selectPage={() => selectPageByIndex(page)}
-        />
-      ))} */}
+      <PaginationButtons />
       <button className="btn" onClick={() => nextPage()}>
         {">"}
       </button>
-      <button className="btn" onClick={() => setActivePage(pages.length - 1)}>
+      <button className="btn" onClick={() => selectPageByIndex(totalPages - 1)}>
         {">>"}
       </button>
     </div>
