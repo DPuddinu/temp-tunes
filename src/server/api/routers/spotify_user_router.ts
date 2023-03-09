@@ -8,8 +8,9 @@ import {
   type AudioFeatures,
   type Recommendations,
   type TopArtists,
-  type TopTracks,
+  type TopTracks
 } from "~/types/spotify-types";
+import { spliceArray } from "~/utils/helpers";
 
 export const spotifyUserRouter = createTRPCRouter({
   getTop: publicProcedure
@@ -17,28 +18,27 @@ export const spotifyUserRouter = createTRPCRouter({
       z.object({
         type: TopTypeEnum,
         timeRange: TimeRangeEnum,
-        cursor: z.string().nullish(),
+        itemsPerPage: z.number(),
+        totalItems: z.number(),
       })
     )
     .query(async ({ ctx, input }) => {
-      const { cursor, type, timeRange } = input;
+      const { type, timeRange, itemsPerPage, totalItems } = input;
       const urlParams = new URLSearchParams({
-        limit: "5",
+        limit: totalItems.toString(),
         time_range: timeRange,
       });
-      const baseUrl = `/me/top/${type}?${urlParams.toString()}`;
-      const params = cursor;
+      const url = `/me/top/${type}?${urlParams.toString()}`;
 
-      const url = cursor ? `${baseUrl}${params ?? ""}` : baseUrl;
       // prettier-ignore
       const results = (await spotifyGET(url, ctx.session?.accessToken ?? '').then((res) => res.json())) as TopArtists | TopTracks;
-      const nextCursor: typeof cursor = results.next
-        ? results.next.split(type)[1]
-        : undefined;
+      const itemsCount = results.items.length;
+
+      const paginatedResults = spliceArray(results.items, itemsPerPage);
 
       return {
-        items: results,
-        nextCursor,
+        items: paginatedResults,
+        totalItems: itemsCount,
       };
     }),
   getMood: publicProcedure.query(async ({ ctx }) => {
@@ -95,3 +95,35 @@ export const spotifyUserRouter = createTRPCRouter({
     return recommendations;
   }),
 });
+
+
+// INFINITE QUERY PROCEDURE
+// getTop: publicProcedure
+//     .input(
+//       z.object({
+//         type: TopTypeEnum,
+//         timeRange: TimeRangeEnum,
+//         cursor: z.string().nullish(),
+//       })
+//     )
+//     .query(async ({ ctx, input }) => {
+//       const { cursor, type, timeRange } = input;
+//       const urlParams = new URLSearchParams({
+//         limit: "50",
+//         time_range: timeRange,
+//       });
+//       const baseUrl = `/me/top/${type}?${urlParams.toString()}`;
+//       const params = cursor;
+
+//       const url = cursor ? `${baseUrl}${params ?? ""}` : baseUrl;
+//       // prettier-ignore
+//       const results = (await spotifyGET(url, ctx.session?.accessToken ?? '').then((res) => res.json())) as TopArtists | TopTracks;
+//       const nextCursor: typeof cursor = results.next
+//         ? results.next.split(type)[1]
+//         : undefined;
+
+//       return {
+//         items: results,
+//         nextCursor,
+//       };
+//     }),

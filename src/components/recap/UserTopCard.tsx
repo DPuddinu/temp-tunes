@@ -9,8 +9,9 @@ import {
   type Track,
 } from "~/types/spotify-types";
 import { api } from "~/utils/api";
+import { ArtistRow } from "../ui/ArtistRow";
+import PaginationComponent from "../ui/PaginationComponent";
 import TrackRow from "../ui/TrackRow";
-import { RecapArtistRow } from "./RecapArtistRow";
 import RecapCard from "./RecapCard";
 import { RecapContainer } from "./RecapCardContainer";
 import { RecapCardHeader } from "./RecapSelectItem";
@@ -19,27 +20,24 @@ export type RecapPropsType = {
   timeRange: TimeRangeType;
   tags: TagsObject | undefined;
 };
-const UserTopCard = ({ timeRange = "short_term", tags }: RecapPropsType) => {
-  const [selectedType, setSelectedType] = useState<TopType>("tracks");
-  const [topPage, setTopPage] = useState(0);
-  const { t } = useTranslation("home");
 
-  const {
-    data: recapData,
-    fetchNextPage,
-    isLoading: isRecapLoading,
-    isError: topError,
-  } = api.spotify_user.getTop.useInfiniteQuery({
+export const itemsPerPageOptions = ["5", "10", "15", "20"];
+export const totalItems = 50;
+
+const UserTopCard = ({ timeRange = "short_term", tags }: RecapPropsType) => {
+  const { t } = useTranslation("home");
+  const [selectedType, setSelectedType] = useState<TopType>("tracks");
+  const [selectedPage, setSelectedPage] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const { data, isLoading, isError } = api.spotify_user.getTop.useQuery({
     type: selectedType,
     timeRange: timeRange,
+    itemsPerPage: itemsPerPage,
+    totalItems: totalItems,
   });
-
+  
   return (
-    <RecapCard
-      key={"card-top-rated"}
-      intent={"topRated"}
-      loading={isRecapLoading}
-    >
+    <RecapCard key={"card-top-rated"} intent={"topRated"} loading={isLoading}>
       <div className="grid grid-cols-2">
         {TopTypeArray.map((type, i) => (
           <RecapCardHeader
@@ -59,36 +57,38 @@ const UserTopCard = ({ timeRange = "short_term", tags }: RecapPropsType) => {
           </RecapCardHeader>
         ))}
       </div>
-      <RecapContainer key={"container-top-rated"} error={topError}>
-        {recapData &&
-          recapData?.pages[topPage]?.items &&
-          recapData?.pages[topPage]?.items.items.map(
-            (item: Artist | Track, i) => (
-              <>
-                {selectedType === "artists" ? (
-                  <RecapArtistRow
-                    artistImageUrl={(item as Artist).images[2]?.url}
-                    position={i}
-                    label={(item as Artist).name}
-                    key={i}
-                  />
-                ) : (
-                  <TrackRow
-                    spotifyId={item.id}
-                    tagType={"track"}
-                    trackTags={tags ? tags[item.id] ?? [] : []}
-                    showMedals
-                    artists={(item as Track).artists.map(
-                      (artist) => artist.name
-                    )}
-                    label={item.name}
-                    position={i}
-                    key={i}
-                  />
-                )}
-              </>
-            )
-          )}
+      <RecapContainer key={"container-top-rated"} error={isError}>
+        {data &&
+          data.items[selectedPage] &&
+          data.items[selectedPage]?.map((item: Artist | Track, i) => (
+            <>
+              {selectedType === "artists" ? (
+                <ArtistRow
+                  artistImageUrl={(item as Artist).images[2]?.url}
+                  label={(item as Artist).name}
+                  key={i}
+                />
+              ) : (
+                <TrackRow
+                  spotifyId={item.id}
+                  tagType={"track"}
+                  trackTags={tags ? tags[item.id] ?? [] : []}
+                  artists={(item as Track).artists.map((artist) => artist.name)}
+                  label={item.name}
+                  position={i}
+                  key={i}
+                />
+              )}
+            </>
+          ))}
+
+        <PaginationComponent
+          activePage={selectedPage}
+          setActivePage={setSelectedPage}
+          itemsPerPage={itemsPerPage}
+          totalItems={data?.totalItems ?? 0}
+          key={"pagination"}
+        ></PaginationComponent>
       </RecapContainer>
     </RecapCard>
   );

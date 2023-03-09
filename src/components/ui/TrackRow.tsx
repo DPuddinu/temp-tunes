@@ -20,11 +20,9 @@ type Props = {
 
 const TrackRow = ({
   label,
-  position = 3,
   artists,
   spotifyId,
   tagType,
-  showMedals = false,
   trackTags,
 }: Props) => {
   const { t } = useTranslation("common");
@@ -60,12 +58,6 @@ const TrackRow = ({
       onMouseOut={() => setIsHovering(false)}
     >
       <div className="flex grow items-center gap-2">
-        {showMedals && (
-          <div className="min-h-[24px] min-w-[24px] text-xl">
-            {getMedalByPosition(position)}
-          </div>
-        )}
-
         <div className="flex flex-col gap-1">
           <p className="text-base">{label}</p>
           <p className="text-xs">{artists.join(", ")}</p>

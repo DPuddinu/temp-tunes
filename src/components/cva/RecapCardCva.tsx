@@ -8,8 +8,8 @@ export const RecapCardCva = cva(
         topRated: [
           "hover:text-accent-content ",
         ],
-        moody: [""],
-        recommended: [""],
+        moody: [],
+        recommended: [],
       },
     },
     defaultVariants: {
