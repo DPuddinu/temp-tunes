@@ -61,18 +61,21 @@ const PaginationComponent = ({
   };
 
   return (
-    <div className="btn-group mt-3">
-      <button className="btn" onClick={() => selectPageByIndex(0)}>
+    <div className="btn-group mt-3 flex">
+      <button className="btn grow" onClick={() => selectPageByIndex(0)}>
         {"<<"}
       </button>
-      <button className="btn" onClick={() => prevPage()}>
+      <button className="btn grow" onClick={() => prevPage()}>
         {"<"}
       </button>
       <PaginationButtons />
-      <button className="btn" onClick={() => nextPage()}>
+      <button className="btn grow" onClick={() => nextPage()}>
         {">"}
       </button>
-      <button className="btn" onClick={() => selectPageByIndex(totalPages - 1)}>
+      <button
+        className="btn grow"
+        onClick={() => selectPageByIndex(totalPages - 1)}
+      >
         {">>"}
       </button>
     </div>
