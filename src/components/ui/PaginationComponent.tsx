@@ -13,19 +13,19 @@ interface PaginationButtonProps {
   selectPage: () => void;
 }
 
-//prettier-ignore
+const maxPages = 5;
+
 const PaginationComponent = ({
   totalItems,
   activePage = 0,
   setActivePage,
   itemsPerPage,
 }: Props) => {
-
-  const [cursor, setCursor] = useState(0)
+  const [cursor, setCursor] = useState(0);
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   function nextPage() {
-    if (activePage < totalPages -1) selectPageByIndex(activePage + 1);
+    if (activePage < totalPages - 1) selectPageByIndex(activePage + 1);
   }
 
   function prevPage() {
@@ -34,32 +34,30 @@ const PaginationComponent = ({
 
   function selectPageByIndex(index: number) {
     if (index >= 0) setActivePage(index);
-    if (index - 1 >= 0) setCursor(index - 1);
+    if (index - 1 >= 0 && index - 1 + maxPages <= totalPages) {
+      setCursor(index - 1);
+    }
+
     if (index === 0) setCursor(0);
   }
 
   const PaginationButtons = () => {
-
+    const maxPagesArray = [...Array(maxPages).keys()];
     return (
       <>
-        <PaginationButton
-          index={cursor}
-          isActive={cursor === activePage}
-          selectPage={() => selectPageByIndex(cursor)}
-        />
-        <PaginationButton
-          index={cursor + 1}
-          isActive={cursor + 1 === activePage}
-          selectPage={() => selectPageByIndex(cursor + 1)}
-        />
-        {cursor + 2 < totalPages && <PaginationButton
-          index={cursor + 2}
-          isActive={cursor + 2 === activePage}
-          selectPage={() => selectPageByIndex(cursor+2)}
-        />}
+        {maxPagesArray.map((page) => (
+          <>
+            {cursor + maxPages <= totalPages && (
+              <PaginationButton
+                index={cursor + page}
+                isActive={cursor + page === activePage}
+                selectPage={() => selectPageByIndex(cursor + page)}
+              />
+            )}
+          </>
+        ))}
       </>
     );
-    
   };
 
   return (
