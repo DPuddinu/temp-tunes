@@ -5,16 +5,13 @@ import { useTranslation } from "next-i18next";
 import { useCallback, useEffect, useState } from "react";
 import { type TagType } from "~/types/user-types";
 import { api } from "~/utils/api";
-import { getMedalByPosition } from "../recap/helpers/recap-helpers";
 import { DropdownMenu } from "./DropdownMenu";
 
 type Props = {
   label: string;
   artists: string[];
-  position?: number;
   spotifyId: string;
   tagType: TagType;
-  showMedals?: boolean;
   trackTags: Tag[];
 };
 

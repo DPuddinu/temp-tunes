@@ -29,7 +29,7 @@ export const spotifyUserRouter = createTRPCRouter({
         time_range: timeRange,
       });
       const url = `/me/top/${type}?${urlParams.toString()}`;
-
+      
       // prettier-ignore
       const results = (await spotifyGET(url, ctx.session?.accessToken ?? '').then((res) => res.json())) as TopArtists | TopTracks;
       const itemsCount = results.items.length;

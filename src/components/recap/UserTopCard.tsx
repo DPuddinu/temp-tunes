@@ -35,7 +35,7 @@ const UserTopCard = ({ timeRange = "short_term", tags }: RecapPropsType) => {
     itemsPerPage: itemsPerPage,
     totalItems: totalItems,
   });
-  
+
   return (
     <RecapCard key={"card-top-rated"} intent={"topRated"} loading={isLoading}>
       <div className="grid grid-cols-2">
@@ -75,7 +75,6 @@ const UserTopCard = ({ timeRange = "short_term", tags }: RecapPropsType) => {
                   trackTags={tags ? tags[item.id] ?? [] : []}
                   artists={(item as Track).artists.map((artist) => artist.name)}
                   label={item.name}
-                  position={i}
                   key={i}
                 />
               )}
