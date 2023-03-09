@@ -83,8 +83,15 @@ export const spotifyUserRouter = createTRPCRouter({
       seed_genres: `${artists.items[0]?.genres[0] ?? ""}`,
       limit: "5",
     });
+    let recommendations: Recommendations = {
+      seeds: [],
+      tracks: [],
+    };
 
-    // prettier-ignore
-    return (await spotifyGET(`${baseUrl}?${params.toString()}`, ctx.session?.accessToken ?? "").then((res) => res.json())) as Recommendations;
+    if (tracks.items.length >= 2 && artists.items.length >= 2) {
+      // prettier-ignore
+      recommendations = await spotifyGET(`${baseUrl}?${params.toString()}`, ctx.session?.accessToken ?? "").then((res) => res.json()) as Recommendations;
+    }
+    return recommendations;
   }),
 });

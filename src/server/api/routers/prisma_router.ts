@@ -14,7 +14,6 @@ export const prismaRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const { userId } = input;
-
       const tags = await ctx.prisma?.tag.findMany({
         where: {
           userId: userId,
