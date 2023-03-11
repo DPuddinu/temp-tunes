@@ -1,33 +1,41 @@
 import { z } from "zod";
+import { spliceArray } from "~/utils/helpers";
 import { spotifyGET } from "../../../core/spotifyFetch";
-import type {
-  GetPlaylistType
-} from "../../../types/spotify-types";
+import type { GetPlaylistType, Playlist } from "../../../types/spotify-types";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const spotifyPlaylistRouter = createTRPCRouter({
-  getAllPlaylists: publicProcedure
-    .input(
+  getAllPlaylists: publicProcedure.input(
       z.object({
-        cursor: z.string().nullish(),
+        itemsPerPage: z.number(),
       })
-    )
-    .query(async ({ ctx, input }) => {
-      const { cursor } = input;
+    ).query(async ({ ctx, input }) => {
+      const {itemsPerPage} = input
+    const params = new URLSearchParams({
+      limit: "50",
+    });
+    const url = "/me/playlists?" + params.toString();
+    const userPlaylists: Playlist[] = [];
 
-      const baseUrl = "/me/playlists";
-      const params = cursor;
-
-      const url = cursor ? `${baseUrl}${params?? ''}` : baseUrl;
-      const results = await (await spotifyGET(url, ctx.session?.accessToken ?? '')).json() as GetPlaylistType;
-
-      const nextCursor: typeof cursor = results.next
-        ? results.next.split("playlists")[1]
-        : undefined;
-
-      return {
-        items: results.items,
-        nextCursor,
-      }
-    }),
+    //prettier-ignore
+    await fetchAllPlaylists(
+      userPlaylists,
+      url,
+      ctx.session?.accessToken ?? ""
+    );
+    return spliceArray(userPlaylists, itemsPerPage);
+  }),
 });
+
+//prettier-ignore
+async function fetchAllPlaylists(playlists: Playlist[], url: string, accessToken: string): Promise<void> {
+  //prettier-ignore
+  const temp = (await spotifyGET(url, accessToken).then((resp) => resp.json())) as GetPlaylistType;
+  playlists.push(...temp.items);
+  const nextPage = temp.next?.split("v1")[1];
+
+  if (nextPage) fetchAllPlaylists(playlists, nextPage, accessToken);
+  console.log(playlists?.length);
+
+  return;
+}

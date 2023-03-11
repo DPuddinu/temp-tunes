@@ -18,7 +18,7 @@ import { RecapCardHeader } from "./RecapSelectItem";
 
 export type RecapPropsType = {
   timeRange: TimeRangeType;
-  tags: TagsObject | undefined;
+  tags?: TagsObject | undefined;
 };
 
 export const itemsPerPageOptions = ["5", "10", "15", "20"];
