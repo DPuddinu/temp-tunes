@@ -1,8 +1,8 @@
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import type { ReactNode } from "react";
-import { useRef } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { type Theme } from "~/types/page-types";
 import { UserNavbar } from "./UserNavbar";
 
 interface Page {
@@ -14,13 +14,25 @@ const pages: Page[] = [
   { url: "/playlists", name: "Playlists" },
   { url: "/templates", name: "Templates" },
 ];
+const themeKey = "next-theme";
+
 const MainLayout = ({ children }: { children: ReactNode }) => {
   const { data: sessionData, status } = useSession();
   const router = useRouter();
   const openDrawer = useRef<HTMLInputElement>(null);
+  const { theme, setTheme } = useTheme();
 
   if (sessionData?.tokenExpired || status === "unauthenticated") {
     router.push("/");
+  }
+
+  useEffect(() => {
+    setTheme(theme); // restoring theme from localstorage
+  }, []);
+
+  function toggleTheme() {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
   }
 
   return (
@@ -33,7 +45,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
       />
       <div className="drawer-content h-full w-full bg-base-100">
         <nav>
-          <UserNavbar />
+          <UserNavbar theme={theme} onThemeChange={toggleTheme} />
         </nav>
         <main className="p-6">{children}</main>
       </div>
@@ -54,3 +66,20 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
 };
 
 export default MainLayout;
+
+function useTheme() {
+  const initialState =
+    typeof window !== "undefined"
+      ? (localStorage.getItem(themeKey) as Theme)
+      : "dark";
+
+  const [theme, setTheme] = useState<Theme>(initialState);
+  return {
+    theme,
+    setTheme: (theme: Theme) => {
+      setTheme(theme);
+      document.body.setAttribute("data-theme", theme);
+      localStorage.setItem(themeKey, theme);
+    },
+  };
+}
