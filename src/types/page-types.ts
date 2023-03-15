@@ -10,4 +10,6 @@ export type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-export type Theme = "dark" | "light";
+export const themesList = ["dark", "light"];
+export const themes = [...themesList] as const;
+export type Theme = (typeof themes)[number];

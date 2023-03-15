@@ -22,7 +22,7 @@ const Home: NextPageWithLayout = () => {
         timeRange={selectedTimeRange}
         selectTimeRange={setSelectedTimeRange}
       />
-      <Recap key={"recap"} timeRange={selectedTimeRange}/>
+      <Recap key={"recap"} timeRange={selectedTimeRange} />
     </div>
   );
 };
@@ -30,9 +30,9 @@ const Home: NextPageWithLayout = () => {
 Home.getLayout = (page) => <MainLayout>{page}</MainLayout>;
 export default Home;
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+export const getStaticProps: GetStaticProps = async (context) => ({
   props: {
-    ...(await serverSideTranslations(locale ?? "en", [
+    ...(await serverSideTranslations(context.locale ?? "en", [
       "home",
       "common",
       "modals",
