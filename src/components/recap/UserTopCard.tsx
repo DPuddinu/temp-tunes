@@ -29,7 +29,7 @@ const UserTopCard = ({ timeRange = "short_term", tags }: RecapPropsType) => {
   const [selectedType, setSelectedType] = useState<TopType>("tracks");
   const [selectedPage, setSelectedPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(5);
-  const { data, isLoading, isError } = api.spotify_user.getTop.useQuery({
+  const { data, isLoading, isError } = api.spotify_user.getTopRated.useQuery({
     type: selectedType,
     timeRange: timeRange,
     itemsPerPage: itemsPerPage,

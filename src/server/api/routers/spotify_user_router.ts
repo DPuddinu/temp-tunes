@@ -13,7 +13,7 @@ import {
 import { spliceArray } from "~/utils/helpers";
 
 export const spotifyUserRouter = createTRPCRouter({
-  getTop: publicProcedure
+  getTopRated: publicProcedure
     .input(
       z.object({
         type: TopTypeEnum,
