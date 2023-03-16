@@ -41,11 +41,11 @@ async function fetchAllPlaylists(playlists: Playlist[], url: string, accessToken
   const nextPage = temp.next?.split("v1")[1];
   
   if (nextPage) {
-     setTimeout(() => {
-      const temp = fetchAllPlaylists(playlists, nextPage, accessToken).then(
-        (res) => console.log(res)
-      );
-     }, 3000);
+    await fetchAllPlaylists(playlists, nextPage, accessToken);
+    
+  } else {
+    
+    return playlists
   }
   
   return playlists;
