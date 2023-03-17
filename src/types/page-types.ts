@@ -5,7 +5,9 @@ import type { ReactElement, ReactNode } from "react";
 export type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
-
+export type PageWithLayout = {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
 export type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
