@@ -39,6 +39,7 @@ const PaginationComponent = ({
     }
 
     if (index === 0) setCursor(0);
+    if(index === totalPages - 1) setCursor(totalPages - maxPages )
   }
 
   const PaginationButtons = () => {

@@ -87,7 +87,7 @@ const UserTopCard = ({ timeRange = "short_term", tags }: RecapPropsType) => {
           itemsPerPage={itemsPerPage}
           totalItems={data?.totalItems ?? 0}
           key={"pagination"}
-        ></PaginationComponent>
+        />
       </RecapContainer>
     </RecapCard>
   );
