@@ -1,13 +1,23 @@
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 const ThemeSwitcher = () => {
-  
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
   const toggleTheme = () => {
-    setTheme(theme=== "dark"? "light":"dark")
+    setTheme(theme === "dark" ? "light" : "dark");
   };
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
   return (
-    <button className="" onClick={() => toggleTheme()}>
+    <button onClick={() => toggleTheme()}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
