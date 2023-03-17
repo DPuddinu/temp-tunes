@@ -17,36 +17,22 @@ export const spotifyPlaylistRouter = createTRPCRouter({
         limit: "50",
       });
       const url = "/me/playlists?" + params.toString();
-      const userPlaylists: Playlist[] = [];
 
-      //prettier-ignore
-      const allPlaylists = await fetchAllPlaylists(
-        userPlaylists,
-        url,
-        ctx.session?.accessToken ?? ""
-      );
-      // console.log(userPlaylists.length);
+      const testData = await fetchAllData(url, ctx.session?.accessToken ?? "");
+      
       // console.log(allPlaylists.length);
-      return spliceArray(userPlaylists, itemsPerPage);
+      return spliceArray(testData, itemsPerPage);
     }),
 });
 
-//prettier-ignore
-async function fetchAllPlaylists(playlists: Playlist[], url: string, accessToken: string): Promise<Playlist[]> {
- 
-  //prettier-ignore
-  const temp = (await spotifyGET(url, accessToken).then((resp) => resp.json())) as GetPlaylistType;
 
-  playlists.push(...temp.items);
-  const nextPage = temp.next?.split("v1")[1];
-  
-  if (nextPage) {
-    await fetchAllPlaylists(playlists, nextPage, accessToken);
-    
-  } else {
-    
-    return playlists
+async function fetchAllData(url: string | undefined, accessToken: string) {
+  let data: Playlist[] = [];
+  while (url) {
+    //prettier-ignore
+    const response = (await spotifyGET(url, accessToken).then((resp) => resp.json())) as GetPlaylistType;
+    data = data.concat(response.items);
+    url = response.next?.split("v1")[1];
   }
-  
-  return playlists;
+  return data;
 }
