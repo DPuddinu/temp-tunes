@@ -16,7 +16,7 @@ import { appRouter } from "~/server/api/root";
 import { createInnerTRPCContext } from "~/server/api/trpc";
 import { authOptions } from "~/server/auth";
 import { Greetings } from "../components/Greetings";
-import type { NextPageWithLayout, PageWithLayout } from "../types/page-types";
+import type { PageWithLayout } from "../types/page-types";
 interface Props{
   userPlaylists: Playlist[][]
 }

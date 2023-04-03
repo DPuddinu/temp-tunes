@@ -13,7 +13,7 @@ export function Greetings({ name, timeRange, selectTimeRange }: Props) {
   const saluteClassName = "text-2xl font-bold text-slate-100 md:text-3xl";
 
   return (
-    <div className="rounded-xl bg-base-300 bg-gradient-to-l p-4 shadow">
+    <div className="">
       <div className="p-2">
         <div className="flex flex-col sm:flex-row">
           <h1 className={saluteClassName}>{`${salute()},`}</h1>
@@ -21,12 +21,12 @@ export function Greetings({ name, timeRange, selectTimeRange }: Props) {
         </div>
         <p className="mt-2 text-primary-content">{t("recap.title")}</p>
         <select
-          className="select select-sm mt-4"
+          className="select select-sm mt-4 bg-base-300"
           value={timeRange}
           onChange={(e) => selectTimeRange(e.target.value as TimeRangeType)}
         >
           {TimeRangeArray.map((range, i) => (
-            <option className="p-1" key={i} value={range}>
+            <option className="mt-1 p-1" key={i} value={range}>
               {t(range)}
             </option>
           ))}
