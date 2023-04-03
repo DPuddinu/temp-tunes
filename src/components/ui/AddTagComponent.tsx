@@ -1,11 +1,11 @@
-import type { Tag } from "@prisma/client";
 import { useTranslation } from "next-i18next";
 import { useCallback, useState } from "react";
 import { z } from "zod";
+import type { TagSchemaType } from "~/types/user-types";
 
 interface Props {
   onAdd: (tagName: string) => void;
-  tags: Tag[];
+  tags: TagSchemaType[];
 }
 const AddTagComponent = ({ onAdd, tags }: Props) => {
   const [tagName, setTagName] = useState("");
