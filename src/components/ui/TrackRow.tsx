@@ -3,7 +3,7 @@ import { type Tag } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useCallback, useEffect, useState } from "react";
-import { type TagType } from "~/types/user-types";
+import { TagSchemaType, type TagType } from "~/types/user-types";
 import { api } from "~/utils/api";
 import { DropdownMenu } from "./DropdownMenu";
 
@@ -12,7 +12,7 @@ type Props = {
   artists: string[];
   spotifyId: string;
   tagType: TagType;
-  trackTags: Tag[];
+  trackTags: TagSchemaType[];
 };
 
 const TrackRow = ({
@@ -27,7 +27,7 @@ const TrackRow = ({
 
   const [isHovering, setIsHovering] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [tags, setTags] = useState<Tag[]>(trackTags ?? []);
+  const [tags, setTags] = useState<TagSchemaType[]>(trackTags ?? []);
 
   // prettier-ignore
   const { data, isLoading, isSuccess, mutate, isError } = api.prisma_router.setTags.useMutation();
@@ -95,9 +95,9 @@ function addTag(
   spotifyId: string,
   spotifyType: TagType,
   userId: string,
-  tags: Tag[]
-): Tag[] {
-  const newTag = {
+  tags: TagSchemaType[]
+): TagSchemaType[] {
+  const newTag: TagSchemaType = {
     name: tagName,
     spotifyId: spotifyId,
     spotifyType: spotifyType,
@@ -106,7 +106,7 @@ function addTag(
   return [...tags, newTag];
 }
 
-function removeTag(tagIndex: number, tags: Tag[]): Tag[] {
+function removeTag(tagIndex: number, tags: TagSchemaType[]): TagSchemaType[] {
   const newTagList = [...tags];
   if (tagIndex > -1) {
     newTagList.splice(tagIndex, 1);

@@ -1,13 +1,13 @@
-import type { Tag } from "@prisma/client";
 import AddTagComponent from "@ui/AddTagComponent";
 import { useTranslation } from "next-i18next";
+import type { TagSchemaType } from "~/types/user-types";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
 import { ConfirmButtonGroup } from "./ConfirmButtonGroup";
 
 type Props = {
-  tags: Tag[];
+  tags: TagSchemaType[];
   onAdd: (tagName: string) => void;
   onRemove: (tagIndex: number) => void;
 } & BaseModalProps;

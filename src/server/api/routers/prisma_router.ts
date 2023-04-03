@@ -1,9 +1,9 @@
 import type { Tag } from "@prisma/client";
 import { z } from "zod";
-import { TagSchema } from "~/types/user-types";
+import { TagSchema, TagSchemaType } from "~/types/user-types";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 export interface TagsObject {
-  [z: string]: Tag[];
+  [z: string]: TagSchemaType[];
 }
 export const prismaRouter = createTRPCRouter({
   getTagsByUser: publicProcedure
@@ -30,10 +30,11 @@ export const prismaRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { tags, userId } = input;
+      const { tags: userTags, userId } = input;
       let tagsToAdd: Tag[] = [];
       let tagsToRemove: Tag[] = [];
 
+      const tags = userTags as Tag[]
       if (userId) {
         const oldTags = await ctx.prisma.tag.findMany({
           where: { userId: userId },
