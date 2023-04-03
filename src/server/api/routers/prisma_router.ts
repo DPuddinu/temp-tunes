@@ -1,6 +1,6 @@
 import type { Tag } from "@prisma/client";
 import { z } from "zod";
-import { TagSchema, TagSchemaType } from "~/types/user-types";
+import { TagSchema, type TagSchemaType } from "~/types/user-types";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 export interface TagsObject {
   [z: string]: TagSchemaType[];
@@ -14,11 +14,12 @@ export const prismaRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const { userId } = input;
-      const tags = await ctx.prisma?.tag.findMany({
+      const userTags = await ctx.prisma?.tag.findMany({
         where: {
           userId: userId,
         },
       });
+      const tags = userTags as TagSchemaType[];
       const tagsObject = createTagsObject(tags);
       return tagsObject;
     }),
@@ -34,7 +35,7 @@ export const prismaRouter = createTRPCRouter({
       let tagsToAdd: Tag[] = [];
       let tagsToRemove: Tag[] = [];
 
-      const tags = userTags as Tag[]
+      const tags = userTags as Tag[];
       if (userId) {
         const oldTags = await ctx.prisma.tag.findMany({
           where: { userId: userId },
@@ -62,7 +63,7 @@ export const prismaRouter = createTRPCRouter({
         } catch (e) {
           throw e;
         }
-        
+
         // REMOVING DELETED TAGS
         try {
           await ctx.prisma.$transaction(
@@ -84,9 +85,9 @@ export const prismaRouter = createTRPCRouter({
       };
     }),
 });
-function createTagsObject(tags: Tag[]) {
+function createTagsObject(tags: TagSchemaType[]) {
   const tagsObject: TagsObject = {};
-  tags.forEach((tag: Tag) => {
+  tags.forEach((tag: TagSchemaType) => {
     if (!tagsObject[tag.spotifyId]) {
       tagsObject[tag.spotifyId] = [tag];
     } else {

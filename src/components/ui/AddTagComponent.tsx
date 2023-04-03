@@ -84,4 +84,3 @@ const AddTagComponent = ({ onAdd, tags }: Props) => {
 
 export default AddTagComponent;
 
-//TODO specificare il messaggio di errore nelle varie casistiche(troppo corto, lungo, già usato)
