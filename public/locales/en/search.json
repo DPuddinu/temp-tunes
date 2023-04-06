@@ -1,8 +1,12 @@
 {
-  "search": "Search...",
+  "search": "Search for tracks, artists, tags...",
   "filter": "Filter by",
   "track_name": "Track Name",
   "track_artist": "Track Artist",
   "playlist": "Playlist",
-  "tags": "Tags"
+  "tags": "Tags",
+  "search_errors": {
+    "short": "text too short",
+    "long": "text too long"
+  }
 }

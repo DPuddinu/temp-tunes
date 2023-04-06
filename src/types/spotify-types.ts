@@ -79,16 +79,12 @@ export type Track = {
   disc_number: number;
   explicit: boolean;
   external_urls: ExternalUrls;
-  href: string;
-  id: string;
   is_playable: boolean;
   linked_from: LinkedFrom;
   restrictions: Restrictions;
-  name: string;
   preview_url: string;
   track_number: number;
   type: string;
-  uri: string;
   is_local: boolean;
   artists: Artist[];
   release_date: string;

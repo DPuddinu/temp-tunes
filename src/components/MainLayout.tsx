@@ -9,6 +9,7 @@ interface Page {
   name: string;
 }
 const pages: Page[] = [
+  { url: "/home", name: "Home" },
   { url: "/search", name: "Advanced Search" },
   { url: "/playlists", name: "Playlists" },
   { url: "/templates", name: "Templates" },
