@@ -5,14 +5,15 @@ import type {
   Playlist,
   Track,
 } from "~/types/spotify-types";
+
 const params = new URLSearchParams({
   limit: "50",
 });
-const playlistsEndPoint = "/me/playlists?" + params.toString();
+const TIMEOUT = 150;
 
 export async function getUserPlaylists(
   accessToken: string,
-  url: string | undefined = playlistsEndPoint
+  url: string | undefined = "/me/playlists?" + params.toString()
 ) {
   let data: Playlist[] = [];
   while (url) {
@@ -24,8 +25,35 @@ export async function getUserPlaylists(
   return data;
 }
 
-export async function getLibrary(playlist_ids: string[], accessToken: string) {
-  // const tracks
+export async function getLibrary(
+  accessToken: string,
+  progressCallback: (progress: number, current: string) => void
+) {
+  //get playlists
+  const playlists = await getUserPlaylists(accessToken);
+
+  //populate playlists
+  let i = 0;
+
+  const interval = setInterval(() => {
+    const playlist = playlists[i];
+    if (playlist) {
+      progressCallback(
+        Math.floor((100 / playlists.length) * i + 1),
+        playlist.name
+      );
+      getPlaylistTracks(playlist.id, accessToken)
+        .then((tracks) => {
+          playlist.tracks = tracks;
+        })
+        .catch((error) => console.error(error));
+      i++;
+    }
+    if (i === playlists.length) {
+      clearInterval(interval);
+    }
+  }, TIMEOUT);
+  return playlists;
 }
 
 

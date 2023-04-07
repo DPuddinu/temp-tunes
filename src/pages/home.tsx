@@ -1,4 +1,5 @@
 import MainLayout from "@components/MainLayout";
+import { useQuery } from "@tanstack/react-query";
 import type { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -13,7 +14,7 @@ import RecommendedCard from "../components/recap/RecommendedCard";
 import TopRatedCard from "../components/recap/UserTopCard";
 import type { PageWithLayout } from "../types/page-types";
 import {
-  getPlaylistTracks,
+  getLibrary,
   getUserPlaylists,
 } from "./api/spotifyApi/spotifyCollection";
 interface UserData {
@@ -23,59 +24,51 @@ interface UserData {
 
 interface LoadingStateProps {
   progress: number;
+  current: string;
 }
 
 const Home: PageWithLayout = () => {
   const { data: sessionData } = useSession();
   const { playlists, setPlaylists, tracks, setTracks } = useSpotifyStore();
-
+  const [currentPlaylist, setCurrentPlaylist] = useState("");
   const [progress, setProgress] = useState<number>(0);
   const [lastFetchedPlaylist, setLastFetchedPlaylist] = useState<string>();
   const [data, setData] = useState<UserData>();
 
-  // useEffect(() => {
-  //   if (sessionData?.accessToken) {
-  //     if (playlists.length === 0) {
-  //       getUserPlaylists(sessionData.accessToken)
-  //         .then((data) => setPlaylists(data))
-  //         .catch((error) => console.error(error));
-  //     }
-  //   }
-  //   //STORING PLAYLISTS
-  // }, [sessionData?.accessToken]);
+  const {
+    data: library,
+    isLoading: loadingLibrary,
+    isError: errorLibrary,
+  } = useQuery({
+    queryKey: ["library"],
+    queryFn: () =>
+      getLibrary(
+        sessionData?.accessToken ?? "",
+        (progress: number, current: string) => {
+          setCurrentPlaylist(current);
+          setProgress(progress);
+        }
+      ),
+    enabled: !!sessionData?.accessToken && playlists.length === 0,
+  });
 
-  // useEffect(() => {
-  //   if (
-  //     playlists.length > 0 &&
-  //     tracks.length === 0 &&
-  //     playlists[0]?.id &&
-  //     sessionData?.accessToken
-  //   ) {
-  //     getPlaylistTracks(playlists[0]?.id, sessionData?.accessToken).then(
-  //       (data) => console.log(data)
-  //     );
-  //   }
-  // }, [playlists]);
-
+  // STORING PLAYLISTS
   useEffect(() => {
-    incrementProgressBy(progress, () => setProgress((value) => value+10) )
-  }, [progress]);
-
-  function incrementProgressBy(currentValue: number, setFunction: () => void){
-    setTimeout(() => {
-      console.log(currentValue)
-      if(currentValue !== 100){
-        setFunction()
-      }
-    }, 2000);
-  }
+    if (library && playlists.length === 0) {
+      setPlaylists(library);
+    }
+  }, [playlists.length, setPlaylists, library]);
 
   // prettier-ignore
   const [selectedTimeRange, setSelectedTimeRange] = useState<TimeRangeType>("short_term");
 
   return (
     <div className="h-full p-4">
-      <LoadingScreen progress={progress}></LoadingScreen>
+      <LoadingScreen
+        progress={progress}
+        current={currentPlaylist}
+      />
+    
       {/* <Greetings
         key={"greetings"}
         name={sessionData?.user?.name || ""}
@@ -87,10 +80,11 @@ const Home: PageWithLayout = () => {
   );
 };
 
-const LoadingScreen = ({ progress }: LoadingStateProps) => {
+const LoadingScreen = ({ progress, current }: LoadingStateProps) => {
   return (
     <section className="flex flex-col items-center justify-center gap-3">
       <p>Loading your playlists...</p>
+      <p className="text-sm">{current}</p>
       <progress
         className="progress progress-primary w-56"
         value={progress}

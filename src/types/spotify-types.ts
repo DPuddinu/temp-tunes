@@ -38,15 +38,7 @@ export type Playlist = {
   };
   public: true;
   snapshot_id: string;
-  tracks: {
-    href: string;
-    items: Track[];
-    limit: number;
-    next: string;
-    offset: number;
-    previous: string;
-    total: number;
-  };
+  tracks: Track[];
   type: string;
   uri: string;
 };

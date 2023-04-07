@@ -13,7 +13,6 @@ const Search: PageWithLayout = () => {
   const [error, setError] = useState("");
 
   const { playlists } = useSpotifyStore();
-  const { data, isLoading, mutate } = api.spotify_search.search.useMutation();
   const { t } = useTranslation("search");
 
   const handleSearchInputChange = (searchInput: string) => {
@@ -52,7 +51,7 @@ const Search: PageWithLayout = () => {
           <button
             disabled={!!error}
             className="btn-square btn"
-            onClick={() => mutate({ search: searchInput ?? "" })}
+            // onClick={}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
