@@ -13,7 +13,6 @@ export const appRouter = createTRPCRouter({
   spotify_playlist: spotifyPlaylistRouter,
   spotify_user: spotifyUserRouter,
   prisma_router: prismaRouter,
-  spotify_search: spotifySearchRouter,
 });
 
 // export type definition of API

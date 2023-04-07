@@ -10,7 +10,9 @@ const akshar = Quicksand({ subsets: ["latin"] });
 
 import "~/styles/globals.css";
 import { ThemeProvider } from "next-themes";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+const queryClient = new QueryClient()
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
@@ -18,17 +20,18 @@ const MyApp: AppType<{ session: Session | null }> = ({
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    <ThemeProvider themes={themesList}>
-      <SessionProvider session={session}>
-        <style jsx global>{`
-          html {
-            font-family: ${akshar.style.fontFamily};
-          }
-        `}</style>
-        {getLayout(<Component {...pageProps} />)}
-      </SessionProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider themes={themesList}>
+        <SessionProvider session={session}>
+          <style jsx global>{`
+            html {
+              font-family: ${akshar.style.fontFamily};
+            }
+          `}</style>
+          {getLayout(<Component {...pageProps} />)}
+        </SessionProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 };
 

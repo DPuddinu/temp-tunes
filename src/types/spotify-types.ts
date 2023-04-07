@@ -50,8 +50,12 @@ export type Playlist = {
   type: string;
   uri: string;
 };
-export type GetPlaylistType = {
+export type GetPlaylistResponseType = {
   items: Playlist[];
+  next: string;
+};
+export type GetTracksResponseType = {
+  items: Track[];
   next: string;
 };
 export type LastPage = {

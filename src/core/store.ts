@@ -3,9 +3,9 @@ import type { Playlist, Track } from "~/types/spotify-types";
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 
 interface BearState {
-  playlists: Playlist[][];
+  playlists: Playlist[];
   tracks: Track[]
-  setPlaylists: (playlists: Playlist[][]) => void;
+  setPlaylists: (playlists: Playlist[]) => void;
   setTracks: (tracks: Track[]) => void
 }
 

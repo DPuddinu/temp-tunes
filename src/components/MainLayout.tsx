@@ -34,11 +34,11 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
         className="drawer-toggle"
         ref={openDrawer}
       />
-      <div className="drawer-content h-full w-full bg-base-100">
+      <div className="drawer-content flex h-full w-full flex-col bg-base-100">
         <nav>
           <UserNavbar />
         </nav>
-        <main className="p-6">{children}</main>
+        <main className="grow p-6">{children}</main>
       </div>
       <div className="drawer-side">
         <label htmlFor="my-drawer-2" className="drawer-overlay" />
