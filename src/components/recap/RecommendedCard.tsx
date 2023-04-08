@@ -10,7 +10,10 @@ import { RecapCardHeader } from "./RecapSelectItem";
 
 const RecommendedCard = () => {
   //prettier-ignore
-  const { data, isLoading, isError } = api.spotify_user.getRecommendedations.useQuery();
+  const { data, isLoading, isError } =
+    api.spotify_user.getRecommendedations.useQuery(undefined, {
+      refetchOnWindowFocus: false,
+    });
   const { t } = useTranslation("home");
   const {tags} = useSpotifyStore();
   

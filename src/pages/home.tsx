@@ -51,9 +51,14 @@ const Home: PageWithLayout = () => {
     enabled: !!sessionData?.accessToken && firstLoading,
   });
 
-  const { data: userTags } = api.prisma_router.getTagsByUser.useQuery({
-    userId: sessionData?.user?.id ?? "",
-  });
+  const { data: userTags } = api.prisma_router.getTagsByUser.useQuery(
+    {
+      userId: sessionData?.user?.id ?? "",
+    },
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
 
   // STORING PLAYLISTS
   useEffect(() => {

@@ -6,7 +6,12 @@ import { RecapCardHeader } from "../recap/RecapSelectItem";
 import MoodContainer from "./MoodContainer";
 
 const MoodCard = () => {
-  const { data, isLoading, isError } = api.spotify_user.getMood.useQuery();
+  const { data, isLoading, isError } = api.spotify_user.getMood.useQuery(
+    undefined,
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
   const { t } = useTranslation("home");
 
   return (
