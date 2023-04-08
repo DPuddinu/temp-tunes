@@ -1,10 +1,10 @@
 import MainLayout from "@components/MainLayout";
 import { useQuery } from "@tanstack/react-query";
-import type { GetServerSideProps } from "next";
+import type { GetStaticProps } from "next";
 import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useState } from "react";
-import type { Playlist, TimeRangeType, Track } from "src/types/spotify-types";
+import type { TimeRangeType } from "src/types/spotify-types";
 import type { RecapPropsType } from "~/components/recap/UserTopCard";
 import { useSpotifyStore } from "~/core/store";
 import { api } from "~/utils/api";
@@ -13,14 +13,7 @@ import MoodCard from "../components/mood/MoodCard";
 import RecommendedCard from "../components/recap/RecommendedCard";
 import TopRatedCard from "../components/recap/UserTopCard";
 import type { PageWithLayout } from "../types/page-types";
-import {
-  getLibrary,
-  getUserPlaylists,
-} from "./api/spotifyApi/spotifyCollection";
-interface UserData {
-  playlists: Playlist[];
-  tracks: Track[];
-}
+import { getLibrary } from "./api/spotifyApi/spotifyCollection";
 
 interface LoadingStateProps {
   progress: number;
@@ -29,11 +22,16 @@ interface LoadingStateProps {
 
 const Home: PageWithLayout = () => {
   const { data: sessionData } = useSession();
-  const { playlists, setPlaylists, tracks, setTracks } = useSpotifyStore();
+  const {
+    playlists,
+    setPlaylists,
+    tags,
+    setTags,
+    firstLoading,
+    setFirstLoading,
+  } = useSpotifyStore();
   const [currentPlaylist, setCurrentPlaylist] = useState("");
   const [progress, setProgress] = useState<number>(0);
-  const [lastFetchedPlaylist, setLastFetchedPlaylist] = useState<string>();
-  const [data, setData] = useState<UserData>();
 
   const {
     data: library,
@@ -47,9 +45,14 @@ const Home: PageWithLayout = () => {
         (progress: number, current: string) => {
           setCurrentPlaylist(current);
           setProgress(progress);
-        }
+        },
+        () => setFirstLoading(false)
       ),
-    enabled: !!sessionData?.accessToken && playlists.length === 0,
+    enabled: !!sessionData?.accessToken && firstLoading,
+  });
+
+  const { data: userTags } = api.prisma_router.getTagsByUser.useQuery({
+    userId: sessionData?.user?.id ?? "",
   });
 
   // STORING PLAYLISTS
@@ -59,23 +62,31 @@ const Home: PageWithLayout = () => {
     }
   }, [playlists.length, setPlaylists, library]);
 
+  // STORING TAGS
+  useEffect(() => {
+    if (userTags && Object.keys(tags).length === 0) {
+      setTags(userTags);
+    }
+  }, [setTags, tags, userTags]);
+
   // prettier-ignore
   const [selectedTimeRange, setSelectedTimeRange] = useState<TimeRangeType>("short_term");
 
   return (
     <div className="h-full p-4">
-      <LoadingScreen
-        progress={progress}
-        current={currentPlaylist}
-      />
-    
-      {/* <Greetings
-        key={"greetings"}
-        name={sessionData?.user?.name || ""}
-        timeRange={selectedTimeRange}
-        selectTimeRange={setSelectedTimeRange}
-      /> */}
-      {/* <Recap key={"recap"} timeRange={selectedTimeRange} /> */}
+      {firstLoading ? (
+        <LoadingScreen progress={progress} current={currentPlaylist} />
+      ) : (
+        <>
+          <Greetings
+            key={"greetings"}
+            name={sessionData?.user?.name || ""}
+            timeRange={selectedTimeRange}
+            selectTimeRange={setSelectedTimeRange}
+          />
+          <Recap key={"recap"} timeRange={selectedTimeRange} />
+        </>
+      )}
     </div>
   );
 };
@@ -94,19 +105,11 @@ const LoadingScreen = ({ progress, current }: LoadingStateProps) => {
   );
 };
 const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
-  const session = useSession();
-
-  if (!session?.data?.user) {
-    throw new Error("User not logged in");
-  }
-  //prettier-ignore
-  const { data } = api.prisma_router.getTagsByUser.useQuery({userId: session.data.user.id });
-
   return (
     <section className="md:grid md:grid-cols-3 md:gap-3">
-      <TopRatedCard timeRange={timeRange} tags={data} />
+      <TopRatedCard timeRange={timeRange} />
       <MoodCard />
-      <RecommendedCard tags={data} />
+      <RecommendedCard />
     </section>
   );
 };
@@ -114,11 +117,11 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
 Home.getLayout = (page) => <MainLayout>{page}</MainLayout>;
 export default Home;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
       //prettier- ignore
-      ...(await serverSideTranslations(context.locale ?? "en", [
+      ...(await serverSideTranslations(locale ?? "en", [
         "home",
         "common",
         "modals",

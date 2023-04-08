@@ -27,7 +27,8 @@ export async function getUserPlaylists(
 
 export async function getLibrary(
   accessToken: string,
-  progressCallback: (progress: number, current: string) => void
+  progressCallback: (progress: number, current: string) => void,
+  finishCallback: () => void
 ) {
   //get playlists
   const playlists = await getUserPlaylists(accessToken);
@@ -39,18 +40,19 @@ export async function getLibrary(
     const playlist = playlists[i];
     if (playlist) {
       progressCallback(
-        Math.floor((100 / playlists.length) * i + 1),
+        Math.floor((100 / playlists.length) * (i + 1)),
         playlist.name
       );
       getPlaylistTracks(playlist.id, accessToken)
         .then((tracks) => {
           playlist.tracks = tracks;
+          i++;
         })
         .catch((error) => console.error(error));
-      i++;
     }
     if (i === playlists.length) {
       clearInterval(interval);
+      finishCallback()
     }
   }, TIMEOUT);
   return playlists;

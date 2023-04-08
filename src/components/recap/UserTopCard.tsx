@@ -1,5 +1,6 @@
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
+import { useSpotifyStore } from "~/core/store";
 import type { TagsObject } from "~/server/api/routers/prisma_router";
 import {
   TopTypeArray,
@@ -18,13 +19,12 @@ import { RecapCardHeader } from "./RecapSelectItem";
 
 export type RecapPropsType = {
   timeRange: TimeRangeType;
-  tags?: TagsObject | undefined;
 };
 
 export const itemsPerPageOptions = ["5", "10", "15", "20"];
 export const totalItems = 50;
 
-const UserTopCard = ({ timeRange = "short_term", tags }: RecapPropsType) => {
+const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
   const { t } = useTranslation("home");
   const [selectedType, setSelectedType] = useState<TopType>("tracks");
   const [selectedPage, setSelectedPage] = useState(0);
@@ -35,6 +35,7 @@ const UserTopCard = ({ timeRange = "short_term", tags }: RecapPropsType) => {
     itemsPerPage: itemsPerPage,
     totalItems: totalItems,
   });
+  const { tags } = useSpotifyStore();
 
   return (
     <RecapCard key={"card-top-rated"} intent={"topRated"} loading={isLoading}>

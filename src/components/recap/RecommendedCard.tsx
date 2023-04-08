@@ -1,4 +1,5 @@
 import { useTranslation } from "next-i18next";
+import { useSpotifyStore } from "~/core/store";
 import type { TagsObject } from "~/server/api/routers/prisma_router";
 import { api } from "~/utils/api";
 import RowsSkeleton from "../ui/skeletons/SingleRowSkeleton";
@@ -7,11 +8,12 @@ import RecapCard from "./RecapCard";
 import { RecapContainer } from "./RecapCardContainer";
 import { RecapCardHeader } from "./RecapSelectItem";
 
-const RecommendedCard = ({ tags }: { tags: TagsObject | undefined }) => {
+const RecommendedCard = () => {
   //prettier-ignore
   const { data, isLoading, isError } = api.spotify_user.getRecommendedations.useQuery();
   const { t } = useTranslation("home");
-
+  const {tags} = useSpotifyStore();
+  
   return (
     <RecapCard
       key={"card-recommended"}
