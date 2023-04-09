@@ -39,20 +39,21 @@ export async function getLibrary(
   const interval = setInterval(() => {
     const playlist = playlists[i];
     if (playlist) {
+      i++;
       progressCallback(
         Math.floor((100 / playlists.length) * (i + 1)),
         playlist.name
       );
-      getPlaylistTracks(playlist.id, accessToken)
-        .then((tracks) => {
-          playlist.tracks = tracks;
-          i++;
-        })
-        .catch((error) => console.error(error));
+      // getPlaylistTracks(playlist.id, accessToken)
+      //   .then((tracks) => {
+      //     playlist.tracks = tracks;
+      //     i++;
+      //   })
+      //   .catch((error) => console.error(error));
     }
     if (i === playlists.length) {
       clearInterval(interval);
-      finishCallback()
+      finishCallback();
     }
   }, TIMEOUT);
   return playlists;
