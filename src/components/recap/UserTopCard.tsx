@@ -1,6 +1,6 @@
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
-import { useSpotifyStore } from "~/core/store";
+import { useStore } from "~/core/store";
 import type { TagsObject } from "~/server/api/routers/prisma_router";
 import {
   TopTypeArray,
@@ -40,7 +40,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
       refetchOnWindowFocus: false,
     }
   );
-  const { tags } = useSpotifyStore();
+  const { tags } = useStore();
 
   return (
     <RecapCard key={"card-top-rated"} intent={"topRated"} loading={isLoading}>

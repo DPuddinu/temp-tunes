@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useCallback, useState } from "react";
 import { z } from "zod";
-import { useSpotifyStore } from "~/core/store";
+import { useStore } from "~/core/store";
 import type { PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 
@@ -12,7 +12,7 @@ const Search: PageWithLayout = () => {
   const [searchInput, setSearchInput] = useState<string>();
   const [error, setError] = useState("");
 
-  const { playlists } = useSpotifyStore();
+  const { playlists } = useStore();
   const { t } = useTranslation("search");
 
   const handleSearchInputChange = (searchInput: string) => {

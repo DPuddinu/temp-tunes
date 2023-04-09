@@ -9,20 +9,27 @@ type UserLibraryState = {
   playlists: Playlist[];
   tags: TagsObject;
   firstLoading: boolean;
-};
-type UserLibraryReducers = {
   setPlaylists: (playlists: Playlist[]) => void;
   setTags: (tags: TagsObject) => void;
   setFirstLoading: (firstLoading: boolean) => void;
 };
-type UserLibrary = UserLibraryState & UserLibraryReducers;
 
-export const emptyStore = create<UserLibraryState>()(() => ({
+
+export const emptyStore = {
   playlists: [],
   tags: {},
   firstLoading: true,
-}));
-export const usePersistedStore = create<UserLibrary>()(
+  setPlaylists: (playlists: Playlist[]) => {
+    return;
+  },
+  setTags: (tags: TagsObject) => {
+    return;
+  },
+  setFirstLoading: (firstLoading: boolean) => {
+    return;
+  },
+};
+export const usePersistedStore = create<UserLibraryState>()(
   persist(
     (set) => ({
       playlists: [],
@@ -39,17 +46,17 @@ export const usePersistedStore = create<UserLibrary>()(
   )
 );
 
-export const useSpotifyStore = () => {
+export const useStore = ((selector, compare) => {
   /*
   This a fix to ensure zustand never hydrates the store before React hydrates the page.
   Without this, there is a mismatch between SSR/SSG and client side on first draw which produces
   an error.
    */
-  const store = usePersistedStore();
+  const store = usePersistedStore(selector, compare);
   const [isHydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);
-  return isHydrated ? store : emptyStore;
-};
+  return isHydrated ? store : selector(emptyStore);
+}) as typeof usePersistedStore;
 
 if (process.env.NODE_ENV === "development") {
   mountStoreDevtool("Store", usePersistedStore);

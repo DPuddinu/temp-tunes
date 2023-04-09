@@ -6,7 +6,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useState } from "react";
 import type { Playlist, TimeRangeType } from "src/types/spotify-types";
 import type { RecapPropsType } from "~/components/recap/UserTopCard";
-import { useSpotifyStore } from "~/core/store";
+import { useStore } from "~/core/store";
+import type { TagsObject } from "~/server/api/routers/prisma_router";
 import { api } from "~/utils/api";
 import { Greetings } from "../components/Greetings";
 import MoodCard from "../components/mood/MoodCard";
@@ -14,7 +15,6 @@ import RecommendedCard from "../components/recap/RecommendedCard";
 import TopRatedCard from "../components/recap/UserTopCard";
 import type { PageWithLayout } from "../types/page-types";
 import { getLibrary } from "./api/spotifyApi/spotifyCollection";
-import type { TagsObject } from "~/server/api/routers/prisma_router";
 
 interface LoadingStateProps {
   progress: number;
@@ -23,7 +23,7 @@ interface LoadingStateProps {
 
 const Home: PageWithLayout = () => {
   const { data: sessionData } = useSession();
-  
+
   const {
     playlists,
     setPlaylists,
@@ -31,10 +31,10 @@ const Home: PageWithLayout = () => {
     setTags,
     firstLoading,
     setFirstLoading,
-  } = useSpotifyStore();
+  } = useStore();
   const [currentPlaylist, setCurrentPlaylist] = useState("");
   const [progress, setProgress] = useState<number>(0);
-  
+
   const {
     data: library,
     isLoading: loadingLibrary,
@@ -74,7 +74,7 @@ const Home: PageWithLayout = () => {
     if (userTags && Object.keys(tags).length === 0) {
       setTags(userTags);
     }
-  }, [ tags, userTags]);
+  }, [tags, userTags]);
 
   // prettier-ignore
   const [selectedTimeRange, setSelectedTimeRange] = useState<TimeRangeType>("short_term");
@@ -85,14 +85,13 @@ const Home: PageWithLayout = () => {
         <LoadingScreen progress={progress} current={currentPlaylist} />
       ) : (
         <>
-          <div>loaded</div>
-          {/* <Greetings
+          <Greetings
             key={"greetings"}
             name={sessionData?.user?.name || ""}
             timeRange={selectedTimeRange}
             selectTimeRange={setSelectedTimeRange}
           />
-          <Recap key={"recap"} timeRange={selectedTimeRange} /> */}
+          <Recap key={"recap"} timeRange={selectedTimeRange} />
         </>
       )}
     </div>
