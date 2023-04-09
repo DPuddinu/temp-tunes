@@ -14,22 +14,17 @@ type UserLibraryState = {
   setFirstLoading: (firstLoading: boolean) => void;
 };
 
-
-export const emptyStore = {
+const emptyStore = create<UserLibraryState>()((set) => ({
   playlists: [],
   tags: {},
   firstLoading: true,
-  setPlaylists: (playlists: Playlist[]) => {
-    return;
-  },
-  setTags: (tags: TagsObject) => {
-    return;
-  },
-  setFirstLoading: (firstLoading: boolean) => {
-    return;
-  },
-};
-export const usePersistedStore = create<UserLibraryState>()(
+  setTags: (tags) => set(() => ({ tags: tags })),
+  setPlaylists: (playlists) => set(() => ({ playlists: playlists })),
+  setFirstLoading: (firstLoading) =>
+    set(() => ({ firstLoading: firstLoading })),
+}));
+
+const usePersistedStore = create<UserLibraryState>()(
   persist(
     (set) => ({
       playlists: [],
@@ -37,7 +32,8 @@ export const usePersistedStore = create<UserLibraryState>()(
       firstLoading: true,
       setTags: (tags) => set(() => ({ tags: tags })),
       setPlaylists: (playlists) => set(() => ({ playlists: playlists })),
-      setFirstLoading: (firstLoading) => set(() => ({ firstLoading: firstLoading })),
+      setFirstLoading: (firstLoading) =>
+        set(() => ({ firstLoading: firstLoading })),
     }),
     {
       name: "asm-storage", // name of the item in the storage (must be unique)
@@ -46,16 +42,16 @@ export const usePersistedStore = create<UserLibraryState>()(
   )
 );
 
-export const useStore = ((selector, compare) => {
+export const useStore = (() => {
   /*
   This a fix to ensure zustand never hydrates the store before React hydrates the page.
   Without this, there is a mismatch between SSR/SSG and client side on first draw which produces
   an error.
    */
-  const store = usePersistedStore(selector, compare);
+  const persistedStore = usePersistedStore();
   const [isHydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);
-  return isHydrated ? store : selector(emptyStore);
+  return isHydrated ? persistedStore : emptyStore;
 }) as typeof usePersistedStore;
 
 if (process.env.NODE_ENV === "development") {
