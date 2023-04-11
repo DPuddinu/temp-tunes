@@ -49,6 +49,7 @@ model Tag {
   userId      String
   spotifyId   String
   spotifyType String
+  spotifyName String @default("")
   user        User   @relation(fields: [userId], references: [id])
 
   @@index([userId])

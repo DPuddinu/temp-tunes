@@ -64,7 +64,7 @@ const Home: PageWithLayout = () => {
 
   // STORING PLAYLISTS
   useEffect(() => {
-    if (library && playlists.length === 0) {
+    if (library && playlists?.length === 0) {
       setPlaylists(library);
     }
   }, [library, playlists]);

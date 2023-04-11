@@ -19,6 +19,7 @@ specifiers:
   autoprefixer: ^10.4.7
   cva: npm:class-variance-authority@^0.4.0
   daisyui: ^2.51.3
+  dotenv: ^16.0.3
   eslint: ^8.34.0
   eslint-config-next: ^13.2.1
   i18next: ^22.4.9
@@ -51,6 +52,7 @@ dependencies:
   '@trpc/server': 10.13.2
   cva: /class-variance-authority/0.4.0_typescript@4.9.5
   daisyui: 2.51.3_gbtt6ss3tbiz4yjtvdr6fbrj44
+  dotenv: 16.0.3
   i18next: 22.4.10
   next: 13.2.3_biqbaboplfbrettd7655fr4n2y
   next-auth: 4.19.2_nvzgbose6yf6w7ijjprgspqefi
@@ -1026,6 +1028,11 @@ packages:
     dependencies:
       esutils: 2.0.3
     dev: true
+
+  /dotenv/16.0.3:
+    resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
+    engines: {node: '>=12'}
+    dev: false
 
   /electron-to-chromium/1.4.314:
     resolution: {integrity: sha512-+3RmNVx9hZLlc0gW//4yep0K5SYKmIvB5DXg1Yg6varsuAHlHwTeqeygfS8DWwLCsNOWrgj+p9qgM5WYjw1lXQ==}

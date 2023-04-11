@@ -2,17 +2,18 @@ import MainLayout from "@components/MainLayout";
 import type { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { z } from "zod";
+import { executeSearch } from "~/core/spotifySearch";
 import { useStore } from "~/core/store";
 import type { PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 
 const Search: PageWithLayout = () => {
-  const [searchInput, setSearchInput] = useState<string>();
+  const [searchInput, setSearchInput] = useState<string>("");
   const [error, setError] = useState("");
 
-  const { playlists } = useStore();
+  const { playlists, tags } = useStore();
   const { t } = useTranslation("search");
 
   const handleSearchInputChange = (searchInput: string) => {
@@ -35,6 +36,10 @@ const Search: PageWithLayout = () => {
     },
     [searchInput]
   );
+
+  const search = useMemo(() => {
+    return executeSearch(searchInput, playlists, tags);
+  }, [searchInput]);
 
   return (
     <div className="flex flex-col items-center justify-center gap-2">

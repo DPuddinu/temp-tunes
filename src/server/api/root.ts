@@ -1,6 +1,5 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 import { prismaRouter } from "./routers/prisma_router";
-import { spotifySearchRouter } from "./routers/spority_search_router";
 import { spotifyPlaylistRouter } from "./routers/spotify_playlist_router";
 import { spotifyUserRouter } from "./routers/spotify_user_router";
 

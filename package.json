@@ -24,6 +24,7 @@
     "@trpc/server": "^10.9.0",
     "cva": "npm:class-variance-authority@^0.4.0",
     "daisyui": "^2.51.3",
+    "dotenv": "^16.0.3",
     "i18next": "^22.4.9",
     "next": "^13.2.1",
     "next-auth": "^4.19.0",
