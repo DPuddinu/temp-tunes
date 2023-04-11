@@ -7,16 +7,16 @@ import { z } from "zod";
 import { executeSearch } from "~/core/spotifySearch";
 import { useStore } from "~/core/store";
 import type { PageWithLayout } from "~/types/page-types";
-import { api } from "~/utils/api";
 
 const Search: PageWithLayout = () => {
   const [searchInput, setSearchInput] = useState<string>("");
   const [error, setError] = useState("");
 
   const { playlists, tags } = useStore();
+  const { playlists, tags } = useStore();
   const { t } = useTranslation("search");
 
-  const handleSearchInputChange = (searchInput: string) => {
+  const onSearchInputChange = (searchInput: string) => {
     setSearchInput(() => {
       validateSearchInput(searchInput);
       return searchInput;
@@ -51,7 +51,7 @@ const Search: PageWithLayout = () => {
             placeholder={t("search") ?? "..."}
             className="input-bordered input grow bg-secondary-content sm:max-w-sm"
             value={searchInput}
-            onChange={(t) => handleSearchInputChange(t.target.value)}
+            onChange={(t) => onSearchInputChange(t.target.value)}
           />
           <button
             disabled={!!error}

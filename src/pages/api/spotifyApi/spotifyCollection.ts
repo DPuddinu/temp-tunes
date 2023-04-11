@@ -6,14 +6,14 @@ import type {
   Track,
 } from "~/types/spotify-types";
 
-const params = new URLSearchParams({
+const limitParams = new URLSearchParams({
   limit: "50",
 });
 const TIMEOUT = 150;
 
 export async function getUserPlaylists(
   accessToken: string,
-  url: string | undefined = "/me/playlists?" + params.toString()
+  url: string | undefined = "/me/playlists?" + limitParams.toString()
 ) {
   let data: Playlist[] = [];
   while (url) {
@@ -44,12 +44,12 @@ export async function getLibrary(
         Math.floor((100 / playlists.length) * (i + 1)),
         playlist.name
       );
-      // getPlaylistTracks(playlist.id, accessToken)
-      //   .then((tracks) => {
-      //     playlist.tracks = tracks;
-      //     i++;
-      //   })
-      //   .catch((error) => console.error(error));
+      getPlaylistTracks(playlist.id, accessToken)
+        .then((tracks) => {
+          playlist.tracks = tracks;
+          i++;
+        })
+        .catch((error) => console.error(error));
     }
     if (i === playlists.length) {
       clearInterval(interval);
@@ -59,19 +59,26 @@ export async function getLibrary(
   return playlists;
 }
 
+const filterTracksByField =
+  "fields=items(track(name,href,album(name,href),duration_ms,id,type))";
 
 export async function getPlaylistTracks(
   playlist_id: string,
   accessToken: string,
-  url: string | undefined = "/playlists/" + playlist_id + "/tracks"
+  url:
+    | string
+    | undefined = `/playlists/${playlist_id}/tracks?${limitParams.toString()}&${filterTracksByField}`
 ) {
   let data: Track[] = [];
+
   while (url) {
     const response = (await spotifyGET(url, accessToken)
       .then((resp) => resp.json())
       .catch((error) => console.error(error))) as GetTracksResponseType;
     data = data.concat(response.items);
-    url = response.next?.split("v1")[1];
+    url = response.next
+      ? `${response.next?.split("v1")[1]}&${filterTracksByField}`
+      : undefined;
   }
   return data;
 }
