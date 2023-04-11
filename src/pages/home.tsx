@@ -64,14 +64,14 @@ const Home: PageWithLayout = () => {
 
   // STORING PLAYLISTS
   useEffect(() => {
-    if (library && playlists.length === 0) {
+    if (library) {
       setPlaylists(library);
     }
   }, [library, playlists]);
 
   // STORING TAGS
   useEffect(() => {
-    if (userTags && Object.keys(tags).length === 0) {
+    if (userTags && tags && Object.keys(tags).length === 0) {
       setTags(userTags);
     }
   }, [tags, userTags]);
