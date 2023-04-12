@@ -2,10 +2,10 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { getUserPlaylists } from "~/pages/api/spotifyApi/spotifyCollection";
 import { spliceArray } from "~/utils/helpers";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const spotifyPlaylistRouter = createTRPCRouter({
-  getAllPlaylists: publicProcedure
+  getAllPlaylists: protectedProcedure
     .input(
       z.object({
         itemsPerPage: z.number(),

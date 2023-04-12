@@ -1,6 +1,6 @@
 import { Quicksand } from "@next/font/google";
 import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
+import { SessionProvider, useSession } from "next-auth/react";
 import { appWithTranslation } from "next-i18next";
 import { type AppType } from "next/app";
 import "~/styles/index.css";

@@ -1,12 +1,12 @@
 import type { Tag } from "@prisma/client";
 import { z } from "zod";
 import { TagSchema, type TagSchemaType } from "~/types/user-types";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 export interface TagsObject {
   [z: string]: TagSchemaType[];
 }
 export const prismaRouter = createTRPCRouter({
-  getTagsByUser: publicProcedure
+  getTagsByUser: protectedProcedure
     .input(
       z.object({
         userId: z.string(),
@@ -23,7 +23,7 @@ export const prismaRouter = createTRPCRouter({
       const tagsObject = createTagsObject(tags);
       return tagsObject;
     }),
-  setTags: publicProcedure
+  setTags: protectedProcedure
     .input(
       z.object({
         userId: z.string().nullable(),

@@ -7,10 +7,12 @@ import { z } from "zod";
 import { executeSearch } from "~/core/spotifySearch";
 import { useStore } from "~/core/store";
 import type { PageWithLayout } from "~/types/page-types";
+import { api } from "~/utils/api";
 
 const Search: PageWithLayout = () => {
   const [searchInput, setSearchInput] = useState<string>("");
   const [error, setError] = useState("");
+  const { mutate, isLoading, data } = api.redis_router.set.useMutation();
 
   const { playlists, tags } = useStore();
   const { playlists, tags } = useStore();
