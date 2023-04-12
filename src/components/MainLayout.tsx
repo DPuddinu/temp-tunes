@@ -1,13 +1,22 @@
+import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useStore, type UserLibrary } from "~/core/store";
+import { getLibrary } from "~/pages/api/spotifyApi/spotifyCollection";
+import { api } from "~/utils/api";
 import { UserNavbar } from "./UserNavbar";
 
 interface Page {
   url: string;
   name: string;
 }
+interface LoadingStateProps {
+  progress: number;
+  current: string;
+}
+
 const pages: Page[] = [
   { url: "/home", name: "Home" },
   { url: "/search", name: "Advanced Search" },
@@ -19,12 +28,59 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   const { data: sessionData, status } = useSession();
   const router = useRouter();
   const openDrawer = useRef<HTMLInputElement>(null);
+  const [currentPlaylist, setCurrentPlaylist] = useState("");
+  const [progress, setProgress] = useState<number>(0);
+  const [loadedLibrary, setLoadedLibrary] = useState(false);
 
   if (sessionData?.tokenExpired || status === "unauthenticated") {
     router.push("/");
   }
+  const { playlists: storeLibrary, setPlaylists: setStoreLibrary } = useStore();
 
-  
+  //prettier-ignore
+  const { isLoading: isCaching, data: cachedLibrary } = api.redis_router.get.useQuery();
+
+  //prettier-ignore
+  const { data: userTags } = api.prisma_router.getTagsByUser.useQuery({userId: sessionData?.user?.id ?? ""},{refetchOnWindowFocus: false});
+
+  const { mutate: saveLibrary } = api.redis_router.set.useMutation();
+  const {
+    data: library,
+    mutate: loadLibrary,
+    isLoading: loadingLibrary,
+    isError: errorLibrary,
+  } = useMutation({
+    mutationKey: ["library"],
+    mutationFn: () =>
+      getLibrary(
+        sessionData?.accessToken ?? "",
+        (progress: number, current: string) => {
+          setCurrentPlaylist(current);
+          setProgress(progress);
+        },
+        () => setLoadedLibrary(true)
+      ),
+  });
+
+  //LOAD LIBRARY
+  useEffect(() => {
+    if (cachedLibrary && cachedLibrary.length > 0) {
+      setStoreLibrary(cachedLibrary);
+      setLoadedLibrary(true);
+    } else {
+      loadLibrary();
+    }
+  }, [cachedLibrary]);
+
+  //SAVE LIBRARY
+  useEffect(() => {
+    if (library && loadedLibrary) {
+      saveLibrary({
+        library: JSON.stringify(library),
+      });
+      setStoreLibrary(library);
+    }
+  }, [library, loadedLibrary]);
 
   return (
     <div className="drawer">
@@ -38,7 +94,13 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
         <nav>
           <UserNavbar />
         </nav>
-        <main className="grow p-6">{children}</main>
+        <main className="grow p-6">
+          {cachedLibrary && loadedLibrary ? (
+            children
+          ) : (
+            <LoadingScreen current={currentPlaylist} progress={progress} />
+          )}
+        </main>
       </div>
       <div className="drawer-side">
         <label htmlFor="my-drawer-2" className="drawer-overlay" />
@@ -56,5 +118,18 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export default MainLayout;
+const LoadingScreen = ({ progress, current }: LoadingStateProps) => {
+  return (
+    <section className="flex flex-col items-center justify-center gap-3">
+      <p>Loading your playlists...</p>
+      <p className="text-sm">{current}</p>
+      <progress
+        className="progress progress-primary w-56"
+        value={progress}
+        max="100"
+      ></progress>
+    </section>
+  );
+};
 
+export default MainLayout;

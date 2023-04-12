@@ -2,14 +2,16 @@ import MainLayout from "@components/MainLayout";
 import type { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { z } from "zod";
 import { useStore } from "~/core/store";
 import type { PageWithLayout } from "~/types/page-types";
+import { api } from "~/utils/api";
 
 const Search: PageWithLayout = () => {
   const [searchInput, setSearchInput] = useState<string>();
   const [error, setError] = useState("");
+  const { mutate, isLoading, data } = api.redis_router.set.useMutation();
 
   const { playlists, tags } = useStore();
   const { t } = useTranslation("search");
@@ -35,12 +37,12 @@ const Search: PageWithLayout = () => {
     [searchInput]
   );
 
-  // const executeSearch = useCallback((searchInput: string) => {
-      
-
-  //   },
-  //   [searchInput]
-  // );
+  useEffect(() => {
+    mutate({
+      library: 'asdf'
+    })
+  }, [])
+  
 
   return (
     <div className="flex flex-col items-center justify-center gap-2">

@@ -22,6 +22,7 @@ const server = z.object({
   SPOTIFY_CLIENT_ID: z.string(),
   SPOTIFY_CLIENT_SECRET: z.string(),
   SPOTIFY_SCOPES: z.string(),
+  REDIS_URL: z.string(),
 });
 
 /**
@@ -46,6 +47,7 @@ const processEnv = {
   SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET,
   SPOTIFY_SCOPES: process.env.SPOTIFY_SCOPES,
   DATABASE_URL: process.env.DATABASE_URL,
+  REDIS_URL: process.env.REDIS_URL,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

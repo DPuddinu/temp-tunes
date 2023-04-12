@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { spotifyGET } from "~/core/spotifyFetch";
 import { averageMood } from "~/core/spotifyMoodAnalyze";
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import {
   TimeRangeEnum,
   TopTypeEnum,
@@ -13,7 +13,7 @@ import {
 import { spliceArray } from "~/utils/helpers";
 
 export const spotifyUserRouter = createTRPCRouter({
-  getTopRated: publicProcedure
+  getTopRated: protectedProcedure
     .input(
       z.object({
         type: TopTypeEnum,
@@ -29,7 +29,7 @@ export const spotifyUserRouter = createTRPCRouter({
         time_range: timeRange,
       });
       const url = `/me/top/${type}?${urlParams.toString()}`;
-      
+
       // prettier-ignore
       const results = (await spotifyGET(url, ctx.session?.accessToken ?? '').then((res) => res.json())) as TopArtists | TopTracks;
       const itemsCount = results.items.length;
@@ -41,7 +41,7 @@ export const spotifyUserRouter = createTRPCRouter({
         totalItems: itemsCount,
       };
     }),
-  getMood: publicProcedure.query(async ({ ctx }) => {
+  getMood: protectedProcedure.query(async ({ ctx }) => {
     const tracksUrl = `/me/top/tracks`;
     // prettier-ignore
     const tracks = (await spotifyGET(
@@ -58,7 +58,7 @@ export const spotifyUserRouter = createTRPCRouter({
     return averageMood(analysis);
   }),
 
-  getRecommendedations: publicProcedure.query(async ({ ctx }) => {
+  getRecommendedations: protectedProcedure.query(async ({ ctx }) => {
     const tracksUrl = `/me/top/tracks`;
     const artistsUrl = `/me/top/artists`;
 
