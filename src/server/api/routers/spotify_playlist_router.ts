@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { getUserPlaylists } from "~/pages/api/spotifyApi/spotifyCollection";
+import { getUserPlaylists } from "~/core/spotifyCollection";
 import { spliceArray } from "~/utils/helpers";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 

@@ -3,8 +3,8 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { useStore, type UserLibrary } from "~/core/store";
-import { getLibrary } from "~/pages/api/spotifyApi/spotifyCollection";
+import { getLibrary } from "~/core/spotifyCollection";
+import { useStore } from "~/core/store";
 import { api } from "~/utils/api";
 import { UserNavbar } from "./UserNavbar";
 
@@ -15,6 +15,7 @@ interface Page {
 interface LoadingStateProps {
   progress: number;
   current: string;
+  indeterminate: boolean;
 }
 
 const pages: Page[] = [
@@ -32,18 +33,21 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   const [progress, setProgress] = useState<number>(0);
   const [loadedLibrary, setLoadedLibrary] = useState(false);
 
-  if (sessionData?.tokenExpired || status === "unauthenticated") {
-    router.push("/");
-  }
+  //prettier-ignore
+  if (sessionData?.tokenExpired || status === "unauthenticated")router.push("/");
+
+  //LOCAL STORE
   const { playlists: storeLibrary, setPlaylists: setStoreLibrary } = useStore();
 
+  //REDIS
   //prettier-ignore
-  const { isLoading: isCaching, data: cachedLibrary } = api.redis_router.get.useQuery();
+  const { isLoading: isCaching, data: cachedLibrary } = api.redis_router.get.useQuery(undefined, {refetchOnWindowFocus: false});
+  const { mutate: saveLibrary } = api.redis_router.set.useMutation();
 
+  //PLANETSCALE
   //prettier-ignore
   const { data: userTags } = api.prisma_router.getTagsByUser.useQuery({userId: sessionData?.user?.id ?? ""},{refetchOnWindowFocus: false});
 
-  const { mutate: saveLibrary } = api.redis_router.set.useMutation();
   const {
     data: library,
     mutate: loadLibrary,
@@ -58,7 +62,9 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
           setCurrentPlaylist(current);
           setProgress(progress);
         },
-        () => setLoadedLibrary(true)
+        () => {
+          setLoadedLibrary(true);
+        }
       ),
   });
 
@@ -68,19 +74,20 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
       setStoreLibrary(cachedLibrary);
       setLoadedLibrary(true);
     } else {
+      setLoadedLibrary(false);
       loadLibrary();
     }
   }, [cachedLibrary]);
 
   //SAVE LIBRARY
   useEffect(() => {
-    if (library && loadedLibrary) {
+    if (library && library.length > 0) {
       saveLibrary({
         library: JSON.stringify(library),
       });
       setStoreLibrary(library);
     }
-  }, [library, loadedLibrary]);
+  }, [library]);
 
   return (
     <div className="drawer">
@@ -95,10 +102,14 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
           <UserNavbar />
         </nav>
         <main className="grow p-6">
-          {cachedLibrary && loadedLibrary ? (
+          {loadedLibrary ? (
             children
           ) : (
-            <LoadingScreen current={currentPlaylist} progress={progress} />
+            <LoadingScreen
+              current={currentPlaylist}
+              progress={progress}
+              indeterminate={loadingLibrary}
+            />
           )}
         </main>
       </div>
@@ -118,16 +129,24 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const LoadingScreen = ({ progress, current }: LoadingStateProps) => {
+const LoadingScreen = ({
+  progress,
+  current,
+  indeterminate,
+}: LoadingStateProps) => {
   return (
     <section className="flex flex-col items-center justify-center gap-3">
       <p>Loading your playlists...</p>
       <p className="text-sm">{current}</p>
-      <progress
-        className="progress progress-primary w-56"
-        value={progress}
-        max="100"
-      ></progress>
+      {indeterminate ? (
+        <progress className="progress progress-primary w-56" />
+      ) : (
+        <progress
+          className="progress progress-primary w-56"
+          value={progress}
+          max="100"
+        />
+      )}
     </section>
   );
 };

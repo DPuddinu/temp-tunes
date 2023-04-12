@@ -1,6 +1,5 @@
 import type { TagsObject } from "~/server/api/routers/prisma_router";
-import type { Playlist, Track } from "~/types/spotify-types";
-import type { TagSchemaType } from "~/types/user-types";
+import type { Playlist } from "~/types/spotify-types";
 
 type SearchResultType = "track" | "playlist";
 
