@@ -1,9 +1,8 @@
 import { TagModal } from "@components/modals/TagModal";
-import { type Tag } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useCallback, useEffect, useState } from "react";
-import { TagSchemaType, type TagType } from "~/types/user-types";
+import { type TagSchemaType } from "~/types/user-types";
 import { api } from "~/utils/api";
 import { DropdownMenu } from "./DropdownMenu";
 
@@ -11,7 +10,6 @@ type Props = {
   label: string;
   artists: string[];
   spotifyId: string;
-  tagType: TagType;
   trackTags: TagSchemaType[];
 };
 
@@ -19,7 +17,6 @@ const TrackRow = ({
   label,
   artists,
   spotifyId,
-  tagType,
   trackTags,
 }: Props) => {
   const { t } = useTranslation("common");
@@ -33,10 +30,7 @@ const TrackRow = ({
   const { data, isLoading, isSuccess, mutate, isError } = api.prisma_router.setTags.useMutation();
 
   const saveTags = useCallback(() => {
-    mutate({
-      userId: session?.data?.user?.id ?? "",
-      tags,
-    });
+    mutate({ tags });
   }, [tags.length]);
 
   useEffect(() => {
@@ -71,9 +65,9 @@ const TrackRow = ({
             addTag(
               tagName,
               spotifyId,
-              tagType,
               session.data?.user?.id ?? "",
-              tags
+              tags,
+              label
             )
           )
         }
@@ -93,15 +87,16 @@ export default TrackRow;
 function addTag(
   tagName: string,
   spotifyId: string,
-  spotifyType: TagType,
   userId: string,
-  tags: TagSchemaType[]
+  tags: TagSchemaType[],
+  trackName: string
 ): TagSchemaType[] {
   const newTag: TagSchemaType = {
     name: tagName,
     spotifyId: spotifyId,
-    spotifyType: spotifyType,
+    spotifyType: "track",
     userId: userId,
+    spotifyName: trackName,
   };
   return [...tags, newTag];
 }

@@ -1,7 +1,6 @@
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
 import { useStore } from "~/core/store";
-import type { TagsObject } from "~/server/api/routers/prisma_router";
 import {
   TopTypeArray,
   type Artist,
@@ -77,7 +76,6 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
               ) : (
                 <TrackRow
                   spotifyId={item.id}
-                  tagType={"track"}
                   trackTags={tags ? tags[item.id] ?? [] : []}
                   artists={(item as Track).artists.map((artist) => artist.name)}
                   label={item.name}

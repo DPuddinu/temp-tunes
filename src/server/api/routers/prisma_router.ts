@@ -21,58 +21,53 @@ export const prismaRouter = createTRPCRouter({
   setTags: protectedProcedure
     .input(
       z.object({
-        userId: z.string().nullable(),
         tags: TagSchema.array(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { tags: userTags, userId } = input;
+      const { tags: userTags } = input;
       let tagsToAdd: Tag[] = [];
       let tagsToRemove: Tag[] = [];
 
       const tags = userTags as Tag[];
-      if (userId) {
-        const oldTags = await ctx.prisma.tag.findMany({
-          where: { userId: userId },
+      const oldTags = await ctx.prisma.tag.findMany({ where: { userId: ctx.session.user.id }});
+
+      const sameTag = (a: Tag, b: Tag) => a.name === b.name;
+      const onlyIn = (
+        a: Tag[],
+        b: Tag[],
+        compareFunction: (a: Tag, b: Tag) => boolean
+      ) =>
+        a.filter(
+          (leftValue) =>
+            !b.some((rightValue) => compareFunction(leftValue, rightValue))
+        );
+
+      tagsToAdd = onlyIn(tags, oldTags, sameTag);
+      tagsToRemove = onlyIn(oldTags, tags, sameTag);
+
+      // ADDING NEW TAGS
+      try {
+        await ctx.prisma.tag.createMany({
+          data: tagsToAdd,
         });
+      } catch (e) {
+        throw e;
+      }
 
-        const sameTag = (a: Tag, b: Tag) => a.name === b.name;
-        const onlyIn = (
-          a: Tag[],
-          b: Tag[],
-          compareFunction: (a: Tag, b: Tag) => boolean
-        ) =>
-          a.filter(
-            (leftValue) =>
-              !b.some((rightValue) => compareFunction(leftValue, rightValue))
-          );
-
-        tagsToAdd = onlyIn(tags, oldTags, sameTag);
-        tagsToRemove = onlyIn(oldTags, tags, sameTag);
-
-        // ADDING NEW TAGS
-        try {
-          await ctx.prisma.tag.createMany({
-            data: tagsToAdd,
-          });
-        } catch (e) {
-          throw e;
-        }
-
-        // REMOVING DELETED TAGS
-        try {
-          await ctx.prisma.$transaction(
-            tagsToRemove.map((tag) =>
-              ctx.prisma.tag.delete({
-                where: {
-                  id: tag.id,
-                },
-              })
-            )
-          );
-        } catch (e) {
-          throw e;
-        }
+      // REMOVING DELETED TAGS
+      try {
+        await ctx.prisma.$transaction(
+          tagsToRemove.map((tag) =>
+            ctx.prisma.tag.delete({
+              where: {
+                id: tag.id,
+              },
+            })
+          )
+        );
+      } catch (e) {
+        throw e;
       }
       return {
         addedTags: tagsToAdd,

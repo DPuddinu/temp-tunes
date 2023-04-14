@@ -1,6 +1,5 @@
 import { useTranslation } from "next-i18next";
 import { useStore } from "~/core/store";
-import type { TagsObject } from "~/server/api/routers/prisma_router";
 import { api } from "~/utils/api";
 import TrackRow from "../ui/TrackRow";
 import RowsSkeleton from "../ui/skeletons/SingleRowSkeleton";
@@ -10,10 +9,7 @@ import { RecapCardHeader } from "./RecapSelectItem";
 
 const RecommendedCard = () => {
   //prettier-ignore
-  const { data, isLoading, isError } =
-    api.spotify_user.getRecommendedations.useQuery(undefined, {
-      refetchOnWindowFocus: false,
-    });
+  const { data, isLoading, isError } = api.spotify_user.getRecommendedations.useQuery(undefined, {refetchOnWindowFocus: false});
   const { t } = useTranslation("home");
   const { tags } = useStore();
 
@@ -37,7 +33,6 @@ const RecommendedCard = () => {
           data.tracks.map((track) => (
             <TrackRow
               spotifyId={track.id}
-              tagType={"track"}
               trackTags={tags ? tags[track.id] ?? [] : []}
               key={track.id}
               artists={track.artists.map((artist) => artist.name)}
