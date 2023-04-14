@@ -4,17 +4,14 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useCallback, useMemo, useState } from "react";
 import { z } from "zod";
-import { executeSearch } from "~/core/spotifySearch";
+import { executeSearch, type SearchResult } from "~/core/spotifySearch";
 import { useStore } from "~/core/store";
 import type { PageWithLayout } from "~/types/page-types";
-import { api } from "~/utils/api";
 
 const Search: PageWithLayout = () => {
   const [searchInput, setSearchInput] = useState<string>("");
   const [error, setError] = useState("");
-  const { mutate, isLoading, data } = api.redis_router.set.useMutation();
-
-  const { playlists, tags } = useStore();
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const { playlists, tags } = useStore();
   const { t } = useTranslation("search");
 
@@ -39,8 +36,8 @@ const Search: PageWithLayout = () => {
     [searchInput]
   );
 
-  const search = useMemo(() => {
-    return executeSearch(searchInput, playlists, tags);
+  const search = useCallback(() => {
+    setSearchResults(executeSearch(searchInput, playlists, tags));
   }, [searchInput]);
 
   return (
@@ -58,7 +55,7 @@ const Search: PageWithLayout = () => {
           <button
             disabled={!!error}
             className="btn-square btn"
-            // onClick={}
+            onClick={search}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -84,6 +81,35 @@ const Search: PageWithLayout = () => {
           </label>
         )}
       </div>
+      {searchResults.length > 0 && (
+        <div>
+          <div className="overflow-x-auto">
+            <table className="table w-full">
+              {/* head */}
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Name</th>
+                  <th>Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* row 1 */}
+
+                {searchResults?.map((res, i) => (
+                  <>
+                    <tr key={i}>
+                      <th>{i + 1}</th>
+                      <td>{res.name}</td>
+                      <td>{res.type}</td>
+                    </tr>
+                  </>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

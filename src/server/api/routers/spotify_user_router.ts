@@ -31,7 +31,7 @@ export const spotifyUserRouter = createTRPCRouter({
       const url = `/me/top/${type}?${urlParams.toString()}`;
 
       // prettier-ignore
-      const results = (await spotifyGET(url, ctx.session?.accessToken ?? '').then((res) => res.json())) as TopArtists | TopTracks;
+      const results = (await spotifyGET(url, ctx.session.accessToken).then((res) => res.json())) as TopArtists | TopTracks;
       const itemsCount = results.items.length;
 
       const paginatedResults = spliceArray(results.items, itemsPerPage);
@@ -46,13 +46,13 @@ export const spotifyUserRouter = createTRPCRouter({
     // prettier-ignore
     const tracks = (await spotifyGET(
       tracksUrl,
-      ctx.session?.accessToken ?? ""
+      ctx.session.accessToken
     ).then((res) => res.json())) as TopTracks;
     const ids = tracks.items.map((track) => track.id);
     const moodUrl = `/audio-features?ids="${ids.join(",")}"`;
 
     // prettier-ignore
-    const results = (await spotifyGET(moodUrl, ctx.session?.accessToken ?? "").then((res) => res.json())) as AudioFeatures;
+    const results = (await spotifyGET(moodUrl, ctx.session.accessToken).then((res) => res.json())) as AudioFeatures;
     const analysis = results.audio_features;
 
     return averageMood(analysis);
@@ -65,14 +65,13 @@ export const spotifyUserRouter = createTRPCRouter({
     // prettier-ignore
     const tracks = (await spotifyGET(
       tracksUrl,
-      ctx.session?.accessToken ?? ""
+      ctx.session.accessToken
     ).then((res) => res.json())) as TopTracks;
 
     // prettier-ignore
-    const artists = (await spotifyGET(
-      artistsUrl,
-      ctx.session?.accessToken ?? ""
-    ).then((res) => res.json())) as TopArtists;
+    const artists = (await spotifyGET(artistsUrl, ctx.session.accessToken).then(
+      (res) => res.json()
+    )) as TopArtists;
 
     const baseUrl = `/recommendations`;
     const params = new URLSearchParams({
@@ -90,7 +89,10 @@ export const spotifyUserRouter = createTRPCRouter({
 
     if (tracks.items.length >= 2 && artists.items.length >= 2) {
       // prettier-ignore
-      recommendations = await spotifyGET(`${baseUrl}?${params.toString()}`, ctx.session?.accessToken ?? "").then((res) => res.json()) as Recommendations;
+      recommendations = (await spotifyGET(
+        `${baseUrl}?${params.toString()}`,
+        ctx.session.accessToken
+      ).then((res) => res.json())) as Recommendations;
     }
     return recommendations;
   }),

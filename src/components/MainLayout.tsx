@@ -37,7 +37,12 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   if (sessionData?.tokenExpired || status === "unauthenticated")router.push("/");
 
   //LOCAL STORE
-  const { playlists: storeLibrary, setPlaylists: setStoreLibrary } = useStore();
+  const {
+    playlists: storeLibrary,
+    setPlaylists: setStoreLibrary,
+    setTags: setStoreTags,
+    tags: storeTags,
+  } = useStore();
 
   //REDIS
   //prettier-ignore
@@ -45,8 +50,12 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   const { mutate: saveLibrary } = api.redis_router.set.useMutation();
 
   //PLANETSCALE
+
   //prettier-ignore
-  const { data: userTags } = api.prisma_router.getTagsByUser.useQuery({userId: sessionData?.user?.id ?? ""},{refetchOnWindowFocus: false});
+  const { data: userTags } = api.prisma_router.getTagsByUser.useQuery(
+    undefined,
+    { refetchOnWindowFocus: false }
+  );
 
   const {
     data: library,
@@ -74,8 +83,9 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
       setStoreLibrary(cachedLibrary);
       setLoadedLibrary(true);
     } else {
+      setStoreLibrary([]);
       setLoadedLibrary(false);
-      loadLibrary();
+      if (sessionData?.accessToken) loadLibrary();
     }
   }, [cachedLibrary]);
 
@@ -88,6 +98,11 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
       setStoreLibrary(library);
     }
   }, [library]);
+
+  //SAVE TAGS
+  useEffect(() => {
+    if (userTags) setStoreTags(userTags);
+  }, [userTags]);
 
   return (
     <div className="drawer">
@@ -102,7 +117,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
           <UserNavbar />
         </nav>
         <main className="grow p-6">
-          {loadedLibrary ? (
+          {storeLibrary.length > 0 ? (
             children
           ) : (
             <LoadingScreen

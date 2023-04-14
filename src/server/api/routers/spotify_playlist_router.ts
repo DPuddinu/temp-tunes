@@ -17,14 +17,6 @@ export const spotifyPlaylistRouter = createTRPCRouter({
         limit: "50",
       });
       const url = "/me/playlists?" + params.toString();
-
-      if (!ctx?.session?.accessToken) {
-        throw new TRPCError({
-          message: "AccessToken not found!",
-          code: "NOT_FOUND",
-          cause: "Login failed",
-        });
-      }
       const data = await getUserPlaylists(url, ctx.session.accessToken);
 
       return spliceArray(data, itemsPerPage);

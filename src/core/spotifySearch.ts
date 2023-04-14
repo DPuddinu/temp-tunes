@@ -1,19 +1,23 @@
 import type { TagsObject } from "~/server/api/routers/prisma_router";
 import type { Playlist } from "~/types/spotify-types";
 
-type SearchResultType = "track" | "playlist";
+type SearchResultType = "track" | "playlist" | "tag";
 
-interface SearchResult {
+export interface SearchResult {
   type: SearchResultType;
   name: string;
   tagName?: string;
 }
-export function executeSearch(query: string, playlists: Playlist[], tags: TagsObject) {
+export function executeSearch(
+  query: string,
+  playlists: Playlist[],
+  tags: TagsObject
+) {
   const matches: SearchResult[] = [];
 
   //search by tag
   if (tags) {
-    for (const key in tags) {
+      Object.keys(tags).forEach((key) => {
       const tagsBySpotifyId = tags[key];
       if (tagsBySpotifyId) {
         tagsBySpotifyId.forEach((tag) => {
@@ -21,17 +25,17 @@ export function executeSearch(query: string, playlists: Playlist[], tags: TagsOb
             matches.push({
               name: tag.spotifyName,
               tagName: tag.name,
-              type: tag.spotifyType,
+              type: 'tag',
             });
           }
         });
       }
-    }
+    });
   }
 
   //search by trackname
 
   //search by artist
-
+  console.log(matches);
   return matches;
 }
