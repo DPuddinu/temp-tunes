@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { getLibrary } from "~/core/spotifyCollection";
 import { useStore } from "~/core/store";
+import { type Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 import { UserNavbar } from "./UserNavbar";
 
@@ -71,8 +72,12 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
           setCurrentPlaylist(current);
           setProgress(progress);
         },
-        () => {
+        (playlists: Playlist[]) => {
           setLoadedLibrary(true);
+          setStoreLibrary(playlists);
+          saveLibrary({
+            library: JSON.stringify(playlists),
+          });
         }
       ),
   });
@@ -88,16 +93,6 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
       if (sessionData?.accessToken) loadLibrary();
     }
   }, [cachedLibrary]);
-
-  //SAVE LIBRARY
-  useEffect(() => {
-    if (library && library.length > 0) {
-      saveLibrary({
-        library: JSON.stringify(library),
-      });
-      setStoreLibrary(library);
-    }
-  }, [library]);
 
   //SAVE TAGS
   useEffect(() => {

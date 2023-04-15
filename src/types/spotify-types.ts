@@ -3,16 +3,6 @@ import { type VariantProps } from "cva";
 import z from "zod";
 
 export type Playlist = {
-  collaborative: true;
-  description: string;
-  external_urls: {
-    spotify: string;
-  };
-  followers: {
-    href: string;
-    total: number;
-  };
-  href: string;
   id: string;
   images: [
     {
@@ -23,21 +13,8 @@ export type Playlist = {
   ];
   name: string;
   owner: {
-    external_urls: {
-      spotify: string;
-    };
-    followers: {
-      href: string;
-      total: number;
-    };
-    href: string;
-    id: string;
-    type: string;
-    uri: string;
     display_name: string;
   };
-  public: true;
-  snapshot_id: string;
   tracks: Track[];
   type: string;
   uri: string;
@@ -47,7 +24,9 @@ export type GetPlaylistResponseType = {
   next: string;
 };
 export type GetTracksResponseType = {
-  items: Track[];
+  items: {
+    track: Track;
+  }[];
   next: string;
 };
 export type LastPage = {
@@ -71,21 +50,14 @@ export type Generic = {
   id: string;
 };
 export type Track = {
-  available_markets: string[];
-  disc_number: number;
-  explicit: boolean;
-  external_urls: ExternalUrls;
-  is_playable: boolean;
-  linked_from: LinkedFrom;
-  restrictions: Restrictions;
-  preview_url: string;
-  track_number: number;
   type: string;
-  is_local: boolean;
   artists: Artist[];
-  release_date: string;
   duration_ms: number;
-} & Generic;
+  name: string;
+  images: Image[];
+  id: string;
+  uri: string;
+};
 export type Restrictions = {
   reason: string;
 };
@@ -116,12 +88,12 @@ export type Seed = {
 };
 export type Artist = {
   genres: string[];
-  followers: {
-    href: string;
-    total: number;
-  };
-  popularity: number;
-} & Generic;
+  href: string;
+  name: string;
+  images: Image[];
+  uri: string;
+  id: string;
+};
 
 export type TopArtists = {
   items: Artist[];

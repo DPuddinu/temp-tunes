@@ -1,7 +1,7 @@
 import { useTranslation } from "next-i18next";
 import { useCallback, useState } from "react";
 import { z } from "zod";
-import type { TagSchemaType } from "~/types/user-types";
+import type { TagSchemaType } from "~/types/zod-schemas";
 
 interface Props {
   onAdd: (tagName: string) => void;

@@ -28,11 +28,22 @@ export async function getUserPlaylists(
 export async function getLibrary(
   accessToken: string,
   progressCallback: (progress: number, current: string) => void,
-  finishCallback: () => void
+  finishCallback: (playlists: Playlist[]) => void
 ) {
   //get playlists
-  const playlists = await getUserPlaylists(accessToken);
-
+  const fullPlaylists = await getUserPlaylists(accessToken);
+  const playlists = fullPlaylists.map((temp) => {
+    const tempPlaylist: Playlist = {
+      id: temp.id,
+      images: temp.images,
+      name: temp.name,
+      owner: temp.owner,
+      tracks: temp.tracks,
+      type: temp.type,
+      uri: temp.uri,
+    }
+    return tempPlaylist;
+  });
   //populate playlists
   let i = 0;
 
@@ -53,21 +64,24 @@ export async function getLibrary(
     }
     if (i === playlists.length) {
       clearInterval(interval);
-      finishCallback();
+      finishCallback(playlists);
     }
   }, TIMEOUT);
   return playlists;
 }
 
-const filterTracksByField =
-  "fields=items(track(name,href,album(name,href),duration_ms,id,type))";
+// interface GetPlaylistTracksReturnType {
+
+// }
+// const filterTracksByField =
+//   "fields=items(track(name,artists,album(name),duration_ms,id,type,images))";
 
 export async function getPlaylistTracks(
   playlist_id: string,
   accessToken: string,
   url:
     | string
-    | undefined = `/playlists/${playlist_id}/tracks?${limitParams.toString()}&${filterTracksByField}`
+    | undefined = `/playlists/${playlist_id}/tracks?${limitParams.toString()}`
 ) {
   let data: Track[] = [];
 
@@ -75,10 +89,19 @@ export async function getPlaylistTracks(
     const response = (await spotifyGET(url, accessToken)
       .then((resp) => resp.json())
       .catch((error) => console.error(error))) as GetTracksResponseType;
-    data = data.concat(response.items);
-    url = response.next
-      ? `${response.next?.split("v1")[1]}&${filterTracksByField}`
-      : undefined;
+    const tracks = response.items.map((temp) => {
+      return {
+        artists: temp.track.artists,
+        duration_ms: temp.track.duration_ms,
+        id: temp.track.id,
+        images: temp.track.images,
+        name: temp.track.name,
+        type: temp.track.type,
+        uri: temp.track.uri,
+      };
+    });
+    data = data.concat(tracks);
+    url = response.next ? `${response.next?.split("v1")[1]}` : undefined;
   }
   return data;
 }

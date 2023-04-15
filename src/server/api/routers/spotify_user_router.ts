@@ -1,6 +1,8 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { spotifyGET } from "~/core/spotifyFetch";
 import { averageMood } from "~/core/spotifyMoodAnalyze";
+import { type SearchResult } from "~/core/spotifySearch";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import {
   TimeRangeEnum,
@@ -8,8 +10,10 @@ import {
   type AudioFeatures,
   type Recommendations,
   type TopArtists,
-  type TopTracks
+  type TopTracks,
+  type Track,
 } from "~/types/spotify-types";
+import { PlaylistSchema, TagSchema } from "~/types/zod-schemas";
 import { spliceArray } from "~/utils/helpers";
 
 export const spotifyUserRouter = createTRPCRouter({
@@ -73,7 +77,6 @@ export const spotifyUserRouter = createTRPCRouter({
       (res) => res.json()
     )) as TopArtists;
 
-    const baseUrl = `/recommendations`;
     const params = new URLSearchParams({
       seed_artists: `${artists.items[0]?.id ?? ""},${
         artists.items[1]?.id ?? ""
@@ -82,6 +85,7 @@ export const spotifyUserRouter = createTRPCRouter({
       seed_genres: `${artists.items[0]?.genres[0] ?? ""}`,
       limit: "5",
     });
+    const recommendationsUrl = `/recommendations?${params.toString()}`;
     let recommendations: Recommendations = {
       seeds: [],
       tracks: [],
@@ -90,14 +94,40 @@ export const spotifyUserRouter = createTRPCRouter({
     if (tracks.items.length >= 2 && artists.items.length >= 2) {
       // prettier-ignore
       recommendations = (await spotifyGET(
-        `${baseUrl}?${params.toString()}`,
+        recommendationsUrl,
         ctx.session.accessToken
       ).then((res) => res.json())) as Recommendations;
     }
     return recommendations;
   }),
-});
+  searchTracks: protectedProcedure
+    .input(
+      z.object({
+        query: z.string(),
+        tags: z.record(TagSchema.array()),
+        playlists: PlaylistSchema,
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const ids = Object.keys(input.tags);
+      const formattedIds = ids.join(",");
+      const playlists = input.playlists;
 
+      const tracksUrl = `/tracks&ids=${formattedIds}`;
+      const tracksByTags = (await spotifyGET(tracksUrl, ctx.session.accessToken)
+        .then((res) => res.json())
+        .catch((error) => {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "An unexpected error occurred, please try again later.",
+            cause: error,
+          });
+        })) as Track[];
+
+      const matches: SearchResult[] = [];
+      return matches;
+    }),
+});
 
 // INFINITE QUERY PROCEDURE
 // getTop: publicProcedure

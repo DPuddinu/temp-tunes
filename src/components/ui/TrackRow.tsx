@@ -2,7 +2,7 @@ import { TagModal } from "@components/modals/TagModal";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useCallback, useEffect, useState } from "react";
-import { type TagSchemaType } from "~/types/user-types";
+import { type TagSchemaType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
 import { DropdownMenu } from "./DropdownMenu";
 

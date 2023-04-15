@@ -2,7 +2,7 @@ import MainLayout from "@components/MainLayout";
 import type { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { z } from "zod";
 import { executeSearch, type SearchResult } from "~/core/spotifySearch";
 import { useStore } from "~/core/store";
@@ -101,7 +101,6 @@ const Search: PageWithLayout = () => {
                     <tr key={i}>
                       <th>{i + 1}</th>
                       <td>{res.name}</td>
-                      <td>{res.type}</td>
                     </tr>
                   </>
                 ))}

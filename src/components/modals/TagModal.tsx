@@ -1,6 +1,6 @@
 import AddTagComponent from "@ui/AddTagComponent";
 import { useTranslation } from "next-i18next";
-import type { TagSchemaType } from "~/types/user-types";
+import type { TagSchemaType } from "~/types/zod-schemas";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";

@@ -1,6 +1,6 @@
 import type { Tag } from "@prisma/client";
 import { z } from "zod";
-import { TagSchema, type TagSchemaType } from "~/types/user-types";
+import { TagSchema, type TagSchemaType } from "~/types/zod-schemas";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 export interface TagsObject {
   [z: string]: TagSchemaType[];
