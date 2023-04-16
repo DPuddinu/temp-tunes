@@ -32,7 +32,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   const openDrawer = useRef<HTMLInputElement>(null);
   const [currentPlaylist, setCurrentPlaylist] = useState("");
   const [progress, setProgress] = useState<number>(0);
-
+  const [loading, setLoading] = useState(false);
   //prettier-ignore
   if (sessionData?.tokenExpired || status === "unauthenticated")router.push("/");
 
@@ -49,7 +49,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   //prettier-ignore
   const { data: userTags } = api.prisma_router.getTagsByUser.useQuery(
     undefined,
-    { refetchOnWindowFocus: false }
+    { refetchOnWindowFocus: false, enabled: !storeTags }
   );
 
   const {
@@ -67,6 +67,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
           setProgress(progress);
         },
         (playlists: Playlist[]) => {
+          setLoading(false);
           setStoreLibrary(playlists);
         }
       ),
@@ -76,6 +77,15 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (userTags) setStoreTags(userTags);
   }, [userTags]);
+
+  useEffect(() => {
+    if (storeLibrary && storeLibrary.length === 0) {
+      if (sessionData?.accessToken && !loading) {
+        setLoading(true);
+        loadLibrary();
+      }
+    }
+  }, [storeLibrary, sessionData?.accessToken]);
 
   return (
     <div className="drawer">
