@@ -1,24 +1,11 @@
 import type { RecapCardHeaderCva } from "@components/cva/RecapCardHeaderCva";
 import { type VariantProps } from "cva";
 import z from "zod";
+import type { PlaylistSchema, TrackSchema } from "./zod-schemas";
 
-export type Playlist = {
-  id: string;
-  images: [
-    {
-      url: string;
-      height: number;
-      width: number;
-    }
-  ];
-  name: string;
-  owner: {
-    display_name: string;
-  };
-  tracks: Track[];
-  type: string;
-  uri: string;
-};
+export type Playlist = z.infer<typeof PlaylistSchema>;
+export type Track = z.infer<typeof TrackSchema>;
+
 export type GetPlaylistResponseType = {
   items: Playlist[];
   next: string;
@@ -48,15 +35,6 @@ export type Generic = {
   images: Image[];
   uri: string;
   id: string;
-};
-export type Track = {
-  type: string;
-  artists: Artist[];
-  duration_ms: number;
-  name: string;
-  images: Image[];
-  id: string;
-  uri: string;
 };
 export type Restrictions = {
   reason: string;
@@ -88,7 +66,6 @@ export type Seed = {
 };
 export type Artist = {
   genres: string[];
-  href: string;
   name: string;
   images: Image[];
   uri: string;

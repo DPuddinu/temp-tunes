@@ -32,7 +32,6 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   const openDrawer = useRef<HTMLInputElement>(null);
   const [currentPlaylist, setCurrentPlaylist] = useState("");
   const [progress, setProgress] = useState<number>(0);
-  const [loadedLibrary, setLoadedLibrary] = useState(false);
 
   //prettier-ignore
   if (sessionData?.tokenExpired || status === "unauthenticated")router.push("/");
@@ -44,11 +43,6 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
     setTags: setStoreTags,
     tags: storeTags,
   } = useStore();
-
-  //REDIS
-  //prettier-ignore
-  const { isLoading: isCaching, data: cachedLibrary } = api.redis_router.get.useQuery(undefined, {refetchOnWindowFocus: false});
-  const { mutate: saveLibrary } = api.redis_router.set.useMutation();
 
   //PLANETSCALE
 
@@ -73,26 +67,10 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
           setProgress(progress);
         },
         (playlists: Playlist[]) => {
-          setLoadedLibrary(true);
           setStoreLibrary(playlists);
-          saveLibrary({
-            library: JSON.stringify(playlists),
-          });
         }
       ),
   });
-
-  //LOAD LIBRARY
-  useEffect(() => {
-    if (cachedLibrary && cachedLibrary.length > 0) {
-      setStoreLibrary(cachedLibrary);
-      setLoadedLibrary(true);
-    } else {
-      setStoreLibrary([]);
-      setLoadedLibrary(false);
-      if (sessionData?.accessToken) loadLibrary();
-    }
-  }, [cachedLibrary]);
 
   //SAVE TAGS
   useEffect(() => {
@@ -112,7 +90,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
           <UserNavbar />
         </nav>
         <main className="grow p-6">
-          {storeLibrary.length > 0 ? (
+          {storeLibrary && storeLibrary.length > 0 ? (
             children
           ) : (
             <LoadingScreen

@@ -22,72 +22,31 @@ const ImagesSchema = z.array(
     width: z.number(),
   })
 );
-
-const TrackSchema = z.object({
-  
-  
-  
-  type: z.string(),
-  artists: z.array(
-    z.object({
-      href: z.string(),
-      name: z.string(),
-      images: z.array(
-        z.object({
-          height: z.number(),
-          url: z.string(),
-          width: z.number(),
-        })
-      ),
-      uri: z.string(),
-      id: z.string(),
-      genres: z.array(z.string()),
-      followers: z.object({
-        href: z.string(),
-        total: z.number(),
-      }),
-      popularity: z.number(),
-    })
-  ),
-  duration_ms: z.number(),
-  href: z.string(),
+export const ArtistSchema = z.object({
+  genres: z.array(z.string()).optional(),
   name: z.string(),
-  images: ImagesSchema,
+  images: ImagesSchema.optional(),
   uri: z.string(),
   id: z.string(),
 });
+export const TrackSchema = z.object({
+  type: z.string(),
+  artists: ArtistSchema.array(),
+  duration_ms: z.number(),
+  name: z.string(),
+  images: ImagesSchema.optional(),
+  id: z.string(),
+  uri: z.string()
+})
 
 export const PlaylistSchema = z.object({
-  collaborative: z.boolean(),
-  description: z.string(),
-  external_urls: z.object({
-    spotify: z.string(),
-  }),
-  followers: z.object({
-    href: z.string(),
-    total: z.number(),
-  }),
-  href: z.string(),
   id: z.string(),
   images: ImagesSchema,
   name: z.string(),
   owner: z.object({
-    external_urls: z.object({
-      spotify: z.string(),
-    }),
-    followers: z.object({
-      href: z.string(),
-      total: z.number(),
-    }),
-    href: z.string(),
-    id: z.string(),
-    type: z.string(),
-    uri: z.string(),
     display_name: z.string(),
   }),
-  public: z.boolean(),
-  snapshot_id: z.string(),
-  tracks: TrackSchema,
+  tracks: TrackSchema.array(),
   type: z.string(),
   uri: z.string(),
 });
