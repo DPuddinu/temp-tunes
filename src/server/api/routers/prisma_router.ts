@@ -1,61 +1,72 @@
 import type { Tag } from "@prisma/client";
 import { z } from "zod";
-import { TagSchema, type TagSchemaType } from "~/types/zod-schemas";
+import {
+  TagSchema,
+  type TagSchemaType,
+} from "~/types/zod-schemas";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 export interface TagsObject {
   [z: string]: TagSchemaType[];
 }
 export const prismaRouter = createTRPCRouter({
-  getTagsByUser: protectedProcedure
-    .query(async ({ ctx }) => {
-      const userId = ctx.session.user.id;
-      const userTags = await ctx.prisma?.tag.findMany({
-        where: {
-          userId: userId,
-        },
-      });
-      const tags = userTags as TagSchemaType[];
-      const tagsObject = createTagsObject(tags);
-      return tagsObject;
-    }),
+  getTagsByUser: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+    const userTags = await ctx.prisma?.tag.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+    const tags = userTags as TagSchemaType[];
+    const tagsObject = createTagsObject(tags);
+    return tagsObject;
+  }),
   setTags: protectedProcedure
     .input(
       z.object({
-        tags: TagSchema.array(),
+        addTags: TagSchema.array(),
+        removeTags: TagSchema.array(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { tags: userTags } = input;
+      const { addTags, removeTags } = input;
+
       let tagsToAdd: Tag[] = [];
       let tagsToRemove: Tag[] = [];
 
-      const tags = userTags as Tag[];
-      const oldTags = await ctx.prisma.tag.findMany({ where: { userId: ctx.session.user.id }});
+      const oldTags = await ctx.prisma.tag.findMany({
+        where: { userId: ctx.session.user.id },
+      });
 
-      const sameTag = (a: Tag, b: Tag) => a.name === b.name;
+      const sameTag = (a: any, b: any) => a.name === b.name;
       const onlyIn = (
-        a: Tag[],
-        b: Tag[],
-        compareFunction: (a: Tag, b: Tag) => boolean
+        a: any[],
+        b: any[],
+        compareFunction: (a: any, b: any) => boolean
       ) =>
         a.filter(
           (leftValue) =>
             !b.some((rightValue) => compareFunction(leftValue, rightValue))
         );
 
-      tagsToAdd = onlyIn(tags, oldTags, sameTag);
-      tagsToRemove = onlyIn(oldTags, tags, sameTag);
+      tagsToAdd = onlyIn(addTags, oldTags, sameTag);
+      tagsToRemove = onlyIn(removeTags, oldTags, sameTag);
 
       // ADDING NEW TAGS
       try {
         await ctx.prisma.tag.createMany({
-          data: tagsToAdd,
+          data: tagsToAdd.map((tag) => {
+            const temp = {
+              ...tag,
+              userId: ctx.session.user.id,
+            };
+            return temp;
+          }),
         });
       } catch (e) {
         throw e;
       }
 
-      // REMOVING DELETED TAGS
+      // // REMOVING DELETED TAGS
       try {
         await ctx.prisma.$transaction(
           tagsToRemove.map((tag) =>

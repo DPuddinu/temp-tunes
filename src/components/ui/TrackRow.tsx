@@ -1,5 +1,4 @@
 import { TagModal } from "@components/modals/TagModal";
-import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useCallback, useEffect, useState } from "react";
 import { type TagSchemaType } from "~/types/zod-schemas";
@@ -13,24 +12,20 @@ type Props = {
   trackTags: TagSchemaType[];
 };
 
-const TrackRow = ({
-  label,
-  artists,
-  spotifyId,
-  trackTags,
-}: Props) => {
+const TrackRow = ({ label, artists, spotifyId, trackTags }: Props) => {
   const { t } = useTranslation("common");
-  const session = useSession();
 
   const [isHovering, setIsHovering] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tags, setTags] = useState<TagSchemaType[]>(trackTags ?? []);
+  const [newTags, setNewTags] = useState<TagSchemaType[]>([]);
+  const [removeTags, setRemoveTags] = useState<TagSchemaType[]>([]);
 
   // prettier-ignore
   const { data, isLoading, isSuccess, mutate, isError } = api.prisma_router.setTags.useMutation();
 
   const saveTags = useCallback(() => {
-    mutate({ tags });
+    mutate({ addTags: newTags, removeTags: removeTags });
   }, [tags.length]);
 
   useEffect(() => {
@@ -60,19 +55,36 @@ const TrackRow = ({
         </li>
       </DropdownMenu>
       <TagModal
-        onAdd={(tagName) =>
-          setTags(
-            addTag(
-              tagName,
-              spotifyId,
-              session.data?.user?.id ?? "",
-              tags,
-              label
-            )
-          )
-        }
+        onAdd={(tagName) => {
+          const newTag: TagSchemaType = {
+            name: tagName,
+            spotifyId: spotifyId,
+            spotifyType: "track",
+          };
+          setTags((oldTags) => {
+            return [...oldTags, newTag];
+          });
+          setNewTags((oldTags) => {
+            return [...oldTags, newTag];
+          });
+        }}
         isLoading={isLoading}
-        onRemove={(i) => setTags(removeTag(i, tags))}
+        onRemove={(i) => {
+          const tagToRemove = tags[i] as TagSchemaType;
+          setRemoveTags((oldTags) => {
+            return [...oldTags, tagToRemove];
+          });
+          setTags((oldTags) => {
+            const temp = [...oldTags];
+            if (i > -1) {
+              temp.splice(i, 1);
+            }
+            return temp;
+          });
+          setNewTags((oldTags) => {
+            return oldTags.filter((t) => t.id !== tagToRemove.id);
+          });
+        }}
         onConfirm={saveTags}
         isOpen={isModalOpen}
         onClose={onClose}
@@ -83,28 +95,3 @@ const TrackRow = ({
 };
 
 export default TrackRow;
-
-function addTag(
-  tagName: string,
-  spotifyId: string,
-  userId: string,
-  tags: TagSchemaType[],
-  trackName: string
-): TagSchemaType[] {
-  const newTag: TagSchemaType = {
-    name: tagName,
-    spotifyId: spotifyId,
-    spotifyType: "track",
-    userId: userId,
-    spotifyName: trackName,
-  };
-  return [...tags, newTag];
-}
-
-function removeTag(tagIndex: number, tags: TagSchemaType[]): TagSchemaType[] {
-  const newTagList = [...tags];
-  if (tagIndex > -1) {
-    newTagList.splice(tagIndex, 1);
-  }
-  return newTagList;
-}

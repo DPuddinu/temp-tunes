@@ -6,7 +6,7 @@ export const TagSchema = z.object({
   id: z.string().optional(),
   spotifyId: z.string(),
   spotifyType: z.enum(TagType),
-  userId: z.string(),
+  userId: z.string().optional(),
   name: z.string(),
 });
 
