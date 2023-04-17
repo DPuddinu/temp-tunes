@@ -29,7 +29,6 @@ export const prismaRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { addTags, removeTags } = input;
-
       let tagsToAdd: Tag[] = [];
       let tagsToRemove: Tag[] = [];
 
@@ -37,8 +36,8 @@ export const prismaRouter = createTRPCRouter({
         where: { userId: ctx.session.user.id },
       });
 
-      const sameTag = (a: any, b: any) => a.name === b.name;
-      const onlyIn = (
+      const sameTag = (a: any, b: any) => a.id === b.id;
+      const filterTagsToAdd = (
         a: any[],
         b: any[],
         compareFunction: (a: any, b: any) => boolean
@@ -47,10 +46,19 @@ export const prismaRouter = createTRPCRouter({
           (leftValue) =>
             !b.some((rightValue) => compareFunction(leftValue, rightValue))
         );
-
-      tagsToAdd = onlyIn(addTags, oldTags, sameTag);
-      tagsToRemove = onlyIn(removeTags, oldTags, sameTag);
-
+      const filterTagsToRemove = (
+        a: any[],
+        b: any[],
+        compareFunction: (a: any, b: any) => boolean
+      ) =>
+      a.filter((leftValue) =>
+        b.some((rightValue) => compareFunction(leftValue, rightValue))
+      );
+      tagsToAdd = filterTagsToAdd(addTags, oldTags, sameTag);
+      tagsToRemove = filterTagsToRemove(removeTags, oldTags, sameTag);
+      console.log("ADDING ---> ", tagsToAdd);
+      console.log("--------------------");
+      console.log("REMOVING ---> ", tagsToRemove);
       // ADDING NEW TAGS
       try {
         await ctx.prisma.tag.createMany({

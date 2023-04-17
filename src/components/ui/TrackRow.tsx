@@ -18,14 +18,13 @@ const TrackRow = ({ label, artists, spotifyId, trackTags }: Props) => {
   const [isHovering, setIsHovering] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tags, setTags] = useState<TagSchemaType[]>(trackTags ?? []);
-  const [newTags, setNewTags] = useState<TagSchemaType[]>([]);
   const [removeTags, setRemoveTags] = useState<TagSchemaType[]>([]);
 
   // prettier-ignore
   const { data, isLoading, isSuccess, mutate, isError } = api.prisma_router.setTags.useMutation();
 
   const saveTags = useCallback(() => {
-    mutate({ addTags: newTags, removeTags: removeTags });
+    mutate({ addTags: tags, removeTags: removeTags });
   }, [tags.length]);
 
   useEffect(() => {
@@ -64,9 +63,7 @@ const TrackRow = ({ label, artists, spotifyId, trackTags }: Props) => {
           setTags((oldTags) => {
             return [...oldTags, newTag];
           });
-          setNewTags((oldTags) => {
-            return [...oldTags, newTag];
-          });
+          
         }}
         isLoading={isLoading}
         onRemove={(i) => {
@@ -81,9 +78,7 @@ const TrackRow = ({ label, artists, spotifyId, trackTags }: Props) => {
             }
             return temp;
           });
-          setNewTags((oldTags) => {
-            return oldTags.filter((t) => t.id !== tagToRemove.id);
-          });
+          
         }}
         onConfirm={saveTags}
         isOpen={isModalOpen}
