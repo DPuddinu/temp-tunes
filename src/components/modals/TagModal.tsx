@@ -89,8 +89,8 @@ function AddTagComponent({ onAdd, tags }: AddTagProps) {
 
   function handleAddTag() {
     if (tagNameRef.current) {
-      tagNameRef.current.value = "";
       onAdd(tagNameRef.current.value);
+      tagNameRef.current.value = "";
     }
   }
   //prettier-ignore
