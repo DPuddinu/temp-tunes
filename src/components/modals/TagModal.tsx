@@ -84,7 +84,7 @@ interface AddTagProps {
 }
 function AddTagComponent({ onAdd, tags }: AddTagProps) {
   const tagNameRef = useRef<HTMLInputElement>(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(" ");
   const { t } = useTranslation("modals");
 
   function handleAddTag() {
