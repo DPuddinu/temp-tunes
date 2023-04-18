@@ -105,7 +105,7 @@ export const spotifyUserRouter = createTRPCRouter({
       z.object({
         query: z.string(),
         tags: z.record(TagSchema.array()),
-        playlists: PlaylistSchema,
+        playlists: PlaylistSchema.array(),
       })
     )
     .query(async ({ input, ctx }) => {

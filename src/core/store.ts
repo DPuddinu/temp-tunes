@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { mountStoreDevtool } from "simple-zustand-devtools";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { useMounted } from "~/hooks/use-mounted";
 import type { TagsObject } from "~/server/api/routers/prisma_router";
 import type { Playlist } from "~/types/spotify-types";
 
@@ -43,10 +44,9 @@ export const useStore = (() => {
   an error.
    */
   const persistedStore = usePersistedStore();
-  const [isHydrated, setHydrated] = useState(false);
-  useEffect(() => setHydrated(true), []);
+  const mounted = useMounted()
 
-  return isHydrated ? persistedStore : emptyStore;
+  return mounted ? persistedStore : emptyStore;
 }) as typeof usePersistedStore;
 
 

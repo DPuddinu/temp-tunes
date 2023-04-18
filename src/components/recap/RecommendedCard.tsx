@@ -5,7 +5,6 @@ import TrackRow from "../ui/TrackRow";
 import RowsSkeleton from "../ui/skeletons/SingleRowSkeleton";
 import RecapCard from "./RecapCard";
 import { RecapContainer } from "./RecapCardContainer";
-import { RecapCardHeader } from "./RecapSelectItem";
 
 const RecommendedCard = () => {
   //prettier-ignore
@@ -19,9 +18,9 @@ const RecommendedCard = () => {
       intent={"recommended"}
       loading={isLoading}
     >
-      <RecapCardHeader key={"card-recommended"} intent={"singleCard"}>
+      <RecapCard.Header key={"card-recommended"} intent={"singleCard"}>
         <p>{t("recap.for_you")}</p>
-      </RecapCardHeader>
+      </RecapCard.Header>
       <RecapContainer key={"container-recommended"} error={isError}>
         {isLoading && (
           <div className="flex flex-col gap-2">

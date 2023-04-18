@@ -16,9 +16,9 @@ const MoodCard = () => {
 
   return (
     <RecapCard key={"card-moody"} intent={"moody"} loading={isLoading}>
-      <RecapCardHeader key={"mood-header"} intent={"singleCard"}>
+      <RecapCard.Header key={"mood-header"} intent={"singleCard"}>
         <p>{t("recap.mood")}</p>
-      </RecapCardHeader>
+      </RecapCard.Header>
       <RecapContainer key={"container-mood"} error={isError}>
         {data && <MoodContainer mood={data} />}
       </RecapContainer>

@@ -45,7 +45,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
     <RecapCard key={"card-top-rated"} intent={"topRated"} loading={isLoading}>
       <div className="grid grid-cols-2">
         {TopTypeArray.map((type, i) => (
-          <RecapCardHeader
+          <RecapCard.Header
             key={i}
             onClick={() => setSelectedType(type)}
             intent={selectedType === type ? "selected" : "primary"}
@@ -59,7 +59,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
             >
               {t(getTranslationByType(type))}
             </p>
-          </RecapCardHeader>
+          </RecapCard.Header>
         ))}
       </div>
       <RecapContainer key={"container-top-rated"} error={isError}>

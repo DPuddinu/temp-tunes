@@ -1,10 +1,10 @@
-import AddTagComponent from "@ui/AddTagComponent";
 import { useTranslation } from "next-i18next";
 import type { TagSchemaType } from "~/types/zod-schemas";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
-import { ConfirmButtonGroup } from "./ConfirmButtonGroup";
+import { useCallback, useState } from "react";
+import { z } from "zod";
 
 type Props = {
   tags: TagSchemaType[];
@@ -54,5 +54,105 @@ export function TagModal({
         <ConfirmButtonGroup onConfirm={onConfirm} onClose={onClose} />
       </div>
     </BaseModal>
+  );
+}
+
+function ConfirmButtonGroup({ onConfirm, onClose }: BaseModalProps) {
+  const { t } = useTranslation("modals");
+  return (
+    <div className="mt-4 flex flex-row-reverse gap-2">
+      <button
+        type="button"
+        className="bg- inline-flex justify-center rounded-md border border-transparent bg-accent-focus px-4 py-2 text-white duration-300 "
+        onClick={onConfirm}
+      >
+        {t("confirm")}
+      </button>
+      <button
+        type="button"
+        className="inline-flex justify-center rounded-md border border-transparent  bg-error px-4 py-2 text-white duration-300 "
+        onClick={onClose}
+      >
+        {t("cancel")}
+      </button>
+    </div>
+  );
+}
+interface AddTagProps {
+  onAdd: (tagName: string) => void;
+  tags: TagSchemaType[];
+}
+function AddTagComponent({ onAdd, tags }: AddTagProps) {
+  const [tagName, setTagName] = useState("");
+  const [error, setError] = useState("");
+  const { t } = useTranslation("modals");
+
+  function handleAddTag(tag: string) {
+    setTagName("");
+    onAdd(tag);
+  }
+  //prettier-ignore
+  const validateTag = useCallback((tagName: string) => {
+      setError("");
+
+      if (!z.string().min(3).safeParse(tagName).success) {
+        setError("tag_errors.short");
+      }
+      if (!z.string().max(18).safeParse(tagName).success) {
+        setError("tag_errors.long");
+      }
+      if (tags.map((tag) => tag.name.toLowerCase()).includes(tagName.toLowerCase())) {
+        setError("tag_errors.used");
+      }
+    },
+    [tagName, tags.length]
+  );
+
+  const handleTagChange = (tagName: string) => {
+    setTagName(() => {
+      validateTag(tagName);
+      return tagName;
+    });
+  };
+  return (
+    <div className="flex gap-2">
+      <div className="w-full">
+        <input
+          type="text"
+          placeholder=""
+          className="input w-full max-w-xs"
+          value={tagName}
+          onChange={(t) => handleTagChange(t.target.value)}
+        />
+        {!!error && (
+          <label className="label text-red-700">
+            <span className="label-text-alt font-bold text-base-100">
+              {t(error)}
+            </span>
+          </label>
+        )}
+      </div>
+
+      <button
+        disabled={!!error}
+        className="btn-circle btn border-transparent bg-accent-focus"
+        onClick={() => handleAddTag(tagName)}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="white"
+          className="h-6 w-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 4.5v15m7.5-7.5h-15"
+          />
+        </svg>
+      </button>
+    </div>
   );
 }

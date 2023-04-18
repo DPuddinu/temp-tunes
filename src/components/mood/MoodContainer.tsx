@@ -14,7 +14,6 @@ const moodKeys: (keyof Mood)[] = [
 
 const MoodContainer = ({ mood }: { mood: Mood }) => {
   const { t } = useTranslation("home");
-  const { duration_ms } = mood;
 
   return (
     <div>
@@ -24,7 +23,7 @@ const MoodContainer = ({ mood }: { mood: Mood }) => {
           color={colors.get(key) ?? ""}
           value={toPercentage(mood[key])}
           label={`${t("moodKeys." + key)}`}
-        ></MoodRow>
+        />
       ))}
     </div>
   );
