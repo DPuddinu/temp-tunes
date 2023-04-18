@@ -15,7 +15,6 @@ const RecommendedCard = () => {
   return (
     <RecapCard
       key={"card-recommended"}
-      intent={"recommended"}
       loading={isLoading}
     >
       <RecapCard.Header key={"card-recommended"} intent={"singleCard"}>

@@ -9,11 +9,11 @@ import {
   type Track,
 } from "~/types/spotify-types";
 import { api } from "~/utils/api";
-import { ArtistRow } from "../ui/ArtistRow";
-import PaginationComponent from "../ui/PaginationComponent";
-import TrackRow from "../ui/TrackRow";
-import RecapCard from "./RecapCard";
-import { RecapContainer } from "./RecapCardContainer";
+import { ArtistRow } from "../../ui/ArtistRow";
+import PaginationComponent from "../../ui/PaginationComponent";
+import TrackRow from "../../ui/TrackRow";
+import RecapCard from "../RecapCard";
+import { RecapContainer } from "../RecapCardContainer";
 import { RecapCardHeader } from "./RecapSelectItem";
 
 export type RecapPropsType = {
@@ -42,7 +42,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
   const { tags } = useStore();
 
   return (
-    <RecapCard key={"card-top-rated"} intent={"topRated"} loading={isLoading}>
+    <RecapCard key={"card-top-rated"} intent={"content"} loading={isLoading}>
       <div className="grid grid-cols-2">
         {TopTypeArray.map((type, i) => (
           <RecapCard.Header
