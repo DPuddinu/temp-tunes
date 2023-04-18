@@ -7,10 +7,10 @@ import { useState } from "react";
 import type { TimeRangeType } from "src/types/spotify-types";
 import { TimeRangeArray } from "src/types/spotify-types";
 import type { RecapPropsType } from "~/components/recap/cards/UserTopCard";
-import MoodCard from "../components/recap/MoodCard";
-import RecommendedCard from "../components/recap/RecommendedCard";
 import TopRatedCard from "../components/recap/cards/UserTopCard";
 import type { PageWithLayout } from "../types/page-types";
+import MoodCard from "~/components/recap/cards/MoodCard";
+import RecommendedCard from "~/components/recap/cards/RecommendedCard";
 
 type GreetingsProps = {
   name: string | undefined | null;

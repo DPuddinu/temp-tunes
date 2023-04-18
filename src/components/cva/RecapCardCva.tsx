@@ -5,7 +5,7 @@ export const RecapCardCva = cva(
   {
     variants: {
       intent: {
-        content: [
+        active: [
           "hover:text-accent-content ",
         ],
         static: []

@@ -113,9 +113,7 @@ export const TimeRangeArray = [
 ] as const;
 export const TimeRangeEnum = z.enum(TimeRangeArray);
 export type TimeRangeType = z.infer<typeof TimeRangeEnum>;
-export type RecapSelectItemPropsType = { onClick?: () => void } & VariantProps<
-  typeof RecapCardHeaderCva
->;
+export type RecapSelectItemPropsType = { onClick?: () => void } & VariantProps<typeof RecapCardHeaderCva>;
 
 export const TagSpotifyTypeArray = ["track", "playlist"] as const;
 export type TagSpotifyType = (typeof TagSpotifyTypeArray)[number];
