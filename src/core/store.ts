@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { mountStoreDevtool } from "simple-zustand-devtools";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";

@@ -1,10 +1,10 @@
 import { useTranslation } from "next-i18next";
+import { useCallback, useRef, useState, type ChangeEvent } from "react";
+import { z } from "zod";
 import type { TagSchemaType } from "~/types/zod-schemas";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
-import { useCallback, useState } from "react";
-import { z } from "zod";
 
 type Props = {
   tags: TagSchemaType[];
@@ -83,19 +83,21 @@ interface AddTagProps {
   tags: TagSchemaType[];
 }
 function AddTagComponent({ onAdd, tags }: AddTagProps) {
-  const [tagName, setTagName] = useState("");
+  const tagNameRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState("");
   const { t } = useTranslation("modals");
 
-  function handleAddTag(tag: string) {
-    setTagName("");
-    onAdd(tag);
+  function handleAddTag() {
+    if (tagNameRef.current) {
+      tagNameRef.current.value = "";
+      onAdd(tagNameRef.current.value);
+    }
   }
   //prettier-ignore
-  const validateTag = useCallback((tagName: string) => {
+  const validateTag =  (event: ChangeEvent<HTMLInputElement>) => {
       setError("");
-
-      if (!z.string().min(3).safeParse(tagName).success) {
+      const tagName = event.target.value
+      if (!z.string().min(3).safeParse(tagName).success || !tagName) {
         setError("tag_errors.short");
       }
       if (!z.string().max(18).safeParse(tagName).success) {
@@ -104,25 +106,16 @@ function AddTagComponent({ onAdd, tags }: AddTagProps) {
       if (tags.map((tag) => tag.name.toLowerCase()).includes(tagName.toLowerCase())) {
         setError("tag_errors.used");
       }
-    },
-    [tagName, tags.length]
-  );
-
-  const handleTagChange = (tagName: string) => {
-    setTagName(() => {
-      validateTag(tagName);
-      return tagName;
-    });
-  };
+  }
   return (
     <div className="flex gap-2">
       <div className="w-full">
         <input
+          ref={tagNameRef}
           type="text"
           placeholder=""
           className="input w-full max-w-xs"
-          value={tagName}
-          onChange={(t) => handleTagChange(t.target.value)}
+          onChange={validateTag}
         />
         {!!error && (
           <label className="label text-red-700">
@@ -136,7 +129,7 @@ function AddTagComponent({ onAdd, tags }: AddTagProps) {
       <button
         disabled={!!error}
         className="btn-circle btn border-transparent bg-accent-focus"
-        onClick={() => handleAddTag(tagName)}
+        onClick={handleAddTag}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
