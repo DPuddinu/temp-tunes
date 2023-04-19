@@ -2,9 +2,15 @@ import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { getLibrary } from "~/core/spotifyCollection";
-import { useStore } from "~/core/store";
+import { useStore, useTagsStore } from "~/core/store";
 import { type Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 import { UserNavbar } from "./UserNavbar";
@@ -37,55 +43,48 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   if (sessionData?.tokenExpired || status === "unauthenticated")router.push("/");
 
   //LOCAL STORE
-  const {
-    playlists: storeLibrary,
-    setPlaylists: setStoreLibrary,
-    setTags: setStoreTags,
-    tags: storeTags,
-  } = useStore();
-
-  //PLANETSCALE
+  const { playlists: storeLibrary, setPlaylists: setStoreLibrary } = useStore();
+  const { setTags: setStoreTags, tags: storeTags } = useTagsStore();
 
   //prettier-ignore
-  const { data: userTags } = api.prisma_router.getTagsByUser.useQuery(
-    undefined,
-    { refetchOnWindowFocus: false, enabled: !storeTags }
-  );
+  const { data: userTags } = api.prisma_router.getTagsByUser.useQuery( undefined, { refetchOnWindowFocus: false, enabled: !storeTags });
 
   const {
-    data: library,
-    mutate: loadLibrary,
+    mutate,
     isLoading: loadingLibrary,
     isError: errorLibrary,
   } = useMutation({
     mutationKey: ["library"],
-    mutationFn: () =>
-      getLibrary(
+    mutationFn: () => {
+      setLoading(true)
+      return getLibrary(
         sessionData?.accessToken ?? "",
         (progress: number, current: string) => {
           setCurrentPlaylist(current);
           setProgress(progress);
         },
         (playlists: Playlist[]) => {
+          console.log(playlists)
           setLoading(false);
           setStoreLibrary(playlists);
         }
-      ),
+      )
+    }
   });
+
+  const loadLibrary = useCallback(() => {
+    if (storeLibrary?.length === 0 && sessionData?.accessToken && !loading)
+      mutate();
+  }, [storeLibrary, mutate, sessionData?.accessToken, loading]);
 
   //SAVE TAGS
   useEffect(() => {
     if (userTags) setStoreTags(userTags);
-  }, [userTags]);
+  }, [setStoreTags, userTags]);
 
   useEffect(() => {
-    if (storeLibrary && storeLibrary.length === 0) {
-      if (sessionData?.accessToken && !loading) {
-        setLoading(true);
-        loadLibrary();
-      }
-    }
-  }, [storeLibrary, sessionData?.accessToken]);
+    loadLibrary();
+  }, [loadLibrary]);
 
   return (
     <div className="drawer">

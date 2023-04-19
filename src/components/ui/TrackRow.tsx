@@ -1,8 +1,7 @@
 import { TagModal } from "@components/modals/TagModal";
 import { useTranslation } from "next-i18next";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { type TagSchemaType } from "~/types/zod-schemas";
-import { api } from "~/utils/api";
 import { DropdownMenu } from "./DropdownMenu";
 
 type Props = {
@@ -18,7 +17,6 @@ const TrackRow = ({ label, artists, spotifyId, trackTags }: Props) => {
   const [isHovering, setIsHovering] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tags, setTags] = useState<TagSchemaType[]>(trackTags ?? []);
-  const [removeTags, setRemoveTags] = useState<TagSchemaType[]>([]);
 
   // prettier-ignore
 
@@ -46,6 +44,7 @@ const TrackRow = ({ label, artists, spotifyId, trackTags }: Props) => {
       </DropdownMenu>
       <TagModal
         isOpen={isModalOpen}
+        setIsOpen={setIsModalOpen}
         onClose={onClose}
         trackTags={tags}
         trackId={spotifyId}

@@ -1,16 +1,24 @@
 import { useTranslation } from "next-i18next";
-import { useRef, useState, type ChangeEvent, useCallback } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from "react";
 import { z } from "zod";
+import { useTagsStore } from "~/core/store";
 import type { TagSchemaType, TagType } from "~/types/zod-schemas";
+import { api } from "~/utils/api";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
-import { api } from "~/utils/api";
 
 type Props = {
   trackTags: TagSchemaType[];
   trackId: string;
   tagType: TagType;
+  setIsOpen: (open: boolean) => void;
 } & BaseModalProps;
 interface ConfirmButtonGroupProps {
   onClose?: () => void;
@@ -21,17 +29,26 @@ export function TagModal({
   onClose,
   trackTags,
   trackId,
-  tagType
+  tagType,
+  setIsOpen,
 }: Props) {
   const { t } = useTranslation("modals");
-
   const [tags, setTags] = useState<TagSchemaType[]>(trackTags ?? []);
   const [removeTags, setRemoveTags] = useState<TagSchemaType[]>([]);
-  const { isLoading, isSuccess, mutate, isError } = api.prisma_router.setTags.useMutation();
+  const { setTags: setStoreTags } = useTagsStore();
+
+  //prettier-ignore
+  const { data, isLoading, isSuccess, mutate, isError } = api.prisma_router.setTags.useMutation();
+
+  useEffect(() => {
+    if (data) console.log(data);
+    // setStoreTags(data)
+  }, [data, isSuccess]);
 
   const saveTags = useCallback(() => {
     mutate({ addTags: tags, removeTags: removeTags });
-  }, [tags.length]);
+    setIsOpen(false);
+  }, [mutate, removeTags, tags]);
 
   function addTag(tagName: string) {
     const newTag: TagSchemaType = {
@@ -59,7 +76,7 @@ export function TagModal({
   }
 
   return (
-    <BaseModal isOpen={isSuccess ? false : isOpen} title={t("new_tag")}>
+    <BaseModal isOpen={isOpen} title={t("new_tag")}>
       <div className="flex flex-row flex-wrap gap-2 pb-2">
         {tags.map((tag, i) => (
           <div className="indicator" key={self.crypto.randomUUID()}>
@@ -76,7 +93,10 @@ export function TagModal({
         ))}
       </div>
 
-      <AddTagComponent onAdd={(tagName: string) => addTag(tagName)} tags={tags} />
+      <AddTagComponent
+        onAdd={(tagName: string) => addTag(tagName)}
+        tags={tags}
+      />
       <div
         className="flex justify-between"
         style={{ justifyContent: isLoading ? "space-between" : "end" }}

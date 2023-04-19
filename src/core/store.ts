@@ -7,26 +7,22 @@ import type { Playlist } from "~/types/spotify-types";
 
 export type UserLibrary = {
   playlists: Playlist[];
-  tags: TagsObject;
-};
-type UserLibraryActions = {
   setPlaylists: (playlists: Playlist[]) => void;
+};
+export type TagsLibrary = {
+  tags: TagsObject;
   setTags: (tags: TagsObject) => void;
 };
 
-const emptyStore = create<UserLibrary & UserLibraryActions>()((set) => ({
+const emptyStore = create<UserLibrary>()((set) => ({
   playlists: [],
-  tags: {},
-  setTags: (tags) => set(() => ({ tags: tags })),
   setPlaylists: (playlists) => set(() => ({ playlists: playlists })),
 }));
 
-const usePersistedStore = create<UserLibrary & UserLibraryActions>()(
+const usePersistedStore = create<UserLibrary>()(
   persist(
     (set) => ({
       playlists: [],
-      tags: {},
-      setTags: (tags) => set(() => ({ tags: tags })),
       setPlaylists: (playlists) => set(() => ({ playlists: playlists })),
     }),
     {
@@ -36,12 +32,16 @@ const usePersistedStore = create<UserLibrary & UserLibraryActions>()(
   )
 );
 
+const tagsStore = create<TagsLibrary>()((set) => ({
+  tags: {},
+  setTags: (tags) => set(() => ({ tags: tags })),
+}));
+
+export const useTagsStore = () => {
+  return tagsStore();
+};
+
 export const useStore = (() => {
-  /*
-  This a fix to ensure zustand never hydrates the store before React hydrates the page.
-  Without this, there is a mismatch between SSR/SSG and client side on first draw which produces
-  an error.
-   */
   const persistedStore = usePersistedStore();
   const mounted = useMounted()
 

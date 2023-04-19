@@ -60,22 +60,17 @@ export async function getLibrary(
         .then((tracks) => {
           playlist.tracks = tracks;
           i++;
+          if (i === playlists.length) {
+            clearInterval(interval);
+            finishCallback(playlists);
+          }
         })
         .catch((error) => console.error(error));
     }
-    if (i === playlists.length) {
-      clearInterval(interval);
-      finishCallback(playlists);
-    }
+    
   }, TIMEOUT);
   return playlists;
 }
-
-// interface GetPlaylistTracksReturnType {
-
-// }
-// const filterTracksByField =
-//   "fields=items(track(name,artists,album(name),duration_ms,id,type,images))";
 
 export async function getPlaylistTracks(
   playlist_id: string,
