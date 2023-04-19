@@ -1,5 +1,6 @@
+import { Transition } from "@headlessui/react";
 import { useTranslation } from "next-i18next";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import type { Mood } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 import RecapCard from "../RecapCard";
@@ -39,33 +40,27 @@ const MoodCard = () => {
 };
 
 MoodCard.MoodRow = function MoodRow({ color, value, label }: MoodRowProps) {
-  const [tempValue, setTempValue] = useState(0);
-
-  useEffect(() => {
-    animateValue(tempValue, value, setTempValue);
-  }, []);
-
-  function animateValue(
-    from: number,
-    to: number,
-    reducerFn: (num: number) => void
-  ) {
-    if (from === to) return;
-
-    setTimeout(() => {
-      reducerFn(from);
-      animateValue(from + 1, to, reducerFn);
-    }, 24);
-  }
-
   return (
     <div className="mb-2 flex gap-2 p-2 ">
-      <div className="w-1/2 grow text-accent-content">{label}</div>
-      <div
-        className="w-1/2 min-w-[30px] rounded-full text-center font-bold text-accent-content"
-        style={{ width: `${tempValue}%`, background: `${color}` }}
-      >
-        {tempValue}%
+      <div className="w-1/2 grow text-accent-content ">{label}</div>
+
+      {/* width: `${value}%` */}
+      <div className="w-1/2 ">
+        <Transition
+          as={Fragment}
+          show={true}
+          enter="transform transition duration-[400ms]"
+          enterFrom="w-0"
+          enterTo="w-48"
+          leave="transition-transform duration-[400ms]"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div
+            className="rounded-full px-2 text-center font-bold text-accent-content before:content-['Hello_World']"
+            style={{ background: `${color}` }}
+          ></div>
+        </Transition>
       </div>
     </div>
   );
