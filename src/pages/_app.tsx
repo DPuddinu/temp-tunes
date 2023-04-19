@@ -1,18 +1,18 @@
 import { Quicksand } from "@next/font/google";
 import { type Session } from "next-auth";
-import { SessionProvider, useSession } from "next-auth/react";
+import { SessionProvider } from "next-auth/react";
 import { appWithTranslation } from "next-i18next";
 import { type AppType } from "next/app";
 import "~/styles/index.css";
 import { api } from "~/utils/api";
-import { type AppPropsWithLayout, themesList } from "../types/page-types";
+import { themesList, type AppPropsWithLayout } from "../types/page-types";
 const akshar = Quicksand({ subsets: ["latin"] });
 
-import "~/styles/globals.css";
-import { ThemeProvider } from "next-themes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ThemeProvider } from "next-themes";
+import "~/styles/globals.css";
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
@@ -21,7 +21,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider themes={themesList}>
+      <ThemeProvider themes={themesList} defaultTheme={"dark"}>
         <SessionProvider session={session}>
           <style jsx global>{`
             html {

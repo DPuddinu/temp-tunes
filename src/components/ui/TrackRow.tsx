@@ -21,15 +21,6 @@ const TrackRow = ({ label, artists, spotifyId, trackTags }: Props) => {
   const [removeTags, setRemoveTags] = useState<TagSchemaType[]>([]);
 
   // prettier-ignore
-  const { data, isLoading, isSuccess, mutate, isError } = api.prisma_router.setTags.useMutation();
-
-  const saveTags = useCallback(() => {
-    mutate({ addTags: tags, removeTags: removeTags });
-  }, [tags.length]);
-
-  useEffect(() => {
-    setIsModalOpen(false);
-  }, [isSuccess]);
 
   const onClose = () => {
     setIsModalOpen(false);
@@ -54,36 +45,11 @@ const TrackRow = ({ label, artists, spotifyId, trackTags }: Props) => {
         </li>
       </DropdownMenu>
       <TagModal
-        onAdd={(tagName) => {
-          const newTag: TagSchemaType = {
-            name: tagName,
-            spotifyId: spotifyId,
-            spotifyType: "track",
-          };
-          setTags((oldTags) => {
-            return [...oldTags, newTag];
-          });
-          
-        }}
-        isLoading={isLoading}
-        onRemove={(i) => {
-          const tagToRemove = tags[i] as TagSchemaType;
-          setRemoveTags((oldTags) => {
-            return [...oldTags, tagToRemove];
-          });
-          setTags((oldTags) => {
-            const temp = [...oldTags];
-            if (i > -1) {
-              temp.splice(i, 1);
-            }
-            return temp;
-          });
-          
-        }}
-        onConfirm={saveTags}
         isOpen={isModalOpen}
         onClose={onClose}
-        tags={tags}
+        trackTags={tags}
+        trackId={spotifyId}
+        tagType="track"
       />
     </div>
   );

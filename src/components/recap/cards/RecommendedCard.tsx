@@ -1,10 +1,9 @@
 import { useTranslation } from "next-i18next";
+import TrackRow from "~/components/ui/TrackRow";
+import RowsSkeleton from "~/components/ui/skeletons/SingleRowSkeleton";
 import { useStore } from "~/core/store";
 import { api } from "~/utils/api";
-import TrackRow from "../ui/TrackRow";
-import RowsSkeleton from "../ui/skeletons/SingleRowSkeleton";
-import RecapCard from "./RecapCard";
-import { RecapContainer } from "./RecapCardContainer";
+import RecapCard from "../RecapCard";
 
 const RecommendedCard = () => {
   //prettier-ignore
@@ -13,15 +12,11 @@ const RecommendedCard = () => {
   const { tags } = useStore();
 
   return (
-    <RecapCard
-      key={"card-recommended"}
-      intent={"recommended"}
-      loading={isLoading}
-    >
-      <RecapCard.Header key={"card-recommended"} intent={"singleCard"}>
+    <RecapCard key={"card-recommended"} loading={isLoading}>
+      <RecapCard.Header key={"card-recommended"}>
         <p>{t("recap.for_you")}</p>
       </RecapCard.Header>
-      <RecapContainer key={"container-recommended"} error={isError}>
+      <RecapCard.Container key={"container-recommended"} error={isError}>
         {isLoading && (
           <div className="flex flex-col gap-2">
             <RowsSkeleton rowsNumber={3} />
@@ -38,7 +33,7 @@ const RecommendedCard = () => {
               label={track.name}
             />
           ))}
-      </RecapContainer>
+      </RecapCard.Container>
     </RecapCard>
   );
 };

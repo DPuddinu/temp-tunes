@@ -6,11 +6,11 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
 import type { TimeRangeType } from "src/types/spotify-types";
 import { TimeRangeArray } from "src/types/spotify-types";
-import type { RecapPropsType } from "~/components/recap/UserTopCard";
-import MoodCard from "../components/mood/MoodCard";
-import RecommendedCard from "../components/recap/RecommendedCard";
-import TopRatedCard from "../components/recap/UserTopCard";
+import type { RecapPropsType } from "~/components/recap/cards/UserTopCard";
+import TopRatedCard from "../components/recap/cards/UserTopCard";
 import type { PageWithLayout } from "../types/page-types";
+import MoodCard from "~/components/recap/cards/MoodCard";
+import RecommendedCard from "~/components/recap/cards/RecommendedCard";
 
 type GreetingsProps = {
   name: string | undefined | null;

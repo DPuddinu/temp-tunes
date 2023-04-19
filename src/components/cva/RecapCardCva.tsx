@@ -5,15 +5,14 @@ export const RecapCardCva = cva(
   {
     variants: {
       intent: {
-        topRated: [
+        active: [
           "hover:text-accent-content ",
         ],
-        moody: [],
-        recommended: [],
+        static: []
       },
     },
     defaultVariants: {
-      intent: "topRated",
+      intent: "static",
     },
   }
 );

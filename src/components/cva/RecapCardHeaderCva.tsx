@@ -8,13 +8,12 @@ export const RecapCardHeaderCva = cva(
   {
     variants: {
       intent: {
-        primary: [" hover:text-base-content hover:cursor-pointer"],
-        selected: [" "],
-        singleCard: "",
+        active: [" hover:text-base-content hover:cursor-pointer"],
+        static: "",
       },
     },
     defaultVariants: {
-      intent: "primary",
+      intent: "static",
     },
   }
 );

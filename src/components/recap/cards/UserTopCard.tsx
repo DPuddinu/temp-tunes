@@ -9,12 +9,10 @@ import {
   type Track,
 } from "~/types/spotify-types";
 import { api } from "~/utils/api";
-import { ArtistRow } from "../ui/ArtistRow";
-import PaginationComponent from "../ui/PaginationComponent";
-import TrackRow from "../ui/TrackRow";
-import RecapCard from "./RecapCard";
-import { RecapContainer } from "./RecapCardContainer";
-import { RecapCardHeader } from "./RecapSelectItem";
+import { ArtistRow } from "../../ui/ArtistRow";
+import PaginationComponent from "../../ui/PaginationComponent";
+import TrackRow from "../../ui/TrackRow";
+import RecapCard from "../RecapCard";
 
 export type RecapPropsType = {
   timeRange: TimeRangeType;
@@ -42,13 +40,13 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
   const { tags } = useStore();
 
   return (
-    <RecapCard key={"card-top-rated"} intent={"topRated"} loading={isLoading}>
+    <RecapCard key={"card-top-rated"} intent={"active"} loading={isLoading}>
       <div className="grid grid-cols-2">
         {TopTypeArray.map((type, i) => (
           <RecapCard.Header
             key={i}
             onClick={() => setSelectedType(type)}
-            intent={selectedType === type ? "selected" : "primary"}
+            intent={selectedType === type ? "static" : "active"}
           >
             <p
               className={`${
@@ -62,7 +60,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
           </RecapCard.Header>
         ))}
       </div>
-      <RecapContainer key={"container-top-rated"} error={isError}>
+      <RecapCard.Container error={isError}>
         {data &&
           data.items[selectedPage] &&
           data.items[selectedPage]?.map((item: Artist | Track, i) => (
@@ -92,7 +90,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
           totalItems={data?.totalItems ?? 0}
           key={"pagination"}
         />
-      </RecapContainer>
+      </RecapCard.Container>
     </RecapCard>
   );
 };

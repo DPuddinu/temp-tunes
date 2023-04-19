@@ -2,7 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 
 type Props = {
-  title: string;
+  title?: string | null | undefined;
   description?: string;
   children?: React.ReactNode;
 } & BaseModalProps;
@@ -11,7 +11,6 @@ export type BaseModalProps = {
   isOpen?: boolean;
   isLoading?: boolean;
   onClose?: () => void;
-  onConfirm?: () => void;
 };
 
 const BaseModal = ({
@@ -60,9 +59,11 @@ const BaseModal = ({
             leaveTo="opacity-0 scale-95"
           >
             <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-base-content p-6 text-left shadow-xl">
-              <Dialog.Title className="text-lg font-medium leading-6 text-base-100">
-                {title}
-              </Dialog.Title>
+              {title && (
+                <Dialog.Title className="text-lg font-medium leading-6 text-base-100">
+                  {title}
+                </Dialog.Title>
+              )}
               {description && (
                 <Dialog.Description className="mt-2">
                   <p className="text-md border-t pt-2 text-base-100">

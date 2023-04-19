@@ -1,40 +1,71 @@
 import { useTranslation } from "next-i18next";
-import { useCallback, useRef, useState, type ChangeEvent } from "react";
+import { useRef, useState, type ChangeEvent, useCallback } from "react";
 import { z } from "zod";
-import type { TagSchemaType } from "~/types/zod-schemas";
+import type { TagSchemaType, TagType } from "~/types/zod-schemas";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
+import { api } from "~/utils/api";
 
 type Props = {
-  tags: TagSchemaType[];
-  onAdd: (tagName: string) => void;
-  onRemove: (tagIndex: number) => void;
+  trackTags: TagSchemaType[];
+  trackId: string;
+  tagType: TagType;
 } & BaseModalProps;
-
+interface ConfirmButtonGroupProps {
+  onClose?: () => void;
+  onConfirm?: () => void;
+}
 export function TagModal({
   isOpen,
   onClose,
-  tags,
-  onConfirm,
-  onAdd,
-  onRemove,
-  isLoading,
+  trackTags,
+  trackId,
+  tagType
 }: Props) {
   const { t } = useTranslation("modals");
 
-  const handleAdd = (tagName: string) => {
-    onAdd(tagName);
-  };
+  const [tags, setTags] = useState<TagSchemaType[]>(trackTags ?? []);
+  const [removeTags, setRemoveTags] = useState<TagSchemaType[]>([]);
+  const { isLoading, isSuccess, mutate, isError } = api.prisma_router.setTags.useMutation();
+
+  const saveTags = useCallback(() => {
+    mutate({ addTags: tags, removeTags: removeTags });
+  }, [tags.length]);
+
+  function addTag(tagName: string) {
+    const newTag: TagSchemaType = {
+      name: tagName,
+      spotifyId: trackId,
+      spotifyType: tagType,
+    };
+    setTags((oldTags) => {
+      return [...oldTags, newTag];
+    });
+  }
+
+  function removeTag(i: number) {
+    const tagToRemove = tags[i] as TagSchemaType;
+    setRemoveTags((oldTags) => {
+      return [...oldTags, tagToRemove];
+    });
+    setTags((oldTags) => {
+      const temp = [...oldTags];
+      if (i > -1) {
+        temp.splice(i, 1);
+      }
+      return temp;
+    });
+  }
 
   return (
-    <BaseModal isOpen={isOpen} title={t("new_tag")} onConfirm={onConfirm}>
+    <BaseModal isOpen={isSuccess ? false : isOpen} title={t("new_tag")}>
       <div className="flex flex-row flex-wrap gap-2 pb-2">
         {tags.map((tag, i) => (
           <div className="indicator" key={self.crypto.randomUUID()}>
             <span
               className="badge indicator-item h-5 w-5 cursor-pointer pb-[2px] text-white"
-              onClick={() => onRemove(i)}
+              onClick={() => removeTag(i)}
             >
               <p className=" m-0 text-center">x</p>
             </span>
@@ -45,19 +76,19 @@ export function TagModal({
         ))}
       </div>
 
-      <AddTagComponent onAdd={handleAdd} tags={tags} />
+      <AddTagComponent onAdd={(tagName: string) => addTag(tagName)} tags={tags} />
       <div
         className="flex justify-between"
         style={{ justifyContent: isLoading ? "space-between" : "end" }}
       >
         {isLoading && <LoadingSpinner />}
-        <ConfirmButtonGroup onConfirm={onConfirm} onClose={onClose} />
+        <ConfirmButtonGroup onConfirm={saveTags} onClose={onClose} />
       </div>
     </BaseModal>
   );
 }
 
-function ConfirmButtonGroup({ onConfirm, onClose }: BaseModalProps) {
+function ConfirmButtonGroup({ onConfirm, onClose }: ConfirmButtonGroupProps) {
   const { t } = useTranslation("modals");
   return (
     <div className="mt-4 flex flex-row-reverse gap-2">
