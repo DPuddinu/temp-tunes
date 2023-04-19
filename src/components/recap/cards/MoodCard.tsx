@@ -1,6 +1,6 @@
 import { Transition } from "@headlessui/react";
 import { useTranslation } from "next-i18next";
-import { Fragment, useEffect, useState } from "react";
+import styled from "styled-components";
 import type { Mood } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 import RecapCard from "../RecapCard";
@@ -40,26 +40,30 @@ const MoodCard = () => {
 };
 
 MoodCard.MoodRow = function MoodRow({ color, value, label }: MoodRowProps) {
+  const RowValue = styled.div`
+    &:after {
+      content: "${value}%";
+    }
+    width: ${value}%;
+    background: ${color};
+  `;
+
   return (
     <div className="mb-2 flex gap-2 p-2 ">
       <div className="w-1/2 grow text-accent-content ">{label}</div>
-
-      {/* width: `${value}%` */}
-      <div className="w-1/2 ">
+      <div className="flex w-1/2 flex-row-reverse">
         <Transition
-          as={Fragment}
+          className="flex flex-row-reverse"
+          appear={true}
           show={true}
-          enter="transform transition duration-[400ms]"
+          enter="transition-width duration-[1200ms]"
           enterFrom="w-0"
-          enterTo="w-48"
-          leave="transition-transform duration-[400ms]"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
+          enterTo="w-full"
+          leave="transition-width duration-[1200ms]"
+          leaveFrom="w-full"
+          leaveTo="w-0"
         >
-          <div
-            className="rounded-full px-2 text-center font-bold text-accent-content before:content-['Hello_World']"
-            style={{ background: `${color}` }}
-          ></div>
+          <RowValue className="rounded-full px-5 text-center font-bold text-accent-content after:flex after:justify-center"></RowValue>
         </Transition>
       </div>
     </div>
