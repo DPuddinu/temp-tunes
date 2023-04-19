@@ -9,7 +9,7 @@ export interface TagsObject {
   [z: string]: TagSchemaType[];
 }
 export const prismaRouter = createTRPCRouter({
-  getTagsByUser: protectedProcedure.query(async ({ ctx }) => {
+  getTagsByUser: protectedProcedure.mutation(async ({ ctx }) => {
     const userId = ctx.session.user.id;
     const userTags = await ctx.prisma?.tag.findMany({
       where: {
@@ -44,19 +44,12 @@ export const prismaRouter = createTRPCRouter({
         a: any[],
         b: any[],
         compareFunction: (a: any, b: any) => boolean
-      ) =>
-        a.filter(
-          (left) =>
-            !b.some((right) => compareFunction(left, right))
-        );
+      ) => a.filter((left) => !b.some((right) => compareFunction(left, right)));
       const filterTagsToRemove = (
         a: any[],
         b: any[],
         compareFunction: (a: any, b: any) => boolean
-      ) =>
-        a.filter((left) =>
-          b.some((right) => compareFunction(left, right))
-        );
+      ) => a.filter((left) => b.some((right) => compareFunction(left, right)));
       tagsToAdd = filterTagsToAdd(addTags, oldTags, sameTag);
       tagsToRemove = filterTagsToRemove(removeTags, oldTags, sameTag);
       console.log("ADDING ---> ", tagsToAdd);

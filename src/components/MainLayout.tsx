@@ -10,9 +10,8 @@ import {
   type ReactNode,
 } from "react";
 import { getLibrary } from "~/core/spotifyCollection";
-import { useStore, useTagsStore } from "~/core/store";
+import { useStore } from "~/core/store";
 import { type Playlist } from "~/types/spotify-types";
-import { api } from "~/utils/api";
 import { UserNavbar } from "./UserNavbar";
 
 interface Page {
@@ -44,10 +43,6 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
 
   //LOCAL STORE
   const { playlists: storeLibrary, setPlaylists: setStoreLibrary } = useStore();
-  const { setTags: setStoreTags, tags: storeTags } = useTagsStore();
-
-  //prettier-ignore
-  const { data: userTags } = api.prisma_router.getTagsByUser.useQuery( undefined, { refetchOnWindowFocus: false, enabled: !storeTags });
 
   const {
     mutate,
@@ -76,11 +71,6 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
     if (storeLibrary?.length === 0 && sessionData?.accessToken && !loading)
       mutate();
   }, [storeLibrary, mutate, sessionData?.accessToken, loading]);
-
-  //SAVE TAGS
-  useEffect(() => {
-    if (userTags) setStoreTags(userTags);
-  }, [setStoreTags, userTags]);
 
   useEffect(() => {
     loadLibrary();

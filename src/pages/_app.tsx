@@ -10,6 +10,7 @@ const akshar = Quicksand({ subsets: ["latin"] });
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
+import UserDataProvider from "~/context/user-data-context";
 import "~/styles/globals.css";
 
 const queryClient = new QueryClient();
@@ -23,12 +24,14 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <QueryClientProvider client={queryClient}>
       <ThemeProvider themes={themesList} defaultTheme={"dark"}>
         <SessionProvider session={session}>
-          <style jsx global>{`
-            html {
-              font-family: ${akshar.style.fontFamily};
-            }
-          `}</style>
-          {getLayout(<Component {...pageProps} />)}
+          <UserDataProvider>
+            <style jsx global>{`
+              html {
+                font-family: ${akshar.style.fontFamily};
+              }
+            `}</style>
+            {getLayout(<Component {...pageProps} />)}
+          </UserDataProvider>
         </SessionProvider>
       </ThemeProvider>
     </QueryClientProvider>

@@ -10,7 +10,7 @@ export type UserLibrary = {
   setPlaylists: (playlists: Playlist[]) => void;
 };
 export type TagsLibrary = {
-  tags: TagsObject;
+  tags: TagsObject | undefined;
   setTags: (tags: TagsObject) => void;
 };
 
@@ -33,7 +33,7 @@ const usePersistedStore = create<UserLibrary>()(
 );
 
 const tagsStore = create<TagsLibrary>()((set) => ({
-  tags: {},
+  tags: undefined,
   setTags: (tags) => set(() => ({ tags: tags })),
 }));
 
@@ -43,12 +43,12 @@ export const useTagsStore = () => {
 
 export const useStore = (() => {
   const persistedStore = usePersistedStore();
-  const mounted = useMounted()
+  const mounted = useMounted();
 
   return mounted ? persistedStore : emptyStore;
 }) as typeof usePersistedStore;
 
-
 if (process.env.NODE_ENV === "development") {
-  mountStoreDevtool("Store", usePersistedStore);
+  mountStoreDevtool("Playlists", usePersistedStore);
+  mountStoreDevtool("Tags", tagsStore);
 }
