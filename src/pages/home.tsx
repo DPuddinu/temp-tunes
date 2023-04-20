@@ -6,11 +6,11 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
 import type { TimeRangeType } from "src/types/spotify-types";
 import { TimeRangeArray } from "src/types/spotify-types";
+import MoodCard from "~/components/recap/cards/MoodCard";
+import RecommendedCard from "~/components/recap/cards/RecommendedCard";
 import type { RecapPropsType } from "~/components/recap/cards/UserTopCard";
 import TopRatedCard from "../components/recap/cards/UserTopCard";
 import type { PageWithLayout } from "../types/page-types";
-import MoodCard from "~/components/recap/cards/MoodCard";
-import RecommendedCard from "~/components/recap/cards/RecommendedCard";
 
 type GreetingsProps = {
   name: string | undefined | null;
@@ -48,16 +48,16 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
 function Greetings({ name, timeRange, selectTimeRange }: GreetingsProps) {
   const { t } = useTranslation("home");
 
-  const saluteClassName = "text-2xl font-bold text-slate-100 md:text-3xl";
-
   return (
     <div className="">
       <div className="p-2">
         <div className="flex flex-col sm:flex-row">
-          <h1 className={saluteClassName}>{`${salute()},`}</h1>
-          <h1 className={saluteClassName}>{`${name} 👋🏻`}</h1>
+          <h1 className="text-2xl font-bold text-base-content md:text-3xl">
+            {`${salute()},`}&nbsp;
+          </h1>
+          <h1 className="text-2xl font-bold text-base-content md:text-3xl">{`${name} 👋🏻`}</h1>
         </div>
-        <p className="mt-2 text-primary-content">{t("recap.title")}</p>
+        <p className="mt-2 font-medium text-base-content">{t("recap.title")}</p>
         <select
           className="select select-sm mt-4 bg-base-300"
           value={timeRange}

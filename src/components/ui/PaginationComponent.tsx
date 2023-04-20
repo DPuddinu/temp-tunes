@@ -62,10 +62,10 @@ const PaginationComponent = ({
   };
 
   return (
-    <div className="btn-group mt-3 flex">
+    <div className="btn-group mt-3 flex justify-center">
       {/* MOBILE */}
       <div className="flex sm:hidden">
-        <button className="btn" onClick={() => prevPage()}>
+        <button className="btn  bg-neutral" onClick={() => prevPage()}>
           {"<"}
         </button>
         <PaginationButton
@@ -79,18 +79,18 @@ const PaginationComponent = ({
       </div>
       {/* DESKTOP */}
       <div className="hidden sm:flex">
-        <button className="btn" onClick={() => selectPageByIndex(0)}>
+        <button className="btn bg-neutral" onClick={() => selectPageByIndex(0)}>
           {"<<"}
         </button>
-        <button className="btn" onClick={() => prevPage()}>
+        <button className="btn  bg-neutral" onClick={() => prevPage()}>
           {"<"}
         </button>
         <PaginationButtons />
-        <button className="btn" onClick={() => nextPage()}>
+        <button className="btn  bg-neutral" onClick={() => nextPage()}>
           {">"}
         </button>
         <button
-          className="btn"
+          className="btn bg-neutral"
           onClick={() => selectPageByIndex(totalPages - 1)}
         >
           {">>"}

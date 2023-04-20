@@ -41,7 +41,10 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
       />
       <div className="drawer-content flex h-full w-full flex-col bg-base-100">
         <nav>
-          <UserNavbar />
+          <UserNavbar
+            name={session?.user?.name ?? ""}
+            image={session?.user?.image ?? ""}
+          />
         </nav>
         <main className="grow p-6">
           {storeLibrary && storeLibrary.length > 0 ? (
@@ -53,10 +56,14 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
       </div>
       <div className="drawer-side">
         <label htmlFor="my-drawer-2" className="drawer-overlay" />
-        <ul className="menu w-80 bg-base-100 p-4 text-base-content">
+        <ul className="menu w-80 bg-base-200 p-4 text-base-content">
           {pages.map((page) => (
-            <li key={page.name}>
-              <Link href={page.url} onClick={() => openDrawer.current?.click()}>
+            <li key={page.name} className="text-base-content md:text-xl ">
+              <Link
+                className="text-base-content"
+                href={page.url}
+                onClick={() => openDrawer.current?.click()}
+              >
                 {page.name}
               </Link>
             </li>
@@ -85,14 +92,12 @@ const LoadingScreen = ({ progress, current }: LoadingStateProps) => {
   );
 };
 
-const UserNavbar = () => {
-  const { data: sessionData } = useSession();
-
+const UserNavbar = ({ name, image }: { name: string; image: string }) => {
   return (
     <div className="navbar bg-base-300 bg-gradient-to-r shadow">
       <div className="flex w-full justify-between">
         <div>
-          <label htmlFor="my-drawer-2" className="drawer-button btn-ghost btn ">
+          <label htmlFor="my-drawer-2" className="btn btn-ghost drawer-button ">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -114,15 +119,12 @@ const UserNavbar = () => {
           <ThemeSwitcher />
           <div className="dropdown-end dropdown ">
             <div className=" flex items-center gap-2 rounded pl-6">
-              <h1 className="text-sm text-primary-content">
-                {sessionData?.user?.name}
+              <h1 className="text-sm font-medium text-primary-content">
+                {name}
               </h1>
-              <label tabIndex={0} className="btn-ghost btn-circle avatar btn">
+              <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
                 <div className="w-10 rounded-full">
-                  <img
-                    src={sessionData?.user?.image || ""}
-                    alt="profile-picture"
-                  />
+                  <img src={image} alt="" />
                 </div>
               </label>
             </div>

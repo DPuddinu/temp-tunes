@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 const config = {
-  content: ["./src/**/*.{js,ts,jsx,tsx}"],
+  content: ["node_modules/daisyui/**/*", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       screens: {
@@ -10,7 +10,18 @@ const config = {
   },
   plugins: [require("daisyui")],
   daisyui: {
-    themes: ["dark", "light"],
+    themes: [
+      "dark",
+      {
+        light: {
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          ...require("daisyui/src/colors/themes")["[data-theme=light]"],
+          "base-100": "#e2e8f0",
+          "base-200": "#cbd5e1",
+          "base-300": "#94a3b8",
+        },
+      },
+    ],
   },
 };
 

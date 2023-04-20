@@ -1,6 +1,6 @@
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
-import { usePlaylistStore } from "~/core/store";
+import { useTagsStore } from "~/core/store";
 import {
   TopTypeArray,
   type Artist,
@@ -37,7 +37,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
       refetchOnWindowFocus: false,
     }
   );
-  const { tags } = usePlaylistStore();
+  const { tags } = useTagsStore();
 
   return (
     <RecapCard key={"card-top-rated"} intent={"active"} loading={isLoading}>
@@ -51,7 +51,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
             <p
               className={`${
                 selectedType === type
-                  ? "border  border-transparent border-b-white"
+                  ? "border  border-transparent border-b-base-content"
                   : ""
               } pb-2 md:text-lg`}
             >

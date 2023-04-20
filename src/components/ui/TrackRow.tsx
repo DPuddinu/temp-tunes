@@ -27,14 +27,14 @@ const TrackRow = ({ label, artists, spotifyId, trackTags }: Props) => {
 
   return (
     <div
-      className="flex rounded-xl px-3 text-accent-content hover:bg-neutral"
+      className="flex rounded-xl px-3 text-accent-content hover:bg-neutral "
       onMouseOver={() => setIsHovering(true)}
       onMouseOut={() => setIsHovering(false)}
     >
-      <div className="flex grow items-center gap-2">
+      <div className="flex grow items-center gap-2 hover:text-primary-content">
         <div className="flex flex-col gap-1">
-          <p className="text-base">{label}</p>
-          <p className="text-xs">{artists.join(", ")}</p>
+          <p className="text-base font-medium">{label}</p>
+          <p className="text-sm font-medium">{artists.join(", ")}</p>
         </div>
       </div>
       <DropdownMenu hidden={!isHovering}>

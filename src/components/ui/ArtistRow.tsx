@@ -15,7 +15,9 @@ export const ArtistRow = ({ label, artistImageUrl }: Props) => {
         <div className="h-20 w-20 rounded-xl bg-slate-400"></div>
       )}
 
-      <div className="ml-4 flex items-center justify-start ">{label}</div>
+      <div className="ml-4 flex items-center justify-start font-medium">
+        {label}
+      </div>
     </div>
   );
 };

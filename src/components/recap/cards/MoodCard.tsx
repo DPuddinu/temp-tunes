@@ -70,7 +70,7 @@ MoodCard.MoodRow = function MoodRow({ color, value, label }: MoodRowProps) {
           <RowValue
             value={value}
             color={color}
-            className="rounded-full px-5 text-center font-bold text-accent-content after:flex after:justify-center"
+            className="flex items-center justify-center rounded-full px-5 py-0 text-center text-sm font-semibold text-base-content after:flex after:items-center after:justify-center"
           ></RowValue>
         </Transition>
       </div>
