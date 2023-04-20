@@ -41,14 +41,13 @@ export function TagModal({
   const { data, isLoading, isSuccess, mutate, isError } = api.prisma_router.setTags.useMutation();
 
   useEffect(() => {
-    if (data) console.log(data);
-    // setStoreTags(data)
-  }, [data, isSuccess]);
+    if (data) setStoreTags(data)
+  }, [data, isSuccess, setStoreTags]);
 
   const saveTags = useCallback(() => {
     mutate({ addTags: tags, removeTags: removeTags });
     setIsOpen(false);
-  }, [mutate, removeTags, tags]);
+  }, [mutate, removeTags, tags, setIsOpen]);
 
   function addTag(tagName: string) {
     const newTag: TagSchemaType = {

@@ -58,8 +58,8 @@ export const prismaRouter = createTRPCRouter({
 
       // REMOVING DELETED TAGS
 
-      const data = await ctx.prisma.$transaction([
-        //ADDING TAGS
+      await ctx.prisma.$transaction([
+        // ADDING TAGS
         ctx.prisma.tag.createMany({
           data: tagsToAdd.map((tag) => {
             const temp = {
@@ -69,6 +69,7 @@ export const prismaRouter = createTRPCRouter({
             return temp;
           }),
         }),
+        // REMOVING TAGS
         ctx.prisma.tag.deleteMany({
           where: {
             id: {
@@ -76,16 +77,11 @@ export const prismaRouter = createTRPCRouter({
             },
           },
         }),
-        ctx.prisma.tag.findMany({
-          where: { userId: ctx.session.user.id },
-        }),
       ]);
-      console.log("RESULT ---------> ");
-      console.log(data);
-      return {
-        addedTags: tagsToAdd,
-        removedTags: tagsToRemove,
-      };
+      const newTags = await ctx.prisma.tag.findMany({
+        where: { userId: ctx.session.user.id },
+      });
+      return createTagsObject(newTags);
     }),
 });
 function createTagsObject(tags: TagSchemaType[]) {
