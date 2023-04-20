@@ -143,20 +143,12 @@ function AddTagComponent({ onAdd, tags }: AddTagProps) {
       tagNameRef.current.value = "";
     }
   }
-  //prettier-ignore
-  const validateTag =  (event: ChangeEvent<HTMLInputElement>) => {
-      setError("");
-      const tagName = event.target.value
-      if (!z.string().min(3).safeParse(tagName).success || !tagName) {
-        setError("tag_errors.short");
-      }
-      if (!z.string().max(18).safeParse(tagName).success) {
-        setError("tag_errors.long");
-      }
-      if (tags.map((tag) => tag.name.toLowerCase()).includes(tagName.toLowerCase())) {
-        setError("tag_errors.used");
-      }
+  function onInputChange(event: ChangeEvent<HTMLInputElement>) {
+    setError(validateTag(event.target.value, tags));
+    console.log(validateTag(event.target.value, tags));
   }
+  //prettier-ignore
+
   return (
     <div className="flex gap-2">
       <div className="w-full">
@@ -165,7 +157,7 @@ function AddTagComponent({ onAdd, tags }: AddTagProps) {
           type="text"
           placeholder=""
           className="input w-full max-w-xs"
-          onChange={validateTag}
+          onChange={onInputChange}
         />
         {!!error && (
           <label className="label text-red-700">
@@ -198,4 +190,20 @@ function AddTagComponent({ onAdd, tags }: AddTagProps) {
       </button>
     </div>
   );
+}
+
+function validateTag(tagName: string, tags: TagSchemaType[]) {
+  let error = "";
+  if (!z.string().min(3).safeParse(tagName).success || !tagName) {
+    error = "tag_errors.short";
+  }
+  if (!z.string().max(18).safeParse(tagName).success) {
+    error = "tag_errors.long";
+  }
+  if (
+    tags.map((tag) => tag.name.toLowerCase()).includes(tagName.toLowerCase())
+  ) {
+    error = "tag_errors.used";
+  }
+  return error;
 }

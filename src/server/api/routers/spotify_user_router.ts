@@ -104,25 +104,24 @@ export const spotifyUserRouter = createTRPCRouter({
     .input(
       z.object({
         query: z.string(),
-        tags: z.record(TagSchema.array()),
-        playlists: PlaylistSchema.array(),
+        tags: z.record(TagSchema.array()).nullish(),
+        // playlists: PlaylistSchema.array().nullish(),
       })
     )
-    .query(async ({ input, ctx }) => {
-      const ids = Object.keys(input.tags);
-      const formattedIds = ids.join(",");
-      const playlists = input.playlists;
+    .mutation(async ({ input, ctx }) => {
+      console.log(input)
+      if (input.tags) {
+        const ids = Object.keys(input.tags);
+        const formattedIds = ids.join(",");
 
-      const tracksUrl = `/tracks&ids=${formattedIds}`;
-      const tracksByTags = (await spotifyGET(tracksUrl, ctx.session.accessToken)
-        .then((res) => res.json())
-        .catch((error) => {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "An unexpected error occurred, please try again later.",
-            cause: error,
-          });
-        })) as Track[];
+        const tracksUrl = `/tracks?ids=${formattedIds}`;
+        const tracksByTags = (await spotifyGET(
+          tracksUrl,
+          ctx.session.accessToken
+        ).then((res) => res.json())) as Track[];
+
+        console.log(tracksByTags);
+      }
 
       const matches: SearchResult[] = [];
       return matches;

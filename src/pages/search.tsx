@@ -2,43 +2,41 @@ import MainLayout from "@components/MainLayout";
 import type { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useCallback, useState } from "react";
+import {
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from "react";
 import { z } from "zod";
 import { executeSearch, type SearchResult } from "~/core/spotifySearch";
-import { usePlaylistStore } from "~/core/store";
+import { usePlaylistStore, useTagsStore } from "~/core/store";
 import type { PageWithLayout } from "~/types/page-types";
+import { api } from "~/utils/api";
 
 const Search: PageWithLayout = () => {
-  const [searchInput, setSearchInput] = useState<string>("");
-  const [error, setError] = useState("");
+  const searchInput = useRef<HTMLInputElement>(null);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const { playlists, tags } = usePlaylistStore();
+  const { playlists } = usePlaylistStore();
+  const { tags } = useTagsStore();
   const { t } = useTranslation("search");
+  const [error, setError] = useState(" ");
+  const { data, mutate, isLoading } =
+    api.spotify_user.searchTracks.useMutation();
 
-  const onSearchInputChange = (searchInput: string) => {
-    setSearchInput(() => {
-      validateSearchInput(searchInput);
-      return searchInput;
-    });
+  const onSearchInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setError(validateSearchInput(event.target.value));
   };
 
-  //prettier-ignore
-  const validateSearchInput = useCallback((searchInput: string) => {
-      setError("");
-
-      if (!z.string().min(2).safeParse(searchInput).success) {
-        setError("search_errors.short");
-      }
-      if (!z.string().max(18).safeParse(searchInput).success) {
-        setError("search_errors.long");
-      }
-    },
-    [searchInput]
-  );
-
-  const search = useCallback(() => {
-    setSearchResults(executeSearch(searchInput, playlists, tags));
-  }, [searchInput]);
+  const search = () => {
+    if (searchInput.current)
+      mutate({
+        // playlists: playlists,
+        query: searchInput.current.value,
+        tags: tags,
+      });
+  };
 
   return (
     <div className="flex flex-col items-center justify-center gap-2">
@@ -46,11 +44,11 @@ const Search: PageWithLayout = () => {
       <div className="form-control w-full sm:max-w-sm md:max-w-md">
         <div className="input-group">
           <input
+            ref={searchInput}
             type="text"
             placeholder={t("search") ?? "..."}
             className="input-bordered input grow bg-secondary-content sm:max-w-sm"
-            value={searchInput}
-            onChange={(t) => onSearchInputChange(t.target.value)}
+            onChange={onSearchInputChange}
           />
           <button
             disabled={!!error}
@@ -115,6 +113,18 @@ const Search: PageWithLayout = () => {
 
 export default Search;
 Search.getLayout = (page) => <MainLayout>{page}</MainLayout>;
+
+function validateSearchInput(searchInput: string) {
+  let error = "";
+
+  if (!z.string().min(2).safeParse(searchInput).success || !searchInput) {
+    error = "search_errors.short";
+  }
+  if (!z.string().max(18).safeParse(searchInput).success) {
+    error = "search_errors.long";
+  }
+  return error;
+}
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
