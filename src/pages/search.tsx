@@ -5,14 +5,14 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useCallback, useState } from "react";
 import { z } from "zod";
 import { executeSearch, type SearchResult } from "~/core/spotifySearch";
-import { useStore } from "~/core/store";
+import { usePlaylistStore } from "~/core/store";
 import type { PageWithLayout } from "~/types/page-types";
 
 const Search: PageWithLayout = () => {
   const [searchInput, setSearchInput] = useState<string>("");
   const [error, setError] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const { playlists, tags } = useStore();
+  const { playlists, tags } = usePlaylistStore();
   const { t } = useTranslation("search");
 
   const onSearchInputChange = (searchInput: string) => {

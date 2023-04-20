@@ -1,7 +1,7 @@
 import { useTranslation } from "next-i18next";
 import TrackRow from "~/components/ui/TrackRow";
 import RowsSkeleton from "~/components/ui/skeletons/SingleRowSkeleton";
-import { useStore } from "~/core/store";
+import { usePlaylistStore } from "~/core/store";
 import { api } from "~/utils/api";
 import RecapCard from "../RecapCard";
 
@@ -9,7 +9,7 @@ const RecommendedCard = () => {
   //prettier-ignore
   const { data, isLoading, isError, error } = api.spotify_user.getRecommendedations.useQuery(undefined, {refetchOnWindowFocus: false});
   const { t } = useTranslation("home");
-  const { tags } = useStore();
+  const { tags } = usePlaylistStore();
 
   return (
     <RecapCard key={"card-recommended"} loading={isLoading}>

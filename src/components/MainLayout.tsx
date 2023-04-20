@@ -1,27 +1,18 @@
-import { useMutation } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
-import { getLibrary } from "~/core/spotifyCollection";
-import { useStore } from "~/core/store";
-import { type Playlist } from "~/types/spotify-types";
-import { UserNavbar } from "./UserNavbar";
+import { useContext, useRef, type ReactNode } from "react";
+import { UserDataContext } from "~/context/user-data-context";
+import { usePlaylistStore } from "~/core/store";
+import ThemeSwitcher from "./ui/ThemeSwitcher";
 
 interface Page {
   url: string;
   name: string;
 }
 interface LoadingStateProps {
-  progress: number;
-  current: string;
-  indeterminate: boolean;
+  progress: number | undefined;
+  current: string | undefined;
 }
 
 const pages: Page[] = [
@@ -32,49 +23,13 @@ const pages: Page[] = [
 ];
 
 const MainLayout = ({ children }: { children: ReactNode }) => {
-  const { data: sessionData, status } = useSession();
+  const { data: session, status } = useSession();
+  const { playlists: storeLibrary } = usePlaylistStore();
+  const { progress, currentPlaylist } = useContext(UserDataContext);
   const router = useRouter();
   const openDrawer = useRef<HTMLInputElement>(null);
-  const [currentPlaylist, setCurrentPlaylist] = useState("");
-  const [progress, setProgress] = useState<number>(0);
-  const [loading, setLoading] = useState(false);
-  //prettier-ignore
-  if (sessionData?.tokenExpired || status === "unauthenticated")router.push("/");
 
-  //LOCAL STORE
-  const { playlists: storeLibrary, setPlaylists: setStoreLibrary } = useStore();
-
-  const {
-    mutate,
-    isLoading: loadingLibrary,
-    isError: errorLibrary,
-  } = useMutation({
-    mutationKey: ["library"],
-    mutationFn: () => {
-      setLoading(true)
-      return getLibrary(
-        sessionData?.accessToken ?? "",
-        (progress: number, current: string) => {
-          setCurrentPlaylist(current);
-          setProgress(progress);
-        },
-        (playlists: Playlist[]) => {
-          console.log(playlists)
-          setLoading(false);
-          setStoreLibrary(playlists);
-        }
-      )
-    }
-  });
-
-  const loadLibrary = useCallback(() => {
-    if (storeLibrary?.length === 0 && sessionData?.accessToken && !loading)
-      mutate();
-  }, [storeLibrary, mutate, sessionData?.accessToken, loading]);
-
-  useEffect(() => {
-    loadLibrary();
-  }, [loadLibrary]);
+  if (session?.tokenExpired || status === "unauthenticated") router.push("/");
 
   return (
     <div className="drawer">
@@ -92,11 +47,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
           {storeLibrary && storeLibrary.length > 0 ? (
             children
           ) : (
-            <LoadingScreen
-              current={currentPlaylist}
-              progress={progress}
-              indeterminate={loadingLibrary}
-            />
+            <LoadingScreen current={currentPlaylist} progress={progress} />
           )}
         </main>
       </div>
@@ -116,16 +67,12 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const LoadingScreen = ({
-  progress,
-  current,
-  indeterminate,
-}: LoadingStateProps) => {
+const LoadingScreen = ({ progress, current }: LoadingStateProps) => {
   return (
     <section className="flex flex-col items-center justify-center gap-3">
       <p>Loading your playlists...</p>
       <p className="text-sm">{current}</p>
-      {indeterminate ? (
+      {!progress ? (
         <progress className="progress progress-primary w-56" />
       ) : (
         <progress
@@ -135,6 +82,63 @@ const LoadingScreen = ({
         />
       )}
     </section>
+  );
+};
+
+const UserNavbar = () => {
+  const { data: sessionData } = useSession();
+
+  return (
+    <div className="navbar bg-base-300 bg-gradient-to-r shadow">
+      <div className="flex w-full justify-between">
+        <div>
+          <label htmlFor="my-drawer-2" className="drawer-button btn-ghost btn ">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="rgb(226 232 240)"
+              className="h-6 w-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            </svg>
+          </label>
+        </div>
+
+        <div className="dropdown-end flex">
+          <ThemeSwitcher />
+          <div className="dropdown-end dropdown ">
+            <div className=" flex items-center gap-2 rounded pl-6">
+              <h1 className="text-sm text-primary-content">
+                {sessionData?.user?.name}
+              </h1>
+              <label tabIndex={0} className="btn-ghost btn-circle avatar btn">
+                <div className="w-10 rounded-full">
+                  <img
+                    src={sessionData?.user?.image || ""}
+                    alt="profile-picture"
+                  />
+                </div>
+              </label>
+            </div>
+
+            <ul
+              tabIndex={0}
+              className="dropdown-content menu rounded-box menu-compact mt-3 w-52 bg-base-200 p-2 shadow"
+            >
+              <li>
+                <a onClick={() => signOut({ callbackUrl: "/" })}>Logout</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

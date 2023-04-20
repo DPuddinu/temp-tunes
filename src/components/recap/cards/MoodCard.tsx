@@ -39,15 +39,19 @@ const MoodCard = () => {
   );
 };
 
-MoodCard.MoodRow = function MoodRow({ color, value, label }: MoodRowProps) {
-  const RowValue = styled.div`
-    &:after {
-      content: "${value}%";
-    }
-    width: ${value}%;
-    background: ${color};
-  `;
+interface RowValueProps {
+  value: number;
+  color: string;
+}
+const RowValue = styled.div<RowValueProps>`
+  &:after {
+    content: "${(p) => p.value}%";
+  }
+  width: ${(p) => p.value}%;
+  background: ${(p) => p.color};
+`;
 
+MoodCard.MoodRow = function MoodRow({ color, value, label }: MoodRowProps) {
   return (
     <div className="mb-2 flex gap-2 p-2 ">
       <div className="w-1/2 grow text-accent-content ">{label}</div>
@@ -63,7 +67,11 @@ MoodCard.MoodRow = function MoodRow({ color, value, label }: MoodRowProps) {
           leaveFrom="w-full"
           leaveTo="w-0"
         >
-          <RowValue className="rounded-full px-5 text-center font-bold text-accent-content after:flex after:justify-center"></RowValue>
+          <RowValue
+            value={value}
+            color={color}
+            className="rounded-full px-5 text-center font-bold text-accent-content after:flex after:justify-center"
+          ></RowValue>
         </Transition>
       </div>
     </div>

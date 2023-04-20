@@ -41,7 +41,7 @@ export const useTagsStore = () => {
   return tagsStore();
 };
 
-export const useStore = (() => {
+export const usePlaylistStore = (() => {
   const persistedStore = usePersistedStore();
   const mounted = useMounted();
 
