@@ -33,8 +33,10 @@ const TrackRow = ({ label, artists, spotifyId, trackTags }: Props) => {
     >
       <div className="flex grow items-center gap-2 hover:text-primary-content">
         <div className="flex flex-col gap-1">
-          <p className="text-base font-medium">{label}</p>
-          <p className="text-sm font-medium">{artists.join(", ")}</p>
+          <p className="font-medium ">{label}</p>
+          <p className="text-sm font-medium text-base-content">
+            {artists.join(", ")}
+          </p>
         </div>
       </div>
       <DropdownMenu hidden={!isHovering}>

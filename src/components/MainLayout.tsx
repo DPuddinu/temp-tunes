@@ -58,7 +58,10 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
         <label htmlFor="my-drawer-2" className="drawer-overlay" />
         <ul className="menu w-80 bg-base-200 p-4 text-base-content">
           {pages.map((page) => (
-            <li key={page.name} className="text-base-content md:text-xl ">
+            <li
+              key={page.name}
+              className="font-semibold text-base-content md:text-lg "
+            >
               <Link
                 className="text-base-content"
                 href={page.url}
