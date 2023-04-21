@@ -11,7 +11,7 @@ import {
 } from "react";
 import { z } from "zod";
 import { executeSearch, type SearchResult } from "~/core/spotifySearch";
-import { usePlaylistStore, useTagsStore } from "~/core/store";
+import { usePlaylistStore, useStore } from "~/core/store";
 import type { PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 
@@ -19,7 +19,7 @@ const Search: PageWithLayout = () => {
   const searchInput = useRef<HTMLInputElement>(null);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const { playlists } = usePlaylistStore();
-  const { tags } = useTagsStore();
+  const { tags } = useStore();
   const { t } = useTranslation("search");
   const [error, setError] = useState(" ");
   const { data, mutate, isLoading } =

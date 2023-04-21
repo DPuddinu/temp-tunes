@@ -7,7 +7,7 @@ import {
   type ChangeEvent,
 } from "react";
 import { z } from "zod";
-import { useTagsStore } from "~/core/store";
+import { useStore } from "~/core/store";
 import type { TagSchemaType, TagType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
@@ -32,7 +32,7 @@ export function TagModal({
 }: Props) {
   const { t } = useTranslation("modals");
   const [removeTags, setRemoveTags] = useState<TagSchemaType[]>([]);
-  const { tags: storeTags, setTags: setStoreTags } = useTagsStore();
+  const { tags: storeTags, setTags: setStoreTags } = useStore();
   const [tags, setTags] = useState<TagSchemaType[]>([]);
 
   //prettier-ignore

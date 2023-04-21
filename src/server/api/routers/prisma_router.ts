@@ -9,7 +9,7 @@ export interface TagsObject {
   [z: string]: TagSchemaType[];
 }
 export const prismaRouter = createTRPCRouter({
-  getTagsByUser: protectedProcedure.mutation(async ({ ctx }) => {
+  getTagsByUser: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session.user.id;
     const userTags = await ctx.prisma?.tag.findMany({
       where: {
@@ -80,7 +80,7 @@ export const prismaRouter = createTRPCRouter({
       return createTagsObject(newTags);
     }),
 });
-function createTagsObject(tags: TagSchemaType[]) {
+export function createTagsObject(tags: TagSchemaType[]) {
   const tagsObject: TagsObject = {};
   tags.forEach((tag: TagSchemaType) => {
     if (!tagsObject[tag.spotifyId]) {

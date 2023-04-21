@@ -1,3 +1,4 @@
+import type { User } from "@prisma/client";
 import { mountStoreDevtool } from "simple-zustand-devtools";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
@@ -10,8 +11,10 @@ export type PlaylistLibrary = {
   setPlaylists: (playlists: Playlist[]) => void;
 };
 export type UserLibrary = {
+  user: User | undefined;
   tags: TagsObject | undefined;
   setTags: (tags: TagsObject) => void;
+  setUser: (user: User) => void;
 };
 
 const emptyStore = create<PlaylistLibrary>()((set) => ({
@@ -34,10 +37,12 @@ const usePersistedStore = create<PlaylistLibrary>()(
 
 const userStore = create<UserLibrary>()((set) => ({
   tags: undefined,
+  user: undefined,
   setTags: (tags) => set(() => ({ tags: tags })),
+  setUser: (user) => set(() => ({ user: user })),
 }));
 
-export const useTagsStore = () => {
+export const useStore = () => {
   return userStore();
 };
 
