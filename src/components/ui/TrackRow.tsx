@@ -1,28 +1,24 @@
 import { TagModal } from "@components/modals/TagModal";
 import { useTranslation } from "next-i18next";
 import { useState, type ReactNode } from "react";
-import { type TagSchemaType } from "~/types/zod-schemas";
 
 interface Props {
   label: string;
   artists: string[];
   spotifyId: string;
-  trackTags: TagSchemaType[];
 }
 interface DropdownProps {
   children: ReactNode;
   hidden: boolean;
 }
-const TrackRow = ({ label, artists, spotifyId, trackTags }: Props) => {
+const TrackRow = ({ label, artists, spotifyId }: Props) => {
   const { t } = useTranslation("common");
 
   const [isHovering, setIsHovering] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [tags, setTags] = useState<TagSchemaType[]>(trackTags ?? []);
 
   const onClose = () => {
     setIsModalOpen(false);
-    setTimeout(() => setTags(trackTags), 300); // restore tags after animation finishes
   };
 
   return (
@@ -51,7 +47,6 @@ const TrackRow = ({ label, artists, spotifyId, trackTags }: Props) => {
         isOpen={isModalOpen}
         setIsOpen={setIsModalOpen}
         onClose={onClose}
-        trackTags={tags}
         trackId={spotifyId}
         tagType="track"
       />

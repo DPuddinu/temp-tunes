@@ -1,6 +1,5 @@
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
-import { useTagsStore } from "~/core/store";
 import {
   TopTypeArray,
   type Artist,
@@ -37,7 +36,6 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
       refetchOnWindowFocus: false,
     }
   );
-  const { tags } = useTagsStore();
 
   return (
     <RecapCard key={"card-top-rated"} intent={"active"} loading={isLoading}>
@@ -74,7 +72,6 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
               ) : (
                 <TrackRow
                   spotifyId={item.id}
-                  trackTags={tags ? tags[item.id] ?? [] : []}
                   artists={(item as Track).artists.map((artist) => artist.name)}
                   label={item.name}
                   key={i}

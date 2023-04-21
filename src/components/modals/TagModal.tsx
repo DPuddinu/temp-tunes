@@ -15,7 +15,6 @@ import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
 
 type Props = {
-  trackTags: TagSchemaType[];
   trackId: string;
   tagType: TagType;
   setIsOpen: (open: boolean) => void;
@@ -27,27 +26,33 @@ interface ConfirmButtonGroupProps {
 export function TagModal({
   isOpen,
   onClose,
-  trackTags,
   trackId,
   tagType,
   setIsOpen,
 }: Props) {
   const { t } = useTranslation("modals");
-  const [tags, setTags] = useState<TagSchemaType[]>(trackTags ?? []);
   const [removeTags, setRemoveTags] = useState<TagSchemaType[]>([]);
-  const { setTags: setStoreTags } = useTagsStore();
+  const { tags: storeTags, setTags: setStoreTags } = useTagsStore();
+  const [tags, setTags] = useState<TagSchemaType[]>([]);
 
   //prettier-ignore
   const { data, isLoading, isSuccess, mutate, isError } = api.prisma_router.setTags.useMutation();
 
   useEffect(() => {
-    if (data) setStoreTags(data)
+    if (storeTags) {
+      const tags = storeTags[trackId];
+      setTags(tags !== undefined ? tags : []);
+    }
+  }, [storeTags, trackId]);
+
+  useEffect(() => {
+    if (data) setStoreTags(data);
   }, [data, isSuccess, setStoreTags]);
 
-  const saveTags = useCallback(() => {
+  const saveTags = () => {
     mutate({ addTags: tags, removeTags: removeTags });
     setIsOpen(false);
-  }, [mutate, removeTags, tags, setIsOpen]);
+  };
 
   function addTag(tagName: string) {
     const newTag: TagSchemaType = {
@@ -55,6 +60,8 @@ export function TagModal({
       spotifyId: trackId,
       spotifyType: tagType,
     };
+    console.log(newTag);
+
     setTags((oldTags) => {
       return [...oldTags, newTag];
     });
@@ -145,7 +152,6 @@ function AddTagComponent({ onAdd, tags }: AddTagProps) {
   }
   function onInputChange(event: ChangeEvent<HTMLInputElement>) {
     setError(validateTag(event.target.value, tags));
-    console.log(validateTag(event.target.value, tags));
   }
   //prettier-ignore
 

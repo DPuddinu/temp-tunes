@@ -31,10 +31,6 @@ export const prismaRouter = createTRPCRouter({
       const { addTags, removeTags } = input;
       let tagsToAdd: Tag[] = [];
       let tagsToRemove: Tag[] = [];
-      console.log("INPUT ADD ---------> ");
-      console.log(addTags);
-      console.log("INPUT REMOVE ---------> ");
-      console.log(removeTags);
       const oldTags = await ctx.prisma.tag.findMany({
         where: { userId: ctx.session.user.id },
       });
@@ -78,9 +74,9 @@ export const prismaRouter = createTRPCRouter({
           },
         }),
       ]);
-      const newTags = await ctx.prisma.tag.findMany({
+      const newTags = (await ctx.prisma.tag.findMany({
         where: { userId: ctx.session.user.id },
-      });
+      })) as TagSchemaType[];
       return createTagsObject(newTags);
     }),
 });
