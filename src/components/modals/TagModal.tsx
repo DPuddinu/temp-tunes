@@ -60,7 +60,6 @@ export function TagModal({
       spotifyId: trackId,
       spotifyType: tagType,
     };
-    console.log(newTag);
 
     setTags((oldTags) => {
       return [...oldTags, newTag];

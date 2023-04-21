@@ -5,40 +5,40 @@ import { useMounted } from "~/hooks/use-mounted";
 import type { TagsObject } from "~/server/api/routers/prisma_router";
 import type { Playlist } from "~/types/spotify-types";
 
-export type UserLibrary = {
+export type PlaylistLibrary = {
   playlists: Playlist[];
   setPlaylists: (playlists: Playlist[]) => void;
 };
-export type TagsLibrary = {
+export type UserLibrary = {
   tags: TagsObject | undefined;
   setTags: (tags: TagsObject) => void;
 };
 
-const emptyStore = create<UserLibrary>()((set) => ({
+const emptyStore = create<PlaylistLibrary>()((set) => ({
   playlists: [],
   setPlaylists: (playlists) => set(() => ({ playlists: playlists })),
 }));
 
-const usePersistedStore = create<UserLibrary>()(
+const usePersistedStore = create<PlaylistLibrary>()(
   persist(
     (set) => ({
       playlists: [],
       setPlaylists: (playlists) => set(() => ({ playlists: playlists })),
     }),
     {
-      name: "asm-storage", // name of the item in the storage (must be unique)
+      name: "nsm-storage", // name of the item in the storage (must be unique)
       storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
     }
   )
 );
 
-const tagsStore = create<TagsLibrary>()((set) => ({
+const userStore = create<UserLibrary>()((set) => ({
   tags: undefined,
   setTags: (tags) => set(() => ({ tags: tags })),
 }));
 
 export const useTagsStore = () => {
-  return tagsStore();
+  return userStore();
 };
 
 export const usePlaylistStore = (() => {
@@ -50,5 +50,5 @@ export const usePlaylistStore = (() => {
 
 if (process.env.NODE_ENV === "development") {
   mountStoreDevtool("Playlists", usePersistedStore);
-  mountStoreDevtool("Tags", tagsStore);
+  mountStoreDevtool("User", userStore);
 }

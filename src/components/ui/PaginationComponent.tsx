@@ -46,10 +46,11 @@ const PaginationComponent = ({
     const maxPagesArray = [...Array(maxPages).keys()];
     return (
       <>
-        {maxPagesArray.map((page) => (
+        {maxPagesArray.map((page, i) => (
           <>
             {cursor + maxPages <= totalPages && (
               <PaginationButton
+                key={i}
                 index={cursor + page}
                 isActive={cursor + page === activePage}
                 selectPage={() => selectPageByIndex(cursor + page)}

@@ -109,18 +109,17 @@ export const spotifyUserRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      console.log(input)
       if (input.tags) {
         const ids = Object.keys(input.tags);
         const formattedIds = ids.join(",");
 
         const tracksUrl = `/tracks?ids=${formattedIds}`;
-        const tracksByTags = (await spotifyGET(
+        const tracksByTags = await spotifyGET(
           tracksUrl,
           ctx.session.accessToken
-        ).then((res) => res.json())) as Track[];
+        ).then((res) => res.json());
 
-        console.log(tracksByTags);
+        console.log(tracksByTags.tracks.length);
       }
 
       const matches: SearchResult[] = [];

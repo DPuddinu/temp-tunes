@@ -15,11 +15,10 @@ model User {
   id                String             @id @default(cuid())
   name              String?
   email             String?            @unique
-  emailVerified     DateTime?
+  spotifyId         String             @unique
   image             String?
-  tokenExpires      DateTime           @default(now())
   playlistTemplates PlaylistTemplate[]
-  Tag               Tag[]
+  Tags               Tag[]
 }
 
 
