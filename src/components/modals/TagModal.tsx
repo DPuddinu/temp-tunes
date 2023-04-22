@@ -152,8 +152,7 @@ function AddTagComponent({ onAdd, tags }: AddTagProps) {
   function onInputChange(event: ChangeEvent<HTMLInputElement>) {
     setError(validateTag(event.target.value, tags));
   }
-  //prettier-ignore
-
+  
   return (
     <div className="flex gap-2">
       <div className="w-full">

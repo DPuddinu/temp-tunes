@@ -60,7 +60,7 @@ const UserDataProvider = ({ children }: { children: ReactNode }) => {
       setUser(user.user)
       setStoreTags(user.tags)
     }
-  }, [user, setUser, storeUser]);
+  }, [user, setUser, storeUser, setStoreTags]);
 
   // ----------------------------------------------------------------
 

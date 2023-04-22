@@ -34,11 +34,11 @@ export const userRouter = createTRPCRouter({
             id: spotifyId,
           } as User,
         });
-      // const tags = ctx.prisma.tag.findMany({
-      //   where: {
-      //     userId: user.id,
-      //   },
-      // }) as TagSchemaType[]; 
-      return { user: user };
+      const tags = await ctx.prisma.tag.findMany({
+        where: {
+          userId: user.id,
+        },
+      }) as TagSchemaType[]; 
+      return { user: user, tags: createTagsObject(tags) };
     }),
 });

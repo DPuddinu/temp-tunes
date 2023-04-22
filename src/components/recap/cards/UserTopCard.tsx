@@ -19,12 +19,12 @@ export type RecapPropsType = {
 
 export const itemsPerPageOptions = ["5", "10", "15", "20"];
 export const totalItems = 50;
+const itemsPerPage = 5;
 
 const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
   const { t } = useTranslation("home");
   const [selectedType, setSelectedType] = useState<TopType>("tracks");
   const [selectedPage, setSelectedPage] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
   const { data, isLoading, isError } = api.spotify_user.getTopRated.useQuery(
     {
       type: selectedType,
@@ -43,7 +43,10 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
         {TopTypeArray.map((type, i) => (
           <RecapCard.Header
             key={i}
-            onClick={() => setSelectedType(type)}
+            onClick={() => {
+              setSelectedType(type);
+              setSelectedPage(0);
+            }}
             intent={selectedType === type ? "static" : "active"}
           >
             <p
@@ -79,14 +82,14 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
               )}
             </>
           ))}
-
-        <PaginationComponent
-          activePage={selectedPage}
-          setActivePage={setSelectedPage}
-          itemsPerPage={itemsPerPage}
-          totalItems={data?.totalItems ?? 0}
-          key={"pagination"}
-        />
+        {data && data.totalItems > itemsPerPage && (
+          <PaginationComponent
+            totalPages={Math.ceil(data?.totalItems / itemsPerPage)}
+            activePage={selectedPage}
+            setActivePage={setSelectedPage}
+            maxVisiblePages={itemsPerPage}
+          />
+        )}
       </RecapCard.Container>
     </RecapCard>
   );
