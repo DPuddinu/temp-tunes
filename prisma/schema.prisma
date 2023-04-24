@@ -46,6 +46,9 @@ model Tag {
   name        String
   userId      String
   spotifyId   String
+  spotifyTrackName String
+  spotifyPlaylistName String?
+  spotifyAuthors  String?
   spotifyType String
   user        User   @relation(fields: [userId], references: [id])
 

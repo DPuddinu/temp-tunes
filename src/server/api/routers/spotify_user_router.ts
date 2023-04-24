@@ -1,10 +1,9 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+import { z } from "zod"; 
 import { spotifyGET } from "~/core/spotifyFetch";
 import { averageMood } from "~/core/spotifyMoodAnalyze";
-import { type SearchResult } from "~/core/spotifySearch";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import {
+  type Artist,
   TimeRangeEnum,
   TopTypeEnum,
   type AudioFeatures,
@@ -13,12 +12,18 @@ import {
   type TopTracks,
   type Track,
 } from "~/types/spotify-types";
-import { PlaylistSchema, TagSchema } from "~/types/zod-schemas";
 import { spliceArray } from "~/utils/helpers";
 
+export interface SearchResult {
+  title: string;
+  playlist: string;
+  artists: string[];
+  tags: string[];
+}
+
 export const spotifyUserRouter = createTRPCRouter({
-  getTopRated: protectedProcedure
-    .input(
+
+  getTopRated: protectedProcedure.input(
       z.object({
         type: TopTypeEnum,
         timeRange: TimeRangeEnum,
@@ -104,28 +109,40 @@ export const spotifyUserRouter = createTRPCRouter({
     .input(
       z.object({
         query: z.string(),
-        tags: z.record(TagSchema.array()).nullish(),
         // playlists: PlaylistSchema.array().nullish(),
       })
     )
     .mutation(async ({ input, ctx }) => {
-      if (input.tags) {
-        const ids = Object.keys(input.tags);
-        const formattedIds = ids.join(",");
-
-        const tracksUrl = `/tracks?ids=${formattedIds}`;
-        const tracksByTags = await spotifyGET(
-          tracksUrl,
-          ctx.session.accessToken
-        ).then((res) => res.json());
-
-        console.log(tracksByTags.tracks.length);
-      }
-
       const matches: SearchResult[] = [];
+      const {query} = input
+      
+      // SEARCH BY TAGS
+      const filteredTags = await ctx.prisma.tag.findMany({where: {
+        name: {
+          contains: query
+        }
+      }})
+      filteredTags.forEach(tag => {
+        matches.push({
+          tags: [tag.name],
+          artists: tag.spotifyAuthors?.split(',') ?? [],
+          playlist: tag.spotifyPlaylistName ?? '',
+          title: tag.spotifyTrackName
+        })
+      })
+      // -----------------
+
+      
+
+
+
       return matches;
     }),
 });
+
+function match(a: string, b: string): boolean {
+  return a.toLowerCase().includes(b.toLowerCase());
+}
 
 // INFINITE QUERY PROCEDURE
 // getTop: publicProcedure

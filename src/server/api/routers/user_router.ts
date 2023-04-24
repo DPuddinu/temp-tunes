@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { createTagsObject } from "./prisma_router";
-import { TagSchemaType } from "~/types/zod-schemas";
+import type { TagSchemaType } from "~/types/zod-schemas";
 
 export const userRouter = createTRPCRouter({
   getUserBySpotifyId: protectedProcedure

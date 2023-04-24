@@ -1,6 +1,5 @@
 import { useTranslation } from "next-i18next";
 import {
-  useCallback,
   useEffect,
   useRef,
   useState,
@@ -13,9 +12,11 @@ import { api } from "~/utils/api";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
+import type { Track } from "~/types/spotify-types";
 
 type Props = {
-  trackId: string;
+  track: Track;
+  playlistName?: string;
   tagType: TagType;
   setIsOpen: (open: boolean) => void;
 } & BaseModalProps;
@@ -26,7 +27,8 @@ interface ConfirmButtonGroupProps {
 export function TagModal({
   isOpen,
   onClose,
-  trackId,
+  track,
+  playlistName,
   tagType,
   setIsOpen,
 }: Props) {
@@ -40,10 +42,10 @@ export function TagModal({
 
   useEffect(() => {
     if (storeTags) {
-      const tags = storeTags[trackId];
+      const tags = storeTags[track.id];
       setTags(tags !== undefined ? tags : []);
     }
-  }, [storeTags, trackId]);
+  }, [storeTags, track.id]);
 
   useEffect(() => {
     if (data) setStoreTags(data);
@@ -57,10 +59,13 @@ export function TagModal({
   function addTag(tagName: string) {
     const newTag: TagSchemaType = {
       name: tagName,
-      spotifyId: trackId,
+      spotifyId: track.id,
       spotifyType: tagType,
+      spotifyTrackName: track.name,
+      spotifyAuthors: track.artists.map(artist => artist.name).join(',')
     };
-
+    if(playlistName)newTag.spotifyPlaylistName = playlistName;
+    
     setTags((oldTags) => {
       return [...oldTags, newTag];
     });

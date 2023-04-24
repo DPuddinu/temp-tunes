@@ -10,8 +10,8 @@ import {
   type ChangeEvent,
 } from "react";
 import { z } from "zod";
-import { executeSearch, type SearchResult } from "~/core/spotifySearch";
 import { usePlaylistStore, useStore } from "~/core/store";
+import type { SearchResult } from "~/server/api/routers/spotify_user_router";
 import type { PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 
@@ -34,7 +34,6 @@ const Search: PageWithLayout = () => {
       mutate({
         // playlists: playlists,
         query: searchInput.current.value,
-        tags: tags,
       });
   };
 
