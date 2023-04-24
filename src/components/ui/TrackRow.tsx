@@ -1,17 +1,16 @@
 import { TagModal } from "@components/modals/TagModal";
 import { useTranslation } from "next-i18next";
 import { useState, type ReactNode } from "react";
+import type { Track } from "~/types/spotify-types";
 
 interface Props {
-  label: string;
-  artists: string[];
-  spotifyId: string;
+  track: Track;
 }
 interface DropdownProps {
   children: ReactNode;
   hidden: boolean;
 }
-const TrackRow = ({ label, artists, spotifyId }: Props) => {
+const TrackRow = ({ track }: Props) => {
   const { t } = useTranslation("common");
 
   const [isHovering, setIsHovering] = useState(false);
@@ -29,9 +28,9 @@ const TrackRow = ({ label, artists, spotifyId }: Props) => {
     >
       <div className="flex grow items-center gap-2 hover:text-primary-content">
         <div className="flex flex-col gap-1">
-          <p className="font-medium ">{label}</p>
+          <p className="font-medium ">{track.name}</p>
           <p className="text-sm font-medium text-base-content">
-            {artists.join(", ")}
+            {track.artists.join(", ")}
           </p>
         </div>
       </div>
@@ -47,7 +46,7 @@ const TrackRow = ({ label, artists, spotifyId }: Props) => {
         isOpen={isModalOpen}
         setIsOpen={setIsModalOpen}
         onClose={onClose}
-        trackId={spotifyId}
+        track={track}
         tagType="track"
       />
     </div>

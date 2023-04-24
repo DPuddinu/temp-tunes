@@ -74,9 +74,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
                 />
               ) : (
                 <TrackRow
-                  spotifyId={item.id}
-                  artists={(item as Track).artists.map((artist) => artist.name)}
-                  label={item.name}
+                  track={item as Track}
                   key={i}
                 />
               )}
