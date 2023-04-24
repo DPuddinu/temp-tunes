@@ -1,17 +1,18 @@
-import { z } from "zod"; 
+import { z } from "zod";
 import { spotifyGET } from "~/core/spotifyFetch";
 import { averageMood } from "~/core/spotifyMoodAnalyze";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import {
-  type Artist,
   TimeRangeEnum,
   TopTypeEnum,
+  type Artist,
   type AudioFeatures,
   type Recommendations,
   type TopArtists,
   type TopTracks,
   type Track,
 } from "~/types/spotify-types";
+import { PlaylistSchema } from "~/types/zod-schemas";
 import { spliceArray } from "~/utils/helpers";
 
 export interface SearchResult {
@@ -22,8 +23,8 @@ export interface SearchResult {
 }
 
 export const spotifyUserRouter = createTRPCRouter({
-
-  getTopRated: protectedProcedure.input(
+  getTopRated: protectedProcedure
+    .input(
       z.object({
         type: TopTypeEnum,
         timeRange: TimeRangeEnum,
@@ -109,33 +110,54 @@ export const spotifyUserRouter = createTRPCRouter({
     .input(
       z.object({
         query: z.string(),
-        // playlists: PlaylistSchema.array().nullish(),
+        playlists: PlaylistSchema.array().nullish(),
       })
     )
     .mutation(async ({ input, ctx }) => {
       const matches: SearchResult[] = [];
-      const {query} = input
-      
+      const { query, playlists } = input;
+
       // SEARCH BY TAGS
-      const filteredTags = await ctx.prisma.tag.findMany({where: {
-        name: {
-          contains: query
-        }
-      }})
-      filteredTags.forEach(tag => {
+      const filteredTags = await ctx.prisma.tag.findMany({
+        where: {
+          name: {
+            contains: query,
+          },
+        },
+      });
+      filteredTags.forEach((tag) => {
         matches.push({
           tags: [tag.name],
-          artists: tag.spotifyAuthors?.split(',') ?? [],
-          playlist: tag.spotifyPlaylistName ?? '',
-          title: tag.spotifyTrackName
-        })
-      })
+          artists: tag.spotifyAuthors?.split(",") ?? [],
+          playlist: tag.spotifyPlaylistName ?? "",
+          title: tag.spotifyTrackName,
+        });
+      });
       // -----------------
 
-      
+      // SEARCH BY PLAYLIST
 
+      if (playlists && playlists.length > 0) {
+        playlists.forEach((playlist) => {
+          const tracks = playlist.tracks;
+          tracks.forEach((track) => {
+            // MATCH BY TRACK NAME OR ARTIST
+            if (
+              match(track.name, query) ||
+              match(track.artists.join(), query)
+            ) {
+              matches.push({
+                artists: track.artists.map((artist) => artist.name),
+                playlist: playlist.name,
+                tags: [],
+                title: track.name,
+              });
+            }
+          });
+        });
+      }
 
-
+      console.log(matches);
       return matches;
     }),
 });

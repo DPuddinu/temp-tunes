@@ -30,7 +30,7 @@ const Search: PageWithLayout = () => {
   const search = () => {
     if (searchInput.current)
       mutate({
-        // playlists: playlists,
+        playlists: playlists,
         query: searchInput.current.value,
       });
   };
@@ -89,8 +89,6 @@ const Search: PageWithLayout = () => {
                 </tr>
               </thead>
               <tbody>
-                {/* row 1 */}
-
                 {searchResults?.map((res, i) => (
                   <>
                     <tr key={i}>
