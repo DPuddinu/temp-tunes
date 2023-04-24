@@ -30,7 +30,7 @@ const TrackRow = ({ track }: Props) => {
         <div className="flex flex-col gap-1">
           <p className="font-medium ">{track.name}</p>
           <p className="text-sm font-medium text-base-content">
-            {track.artists.join(", ")}
+            {track.artists.map((artist) => artist.name).join(", ")}
           </p>
         </div>
       </div>
