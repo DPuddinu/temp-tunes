@@ -2,11 +2,7 @@ import MainLayout from "@components/MainLayout";
 import type { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import {
-  useRef,
-  useState,
-  type ChangeEvent
-} from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { z } from "zod";
 import { usePlaylistStore, useStore } from "~/core/store";
 import type { SearchResult } from "~/server/api/routers/spotify_user_router";
@@ -34,6 +30,10 @@ const Search: PageWithLayout = () => {
         query: searchInput.current.value,
       });
   };
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   return (
     <div className="flex flex-col items-center justify-center gap-2">

@@ -115,6 +115,7 @@ export const spotifyUserRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const matches: SearchResult[] = [];
+      const tagMatches: SearchResult[] = [];
       const { query, playlists } = input;
 
       // SEARCH BY TAGS
@@ -126,13 +127,14 @@ export const spotifyUserRouter = createTRPCRouter({
         },
       });
       filteredTags.forEach((tag) => {
-        matches.push({
+        tagMatches.push({
           tags: [tag.name],
           artists: tag.spotifyAuthors?.split(",") ?? [],
           playlist: tag.spotifyPlaylistName ?? "",
           title: tag.spotifyTrackName,
         });
       });
+      matches.push(...tagMatches);
       // -----------------
 
       // SEARCH BY PLAYLIST
@@ -144,7 +146,15 @@ export const spotifyUserRouter = createTRPCRouter({
             // MATCH BY TRACK NAME OR ARTIST
             if (
               match(track.name, query) ||
-              match(track.artists.join(), query)
+              (match(
+                track.artists.map((artist) => artist.name).join(),
+                query
+              ) &&
+                !tagMatches.find(
+                  (match) =>
+                    match.playlist === playlist.name &&
+                    match.title === track.name
+                ))
             ) {
               matches.push({
                 artists: track.artists.map((artist) => artist.name),
@@ -157,7 +167,6 @@ export const spotifyUserRouter = createTRPCRouter({
         });
       }
 
-      console.log(matches);
       return matches;
     }),
 });
