@@ -1,11 +1,11 @@
 import { z } from "zod";
+import { getTracksByIds } from "~/core/spotifyCollection";
 import { spotifyGET } from "~/core/spotifyFetch";
 import { averageMood } from "~/core/spotifyMoodAnalyze";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import {
   TimeRangeEnum,
   TopTypeEnum,
-  type Artist,
   type AudioFeatures,
   type Recommendations,
   type TopArtists,
@@ -16,9 +16,9 @@ import { PlaylistSchema } from "~/types/zod-schemas";
 import { spliceArray } from "~/utils/helpers";
 
 export interface SearchResult {
-  title: string;
+  track: Track;
   playlist: string;
-  artists: string[];
+  creator: string;
   tags: string[];
 }
 
@@ -126,12 +126,16 @@ export const spotifyUserRouter = createTRPCRouter({
           },
         },
       });
+
+      const tracksByTags = await getTracksByIds(filteredTags.map(tag => tag.spotifyId), ctx.session.accessToken)
       filteredTags.forEach((tag) => {
+        const trackByTag = tracksByTags.find(track => track.id === tag.spotifyId)
+        if (trackByTag)
         tagMatches.push({
           tags: [tag.name],
-          artists: tag.spotifyAuthors?.split(",") ?? [],
+          track: trackByTag,
           playlist: tag.spotifyPlaylistName ?? "",
-          title: tag.spotifyTrackName,
+          creator: ctx.session.user.name ?? '',
         });
       });
       matches.push(...tagMatches);
@@ -143,7 +147,7 @@ export const spotifyUserRouter = createTRPCRouter({
         playlists.forEach((playlist) => {
           const tracks = playlist.tracks;
           tracks.forEach((track) => {
-            // MATCH BY TRACK NAME OR ARTIST
+            // MATCH BY TRACK NAME OR ARTIST NAME
             if (
               match(track.name, query) ||
               (match(
@@ -153,14 +157,14 @@ export const spotifyUserRouter = createTRPCRouter({
                 !tagMatches.find(
                   (match) =>
                     match.playlist === playlist.name &&
-                    match.title === track.name
+                    match.track.name === track.name
                 ))
             ) {
               matches.push({
-                artists: track.artists.map((artist) => artist.name),
+                track: track,
                 playlist: playlist.name,
                 tags: [],
-                title: track.name,
+                creator: playlist.owner.display_name,
               });
             }
           });
@@ -174,34 +178,3 @@ export const spotifyUserRouter = createTRPCRouter({
 function match(a: string, b: string): boolean {
   return a.toLowerCase().includes(b.toLowerCase());
 }
-
-// INFINITE QUERY PROCEDURE
-// getTop: publicProcedure
-//     .input(
-//       z.object({
-//         type: TopTypeEnum,
-//         timeRange: TimeRangeEnum,
-//         cursor: z.string().nullish(),
-//       })
-//     )
-//     .query(async ({ ctx, input }) => {
-//       const { cursor, type, timeRange } = input;
-//       const urlParams = new URLSearchParams({
-//         limit: "50",
-//         time_range: timeRange,
-//       });
-//       const baseUrl = `/me/top/${type}?${urlParams.toString()}`;
-//       const params = cursor;
-
-//       const url = cursor ? `${baseUrl}${params ?? ""}` : baseUrl;
-//       // prettier-ignore
-//       const results = (await spotifyGET(url, ctx.session?.accessToken ?? '').then((res) => res.json())) as TopArtists | TopTracks;
-//       const nextCursor: typeof cursor = results.next
-//         ? results.next.split(type)[1]
-//         : undefined;
-
-//       return {
-//         items: results,
-//         nextCursor,
-//       };
-//     }),

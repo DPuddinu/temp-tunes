@@ -1,10 +1,11 @@
 import type { RecapCardHeaderCva } from "@components/cva/RecapCardHeaderCva";
 import { type VariantProps } from "cva";
 import z from "zod";
-import type { PlaylistSchema, TrackSchema } from "./zod-schemas";
+import type { ArtistSchema, PlaylistSchema, TrackSchema } from "./zod-schemas";
 
 export type Playlist = z.infer<typeof PlaylistSchema>;
 export type Track = z.infer<typeof TrackSchema>;
+export type Artist = z.infer<typeof ArtistSchema>;
 
 export type GetPlaylistResponseType = {
   items: Playlist[];
@@ -63,13 +64,6 @@ export type Seed = {
   id: string;
   initialPoolSize: number;
   type: string;
-};
-export type Artist = {
-  genres: string[];
-  name: string;
-  images: Image[];
-  uri: string;
-  id: string;
 };
 
 export type TopArtists = {

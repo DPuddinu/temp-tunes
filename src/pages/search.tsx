@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { z } from "zod";
-import { usePlaylistStore, useStore } from "~/core/store";
+import { usePlaylistStore } from "~/core/store";
 import type { SearchResult } from "~/server/api/routers/spotify_user_router";
 import type { PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
@@ -13,7 +13,6 @@ const Search: PageWithLayout = () => {
   const searchInput = useRef<HTMLInputElement>(null);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const { playlists } = usePlaylistStore();
-  const { tags } = useStore();
   const { t } = useTranslation("search");
   const [error, setError] = useState(" ");
   const { data, mutate, isLoading } =

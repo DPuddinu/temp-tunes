@@ -1,10 +1,12 @@
 import { spotifyGET } from "~/core/spotifyFetch";
 import type {
+  Artist,
   GetPlaylistResponseType,
   GetTracksResponseType,
   Playlist,
   Track,
 } from "~/types/spotify-types";
+import { spliceArray } from "~/utils/helpers";
 
 const limitParams = new URLSearchParams({
   limit: "50",
@@ -107,6 +109,46 @@ export async function getPlaylistTracks(
       : [];
     data = data.concat(tracks);
     url = response.next ? `${response.next?.split("v1")[1]}` : undefined;
+  }
+  return data;
+}
+
+export async function getTracksByIds(
+  ids: string[],
+  accessToken: string
+) {
+  const data: Track[] = [];
+
+  const chunks = spliceArray(ids, 50)
+  let i = 0;
+
+  while(i !== chunks.length) {
+    const chunk = chunks[i]
+    const formattedIds = chunk?.join(',')
+    const tracksUrl = `/tracks?ids=${formattedIds}` 
+    const tracksByTags = await spotifyGET(tracksUrl, accessToken).then(res => res.json());
+    const formattedTracks: Track[] = tracksByTags.track.map((track: Track) => {
+      const formattedTrack: Track = {
+        artists: track.artists.map((artist: Artist) => {
+          const formattedArtist: Artist = {
+            genres: artist.genres,
+            id: artist.id,
+            images: artist.images,
+            name: artist.name,
+            uri: artist.uri
+          }
+          return formattedArtist
+        }),
+        duration_ms: track.duration_ms,
+        name: track.name,
+        type: track.type,
+        uri: track.uri,
+        id: track.id,
+      } 
+      return formattedTrack
+    })
+    data.push(...formattedTracks)
+    i++;
   }
   return data;
 }
