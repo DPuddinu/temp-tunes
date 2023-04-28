@@ -2,8 +2,9 @@ import MainLayout from "@components/MainLayout";
 import type { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { useRef, useState, type ChangeEvent } from "react";
 import { z } from "zod";
+import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { usePlaylistStore } from "~/core/store";
 import type { SearchResult } from "~/server/api/routers/spotify_user_router";
 import type { PageWithLayout } from "~/types/page-types";
@@ -11,13 +12,17 @@ import { api } from "~/utils/api";
 
 const Search: PageWithLayout = () => {
   const searchInput = useRef<HTMLInputElement>(null);
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const { playlists } = usePlaylistStore();
   const { t } = useTranslation("search");
   const [error, setError] = useState(" ");
-  const { data, mutate, isLoading } =
-    api.spotify_user.searchTracks.useMutation();
-
+  // prettier-ignore
+  const { data, mutate, isLoading } = api.spotify_user.searchTracks.useMutation();
+  const headers = [
+    t("search_table_headers.title"),
+    t("search_table_headers.playlist"),
+    t("search_table_headers.creator"),
+    t("search_table_headers.tags"),
+  ];
   const onSearchInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setError(validateSearchInput(event.target.value));
   };
@@ -29,10 +34,6 @@ const Search: PageWithLayout = () => {
         query: searchInput.current.value,
       });
   };
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   return (
     <div className="flex flex-col items-center justify-center gap-2">
@@ -75,31 +76,9 @@ const Search: PageWithLayout = () => {
           </label>
         )}
       </div>
-      {searchResults.length > 0 && (
-        <div>
-          <div className="overflow-x-auto">
-            <table className="table w-full">
-              {/* head */}
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>Name</th>
-                  <th>Type</th>
-                </tr>
-              </thead>
-              <tbody>
-                {searchResults?.map((res, i) => (
-                  <>
-                    <tr key={i}>
-                      <th>{i + 1}</th>
-                      <td>{res.title}</td>
-                    </tr>
-                  </>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+      {isLoading && <LoadingSpinner/>}
+      {data && data.length > 0 && (
+        <CompactTable headers={headers} data={data} />
       )}
     </div>
   );
@@ -131,4 +110,37 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       ])),
     },
   };
+};
+
+export interface TableConfig {
+  headers: string[];
+  data: SearchResult[];
+}
+
+const CompactTable = ({ data, headers }: TableConfig) => {
+  return (
+    <div className="overflow-x-auto pt-4 sm:w-2/3 w-full">
+      <table className="table-compact table w-full">
+        <thead>
+          <tr>
+            <th></th>
+            {headers.map((header, i) => (
+              <th key={i}>{header}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((data, i) => (
+            <tr key={i}>
+              <th>{i + 1}</th>
+              <td>{data.track.name}</td>
+              <td>{data.playlist}</td>
+              <td>{data.creator}</td>
+              <td>{data.tags.join(", ")}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 };

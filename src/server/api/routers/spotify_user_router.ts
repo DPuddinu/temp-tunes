@@ -88,7 +88,7 @@ export const spotifyUserRouter = createTRPCRouter({
         artists.items[1]?.id ?? ""
       }`,
       seed_tracks: `${tracks.items[0]?.id ?? ""},${tracks.items[1]?.id ?? ""}`,
-      seed_genres: `${artists.items[0]?.genres[0] ?? ""}`,
+      seed_genres: `${artists.items[0] && artists.items[0].genres ?  artists.items[0]?.genres[0] : ""}`,
       limit: "5",
     });
     const recommendationsUrl = `/recommendations?${params.toString()}`;
@@ -124,9 +124,15 @@ export const spotifyUserRouter = createTRPCRouter({
           name: {
             contains: query,
           },
+          OR: {
+            spotifyTrackName: {
+              contains: query
+            }
+          }
         },
       });
-
+      console.log(filteredTags)
+      
       const tracksByTags = await getTracksByIds(filteredTags.map(tag => tag.spotifyId), ctx.session.accessToken)
       filteredTags.forEach((tag) => {
         const trackByTag = tracksByTags.find(track => track.id === tag.spotifyId)

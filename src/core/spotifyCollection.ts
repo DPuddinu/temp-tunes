@@ -118,7 +118,6 @@ export async function getTracksByIds(
   accessToken: string
 ) {
   const data: Track[] = [];
-
   const chunks = spliceArray(ids, 50)
   let i = 0;
 
@@ -126,8 +125,9 @@ export async function getTracksByIds(
     const chunk = chunks[i]
     const formattedIds = chunk?.join(',')
     const tracksUrl = `/tracks?ids=${formattedIds}` 
+
     const tracksByTags = await spotifyGET(tracksUrl, accessToken).then(res => res.json());
-    const formattedTracks: Track[] = tracksByTags.track.map((track: Track) => {
+    const formattedTracks: Track[] = tracksByTags.tracks.map((track: Track) => {
       const formattedTrack: Track = {
         artists: track.artists.map((artist: Artist) => {
           const formattedArtist: Artist = {
@@ -144,7 +144,7 @@ export async function getTracksByIds(
         type: track.type,
         uri: track.uri,
         id: track.id,
-      } 
+      }
       return formattedTrack
     })
     data.push(...formattedTracks)

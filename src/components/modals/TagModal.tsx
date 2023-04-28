@@ -41,7 +41,7 @@ export function TagModal({
   const { data, isLoading, isSuccess, mutate, isError } = api.prisma_router.setTags.useMutation();
 
   useEffect(() => {
-    if (storeTags) {
+    if (storeTags && track.id) {
       const tags = storeTags[track.id];
       setTags(tags !== undefined ? tags : []);
     }
@@ -57,18 +57,20 @@ export function TagModal({
   };
 
   function addTag(tagName: string) {
-    const newTag: TagSchemaType = {
-      name: tagName,
-      spotifyId: track.id,
-      spotifyType: tagType,
-      spotifyTrackName: track.name,
-      spotifyAuthors: track.artists.map(artist => artist.name).join(',')
-    };
-    if(playlistName)newTag.spotifyPlaylistName = playlistName;
-    
-    setTags((oldTags) => {
-      return [...oldTags, newTag];
-    });
+    if(track.id){
+      const newTag: TagSchemaType = {
+        name: tagName,
+        spotifyId: track.id,
+        spotifyType: tagType,
+        spotifyTrackName: track.name,
+        spotifyAuthors: track.artists.map((artist) => artist.name).join(","),
+      };
+      if (playlistName) newTag.spotifyPlaylistName = playlistName;
+
+      setTags((oldTags) => {
+        return [...oldTags, newTag];
+      });
+    }
   }
 
   function removeTag(i: number) {

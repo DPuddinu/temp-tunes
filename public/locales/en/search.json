@@ -8,5 +8,11 @@
   "search_errors": {
     "short": "text too short",
     "long": "text too long"
+  },
+  "search_table_headers": {
+    "title":"Title",
+    "creator": "Creator",
+    "playlist":"Playlist",
+    "tags":"Tags"
   }
 }

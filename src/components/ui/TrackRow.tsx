@@ -12,7 +12,6 @@ interface DropdownProps {
 }
 const TrackRow = ({ track }: Props) => {
   const { t } = useTranslation("common");
-
   const [isHovering, setIsHovering] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 

@@ -68,15 +68,11 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
             <>
               {selectedType === "artists" ? (
                 <ArtistRow
-                  artistImageUrl={(item as Artist).images[2]?.url}
-                  label={(item as Artist).name}
+                  artist={item as Artist}
                   key={i}
                 />
               ) : (
-                <TrackRow
-                  track={item as Track}
-                  key={i}
-                />
+                <TrackRow track={item as Track} key={i} />
               )}
             </>
           ))}
