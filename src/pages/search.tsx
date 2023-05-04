@@ -5,7 +5,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRef, useState, type ChangeEvent } from "react";
 import { z } from "zod";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
-import { usePlaylistStore, useStore } from "~/core/store";
+import { usePlaylistStore } from "~/core/store";
 import type { SearchResult } from "~/server/api/routers/spotify_user_router";
 import type { PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";

@@ -1,4 +1,3 @@
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { getUserPlaylists } from "~/core/spotifyCollection";
 import { spliceArray } from "~/utils/helpers";

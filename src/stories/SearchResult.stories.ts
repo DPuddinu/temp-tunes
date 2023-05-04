@@ -276,19 +276,46 @@ export const Primary: Story = {
     data: [{
       creator: 'Dario',
       playlist: 'Scopri Novità',
-      tags: ['bella', 'figata'],
+      tags: [{
+        name:'bella',
+        spotifyId: '12345',
+        id:'asfd1234'
+      },
+        {
+          name: 'figata',
+          spotifyId: '12345',
+          id: 'asfd1234'
+        }],
       track: ExampleTracks[0] as Track
     },
       {
         creator: 'Dario',
         playlist: 'Scopri Novità',
-        tags: ['bella', 'figata'],
+        tags: [{
+          name: 'bella',
+          spotifyId: '12345',
+          id: 'asfd1234'
+        },
+          {
+            name: 'figata',
+            spotifyId: '12345',
+            id: 'asfd1234'
+          }],
         track: ExampleTracks[1] as Track
       },
       {
         creator: 'Dario',
         playlist: 'Scopri Novità',
-        tags: ['bella', 'figata'],
+        tags: [{
+          name: 'bella',
+          spotifyId: '12345',
+          id: 'asfd1234'
+        },
+          {
+            name: 'figata',
+            spotifyId: '12345',
+            id: 'asfd1234'
+          }],
         track: ExampleTracks[2] as Track
       },
     ],

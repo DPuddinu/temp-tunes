@@ -7,12 +7,12 @@ import {
 } from "react";
 import { z } from "zod";
 import { useStore } from "~/core/store";
+import type { Track } from "~/types/spotify-types";
 import type { TagSchemaType, TagType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
-import type { Track } from "~/types/spotify-types";
 
 type Props = {
   track: Track;
@@ -61,11 +61,7 @@ export function TagModal({
       const newTag: TagSchemaType = {
         name: tagName,
         spotifyId: track.id,
-        spotifyType: tagType,
-        spotifyTrackName: track.name,
-        spotifyAuthors: track.artists.map((artist) => artist.name).join(","),
       };
-      if (playlistName) newTag.spotifyPlaylistName = playlistName;
 
       setTags((oldTags) => {
         return [...oldTags, newTag];
