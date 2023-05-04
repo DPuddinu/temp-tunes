@@ -1,15 +1,14 @@
 import z from "zod";
 
 export const TagType = ["track", "playlist"] as const;
+export const SearchType = ["tag", "track/artist"] as const;
+export const SearchTypeEnum = z.enum(SearchType);
+export type SearchType = z.infer<typeof SearchTypeEnum>
 
 export const TagSchema = z.object({
   id: z.string().optional(),
   spotifyId: z.string(),
-  spotifyType: z.enum(TagType),
   userId: z.string().optional(),
-  spotifyTrackName: z.string(),
-  spotifyPlaylistName: z.string().optional(),
-  spotifyAuthors: z.string().optional(),
   name: z.string(),
 });
 

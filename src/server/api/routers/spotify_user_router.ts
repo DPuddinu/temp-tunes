@@ -12,14 +12,15 @@ import {
   type TopTracks,
   type Track,
 } from "~/types/spotify-types";
-import { PlaylistSchema } from "~/types/zod-schemas";
+import { PlaylistSchema, type TagSchemaType } from "~/types/zod-schemas";
 import { spliceArray } from "~/utils/helpers";
+import { createTagsObject } from "./prisma_router";
 
 export interface SearchResult {
   track: Track;
-  playlist: string;
-  creator: string;
-  tags: string[];
+  playlist?: string;
+  creator?: string;
+  tags?: TagSchemaType[];
 }
 
 export const spotifyUserRouter = createTRPCRouter({
@@ -114,70 +115,81 @@ export const spotifyUserRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const matches: SearchResult[] = [];
+      const { query, playlists } = input
+
       const tagMatches: SearchResult[] = [];
-      const { query, playlists } = input;
+      const playlistMatches: SearchResult[] = [];
 
       // SEARCH BY TAGS
-      const filteredTags = await ctx.prisma.tag.findMany({
+      const tagsByName = await ctx.prisma.tag.findMany({
         where: {
-          name: {
-            contains: query,
+          userId: {
+            equals: ctx.session.user.id
           },
-          OR: {
-            spotifyTrackName: {
-              contains: query
-            }
+          name: {
+            contains: query
           }
-        },
-      });
-      console.log(filteredTags)
-      
-      const tracksByTags = await getTracksByIds(filteredTags.map(tag => tag.spotifyId), ctx.session.accessToken)
-      filteredTags.forEach((tag) => {
-        const trackByTag = tracksByTags.find(track => track.id === tag.spotifyId)
-        if (trackByTag)
+        }
+      }) as TagSchemaType[];
+
+      const tagsObject = createTagsObject(tagsByName)
+      console.log('TAGS BY NAME ------------>')
+      console.log(tagsByName)
+      console.log('-------------------')
+      console.log('TAGS OBJECT --------------->')
+      console.log(tagsObject)
+      console.log('-------------------')
+
+      const tracksByTags = await getTracksByIds(tagsByName.map(tag => tag.spotifyId), ctx.session.accessToken)
+      console.log(tracksByTags)
+      tracksByTags.forEach(t => {
         tagMatches.push({
-          tags: [tag.name],
-          track: trackByTag,
-          playlist: tag.spotifyPlaylistName ?? "",
-          creator: ctx.session.user.name ?? '',
-        });
-      });
-      matches.push(...tagMatches);
+          track: {...t},
+          tags: t.id && tagsObject[t.id] ? tagsObject[t.id] : []
+        })
+      })
+      console.log('TAG MATCHES', tagMatches)
       // -----------------
 
       // SEARCH BY PLAYLIST
-
       if (playlists && playlists.length > 0) {
         playlists.forEach((playlist) => {
           const tracks = playlist.tracks;
+          let newMatch: SearchResult;
+
           tracks.forEach((track) => {
+
             // MATCH BY TRACK NAME OR ARTIST NAME
-            if (
-              match(track.name, query) ||
-              (match(
-                track.artists.map((artist) => artist.name).join(),
-                query
-              ) &&
-                !tagMatches.find(
-                  (match) =>
-                    match.playlist === playlist.name &&
-                    match.track.name === track.name
-                ))
-            ) {
-              matches.push({
+            // prettier-ignore
+            if (match(track.name, query) || match(track.artists.map((artist) => artist.name).join(), query)) {
+              newMatch = {
                 track: track,
                 playlist: playlist.name,
-                tags: [],
                 creator: playlist.owner.display_name,
-              });
+              }
+              console.log('MATCH BY NAME OR ARTIST', newMatch)
+              playlistMatches.push(newMatch);
             }
+            const found = tagMatches.find(t => t.track.id === track.id)
+            if (found && track.id && tagsObject[track.id]) {
+              newMatch = {
+                track: track,
+                playlist: playlist.name,
+                creator: playlist.owner.display_name,
+                tags: tagsObject[track.id]
+              }
+              const matchIndex = tagMatches.indexOf(found)
+              tagMatches.splice(matchIndex, 1)
+              console.log(newMatch)
+              playlistMatches.push(newMatch);
+            }
+            // if(newMatch)playlistMatches.push(newMatch);
           });
         });
+        console.log('playlistMatches',playlistMatches)
       }
 
-      return matches;
+      return [...tagMatches, ...playlistMatches];
     }),
 });
 

@@ -5,7 +5,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRef, useState, type ChangeEvent } from "react";
 import { z } from "zod";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
-import { usePlaylistStore } from "~/core/store";
+import { usePlaylistStore, useStore } from "~/core/store";
 import type { SearchResult } from "~/server/api/routers/spotify_user_router";
 import type { PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
@@ -119,7 +119,7 @@ export interface TableConfig {
 
 const CompactTable = ({ data, headers }: TableConfig) => {
   return (
-    <div className="overflow-x-auto pt-4 sm:w-2/3 w-full">
+    <div className="overflow-x-auto pt-4  w-full">
       <table className="table-compact table w-full">
         <thead>
           <tr>
@@ -136,7 +136,7 @@ const CompactTable = ({ data, headers }: TableConfig) => {
               <td>{data.track.name}</td>
               <td>{data.playlist}</td>
               <td>{data.creator}</td>
-              <td>{data.tags.join(", ")}</td>
+              {data.tags && <td>{data.tags.map(tag => tag.name).join(", ")}</td>}
             </tr>
           ))}
         </tbody>
