@@ -5,6 +5,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRef, useState, type ChangeEvent } from "react";
 import { z } from "zod";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
+import PaginationComponent from "~/components/ui/PaginationComponent";
 import { usePlaylistStore } from "~/core/store";
 import type { SearchResult } from "~/server/api/routers/spotify_user_router";
 import type { PageWithLayout } from "~/types/page-types";
@@ -13,12 +14,15 @@ import { api } from "~/utils/api";
 const Search: PageWithLayout = () => {
   const searchInput = useRef<HTMLInputElement>(null);
   const { playlists } = usePlaylistStore();
+  const [selectedPage, setSelectedPage] = useState(0);
+
   const { t } = useTranslation("search");
   const [error, setError] = useState(" ");
   // prettier-ignore
   const { data, mutate, isLoading } = api.spotify_user.searchTracks.useMutation();
   const headers = [
     t("search_table_headers.title"),
+    t("search_table_headers.author"),
     t("search_table_headers.playlist"),
     t("search_table_headers.creator"),
     t("search_table_headers.tags"),
@@ -38,7 +42,7 @@ const Search: PageWithLayout = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-2">
       {/* <Filters /> */}
-      <div className="form-control w-full sm:max-w-sm md:max-w-md">
+      <div className="form-control w-full pb-4 sm:max-w-sm md:max-w-md">
         <div className="input-group">
           <input
             ref={searchInput}
@@ -76,9 +80,19 @@ const Search: PageWithLayout = () => {
           </label>
         )}
       </div>
-      {isLoading && <LoadingSpinner/>}
-      {data && data.length > 0 && (
-        <CompactTable headers={headers} data={data} />
+      {isLoading && <LoadingSpinner />}
+      {data && data.items[selectedPage] && (
+        <div className="p-1 flex flex-col gap-2 w-full">
+          <CompactTable
+            headers={headers}
+            data={data.items[selectedPage] ?? []}
+          />
+          <PaginationComponent
+            activePage={selectedPage}
+            totalPages={data.items.length}
+            setActivePage={setSelectedPage}
+          />
+        </div>
       )}
     </div>
   );
@@ -117,10 +131,10 @@ export interface TableConfig {
   data: SearchResult[];
 }
 
-const CompactTable = ({ data, headers }: TableConfig) => {
+export const CompactTable = ({ data, headers }: TableConfig) => {
   return (
-    <div className="overflow-x-auto pt-4  w-full">
-      <table className="table-compact table w-full">
+    <div className=" overflow-x-auto w-full ">
+      <table className="px-4 table table-compact w-full">
         <thead>
           <tr>
             <th></th>
@@ -131,12 +145,13 @@ const CompactTable = ({ data, headers }: TableConfig) => {
         </thead>
         <tbody>
           {data.map((data, i) => (
-            <tr key={i}>
+            <tr key={i} className="border border-base-200">
               <th>{i + 1}</th>
               <td>{data.track.name}</td>
+              <td>{data.track.artists.map(artist => artist.name).join(', ')}</td>
               <td>{data.playlist}</td>
               <td>{data.creator}</td>
-              {data.tags && <td>{data.tags.map(tag => tag.name).join(", ")}</td>}
+              {data.tags ? <td>{data.tags.map(tag => tag.name).join(", ")}</td> : <td></td>}
             </tr>
           ))}
         </tbody>

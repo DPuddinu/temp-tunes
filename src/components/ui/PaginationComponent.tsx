@@ -3,13 +3,13 @@ import { PaginationItemCva } from "../cva/PaginationItemCva";
 
 const maxPages = 5;
 interface PropsPagination {
-  maxVisiblePages: number;
+  maxVisiblePages?: number;
   totalPages: number;
   activePage: number;
   setActivePage: Dispatch<SetStateAction<number>>;
 }
 const PaginationComponent = ({
-  maxVisiblePages,
+  maxVisiblePages = 5,
   totalPages,
   activePage,
   setActivePage,

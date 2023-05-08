@@ -1,36 +1,47 @@
-import type { SearchResult } from "~/server/api/routers/spotify_user_router";
-
-export interface TableConfig {
-  headers: string[];
-  data: SearchResult[];
+interface Results {
+  title: string;
+  artists: string[];
+  tags?: string[];
+  creator: string;
+  playlist?: string;
 }
-
-const CompactTable = ({ data, headers }: TableConfig) => {
+export const SearchResultRow = ({ title, artists, tags, playlist, creator }: Results) => {
   return (
-    <div className="overflow-x-auto">
-      <table className="table-compact table w-full">
-        <thead>
-          <tr>
-            <th></th>
-            {headers.map((header, i) => (
-              <th key={i}>{header}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((data, i) => (
-            <tr key={i}>
-              <th>{i + 1}</th>
-              <td>{data.track.name}</td>
-              <td>{data.playlist}</td>
-              <td>{data.creator}</td>
-              <td>{data.tags.join(", ")}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="flex gap-2 rounded-lg bg-base-200 p-2 shadow">
+      <div className="flex grow flex-col gap-2 p-2">
+        <div>
+          <p className="text-md font-neutral-content font-semibold italic tracking-wide">Title</p>
+          <p className="text-sm text-base-content font-accent-content">{title}</p>
+        </div>
+        <div>
+          <p className="text-sm font-medium tracking-wider text-base-content">
+            Artists
+          </p>
+          <p>{artists.map((artist) => artist).join(", ")}</p>
+        </div>
+      </div>
+      <div className="flex grow flex-col gap-2 p-2">
+        <div>
+          <p className="text-sm font-medium tracking-wider text-base-content">
+            Tags
+          </p>
+          <p>{tags && tags.map((tag) => tag).join(", ")}</p>
+        </div>
+        <div>
+          <p className="text-sm font-medium tracking-wider text-base-content">
+            Playlist
+          </p>
+          <p>{playlist && playlist}</p>
+        </div>
+      </div>
+      <div className="flex grow flex-col gap-2 p-2">
+        <div>
+          <p className="text-sm font-medium tracking-wider text-base-content">
+            Creator
+          </p>
+          <p>{creator}</p>
+        </div>
+      </div>
     </div>
   );
 };
-
-export default CompactTable;

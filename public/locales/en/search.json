@@ -11,6 +11,7 @@
   },
   "search_table_headers": {
     "title":"Title",
+    "author":"Author",
     "creator": "Creator",
     "playlist":"Playlist",
     "tags":"Tags"

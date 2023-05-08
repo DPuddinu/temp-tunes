@@ -188,8 +188,12 @@ export const spotifyUserRouter = createTRPCRouter({
         });
         console.log('playlistMatches',playlistMatches)
       }
+      const data = [...tagMatches, ...playlistMatches]
 
-      return [...tagMatches, ...playlistMatches];
+      return {
+        items: spliceArray(data, 25),
+        totalItems: data.length,
+      };
     }),
 });
 

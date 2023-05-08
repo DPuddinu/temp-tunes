@@ -52,7 +52,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
             <p
               className={`${
                 selectedType === type
-                  ? "border  border-transparent border-b-base-content"
+                  ? "border border-transparent border-b-base-content"
                   : ""
               } pb-2 md:text-lg`}
             >
@@ -78,7 +78,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
           ))}
         {data && data.totalItems > itemsPerPage && (
           <PaginationComponent
-            totalPages={Math.ceil(data?.totalItems / itemsPerPage)}
+            totalPages={data.items.length}
             activePage={selectedPage}
             setActivePage={setSelectedPage}
             maxVisiblePages={itemsPerPage}

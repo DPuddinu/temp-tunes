@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { CompactTable } from '~/pages/search';
 
 import type { Track } from '~/types/spotify-types';
-import CompactTable from './SearchResult';
 
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction
 const meta: Meta<typeof CompactTable> = {
