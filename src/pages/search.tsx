@@ -1,11 +1,21 @@
 import MainLayout from "@components/MainLayout";
+import {
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+  type SortingState,
+} from "@tanstack/react-table";
 import type { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useRef, useState, type ChangeEvent } from "react";
+import { useMemo, useRef, useState, type ChangeEvent } from "react";
+import styled, { keyframes } from "styled-components";
 import { z } from "zod";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
-import PaginationComponent from "~/components/ui/PaginationComponent";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { usePlaylistStore } from "~/core/store";
 import type { SearchResult } from "~/server/api/routers/spotify_user_router";
 import type { PageWithLayout } from "~/types/page-types";
@@ -14,19 +24,114 @@ import { api } from "~/utils/api";
 const Search: PageWithLayout = () => {
   const searchInput = useRef<HTMLInputElement>(null);
   const { playlists } = usePlaylistStore();
-  const [selectedPage, setSelectedPage] = useState(0);
 
   const { t } = useTranslation("search");
   const [error, setError] = useState(" ");
   // prettier-ignore
   const { data, mutate, isLoading } = api.spotify_user.searchTracks.useMutation();
-  const headers = [
-    t("search_table_headers.title"),
-    t("search_table_headers.author"),
-    t("search_table_headers.playlist"),
-    t("search_table_headers.creator"),
-    t("search_table_headers.tags"),
-  ];
+
+  const columns: ColumnDef<SearchResult>[] = useMemo(() => {
+    return [
+      {
+        accessorKey: "track",
+        header: ({ column }) => {
+          return (
+            <button
+              className="flex items-center justify-center gap-1"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              {t("search_table_headers.title") ?? "Title"}
+              <Arrow></Arrow>
+            </button>
+          );
+        },
+        // header: ,
+        cell: ({ row }) => {
+          return row.original.track.name;
+        },
+      },
+      {
+        accessorKey: "author",
+        header: ({ column }) => {
+          return (
+            <button
+              className="flex items-center justify-center gap-1"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              {t("search_table_headers.author") ?? "Author"}
+              <Arrow></Arrow>
+            </button>
+          );
+        },
+        cell: ({ row }) => {
+          return row.original.track.artists
+            .map((artist) => artist.name)
+            .join(", ");
+        },
+      },
+      {
+        accessorKey: "playlist",
+        header: ({ column }) => {
+          return (
+            <button
+              className="flex items-center justify-center gap-1"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              {t("search_table_headers.playlist") ?? "playlist"}
+              <Arrow></Arrow>
+            </button>
+          );
+        },
+      },
+
+      {
+        accessorKey: "creator",
+        header: ({ column }) => {
+          return (
+            <button
+              className="flex items-center justify-center gap-1"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              {t("search_table_headers.creator") ?? "Creator"}
+              <Arrow></Arrow>
+            </button>
+          );
+        },
+      },
+      {
+        accessorKey: "tags",
+        header: ({ column }) => {
+          return (
+            <button
+              className="flex items-center justify-center gap-1"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              {t("search_table_headers.tags") ?? "Tags"}
+              <Arrow></Arrow>
+            </button>
+          );
+        },
+        cell: ({ row }) => {
+          const tags = row.original.tags;
+          return (
+            <>{tags && tags.map((tag) => <div key={tag.id}>{tag.name}</div>)}</>
+          );
+        },
+      },
+    ];
+  }, [])  
+
+
   const onSearchInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setError(validateSearchInput(event.target.value));
   };
@@ -81,24 +186,171 @@ const Search: PageWithLayout = () => {
         )}
       </div>
       {isLoading && <LoadingSpinner />}
-      {data && data.items[selectedPage] && (
-        <div className="p-1 flex flex-col gap-2 w-full">
-          <CompactTable
-            headers={headers}
-            data={data.items[selectedPage] ?? []}
-          />
-          <PaginationComponent
-            activePage={selectedPage}
-            totalPages={data.items.length}
-            setActivePage={setSelectedPage}
-          />
+      {data && (
+        <div className="flex w-full flex-col gap-2 p-1">
+          <DataTable columns={columns} data={data} />
         </div>
       )}
     </div>
   );
 };
+export interface TableConfig {
+  headers: string[];
+  data: SearchResult[];
+}
+interface DataTableProps<TData, TValue> {
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+}
 
-export default Search;
+function DataTable<TData, TValue>({
+  columns,
+  data,
+}: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+    },
+  });
+  return (
+    <div className=" w-full overflow-x-auto ">
+      <Table className="table-compact table">
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                );
+              })}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && "selected"}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                No results.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      <div className="btn-group mt-3 flex justify-center">
+        <div className="flex">
+          <button
+            className="btn  bg-neutral"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {"<"}
+          </button>
+          <button
+            className="btn"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            {">"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+interface ArrowProps {
+  open: boolean | undefined;
+}
+
+
+const rotate = keyframes`
+  from {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 180deg;
+  }
+`;
+const reverseRotate = keyframes`
+  from {
+    rotate: 180deg;
+  }
+  to {
+    rotate: 0deg;
+  }
+`;
+
+const ArrowContainer = styled.div<ArrowProps>`
+  animation: ${(p) => (p.open !== undefined ? p.open? rotate : reverseRotate : '')} 0.3s ease-in;
+  rotate: ${(p) => (p.open ? "180deg" : "0deg")}
+`;
+
+const Arrow = () => {
+  const [open, setOpen] = useState<boolean | undefined>(undefined)
+  return (
+    <ArrowContainer open={open} onClick={() => setOpen((open) => {
+      if(open===undefined)return true
+      return !open
+    } )}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 20"
+        strokeWidth={1.5}
+        stroke="currentColor"
+        className="h-4 w-4 focus:rotate-180 "
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+        />
+      </svg>
+    </ArrowContainer>
+  );
+
+}
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return {
+    props: {
+      //prettier- ignore
+      ...(await serverSideTranslations(context.locale ?? "en", [
+        "search",
+        "common",
+        "modals",
+      ])),
+    },
+  };
+};
+
+
+
 Search.getLayout = (page) => <MainLayout>{page}</MainLayout>;
 
 function validateSearchInput(searchInput: string) {
@@ -113,49 +365,4 @@ function validateSearchInput(searchInput: string) {
   return error;
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return {
-    props: {
-      //prettier- ignore
-      ...(await serverSideTranslations(context.locale ?? "en", [
-        "search",
-        "common",
-        "modals",
-      ])),
-    },
-  };
-};
-
-export interface TableConfig {
-  headers: string[];
-  data: SearchResult[];
-}
-
-export const CompactTable = ({ data, headers }: TableConfig) => {
-  return (
-    <div className=" overflow-x-auto w-full ">
-      <table className="px-4 table table-compact w-full">
-        <thead>
-          <tr>
-            <th></th>
-            {headers.map((header, i) => (
-              <th key={i}>{header}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((data, i) => (
-            <tr key={i} className="border border-base-200">
-              <th>{i + 1}</th>
-              <td>{data.track.name}</td>
-              <td>{data.track.artists.map(artist => artist.name).join(', ')}</td>
-              <td>{data.playlist}</td>
-              <td>{data.creator}</td>
-              {data.tags ? <td>{data.tags.map(tag => tag.name).join(", ")}</td> : <td></td>}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-};
+export default Search;

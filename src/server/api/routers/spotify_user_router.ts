@@ -183,17 +183,13 @@ export const spotifyUserRouter = createTRPCRouter({
               console.log(newMatch)
               playlistMatches.push(newMatch);
             }
-            // if(newMatch)playlistMatches.push(newMatch);
           });
         });
         console.log('playlistMatches',playlistMatches)
       }
       const data = [...tagMatches, ...playlistMatches]
 
-      return {
-        items: spliceArray(data, 25),
-        totalItems: data.length,
-      };
+      return data;
     }),
 });
 
