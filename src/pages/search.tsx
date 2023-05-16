@@ -101,8 +101,7 @@ const Search: PageWithLayout = () => {
         },
       },
       {
-        id: 'tags',
-        accessorFn: (row) => row.tags,
+        accessorKey: "tags",
         header: ({ column }) => {
           return (
             <button
@@ -116,7 +115,6 @@ const Search: PageWithLayout = () => {
             </button>
           );
         },
-        
       },
     ];
   }, [])  
