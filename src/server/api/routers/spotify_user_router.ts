@@ -10,14 +10,14 @@ import {
   type Recommendations,
   type TopArtists,
   type TopTracks,
-  type Track,
 } from "~/types/spotify-types";
 import { PlaylistSchema, type TagSchemaType } from "~/types/zod-schemas";
 import { spliceArray } from "~/utils/helpers";
 import { createTagsObject } from "./prisma_router";
 
 export interface SearchResult {
-  track: Track;
+  title: string;
+  artists: string;
   playlist?: string;
   creator?: string;
   tags?: TagSchemaType[];
@@ -144,7 +144,8 @@ export const spotifyUserRouter = createTRPCRouter({
       console.log(tracksByTags)
       tracksByTags.forEach(t => {
         tagMatches.push({
-          track: {...t},
+          title: t.name,
+          artists: t.artists.map(artist => artist.name).join(', '),
           tags: t.id && tagsObject[t.id] ? tagsObject[t.id] : []
         })
       })
@@ -163,17 +164,19 @@ export const spotifyUserRouter = createTRPCRouter({
             // prettier-ignore
             if (match(track.name, query) || match(track.artists.map((artist) => artist.name).join(), query)) {
               newMatch = {
-                track: track,
+                title: track.name,
+                artists: track.artists.map(artist => artist.name).join(', '),
                 playlist: playlist.name,
                 creator: playlist.owner.display_name,
               }
               console.log('MATCH BY NAME OR ARTIST', newMatch)
               playlistMatches.push(newMatch);
             }
-            const found = tagMatches.find(t => t.track.id === track.id)
+            const found = tagMatches.find(t => t.title === track.name)
             if (found && track.id && tagsObject[track.id]) {
               newMatch = {
-                track: track,
+                title: track.name,
+                artists: track.artists.map(artist => artist.name).join(', '),
                 playlist: playlist.name,
                 creator: playlist.owner.display_name,
                 tags: tagsObject[track.id]

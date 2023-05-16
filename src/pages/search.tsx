@@ -1,17 +1,20 @@
 import MainLayout from "@components/MainLayout";
+import { Disclosure, Transition } from "@headlessui/react";
 import {
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
   type ColumnDef,
+  type ColumnFiltersState,
   type SortingState,
 } from "@tanstack/react-table";
 import type { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useMemo, useRef, useState, type ChangeEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import styled, { keyframes } from "styled-components";
 import { z } from "zod";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
@@ -33,7 +36,7 @@ const Search: PageWithLayout = () => {
   const columns: ColumnDef<SearchResult>[] = useMemo(() => {
     return [
       {
-        accessorKey: "track",
+        accessorKey: "title",
         header: ({ column }) => {
           return (
             <button
@@ -43,17 +46,13 @@ const Search: PageWithLayout = () => {
               }
             >
               {t("search_table_headers.title") ?? "Title"}
-              <Arrow></Arrow>
+              <ArrowSVG></ArrowSVG>
             </button>
           );
         },
-        // header: ,
-        cell: ({ row }) => {
-          return row.original.track.name;
-        },
       },
       {
-        accessorKey: "author",
+        accessorKey: "artists",
         header: ({ column }) => {
           return (
             <button
@@ -63,14 +62,9 @@ const Search: PageWithLayout = () => {
               }
             >
               {t("search_table_headers.author") ?? "Author"}
-              <Arrow></Arrow>
+              <ArrowSVG></ArrowSVG>
             </button>
           );
-        },
-        cell: ({ row }) => {
-          return row.original.track.artists
-            .map((artist) => artist.name)
-            .join(", ");
         },
       },
       {
@@ -84,7 +78,7 @@ const Search: PageWithLayout = () => {
               }
             >
               {t("search_table_headers.playlist") ?? "playlist"}
-              <Arrow></Arrow>
+              <ArrowSVG></ArrowSVG>
             </button>
           );
         },
@@ -101,7 +95,7 @@ const Search: PageWithLayout = () => {
               }
             >
               {t("search_table_headers.creator") ?? "Creator"}
-              <Arrow></Arrow>
+              <ArrowSVG></ArrowSVG>
             </button>
           );
         },
@@ -117,7 +111,7 @@ const Search: PageWithLayout = () => {
               }
             >
               {t("search_table_headers.tags") ?? "Tags"}
-              <Arrow></Arrow>
+              <ArrowSVG></ArrowSVG>
             </button>
           );
         },
@@ -146,7 +140,6 @@ const Search: PageWithLayout = () => {
 
   return (
     <div className="flex flex-col items-center justify-center gap-2">
-      {/* <Filters /> */}
       <div className="form-control w-full pb-4 sm:max-w-sm md:max-w-md">
         <div className="input-group">
           <input
@@ -208,6 +201,8 @@ function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [filterOpen, setFilterOpen] = useState(false);
   const table = useReactTable({
     data,
     columns,
@@ -215,12 +210,132 @@ function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
     state: {
       sorting,
+      columnFilters,
     },
   });
+  
   return (
     <div className=" w-full overflow-x-auto ">
+      <div className="mb-2 gap-2 rounded-lg bg-base-200 text-lg font-medium tracking-wide">
+        <Disclosure>
+          <Disclosure.Button>
+            <div onClick={() => setFilterOpen((open) => !open)} className="p-4">
+              {`Filters ${filterOpen ? "-" : "+"}`}
+            </div>
+          </Disclosure.Button>
+
+          <Transition
+            enter="transition duration-100 ease-out"
+            enterFrom="transform scale-95 opacity-0"
+            enterTo="transform scale-100 opacity-100"
+            leave="transition duration-75 ease-out"
+            leaveFrom="transform scale-100 opacity-100"
+            leaveTo="transform scale-95 opacity-0"
+          >
+            <Disclosure.Panel>
+              <div className="rounded-b-lg flex gap-2 bg-base-200 p-4 flex-wrap md:flex-nowrap">
+                <div className="form-control w-full max-w-xs">
+                  <label className="label">
+                    <span className="label-text">Title</span>
+                  </label>
+                  <input
+                    value={
+                      (table.getColumn("title")?.getFilterValue() as string) ??
+                      ""
+                    }
+                    onChange={(event) =>
+                      table
+                        .getColumn("title")
+                        ?.setFilterValue(event.target.value)
+                    }
+                    type="text"
+                    placeholder=""
+                    className="input-bordered input w-full max-w-xs"
+                  />
+                </div>
+                <div className="form-control w-full max-w-xs">
+                  <label className="label">
+                    <span className="label-text">Artists</span>
+                  </label>
+                  <input
+                    value={
+                      (table
+                        .getColumn("artists")
+                        ?.getFilterValue() as string) ?? ""
+                    }
+                    onChange={(event) => {
+                      console.log(event.target.value);
+                      table
+                        .getColumn("artists")
+                        ?.setFilterValue(event.target.value);
+                    }}
+                    type="text"
+                    placeholder=""
+                    className="input-bordered input w-full max-w-xs"
+                  />
+                </div>
+                <div className="form-control w-full max-w-xs">
+                  <label className="label">
+                    <span className="label-text">Playlist</span>
+                  </label>
+                  <input
+                    value={
+                      (table
+                        .getColumn("playlist")
+                        ?.getFilterValue() as string) ?? ""
+                    }
+                    onChange={(event) => {
+                      console.log(event.target.value);
+                      table
+                        .getColumn("playlist")
+                        ?.setFilterValue(event.target.value);
+                    }}
+                    type="text"
+                    placeholder=""
+                    className="input-bordered input w-full max-w-xs"
+                  />
+                </div>
+                <div className="form-control w-full max-w-xs">
+                  <label className="label">
+                    <span className="label-text">Creator</span>
+                  </label>
+                  <input
+                    value={
+                      (table
+                        .getColumn("creator")
+                        ?.getFilterValue() as string) ?? ""
+                    }
+                    onChange={(event) => {
+                      console.log(event.target.value);
+                      table
+                        .getColumn("creator")
+                        ?.setFilterValue(event.target.value);
+                    }}
+                    type="text"
+                    placeholder=""
+                    className="input-bordered input w-full max-w-xs"
+                  />
+                </div>
+              </div>
+            </Disclosure.Panel>
+          </Transition>
+        </Disclosure>
+      </div>
+
+      {/* <div className="collapse mb-2 rounded-lg">
+        <input type="checkbox" className="peer" />
+        <div
+          className="collapse-title  peer-checked:text-secondary-content"
+          onClick={() => setFilterOpen((open) => !open)}
+        >
+          {`Filters ${filterOpen ? "-" : "+"}`}
+        </div>
+        <div className="collapse-content"></div>
+      </div> */}
       <Table className="table-compact table">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -285,7 +400,7 @@ function DataTable<TData, TValue>({
   );
 }
 interface ArrowProps {
-  open: boolean | undefined;
+  isOpen?: boolean | undefined;
 }
 
 
@@ -307,17 +422,25 @@ const reverseRotate = keyframes`
 `;
 
 const ArrowContainer = styled.div<ArrowProps>`
-  animation: ${(p) => (p.open !== undefined ? p.open? rotate : reverseRotate : '')} 0.3s ease-in;
-  rotate: ${(p) => (p.open ? "180deg" : "0deg")}
+  animation: ${(p) => (p.isOpen !== undefined ? p.isOpen? rotate : reverseRotate : '')} 0.3s ease-in;
+  rotate: ${(p) => (p.isOpen ? "180deg" : "0deg")}
 `;
 
-const Arrow = () => {
-  const [open, setOpen] = useState<boolean | undefined>(undefined)
+
+const ArrowSVG = ({ isOpen }: ArrowProps) => {
+  const [open, setOpen] = useState<boolean | undefined>(undefined);
+
   return (
-    <ArrowContainer open={open} onClick={() => setOpen((open) => {
-      if(open===undefined)return true
-      return !open
-    } )}>
+    <ArrowContainer
+      className="flex items-center"
+      isOpen={isOpen ? isOpen : open}
+      onClick={() =>
+        setOpen((open) => {
+          if (open === undefined) return true;
+          return !open;
+        })
+      }
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -334,8 +457,9 @@ const Arrow = () => {
       </svg>
     </ArrowContainer>
   );
+};
 
-}
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
