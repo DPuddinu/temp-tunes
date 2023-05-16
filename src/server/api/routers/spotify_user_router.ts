@@ -20,7 +20,7 @@ export interface SearchResult {
   artists: string;
   playlist?: string;
   creator?: string;
-  tags?: TagSchemaType[];
+  tags?: string;
 }
 
 export const spotifyUserRouter = createTRPCRouter({
@@ -146,7 +146,7 @@ export const spotifyUserRouter = createTRPCRouter({
         tagMatches.push({
           title: t.name,
           artists: t.artists.map(artist => artist.name).join(', '),
-          tags: t.id && tagsObject[t.id] ? tagsObject[t.id] : []
+          tags: t.id && tagsObject[t.id] ? tagsObject[t.id]?.join(', ') : ''
         })
       })
       console.log('TAG MATCHES', tagMatches)
@@ -179,7 +179,7 @@ export const spotifyUserRouter = createTRPCRouter({
                 artists: track.artists.map(artist => artist.name).join(', '),
                 playlist: playlist.name,
                 creator: playlist.owner.display_name,
-                tags: tagsObject[track.id]
+                tags: tagsObject[track.id]?.map(tag => tag.name).join(', ') ?? ''
               }
               const matchIndex = tagMatches.indexOf(found)
               tagMatches.splice(matchIndex, 1)

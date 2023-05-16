@@ -14,7 +14,7 @@ import {
 import type { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { useMemo, useRef, useState, type ChangeEvent } from "react";
 import styled, { keyframes } from "styled-components";
 import { z } from "zod";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
@@ -101,7 +101,8 @@ const Search: PageWithLayout = () => {
         },
       },
       {
-        accessorKey: "tags",
+        id: 'tags',
+        accessorFn: (row) => row.tags,
         header: ({ column }) => {
           return (
             <button
@@ -115,12 +116,7 @@ const Search: PageWithLayout = () => {
             </button>
           );
         },
-        cell: ({ row }) => {
-          const tags = row.original.tags;
-          return (
-            <>{tags && tags.map((tag) => <div key={tag.id}>{tag.name}</div>)}</>
-          );
-        },
+        
       },
     ];
   }, [])  
@@ -237,7 +233,7 @@ function DataTable<TData, TValue>({
             leaveTo="transform scale-95 opacity-0"
           >
             <Disclosure.Panel>
-              <div className="rounded-b-lg flex gap-2 bg-base-200 p-4 flex-wrap md:flex-nowrap">
+              <div className="flex flex-wrap gap-2 rounded-b-lg bg-base-200 p-4 md:flex-nowrap">
                 <div className="form-control w-full max-w-xs">
                   <label className="label">
                     <span className="label-text">Title</span>
@@ -313,6 +309,27 @@ function DataTable<TData, TValue>({
                       console.log(event.target.value);
                       table
                         .getColumn("creator")
+                        ?.setFilterValue(event.target.value);
+                    }}
+                    type="text"
+                    placeholder=""
+                    className="input-bordered input w-full max-w-xs"
+                  />
+                </div>
+                <div className="form-control w-full max-w-xs">
+                  <label className="label">
+                    <span className="label-text">Tags</span>
+                  </label>
+                  <input
+                    value={
+                      (table
+                        .getColumn("tags")
+                        ?.getFilterValue() as string) ?? ""
+                    }
+                    onChange={(event) => {
+                      console.log(event.target.value);
+                      table
+                        .getColumn("tags")
                         ?.setFilterValue(event.target.value);
                     }}
                     type="text"
