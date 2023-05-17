@@ -1,0 +1,25 @@
+.rotate{
+  animation: rotate 0.3s ease-in;
+  rotate: 180deg
+}
+.rotate_reverse{
+  animation: rotateReverse 0.3s ease-in;
+  rotate: 0deg
+}
+
+@keyframes rotate {
+  from {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 180deg;
+  }
+}
+@keyframes rotateReverse {
+  from {
+    rotate: 180deg;
+  }
+  to {
+    rotate: 0deg;
+  }
+}

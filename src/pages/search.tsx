@@ -9,25 +9,25 @@ import {
   useReactTable,
   type ColumnDef,
   type ColumnFiltersState,
-  type SortingState,
+  type SortDirection,
+  type SortingState
 } from "@tanstack/react-table";
 import type { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useMemo, useRef, useState, type ChangeEvent } from "react";
-import styled, { keyframes } from "styled-components";
 import { z } from "zod";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { usePlaylistStore } from "~/core/store";
 import type { SearchResult } from "~/server/api/routers/spotify_user_router";
+import styles from "~/styles/search.module.css";
 import type { PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 
 const Search: PageWithLayout = () => {
   const searchInput = useRef<HTMLInputElement>(null);
   const { playlists } = usePlaylistStore();
-
   const { t } = useTranslation("search");
   const [error, setError] = useState(" ");
   // prettier-ignore
@@ -40,13 +40,13 @@ const Search: PageWithLayout = () => {
         header: ({ column }) => {
           return (
             <button
-              className="flex items-center justify-center gap-1"
+              className="flex w-full items-center gap-1"
               onClick={() =>
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
             >
               {t("search_table_headers.title") ?? "Title"}
-              <ArrowSVG></ArrowSVG>
+              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
             </button>
           );
         },
@@ -62,7 +62,7 @@ const Search: PageWithLayout = () => {
               }
             >
               {t("search_table_headers.author") ?? "Author"}
-              <ArrowSVG></ArrowSVG>
+              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
             </button>
           );
         },
@@ -78,7 +78,7 @@ const Search: PageWithLayout = () => {
               }
             >
               {t("search_table_headers.playlist") ?? "playlist"}
-              <ArrowSVG></ArrowSVG>
+              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
             </button>
           );
         },
@@ -95,7 +95,7 @@ const Search: PageWithLayout = () => {
               }
             >
               {t("search_table_headers.creator") ?? "Creator"}
-              <ArrowSVG></ArrowSVG>
+              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
             </button>
           );
         },
@@ -111,7 +111,7 @@ const Search: PageWithLayout = () => {
               }
             >
               {t("search_table_headers.tags") ?? "Tags"}
-              <ArrowSVG></ArrowSVG>
+              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
             </button>
           );
         },
@@ -262,7 +262,6 @@ function DataTable<TData, TValue>({
                         ?.getFilterValue() as string) ?? ""
                     }
                     onChange={(event) => {
-                      console.log(event.target.value);
                       table
                         .getColumn("artists")
                         ?.setFilterValue(event.target.value);
@@ -283,7 +282,6 @@ function DataTable<TData, TValue>({
                         ?.getFilterValue() as string) ?? ""
                     }
                     onChange={(event) => {
-                      console.log(event.target.value);
                       table
                         .getColumn("playlist")
                         ?.setFilterValue(event.target.value);
@@ -304,7 +302,6 @@ function DataTable<TData, TValue>({
                         ?.getFilterValue() as string) ?? ""
                     }
                     onChange={(event) => {
-                      console.log(event.target.value);
                       table
                         .getColumn("creator")
                         ?.setFilterValue(event.target.value);
@@ -325,7 +322,6 @@ function DataTable<TData, TValue>({
                         ?.getFilterValue() as string) ?? ""
                     }
                     onChange={(event) => {
-                      console.log(event.target.value);
                       table
                         .getColumn("tags")
                         ?.setFilterValue(event.target.value);
@@ -340,17 +336,6 @@ function DataTable<TData, TValue>({
           </Transition>
         </Disclosure>
       </div>
-
-      {/* <div className="collapse mb-2 rounded-lg">
-        <input type="checkbox" className="peer" />
-        <div
-          className="collapse-title  peer-checked:text-secondary-content"
-          onClick={() => setFilterOpen((open) => !open)}
-        >
-          {`Filters ${filterOpen ? "-" : "+"}`}
-        </div>
-        <div className="collapse-content"></div>
-      </div> */}
       <Table className="table-compact table">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -415,46 +400,13 @@ function DataTable<TData, TValue>({
   );
 }
 interface ArrowProps {
-  isOpen?: boolean | undefined;
+  isOpen?: false | SortDirection;
 }
 
-
-const rotate = keyframes`
-  from {
-    rotate: 0deg;
-  }
-  to {
-    rotate: 180deg;
-  }
-`;
-const reverseRotate = keyframes`
-  from {
-    rotate: 180deg;
-  }
-  to {
-    rotate: 0deg;
-  }
-`;
-
-const ArrowContainer = styled.div<ArrowProps>`
-  animation: ${(p) => (p.isOpen !== undefined ? p.isOpen? rotate : reverseRotate : '')} 0.3s ease-in;
-  rotate: ${(p) => (p.isOpen ? "180deg" : "0deg")}
-`;
-
-
 const ArrowSVG = ({ isOpen }: ArrowProps) => {
-  const [open, setOpen] = useState<boolean | undefined>(undefined);
-
   return (
-    <ArrowContainer
-      className="flex items-center"
-      isOpen={isOpen ? isOpen : open}
-      onClick={() =>
-        setOpen((open) => {
-          if (open === undefined) return true;
-          return !open;
-        })
-      }
+    <div
+      className={`flex items-center ${!isOpen ? '' : isOpen === 'asc' ? styles.rotate: styles.rotate_reverse}`}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -470,7 +422,7 @@ const ArrowSVG = ({ isOpen }: ArrowProps) => {
           d="M19.5 8.25l-7.5 7.5-7.5-7.5"
         />
       </svg>
-    </ArrowContainer>
+    </div>
   );
 };
 

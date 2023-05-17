@@ -146,7 +146,7 @@ export const spotifyUserRouter = createTRPCRouter({
         tagMatches.push({
           title: t.name,
           artists: t.artists.map(artist => artist.name).join(', '),
-          tags: t.id && tagsObject[t.id] ? tagsObject[t.id]?.join(', ') : ''
+          tags: t.id && tagsObject[t.id] ? tagsObject[t.id]?.map(tag => tag.name).join(', ') : ''
         })
       })
       console.log('TAG MATCHES', tagMatches)
