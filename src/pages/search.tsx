@@ -317,9 +317,8 @@ function DataTable<TData, TValue>({
                   </label>
                   <input
                     value={
-                      (table
-                        .getColumn("tags")
-                        ?.getFilterValue() as string) ?? ""
+                      (table.getColumn("tags")?.getFilterValue() as string) ??
+                      ""
                     }
                     onChange={(event) => {
                       table
@@ -336,8 +335,8 @@ function DataTable<TData, TValue>({
           </Transition>
         </Disclosure>
       </div>
-      <Table className="table-compact table">
-        <TableHeader>
+      <Table>
+        <TableHeader >
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
