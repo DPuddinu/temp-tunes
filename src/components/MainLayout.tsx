@@ -24,8 +24,6 @@ const pages: Page[] = [
 
 const MainLayout = ({ children }: { children: ReactNode }) => {
   const { data: session, status } = useSession();
-  const { playlists: storeLibrary } = usePlaylistStore();
-  const { progress, currentPlaylist } = useContext(UserDataContext);
   const router = useRouter();
   const openDrawer = useRef<HTMLInputElement>(null);
 
@@ -47,11 +45,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
           />
         </nav>
         <main className="grow p-6">
-          {storeLibrary && storeLibrary.length > 0 ? (
-            children
-          ) : (
-            <LoadingScreen current={currentPlaylist} progress={progress} />
-          )}
+          {children}
         </main>
       </div>
       <div className="drawer-side">
@@ -79,8 +73,8 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
 
 const LoadingScreen = ({ progress, current }: LoadingStateProps) => {
   return (
-    <section className="flex flex-col items-center justify-center gap-3">
-      <p>Loading your playlists...</p>
+    <section className="flex items-center justify-center gap-3">
+      <p className="text-sm">Loading your playlists</p>
       <p className="text-sm">{current}</p>
       {!progress ? (
         <progress className="progress progress-primary w-56" />
@@ -94,13 +88,22 @@ const LoadingScreen = ({ progress, current }: LoadingStateProps) => {
     </section>
   );
 };
+interface UserNavbarProps {
+  name: string;
+  image: string;
+}
+const UserNavbar = ({
+  name,
+  image
+}: UserNavbarProps) => {
+  const { playlists: storeLibrary } = usePlaylistStore();
+  const { progress, currentPlaylist } = useContext(UserDataContext);
 
-const UserNavbar = ({ name, image }: { name: string; image: string }) => {
   return (
     <div className="navbar bg-base-300 bg-gradient-to-r shadow">
       <div className="flex w-full justify-between">
-        <div>
-          <label htmlFor="my-drawer-2" className="btn btn-ghost drawer-button ">
+        <div className="flex gap-2">
+          <label htmlFor="my-drawer-2" className="btn-ghost drawer-button btn ">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -116,6 +119,9 @@ const UserNavbar = ({ name, image }: { name: string; image: string }) => {
               />
             </svg>
           </label>
+          {progress && currentPlaylist && storeLibrary.length === 0 && (
+            <LoadingScreen current={currentPlaylist} progress={progress} />
+          )}
         </div>
 
         <div className="dropdown-end flex">
@@ -125,7 +131,7 @@ const UserNavbar = ({ name, image }: { name: string; image: string }) => {
               <h1 className="text-sm font-medium text-primary-content">
                 {name}
               </h1>
-              <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+              <label tabIndex={0} className="btn-ghost btn-circle avatar btn">
                 <div className="w-10 rounded-full">
                   <img src={image} alt="" />
                 </div>
