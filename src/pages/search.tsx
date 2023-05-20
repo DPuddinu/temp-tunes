@@ -18,10 +18,10 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useMemo, useRef, useState, type ChangeEvent } from "react";
 import { z } from "zod";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
+import { ArrowSVG } from "~/components/ui/icons/ArrowSVG";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { usePlaylistStore } from "~/core/store";
 import type { SearchResult } from "~/server/api/routers/spotify_user_router";
-import styles from "~/styles/search.module.css";
 import type { PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 
@@ -144,7 +144,7 @@ const Search: PageWithLayout = () => {
             onChange={onSearchInputChange}
           />
           <button
-            disabled={!!error}
+            disabled={!!error && playlists?.length > 0}
             className="btn-square btn"
             onClick={search}
           >
@@ -214,7 +214,7 @@ function DataTable<TData, TValue>({
   
   return (
     <div className=" w-full overflow-x-auto ">
-      <div className="mb-2 gap-2 rounded-lg bg-base-200 text-lg font-medium tracking-wide">
+      <div key="filters" className="mb-2 gap-2 rounded-lg bg-base-200 text-lg font-medium tracking-wide">
         <Disclosure>
           <Disclosure.Button>
             <div onClick={() => setFilterOpen((open) => !open)} className="p-4">
@@ -398,32 +398,7 @@ function DataTable<TData, TValue>({
     </div>
   );
 }
-interface ArrowProps {
-  isOpen?: false | SortDirection;
-}
 
-const ArrowSVG = ({ isOpen }: ArrowProps) => {
-  return (
-    <div
-      className={`flex items-center ${!isOpen ? '' : isOpen === 'asc' ? styles.rotate: styles.rotate_reverse}`}
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 20"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="h-4 w-4 focus:rotate-180 "
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-        />
-      </svg>
-    </div>
-  );
-};
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -432,8 +407,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       //prettier- ignore
       ...(await serverSideTranslations(context.locale ?? "en", [
         "search",
-        "common",
-        "modals",
       ])),
     },
   };
