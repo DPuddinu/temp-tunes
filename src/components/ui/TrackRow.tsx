@@ -2,6 +2,7 @@ import { TagModal } from "@components/modals/TagModal";
 import { useTranslation } from "next-i18next";
 import { useState, type ReactNode } from "react";
 import type { Track } from "~/types/spotify-types";
+import { cn } from "~/utils/utils";
 import { TagIcon } from "./icons/TagSVG";
 import { VerticalDots } from "./icons/VerticalDots";
 
@@ -10,11 +11,10 @@ interface Props {
 }
 interface DropdownProps {
   children: ReactNode;
-  hidden: boolean;
+  className?: string;
 }
 const TrackRow = ({ track }: Props) => {
   const { t } = useTranslation("common");
-  const [isHovering, setIsHovering] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onClose = () => {
@@ -22,27 +22,24 @@ const TrackRow = ({ track }: Props) => {
   };
 
   return (
-    <div
-      className="flex rounded-xl px-3 text-accent-content hover:bg-neutral "
-      onMouseOver={() => setIsHovering(true)}
-      onMouseOut={() => setIsHovering(false)}
-    >
-      <div className="flex grow items-center gap-2 hover:text-primary-content">
-        <div className="flex flex-col gap-1">
+    <div className="group flex rounded-xl px-3 text-accent-content hover:bg-neutral">
+      <div className="relative flex grow items-center justify-between p-2 hover:text-primary-content">
+        <div className="flex grow flex-col gap-1">
           <p className="font-medium ">{track.name}</p>
           <p className="text-sm font-medium text-base-content">
             {track.artists.map((artist) => artist.name).join(", ")}
           </p>
         </div>
+        <DropdownMenu className="hidden group-hover:flex max-h-10">
+          <li onClick={() => setIsModalOpen(true)} className="bg-transparent">
+            <div className="flex gap-2 rounded-xl">
+              <TagIcon />
+              <a>{t("add_tag")}</a>
+            </div>
+          </li>
+        </DropdownMenu>
       </div>
-      <DropdownMenu hidden={!isHovering}>
-        <li onClick={() => setIsModalOpen(true)}>
-          <div className="flex gap-2">
-            <TagIcon />
-            <a>{t("add_tag")}</a>
-          </div>
-        </li>
-      </DropdownMenu>
+
       <TagModal
         isOpen={isModalOpen}
         setIsOpen={setIsModalOpen}
@@ -55,14 +52,13 @@ const TrackRow = ({ track }: Props) => {
 };
 
 
-function DropdownMenu({ children, hidden }: DropdownProps) {
+function DropdownMenu({ children, className }: DropdownProps) {
   return (
     <div
-      className="dropdown-end dropdown dropdown-bottom "
-      style={{ visibility: hidden ? "hidden" : "visible" }}
+      className={cn("dropdown-end dropdown-bottom dropdown ", className)}
     >
       <label tabIndex={0} className="m-1">
-        <VerticalDots/>
+        <VerticalDots />
       </label>
       <ul
         tabIndex={0}
