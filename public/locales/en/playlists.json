@@ -2,5 +2,8 @@
   "table_headers": {
     "name": "Name",
     "creator": "Creator"
+  },
+  "operations": {
+    "shuffle": "Shuffle"
   }
 }

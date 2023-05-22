@@ -5,7 +5,8 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useMemo, useState } from "react";
 import MainLayout from "~/components/MainLayout";
-import { DropdownMenu, DropdownMenuV2 } from "~/components/ui/DropdownMenu";
+import { DropdownMenu } from "~/components/ui/DropdownMenu";
+import { ShuffleSVG } from "~/components/ui/icons/ShuffleSVG";
 import { TagIcon } from "~/components/ui/icons/TagSVG";
 import { usePlaylistStore } from "~/core/store";
 import { PageWithLayout } from "~/types/page-types";
@@ -170,7 +171,7 @@ interface PlaylistComponentProps{
 }
 
 function PlaylistComponent({name, creator, imageUrl}: PlaylistComponentProps) {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("playlists");
 
   return (
     <div className="group flex items-center rounded-2xl border-base-300 bg-base-200 shadow">
@@ -184,12 +185,12 @@ function PlaylistComponent({name, creator, imageUrl}: PlaylistComponentProps) {
         <p className="truncate font-semibold">{name}</p>
         <p className="truncate text-sm">{creator}</p>
       </div>
-      
+
       <DropdownMenu className="max-h-10 group-hover:flex sm:hidden">
         <li className="bg-transparent">
           <div className="flex gap-2 rounded-xl">
-            <TagIcon />
-            <a>{t("add_tag")}</a>
+            <ShuffleSVG />
+            <a>{t("operations.shuffle")}</a>
           </div>
         </li>
       </DropdownMenu>
