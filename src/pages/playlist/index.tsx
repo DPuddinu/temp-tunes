@@ -7,7 +7,6 @@ import { useMemo, useState } from "react";
 import MainLayout from "~/components/MainLayout";
 import { DropdownMenu } from "~/components/ui/DropdownMenu";
 import { ShuffleSVG } from "~/components/ui/icons/ShuffleSVG";
-import { TagIcon } from "~/components/ui/icons/TagSVG";
 import { usePlaylistStore } from "~/core/store";
 import { PageWithLayout } from "~/types/page-types";
 import { Playlist } from "~/types/spotify-types";
@@ -30,7 +29,7 @@ const PlaylistsPage: PageWithLayout = () => {
   }, []); 
 
 
-  return <div className="flex flex-col">{
+  return <div className="flex flex-col h-full ">{
     playlists && playlists.length > 0 ? <DataTable columns={columns} data={playlists}></DataTable> : <p>No Data!</p>
   }
     
@@ -63,7 +62,7 @@ function DataTable<TData, TValue>({
     <>
       <div
         key="filters"
-        className="mb-4 gap-2 rounded-lg bg-base-200 text-lg font-medium tracking-wide w-full"
+        className="mb-4 w-full gap-2 rounded-lg bg-base-200 text-lg font-medium tracking-wide"
       >
         <Disclosure>
           <Disclosure.Button>
@@ -126,7 +125,7 @@ function DataTable<TData, TValue>({
           </Transition>
         </Disclosure>
       </div>
-      <div className=" grid w-full gap-4 overflow-x-auto sm:grid-cols-2 md:grid-cols-3">
+      <div className="grid w-full gap-4 overflow-x-auto  sm:grid-cols-2 pb-10 md:grid-cols-3">
         {table.getRowModel().rows?.length ? (
           table
             .getRowModel()
@@ -174,7 +173,7 @@ function PlaylistComponent({name, creator, imageUrl}: PlaylistComponentProps) {
   const { t } = useTranslation("playlists");
 
   return (
-    <div className="group flex items-center rounded-2xl border-base-300 bg-base-200 shadow">
+    <div className="group flex items-center rounded-2xl border-base-300 bg-base-200 shadow max-h-20">
       <div className="h-20 w-20 min-w-[5rem]">
         <img
           src={imageUrl}
@@ -185,8 +184,7 @@ function PlaylistComponent({name, creator, imageUrl}: PlaylistComponentProps) {
         <p className="truncate font-semibold">{name}</p>
         <p className="truncate text-sm">{creator}</p>
       </div>
-
-      <DropdownMenu className="max-h-10 group-hover:flex sm:hidden">
+      <DropdownMenu className="max-h-10 sm:group-hover:flex sm:hidden">
         <li className="bg-transparent">
           <div className="flex gap-2 rounded-xl">
             <ShuffleSVG />

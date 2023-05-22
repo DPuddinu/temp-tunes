@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { VerticalDots } from "./icons/VerticalDots";
 import { cn } from "~/utils/utils";
+import { VerticalDots } from "./icons/VerticalDots";
 
 interface DropdownProps {
   children: ReactNode;
@@ -8,8 +8,8 @@ interface DropdownProps {
 }
 export function DropdownMenu({ children, className }: DropdownProps) {
   return (
-    <div className={cn("dropdown-end dropdown-bottom dropdown ", className)}>
-      <label tabIndex={0} className="m-1">
+    <div className={cn("dropdown-end dropdown-bottom dropdown flex items-center", className)}>
+      <label tabIndex={0} >
         <VerticalDots />
       </label>
       <ul
