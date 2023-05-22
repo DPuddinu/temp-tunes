@@ -5,7 +5,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useMemo, useState } from "react";
 import MainLayout from "~/components/MainLayout";
-import { DropdownMenu } from "~/components/ui/DropdownMenu";
+import { DropdownMenu, DropdownMenuV2 } from "~/components/ui/DropdownMenu";
 import { TagIcon } from "~/components/ui/icons/TagSVG";
 import { usePlaylistStore } from "~/core/store";
 import { PageWithLayout } from "~/types/page-types";
@@ -173,29 +173,26 @@ function PlaylistComponent({name, creator, imageUrl}: PlaylistComponentProps) {
   const { t } = useTranslation("common");
 
   return (
-    <div className="group flex rounded-2xl border-base-300 bg-base-200 shadow">
+    <div className="group flex items-center rounded-2xl border-base-300 bg-base-200 shadow">
       <div className="h-20 w-20 min-w-[5rem]">
         <img
           src={imageUrl}
           className="aspect-square h-full w-full rounded-xl"
         ></img>
       </div>
-      <div className="flex grow items-center justify-between truncate p-2 hover:text-primary-content">
-        <div className="flex flex-col justify-center gap-2 truncate px-4">
-          <p className="truncate font-semibold">{name}</p>
-          <p className="truncate text-sm">{creator}</p>
-        </div>
-        <div className="w-8">
-          <DropdownMenu className="sm:hidden max-h-10 group-hover:flex">
-            <li className="bg-transparent">
-              <div className="flex gap-2 rounded-xl">
-                <TagIcon />
-                <a>{t("add_tag")}</a>
-              </div>
-            </li>
-          </DropdownMenu>
-        </div>
+      <div className="flex grow flex-col justify-center gap-2 truncate px-4">
+        <p className="truncate font-semibold">{name}</p>
+        <p className="truncate text-sm">{creator}</p>
       </div>
+      
+      <DropdownMenu className="max-h-10 group-hover:flex sm:hidden">
+        <li className="bg-transparent">
+          <div className="flex gap-2 rounded-xl">
+            <TagIcon />
+            <a>{t("add_tag")}</a>
+          </div>
+        </li>
+      </DropdownMenu>
     </div>
   );
 }
