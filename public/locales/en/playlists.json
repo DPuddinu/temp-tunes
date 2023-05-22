@@ -4,6 +4,10 @@
     "creator": "Creator"
   },
   "operations": {
-    "shuffle": "Shuffle"
+    "shuffle": "Shuffle",
+    "copy": "Copy",
+    "merge": "Merge",
+    "delete": "Delete",
+    "rename": "Rename"
   }
 }

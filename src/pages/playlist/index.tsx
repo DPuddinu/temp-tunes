@@ -6,6 +6,10 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useMemo, useState } from "react";
 import MainLayout from "~/components/MainLayout";
 import { DropdownMenu } from "~/components/ui/DropdownMenu";
+import { CopySVG } from "~/components/ui/icons/CopySVG";
+import { DeleteSVG } from "~/components/ui/icons/DeleteSVG";
+import { MergeSVG } from "~/components/ui/icons/MergeSVG";
+import { PencilSVG } from "~/components/ui/icons/PencilSVG";
 import { ShuffleSVG } from "~/components/ui/icons/ShuffleSVG";
 import { usePlaylistStore } from "~/core/store";
 import { PageWithLayout } from "~/types/page-types";
@@ -172,7 +176,7 @@ function PlaylistComponent({name, creator, imageUrl}: PlaylistComponentProps) {
   const { t } = useTranslation("playlists");
 
   return (
-    <div className="group flex items-center rounded-2xl border-base-300 bg-base-200 shadow max-h-20">
+    <div className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 shadow">
       <div className="h-20 w-20 min-w-[5rem]">
         <img
           src={imageUrl}
@@ -183,11 +187,35 @@ function PlaylistComponent({name, creator, imageUrl}: PlaylistComponentProps) {
         <p className="truncate font-semibold">{name}</p>
         <p className="truncate text-sm">{creator}</p>
       </div>
-      <DropdownMenu className="max-h-10 sm:group-hover:flex sm:hidden">
+      <DropdownMenu className="max-h-10 sm:hidden sm:group-hover:flex">
         <li className="bg-transparent">
           <div className="flex gap-2 rounded-xl">
             <ShuffleSVG />
             <a>{t("operations.shuffle")}</a>
+          </div>
+        </li>
+        <li className="bg-transparent">
+          <div className="flex gap-2 rounded-xl">
+            <CopySVG />
+            <a>{t("operations.copy")}</a>
+          </div>
+        </li>
+        <li className="bg-transparent">
+          <div className="flex gap-2 rounded-xl">
+            <MergeSVG />
+            <a>{t("operations.merge")}</a>
+          </div>
+        </li>
+        <li className="bg-transparent">
+          <div className="flex gap-2 rounded-xl">
+            <DeleteSVG />
+            <a>{t("operations.delete")}</a>
+          </div>
+        </li>
+        <li className="bg-transparent">
+          <div className="flex gap-2 rounded-xl">
+            <PencilSVG />
+            <a>{t("operations.rename")}</a>
           </div>
         </li>
       </DropdownMenu>
