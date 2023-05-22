@@ -9,7 +9,6 @@ import {
   useReactTable,
   type ColumnDef,
   type ColumnFiltersState,
-  type SortDirection,
   type SortingState
 } from "@tanstack/react-table";
 import type { GetServerSideProps } from "next";
@@ -18,8 +17,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useMemo, useRef, useState, type ChangeEvent } from "react";
 import { z } from "zod";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
-import { ArrowSVG } from "~/components/ui/icons/ArrowSVG";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/Table";
+import { ArrowSVG } from "~/components/ui/icons/ArrowSVG";
 import { usePlaylistStore } from "~/core/store";
 import type { SearchResult } from "~/server/api/routers/spotify_user_router";
 import type { PageWithLayout } from "~/types/page-types";

@@ -28,8 +28,7 @@ const PlaylistsPage: PageWithLayout = () => {
     ];
   }, []); 
 
-
-  return <div className="flex flex-col h-full ">{
+  return <div className="flex flex-col w-full items-center">{
     playlists && playlists.length > 0 ? <DataTable columns={columns} data={playlists}></DataTable> : <p>No Data!</p>
   }
     
@@ -62,7 +61,7 @@ function DataTable<TData, TValue>({
     <>
       <div
         key="filters"
-        className="mb-4 w-full gap-2 rounded-lg bg-base-200 text-lg font-medium tracking-wide"
+        className="mb-4 w-full gap-2 rounded-lg bg-base-200 text-lg font-medium tracking-wide lg:w-3/4"
       >
         <Disclosure>
           <Disclosure.Button>
@@ -125,7 +124,7 @@ function DataTable<TData, TValue>({
           </Transition>
         </Disclosure>
       </div>
-      <div className="grid w-full gap-4 overflow-x-auto  sm:grid-cols-2 pb-10 md:grid-cols-3">
+      <div className="lg:w-3/4 grid w-full gap-4  overflow-x-auto pb-10 sm:grid-cols-2 md:grid-cols-3">
         {table.getRowModel().rows?.length ? (
           table
             .getRowModel()
@@ -141,7 +140,7 @@ function DataTable<TData, TValue>({
           <div>No results</div>
         )}
       </div>
-      <div className="btn-group mt-3 flex justify-center">
+      <div className="lg:w-3/4 btn-group mt-3 flex justify-center">
         <div className="flex">
           <button
             className="btn  bg-neutral"
@@ -177,7 +176,7 @@ function PlaylistComponent({name, creator, imageUrl}: PlaylistComponentProps) {
       <div className="h-20 w-20 min-w-[5rem]">
         <img
           src={imageUrl}
-          className="aspect-square h-full w-full rounded-xl"
+          className="aspect-square h-full w-full rounded-xl object-cover"
         ></img>
       </div>
       <div className="flex grow flex-col justify-center gap-2 truncate px-4">
