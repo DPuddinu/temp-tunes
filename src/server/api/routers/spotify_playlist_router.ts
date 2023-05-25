@@ -22,7 +22,7 @@ export const spotifyPlaylistRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { playlist } = input;
       let uris = playlist.tracks.map(track => track.uri)
-      // await removeTracksFromPlaylist(uris, playlist.id, ctx.session.accessToken)
+      await removeTracksFromPlaylist(uris, playlist.id, ctx.session.accessToken)
       
       const add = await addTracksToPlaylist(shuffle(uris), playlist.id, ctx.session.accessToken)
 
