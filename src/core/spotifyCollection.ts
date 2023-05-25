@@ -1,4 +1,4 @@
-import { spotifyGET } from "~/core/spotifyFetch";
+import { spotifyDELETE, spotifyGET, spotifyPOST } from "~/core/spotifyFetch";
 import type {
   Artist,
   GetPlaylistResponseType,
@@ -151,4 +151,43 @@ export async function getTracksByIds(
     i++;
   }
   return data;
+}
+
+export async function removeTracksFromPlaylist(uris: string[], playlistId: string, token: string) {
+  const url = `/playlists/${playlistId}/tracks`
+  const body = {
+    tracks: uris.map(uri => {
+      return {
+        uri: uri
+      }
+    })
+  }
+  
+  const response = await spotifyDELETE({access_token: token, url: url, body: JSON.stringify(body) })
+  return response
+}
+
+export async function addTracksToPlaylist(uris: string[], playlistId: string, token: string) {
+
+  console.log('TEST 1234')
+  const url = `/playlists/${playlistId}/tracks`
+  
+  const body = {
+    uris: uris.join(),
+    position: 0
+  }
+  const response = await spotifyPOST({ access_token: token, url: url, body: JSON.stringify(body) })
+  return response 
+  // const chunks = spliceArray(uris, 100)
+  // let i = 0;
+
+  // while (i !== chunks.length) {
+  //   const chunk = chunks[i] as string[]
+  //   const body = {
+  //     uris: chunk?.join() ?? [],
+  //     position: i == 0 ? 0 : chunk.length -1
+  //   }
+  //   await spotifyPOST({ access_token: token, url: url, body: JSON.stringify(body)})
+  //   i++
+  // }
 }

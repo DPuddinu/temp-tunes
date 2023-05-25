@@ -14,6 +14,7 @@ import { ShuffleSVG } from "~/components/ui/icons/ShuffleSVG";
 import { usePlaylistStore } from "~/core/store";
 import { PageWithLayout } from "~/types/page-types";
 import { Playlist } from "~/types/spotify-types";
+import { api } from "~/utils/api";
 
 const PlaylistsPage: PageWithLayout = () => {
 
@@ -135,9 +136,7 @@ function DataTable<TData, TValue>({
             .rows.map((row) => (
               <PlaylistComponent
                 key={row.id}
-                creator={(row.original as Playlist).owner.display_name}
-                imageUrl={(row.original as Playlist).images[0]?.url ?? ""}
-                name={(row.original as Playlist).name}
+                playlist={row.original as Playlist}
               ></PlaylistComponent>
             ))
         ) : (
@@ -167,28 +166,27 @@ function DataTable<TData, TValue>({
 }
 
 interface PlaylistComponentProps{
-  name:string;
-  creator: string;
-  imageUrl:string;
+  playlist: Playlist
 }
 
-function PlaylistComponent({name, creator, imageUrl}: PlaylistComponentProps) {
+function PlaylistComponent({playlist}: PlaylistComponentProps) {
   const { t } = useTranslation("playlists");
+  const {data, isError, isLoading, mutate} = api.spotify_playlist.randomizePlaylist.useMutation()
 
   return (
     <div className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 shadow">
       <div className="h-20 w-20 min-w-[5rem]">
         <img
-          src={imageUrl}
+          src={playlist.images && playlist.images[0]?  playlist.images[0].url : ''}
           className="aspect-square h-full w-full rounded-xl object-cover"
         ></img>
       </div>
       <div className="flex grow flex-col justify-center gap-2 truncate px-4">
-        <p className="truncate font-semibold">{name}</p>
-        <p className="truncate text-sm">{creator}</p>
+        <p className="truncate font-semibold">{playlist.name}</p>
+        <p className="truncate text-sm">{playlist.owner.display_name}</p>
       </div>
-      <DropdownMenu className="max-h-10 sm:hidden sm:group-hover:flex">
-        <li className="bg-transparent">
+      <DropdownMenu className="max-h-10 sm:hidden sm:group-hover:flex pr-4">
+        <li className="bg-transparent" onClick={() => mutate({playlist: playlist})}>
           <div className="flex gap-2 rounded-xl">
             <ShuffleSVG />
             <a>{t("operations.shuffle")}</a>

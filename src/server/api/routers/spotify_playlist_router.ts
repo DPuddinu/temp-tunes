@@ -1,23 +1,49 @@
 import { z } from "zod";
-import { getUserPlaylists } from "~/core/spotifyCollection";
-import { spliceArray } from "~/utils/helpers";
+import { addTracksToPlaylist, getUserPlaylists, removeTracksFromPlaylist } from "~/core/spotifyCollection";
+import { PlaylistSchema } from "~/types/zod-schemas";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const spotifyPlaylistRouter = createTRPCRouter({
   getAllPlaylists: protectedProcedure
-    .input(
-      z.object({
-        itemsPerPage: z.number(),
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      const { itemsPerPage } = input;
+    .query(async ({ ctx }) => {
       const params = new URLSearchParams({
         limit: "50",
       });
       const url = "/me/playlists?" + params.toString();
       const data = await getUserPlaylists(url, ctx.session.accessToken);
 
-      return spliceArray(data, itemsPerPage);
+      return data;
+    }),
+  randomizePlaylist: protectedProcedure.input(
+    z.object({
+      playlist: PlaylistSchema,
+    })
+  )
+    .mutation(async ({ ctx, input }) => {
+      const { playlist } = input;
+      let uris = playlist.tracks.map(track => track.uri)
+      // await removeTracksFromPlaylist(uris, playlist.id, ctx.session.accessToken)
+      
+      const add = await addTracksToPlaylist(shuffle(uris), playlist.id, ctx.session.accessToken)
+
+      return add
     }),
 });
+
+function shuffle(array: any[]) {
+  let currentIndex = array.length, randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex != 0) {
+
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+}

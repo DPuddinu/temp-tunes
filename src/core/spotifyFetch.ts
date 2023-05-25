@@ -24,9 +24,9 @@ const spotifyGET = async (
   });
 };
 
-const spotifyPOST = (url: string, headers: IHeader, body: BodyInit) =>
+const spotifyPOST = ({ url, body, access_token }: { access_token: string, url: string, body: BodyInit }) =>
   fetch(`${baseUrl}${url}`, {
-    headers: { ...headers },
+    headers: { ...authHeaders(access_token) },
     method: "POST",
     body,
   });
@@ -38,9 +38,9 @@ const spotifyPUT = (url: string, headers: IHeader, body: BodyInit) =>
     body,
   });
 
-const spotifyDELETE = (url: string, headers: IHeader, body: BodyInit) =>
+const spotifyDELETE = ({ url, body, access_token }: { access_token: string, url: string, body: BodyInit} ) =>
   fetch(`${baseUrl}${url}`, {
-    headers: { ...headers },
+    headers: { ...authHeaders(access_token) },
     method: "DELETE",
     body,
   });
