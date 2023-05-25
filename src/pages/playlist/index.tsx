@@ -129,7 +129,7 @@ function DataTable<TData, TValue>({
           </Transition>
         </Disclosure>
       </div>
-      <div className="lg:w-3/4 grid w-full gap-4  overflow-x-auto pb-10 sm:grid-cols-2 md:grid-cols-3">
+      <div className="grid w-full gap-4 sm:grid-cols-2 md:grid-cols-3 lg:w-3/4">
         {table.getRowModel().rows?.length ? (
           table
             .getRowModel()
@@ -143,7 +143,7 @@ function DataTable<TData, TValue>({
           <div>No results</div>
         )}
       </div>
-      <div className="lg:w-3/4 btn-group mt-3 flex justify-center">
+      <div className="btn-group mt-3 flex justify-center lg:w-3/4">
         <div className="flex">
           <button
             className="btn  bg-neutral"
@@ -172,12 +172,15 @@ interface PlaylistComponentProps{
 function PlaylistComponent({playlist}: PlaylistComponentProps) {
   const { t } = useTranslation("playlists");
   const {data, isError, isLoading, mutate} = api.spotify_playlist.randomizePlaylist.useMutation()
+  const [openMenu, setOpenMenu] = useState(false)
 
   return (
     <div className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 shadow">
       <div className="h-20 w-20 min-w-[5rem]">
         <img
-          src={playlist.images && playlist.images[0]?  playlist.images[0].url : ''}
+          src={
+            playlist.images && playlist.images[0] ? playlist.images[0].url : ""
+          }
           className="aspect-square h-full w-full rounded-xl object-cover"
         ></img>
       </div>
@@ -185,37 +188,50 @@ function PlaylistComponent({playlist}: PlaylistComponentProps) {
         <p className="truncate font-semibold">{playlist.name}</p>
         <p className="truncate text-sm">{playlist.owner.display_name}</p>
       </div>
-      <DropdownMenu className="max-h-10 sm:hidden sm:group-hover:flex pr-4">
-        <li className="bg-transparent" onClick={() => mutate({playlist: playlist})}>
-          <div className="flex gap-2 rounded-xl">
-            <ShuffleSVG />
-            <a>{t("operations.shuffle")}</a>
-          </div>
-        </li>
-        <li className="bg-transparent">
-          <div className="flex gap-2 rounded-xl">
-            <CopySVG />
-            <a>{t("operations.copy")}</a>
-          </div>
-        </li>
-        <li className="bg-transparent">
-          <div className="flex gap-2 rounded-xl">
-            <MergeSVG />
-            <a>{t("operations.merge")}</a>
-          </div>
-        </li>
-        <li className="bg-transparent">
-          <div className="flex gap-2 rounded-xl">
-            <DeleteSVG />
-            <a>{t("operations.delete")}</a>
-          </div>
-        </li>
-        <li className="bg-transparent">
-          <div className="flex gap-2 rounded-xl">
-            <PencilSVG />
-            <a>{t("operations.rename")}</a>
-          </div>
-        </li>
+
+      <DropdownMenu
+        className="max-h-10 pr-4 "
+        onClick={() => setOpenMenu((open) => !open)}
+        open={true}
+      >
+        
+          <li
+              className="bg-transparent"
+              onClick={() => {
+                mutate({ playlist: playlist });
+                setOpenMenu(false);
+              }}
+            >
+              <div className="flex gap-2 rounded-xl">
+                <ShuffleSVG />
+                <a>{t("operations.shuffle")}</a>
+              </div>
+            </li>
+            <li className="bg-transparent">
+              <div className="flex gap-2 rounded-xl">
+                <CopySVG />
+                <a>{t("operations.copy")}</a>
+              </div>
+            </li>
+            <li className="bg-transparent">
+              <div className="flex gap-2 rounded-xl">
+                <MergeSVG />
+                <a>{t("operations.merge")}</a>
+              </div>
+            </li>
+            <li className="bg-transparent">
+              <div className="flex gap-2 rounded-xl">
+                <DeleteSVG />
+                <a>{t("operations.delete")}</a>
+              </div>
+            </li>
+            <li className="bg-transparent">
+              <div className="flex gap-2 rounded-xl">
+                <PencilSVG />
+                <a>{t("operations.rename")}</a>
+              </div>
+            </li>
+        
       </DropdownMenu>
     </div>
   );
