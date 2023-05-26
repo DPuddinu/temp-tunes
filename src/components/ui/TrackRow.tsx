@@ -12,7 +12,7 @@ interface Props {
 const TrackRow = ({ track }: Props) => {
   const { t } = useTranslation("common");
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [menuOpen, setMenuOpen] = useState(false)
   const onClose = () => {
     setIsModalOpen(false);
   };
@@ -26,7 +26,7 @@ const TrackRow = ({ track }: Props) => {
             {track.artists.map((artist) => artist.name).join(", ")}
           </p>
         </div>
-        <DropdownMenu className="hidden group-hover:flex max-h-10">
+        <DropdownMenu className=" max-h-10" open={menuOpen} onClick={() => setMenuOpen(open => !open)} intent={"light"}>
           <li onClick={() => setIsModalOpen(true)} className="bg-transparent">
             <div className="flex gap-2 rounded-xl">
               <TagIcon />

@@ -190,48 +190,46 @@ function PlaylistComponent({playlist}: PlaylistComponentProps) {
       </div>
 
       <DropdownMenu
+        intent={"darkest"}
         className="max-h-10 pr-4 "
         onClick={() => setOpenMenu((open) => !open)}
         open={true}
       >
-        
-          <li
-              className="bg-transparent"
-              onClick={() => {
-                mutate({ playlist: playlist });
-                setOpenMenu(false);
-              }}
-            >
-              <div className="flex gap-2 rounded-xl">
-                <ShuffleSVG />
-                <a>{t("operations.shuffle")}</a>
-              </div>
-            </li>
-            <li className="bg-transparent">
-              <div className="flex gap-2 rounded-xl">
-                <CopySVG />
-                <a>{t("operations.copy")}</a>
-              </div>
-            </li>
-            <li className="bg-transparent">
-              <div className="flex gap-2 rounded-xl">
-                <MergeSVG />
-                <a>{t("operations.merge")}</a>
-              </div>
-            </li>
-            <li className="bg-transparent">
-              <div className="flex gap-2 rounded-xl">
-                <DeleteSVG />
-                <a>{t("operations.delete")}</a>
-              </div>
-            </li>
-            <li className="bg-transparent">
-              <div className="flex gap-2 rounded-xl">
-                <PencilSVG />
-                <a>{t("operations.rename")}</a>
-              </div>
-            </li>
-        
+        <li
+          onClick={() => {
+            mutate({ playlist: playlist });
+            setOpenMenu(false);
+          }}
+        >
+          <div className="flex gap-2 rounded-xl">
+            <ShuffleSVG />
+            <a>{t("operations.shuffle")}</a>
+          </div>
+        </li>
+        <li className="disabled">
+          <div className="flex gap-2 rounded-xl">
+            <CopySVG />
+            <a>{t("operations.copy")}</a>
+          </div>
+        </li>
+        <li className="disabled bg-transparent">
+          <div className="flex gap-2 rounded-xl">
+            <MergeSVG />
+            <a>{t("operations.merge")}</a>
+          </div>
+        </li>
+        <li className="disabled bg-transparent">
+          <div className="flex gap-2 rounded-xl">
+            <DeleteSVG />
+            <a>{t("operations.delete")}</a>
+          </div>
+        </li>
+        <li className="disabled bg-transparent">
+          <div className="flex gap-2 rounded-xl">
+            <PencilSVG />
+            <a>{t("operations.rename")}</a>
+          </div>
+        </li>
       </DropdownMenu>
     </div>
   );

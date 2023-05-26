@@ -1,19 +1,22 @@
+import { VariantProps } from "cva";
 import { ReactNode } from "react";
 import { cn } from "~/utils/utils";
+import { DropdownMenuContentCva } from "../cva/DropdownMenuCva";
 import { VerticalDots } from "./icons/VerticalDots";
 
-interface DropdownProps {
+type DropdownProps = {
   children: ReactNode;
   className?: string;
   onClick: () => void;
   open: boolean;
-}
-export function DropdownMenu({ children, className, onClick, open }: DropdownProps) {
+} & VariantProps<typeof DropdownMenuContentCva>;
+
+export function DropdownMenu({ children, className, onClick, open, intent }: DropdownProps) {
   return (
     <>
       <div
         className={cn(
-          "dropdown-end dropdown-bottom dropdown flex items-center",
+          "dropdown-end dropdown-bottom dropdown hidden items-center group-hover:flex",
           className
         )}
         onClick={onClick}
@@ -22,10 +25,7 @@ export function DropdownMenu({ children, className, onClick, open }: DropdownPro
           <VerticalDots />
         </label>
         {open && (
-          <ul
-            tabIndex={0}
-            className="dropdown-content menu rounded-box relative w-52 bg-base-300 p-2 shadow"
-          >
+          <ul tabIndex={0} className={DropdownMenuContentCva({intent})}>
             {children}
           </ul>
         )}
