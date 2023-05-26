@@ -12,7 +12,7 @@ import { DeleteSVG } from "~/components/ui/icons/DeleteSVG";
 import { MergeSVG } from "~/components/ui/icons/MergeSVG";
 import { PencilSVG } from "~/components/ui/icons/PencilSVG";
 import { ShuffleSVG } from "~/components/ui/icons/ShuffleSVG";
-import { usePlaylistStore } from "~/core/store";
+import { usePlaylistStore, useStore } from "~/core/store";
 import { PageWithLayout } from "~/types/page-types";
 import { Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
@@ -174,6 +174,7 @@ function PlaylistComponent({playlist}: PlaylistComponentProps) {
   const { t } = useTranslation("playlists");
   const { isError, isLoading, mutate} = api.spotify_playlist.randomizePlaylist.useMutation()
   const [openMenu, setOpenMenu] = useState(false)
+  const {setMessage} = useStore()
 
   return (
     <div className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 shadow">
@@ -196,7 +197,7 @@ function PlaylistComponent({playlist}: PlaylistComponentProps) {
           intent={"darkest"}
           className="max-h-10 pr-4 "
           onClick={() => setOpenMenu((open) => !open)}
-          open={true}
+          open={openMenu}
         >
           <li
             onClick={() => {
@@ -209,7 +210,7 @@ function PlaylistComponent({playlist}: PlaylistComponentProps) {
               <a>{t("operations.shuffle")}</a>
             </div>
           </li>
-          <li className="disabled">
+          <li className="" onClick={() => setMessage(playlist.name)}>
             <div className="flex gap-2 rounded-xl">
               <CopySVG />
               <a>{t("operations.copy")}</a>

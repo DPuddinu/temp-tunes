@@ -1,9 +1,13 @@
+import { Transition } from "@headlessui/react";
+import { VariantProps } from "cva";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useContext, useRef, useState, type ReactNode } from "react";
+import { useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { UserDataContext } from "~/context/user-data-context";
-import { usePlaylistStore } from "~/core/store";
+import { usePlaylistStore, useStore } from "~/core/store";
+import { cn } from "~/utils/utils";
+import { ToastCva } from "./cva/ToastCva";
 import ThemeSwitcher from "./ui/ThemeSwitcher";
 import { HomeSVG } from "./ui/icons/HomeSVG";
 import { PlaylistSVG } from "./ui/icons/PlaylistSVG";
@@ -30,6 +34,7 @@ const pages: Page[] = [
 
 const MainLayout = ({ children }: { children: ReactNode }) => {
   const { data: session, status } = useSession();
+  const {message, setMessage} = useStore();
   const router = useRouter();
   const openDrawer = useRef<HTMLInputElement>(null);
 
@@ -52,7 +57,8 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
         </nav>
         <main className="grow p-6">
           {children}
-          <BottomNavigation></BottomNavigation>
+          <BottomNavigation />
+          {!!message && <Toast intent={"primary"} message={message} />}
         </main>
       </div>
       <div className="drawer-side">
@@ -181,6 +187,39 @@ const BottomNavigation = () => {
     </div>
   );
 }
+
+type ToastProps = {
+  className?: string;
+  duration?: number;
+  message: string | undefined;
+} & VariantProps<typeof ToastCva>;
+const Toast = ({ className, intent, message, duration = 3000 }: ToastProps) => {
+  const [show, setShow] = useState(false)
+  
+  useEffect(() => {
+    setShow(true)
+    setTimeout(() => setShow(false), duration);
+       
+  },[message])
+
+  return (
+    <>
+      <Transition
+        show={show}
+        enter="transition-opacity duration-75"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        leave="transition-opacity duration-125"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
+      >
+        <div className={cn("toast pb-20", className)}>
+          <div className={ToastCva({ intent })}>{message}</div>
+        </div>
+      </Transition>
+    </>
+  );
+};
 
 export default MainLayout;
 

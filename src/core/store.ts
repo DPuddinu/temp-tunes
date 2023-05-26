@@ -10,11 +10,13 @@ export type PlaylistLibrary = {
   playlists: Playlist[];
   setPlaylists: (playlists: Playlist[]) => void;
 };
-export type UserLibrary = {
+export type UserStore = {
   user: User | undefined;
   tags: TagsObject | undefined;
+  message: string | undefined;
   setTags: (tags: TagsObject) => void;
   setUser: (user: User) => void;
+  setMessage: (message: string | undefined) => void
 };
 
 const emptyStore = create<PlaylistLibrary>()((set) => ({
@@ -35,11 +37,13 @@ const usePersistedStore = create<PlaylistLibrary>()(
   )
 );
 
-const userStore = create<UserLibrary>()((set) => ({
+const userStore = create<UserStore>()((set) => ({
   tags: undefined,
   user: undefined,
+  message: undefined,
   setTags: (tags) => set(() => ({ tags: tags })),
   setUser: (user) => set(() => ({ user: user })),
+  setMessage: (message) => set(() => ({ message: message}))
 }));
 
 export const useStore = () => {
