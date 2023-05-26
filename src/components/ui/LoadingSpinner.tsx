@@ -1,6 +1,11 @@
-export function LoadingSpinner() {
+import { cn } from "~/utils/utils";
+
+interface Props{
+  className?: string
+}
+export function LoadingSpinner({className}: Props) {
   return (
-    <div role="status" className="grid place-items-end">
+    <div role="status" className={cn("grid place-items-end", className)}>
       <svg
         aria-hidden="true"
         className=" h-8 w-8 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"

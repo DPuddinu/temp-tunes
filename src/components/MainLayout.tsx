@@ -1,14 +1,20 @@
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useContext, useRef, type ReactNode } from "react";
+import { useContext, useRef, useState, type ReactNode } from "react";
 import { UserDataContext } from "~/context/user-data-context";
 import { usePlaylistStore } from "~/core/store";
 import ThemeSwitcher from "./ui/ThemeSwitcher";
+import { HomeSVG } from "./ui/icons/HomeSVG";
+import { PlaylistSVG } from "./ui/icons/PlaylistSVG";
+import { SearchSVG } from "./ui/icons/SearchSVG";
+import { TemplateSVG } from "./ui/icons/TemplateSVG";
 
+type PageType = 'Home'| 'Search'| 'Playlists' | 'Templates'
 interface Page {
   url: string;
-  name: string;
+  name: PageType;
+  icon: ReactNode;
 }
 interface LoadingStateProps {
   progress: number | undefined;
@@ -16,10 +22,10 @@ interface LoadingStateProps {
 }
 
 const pages: Page[] = [
-  { url: "/home", name: "Home" },
-  { url: "/search", name: "Advanced Search" },
-  { url: "/playlist", name: "Playlists" },
-  { url: "/templates", name: "Templates" },
+  { url: "/home", name: "Home", icon: <HomeSVG /> },
+  { url: "/search", name: "Search", icon: <SearchSVG /> },
+  { url: "/playlist", name: "Playlists", icon: <PlaylistSVG /> },
+  { url: "/templates", name: "Templates", icon: <TemplateSVG /> },
 ];
 
 const MainLayout = ({ children }: { children: ReactNode }) => {
@@ -46,6 +52,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
         </nav>
         <main className="grow p-6">
           {children}
+          <BottomNavigation></BottomNavigation>
         </main>
       </div>
       <div className="drawer-side">
@@ -101,8 +108,8 @@ const UserNavbar = ({
 
   return (
     <div className="navbar bg-base-300 bg-gradient-to-r shadow">
-      <div className="flex w-full justify-between">
-        <div className="flex gap-2">
+      <div className="flex w-full justify-end sm:justify-between">
+        <div className="p-2 hidden sm:block">
           <label htmlFor="my-drawer-2" className="btn-ghost drawer-button btn ">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -153,4 +160,27 @@ const UserNavbar = ({
   );
 };
 
+const BottomNavigation = () => {
+  const [selectedPage, setSelectedPage] = useState<number>(0);
+  
+  return (
+    <div className="btm-nav bg-base-300 sm:hidden">
+      {pages.map((page, i) => (
+        <Link key={i} href={page.url} className="btm-nav">
+          <button
+            key={i}
+            onClick={() => setSelectedPage(i)}
+            className={`${
+              selectedPage === i ? "border-t-2 bg-base-100" : " bg-base-300"
+            } flex h-full w-full items-center justify-center`}
+          >
+            {page.icon}
+          </button>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
 export default MainLayout;
+

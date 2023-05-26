@@ -6,6 +6,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useMemo, useState } from "react";
 import MainLayout from "~/components/MainLayout";
 import { DropdownMenu } from "~/components/ui/DropdownMenu";
+import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { CopySVG } from "~/components/ui/icons/CopySVG";
 import { DeleteSVG } from "~/components/ui/icons/DeleteSVG";
 import { MergeSVG } from "~/components/ui/icons/MergeSVG";
@@ -171,7 +172,7 @@ interface PlaylistComponentProps{
 
 function PlaylistComponent({playlist}: PlaylistComponentProps) {
   const { t } = useTranslation("playlists");
-  const {data, isError, isLoading, mutate} = api.spotify_playlist.randomizePlaylist.useMutation()
+  const { isError, isLoading, mutate} = api.spotify_playlist.randomizePlaylist.useMutation()
   const [openMenu, setOpenMenu] = useState(false)
 
   return (
@@ -188,49 +189,52 @@ function PlaylistComponent({playlist}: PlaylistComponentProps) {
         <p className="truncate font-semibold">{playlist.name}</p>
         <p className="truncate text-sm">{playlist.owner.display_name}</p>
       </div>
-
-      <DropdownMenu
-        intent={"darkest"}
-        className="max-h-10 pr-4 "
-        onClick={() => setOpenMenu((open) => !open)}
-        open={true}
-      >
-        <li
-          onClick={() => {
-            mutate({ playlist: playlist });
-            setOpenMenu(false);
-          }}
+      {isLoading ? (
+        <LoadingSpinner className="pr-4" />
+      ) : (
+        <DropdownMenu
+          intent={"darkest"}
+          className="max-h-10 pr-4 "
+          onClick={() => setOpenMenu((open) => !open)}
+          open={true}
         >
-          <div className="flex gap-2 rounded-xl">
-            <ShuffleSVG />
-            <a>{t("operations.shuffle")}</a>
-          </div>
-        </li>
-        <li className="disabled">
-          <div className="flex gap-2 rounded-xl">
-            <CopySVG />
-            <a>{t("operations.copy")}</a>
-          </div>
-        </li>
-        <li className="disabled bg-transparent">
-          <div className="flex gap-2 rounded-xl">
-            <MergeSVG />
-            <a>{t("operations.merge")}</a>
-          </div>
-        </li>
-        <li className="disabled bg-transparent">
-          <div className="flex gap-2 rounded-xl">
-            <DeleteSVG />
-            <a>{t("operations.delete")}</a>
-          </div>
-        </li>
-        <li className="disabled bg-transparent">
-          <div className="flex gap-2 rounded-xl">
-            <PencilSVG />
-            <a>{t("operations.rename")}</a>
-          </div>
-        </li>
-      </DropdownMenu>
+          <li
+            onClick={() => {
+              mutate({ playlist: playlist });
+              setOpenMenu(false);
+            }}
+          >
+            <div className="flex gap-2 rounded-xl">
+              <ShuffleSVG />
+              <a>{t("operations.shuffle")}</a>
+            </div>
+          </li>
+          <li className="disabled">
+            <div className="flex gap-2 rounded-xl">
+              <CopySVG />
+              <a>{t("operations.copy")}</a>
+            </div>
+          </li>
+          <li className="disabled bg-transparent">
+            <div className="flex gap-2 rounded-xl">
+              <MergeSVG />
+              <a>{t("operations.merge")}</a>
+            </div>
+          </li>
+          <li className="disabled bg-transparent">
+            <div className="flex gap-2 rounded-xl">
+              <DeleteSVG />
+              <a>{t("operations.delete")}</a>
+            </div>
+          </li>
+          <li className="disabled bg-transparent">
+            <div className="flex gap-2 rounded-xl">
+              <PencilSVG />
+              <a>{t("operations.rename")}</a>
+            </div>
+          </li>
+        </DropdownMenu>
+      )}
     </div>
   );
 }
