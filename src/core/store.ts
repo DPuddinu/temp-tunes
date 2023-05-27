@@ -7,7 +7,7 @@ import type { TagsObject } from "~/server/api/routers/prisma_router";
 import type { Playlist } from "~/types/spotify-types";
 
 export type PlaylistLibrary = {
-  playlists: Playlist[];
+  playlists: Playlist[] | undefined;
   setPlaylists: (playlists: Playlist[]) => void;
 };
 export type UserStore = {
@@ -20,19 +20,19 @@ export type UserStore = {
 };
 
 const emptyStore = create<PlaylistLibrary>()((set) => ({
-  playlists: [],
+  playlists: undefined,
   setPlaylists: (playlists) => set(() => ({ playlists: playlists })),
 }));
 
 const usePersistedStore = create<PlaylistLibrary>()(
   persist(
     (set) => ({
-      playlists: [],
+      playlists: undefined,
       setPlaylists: (playlists) => set(() => ({ playlists: playlists })),
     }),
     {
       name: "nsm-storage", // name of the item in the storage (must be unique)
-      storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
+      storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'sessionStorage' is used
     }
   )
 );

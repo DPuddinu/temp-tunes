@@ -12,25 +12,56 @@ import {
   type SortingState
 } from "@tanstack/react-table";
 import type { GetServerSideProps } from "next";
+import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useMemo, useRef, useState, type ChangeEvent } from "react";
 import { z } from "zod";
+import { LoadingScreen } from "~/components/ui/LoadingPlaylistComponent";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/Table";
 import { ArrowSVG } from "~/components/ui/icons/ArrowSVG";
+import { SearchSVG } from "~/components/ui/icons/SearchSVG";
 import { usePlaylistStore } from "~/core/store";
+import { useLibrary } from "~/hooks/use-library";
 import type { SearchResult } from "~/server/api/routers/spotify_user_router";
 import type { PageWithLayout } from "~/types/page-types";
+import { Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 
 const Search: PageWithLayout = () => {
   const searchInput = useRef<HTMLInputElement>(null);
-  const { playlists } = usePlaylistStore();
+  const { playlists, setPlaylists } = usePlaylistStore();
+  const { data: session } = useSession();
+  const [loading, setLoading] = useState(false);
+  const [currentPlaylist, setCurrentPlaylist] = useState<string | undefined>(
+    undefined
+  );
+  const [progress, setProgress] = useState<number | undefined>(undefined);
+
   const { t } = useTranslation("search");
   const [error, setError] = useState(" ");
   // prettier-ignore
   const { data, mutate, isLoading } = api.spotify_user.searchTracks.useMutation();
+
+  // LOADING LIBRARY
+  const { loadLibrary, isLoadingLibrary, isErrorLibrary } = useLibrary({
+    token: session?.accessToken,
+    onStart: () => setLoading(true),
+    onProgress: (progress: number, name: string) => {
+      setCurrentPlaylist(name);
+      setProgress(progress);
+    },
+    onFinish: (library: Playlist[]) => {
+      setLoading(false);
+      setPlaylists(library);
+      if (searchInput.current)
+        mutate({
+          playlists: library,
+          query: searchInput.current.value,
+        });
+    },
+  });
 
   const columns: ColumnDef<SearchResult>[] = useMemo(() => {
     return [
@@ -116,19 +147,22 @@ const Search: PageWithLayout = () => {
         },
       },
     ];
-  }, [])  
-
+  }, []);
 
   const onSearchInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setError(validateSearchInput(event.target.value));
   };
 
   const search = () => {
+    if(!playlists){
+      loadLibrary();
+      return;
+    }
     if (searchInput.current)
       mutate({
         playlists: playlists,
         query: searchInput.current.value,
-      });
+    });
   };
 
   return (
@@ -143,24 +177,11 @@ const Search: PageWithLayout = () => {
             onChange={onSearchInputChange}
           />
           <button
-            disabled={!!error && playlists?.length > 0}
-            className="btn-square btn"
+            disabled={!!error && playlists && playlists?.length > 0}
+            className="btn btn-square"
             onClick={search}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
+            <SearchSVG/>
           </button>
         </div>
         {!!error && (
@@ -171,7 +192,11 @@ const Search: PageWithLayout = () => {
           </label>
         )}
       </div>
+      {loading && (
+        <LoadingScreen current={currentPlaylist} progress={progress} />
+      )}
       {isLoading && <LoadingSpinner />}
+
       {data && (
         <div className="flex w-full flex-col gap-2 p-1">
           <DataTable columns={columns} data={data} />

@@ -20,10 +20,6 @@ interface Page {
   name: PageType;
   icon: ReactNode;
 }
-interface LoadingStateProps {
-  progress: number | undefined;
-  current: string | undefined;
-}
 
 const pages: Page[] = [
   { url: "/home", name: "Home", icon: <HomeSVG /> },
@@ -34,7 +30,7 @@ const pages: Page[] = [
 
 const MainLayout = ({ children }: { children: ReactNode }) => {
   const { data: session, status } = useSession();
-  const {message, setMessage} = useStore();
+  const {message} = useStore();
   const router = useRouter();
   const openDrawer = useRef<HTMLInputElement>(null);
 
@@ -84,23 +80,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const LoadingScreen = ({ progress, current }: LoadingStateProps) => {
-  return (
-    <section className="flex items-center justify-center gap-3">
-      <p className="text-sm">Loading your playlists</p>
-      <p className="text-sm">{current}</p>
-      {!progress ? (
-        <progress className="progress progress-primary w-56" />
-      ) : (
-        <progress
-          className="progress progress-primary w-56"
-          value={progress}
-          max="100"
-        />
-      )}
-    </section>
-  );
-};
+
 interface UserNavbarProps {
   name: string;
   image: string;
@@ -132,9 +112,7 @@ const UserNavbar = ({
               />
             </svg>
           </label>
-          {progress && currentPlaylist && storeLibrary.length === 0 && (
-            <LoadingScreen current={currentPlaylist} progress={progress} />
-          )}
+          
         </div>
 
         <div className="dropdown-end flex">
