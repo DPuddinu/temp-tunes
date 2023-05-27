@@ -130,7 +130,7 @@ function DataTable<TData, TValue>({
           </Transition>
         </Disclosure>
       </div>
-      <div className="grid w-full gap-4 sm:grid-cols-2 md:grid-cols-3 lg:w-3/4">
+      <div className="flex flex-col sm:grid w-full gap-4 sm:grid-cols-2 md:grid-cols-3 lg:w-3/4">
         {table.getRowModel().rows?.length ? (
           table
             .getRowModel()

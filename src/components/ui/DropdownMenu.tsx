@@ -16,7 +16,7 @@ export function DropdownMenu({ children, className, onClick, open, intent }: Dro
     <>
       <div
         className={cn(
-          "dropdown-end dropdown-bottom dropdown hidden items-center group-hover:flex",
+          "dropdown-end dropdown-bottom dropdown lg:hidden items-center lg:group-hover:flex",
           className
         )}
         onClick={onClick}
