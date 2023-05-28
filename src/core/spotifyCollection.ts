@@ -11,7 +11,6 @@ import { spliceArray } from "~/utils/helpers";
 const limitParams = new URLSearchParams({
   limit: "50",
 });
-const TIMEOUT = 150;
 
 export async function getUserPlaylists(
   accessToken: string,
@@ -185,4 +184,12 @@ export async function addTracksToPlaylist(uris: string[], playlistId: string, to
     i++
   }
   return await Promise.all(responses)
+}
+
+export async function createPlaylist(userID: string, name: string, access_token: string){
+  const url = `/users/${userID}/playlists`
+  const body = {
+    name: name
+  }
+  return await spotifyPOST({access_token: access_token, url, body: JSON.stringify(body)})
 }

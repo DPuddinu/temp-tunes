@@ -3,7 +3,7 @@ import { ColumnDef, ColumnFiltersState, getCoreRowModel, getFilteredRowModel, ge
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import MainLayout from "~/components/MainLayout";
 import { DropdownMenu } from "~/components/ui/DropdownMenu";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
@@ -16,6 +16,10 @@ import { usePlaylistStore, useStore } from "~/core/store";
 import { PageWithLayout } from "~/types/page-types";
 import { Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
+interface DataTableProps<TData, TValue> {
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+}
 
 const PlaylistsPage: PageWithLayout = () => {
 
@@ -23,7 +27,6 @@ const PlaylistsPage: PageWithLayout = () => {
   const {data, isLoading, isError} = api.spotify_playlist.getAllPlaylists.useQuery(undefined, {
     refetchOnWindowFocus: false,
     enabled: !playlists})
-  
   const columns: ColumnDef<Playlist>[] = useMemo(() => {
     return [
       {
@@ -35,7 +38,7 @@ const PlaylistsPage: PageWithLayout = () => {
       }
     ];
   }, []); 
-
+  
   return (
     <div className="flex h-full w-full flex-col items-center justify-center">
       {isLoading ? (
@@ -47,10 +50,6 @@ const PlaylistsPage: PageWithLayout = () => {
   );
 };
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-}
 function DataTable<TData, TValue>({
   columns,
   data,
@@ -178,7 +177,17 @@ interface PlaylistComponentProps{
 
 function PlaylistComponent({playlist}: PlaylistComponentProps) {
   const { t } = useTranslation("playlists");
-  const { isError, isLoading, mutate} = api.spotify_playlist.randomizePlaylist.useMutation()
+  const { isError, isLoading, mutate: shuffle} = api.spotify_playlist.randomizePlaylist.useMutation({
+    onSuccess(){
+      setMessage(`${playlist.name} ${t("operations.shuffled")}`);
+    }
+  })
+  const {mutate: copy, isLoading: copyLoading, isError: copyError} = api.spotify_playlist.copyPlaylist.useMutation({
+    onSuccess() {
+      setMessage(`${playlist.name} ${t("operations.copied")}`);
+    },
+  });
+
   const [openMenu, setOpenMenu] = useState(false)
   const {setMessage} = useStore()
 
@@ -207,9 +216,8 @@ function PlaylistComponent({playlist}: PlaylistComponentProps) {
         >
           <li
             onClick={() => {
-              mutate({ playlist: playlist });
+              shuffle({ playlist: playlist });
               setOpenMenu(false);
-              setMessage(`playlist.name ${t("operations.shuffled")}`);
             }}
           >
             <div className="flex gap-2 rounded-xl">
@@ -217,7 +225,11 @@ function PlaylistComponent({playlist}: PlaylistComponentProps) {
               <a>{t("operations.shuffle")}</a>
             </div>
           </li>
-          <li className="disabled" >
+          <li onClick={() => {
+            copy({ playlist: playlist });
+            setOpenMenu(false);
+
+          }}>
             <div className="flex gap-2 rounded-xl">
               <CopySVG />
               <a>{t("operations.copy")}</a>
