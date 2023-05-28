@@ -3,7 +3,7 @@ import { ColumnDef, ColumnFiltersState, getCoreRowModel, getFilteredRowModel, ge
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import MainLayout from "~/components/MainLayout";
 import { DropdownMenu } from "~/components/ui/DropdownMenu";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
@@ -19,7 +19,7 @@ import { api } from "~/utils/api";
 
 const PlaylistsPage: PageWithLayout = () => {
 
-  const { playlists, setPlaylists } = usePlaylistStore();
+  const { playlists } = usePlaylistStore();
   const {data, isLoading, isError} = api.spotify_playlist.getAllPlaylists.useQuery(undefined, {
     refetchOnWindowFocus: false,
     enabled: !playlists})
@@ -39,16 +39,10 @@ const PlaylistsPage: PageWithLayout = () => {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center">
       {isLoading ? (
-          <LoadingSpinner />
-        ) : (
-          (playlists && playlists.length > 0) ||
-          (data && data.length > 0 && (
-            <DataTable
-              columns={columns}
-              data={playlists !== undefined ? playlists : data}
-            />
-          ))
-        )}
+        <LoadingSpinner />
+      ) : (
+        <DataTable columns={columns} data={playlists ? playlists : data? data : []} />
+      )}
     </div>
   );
 };
