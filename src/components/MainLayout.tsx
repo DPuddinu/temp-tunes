@@ -3,9 +3,8 @@ import { VariantProps } from "cva";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import { UserDataContext } from "~/context/user-data-context";
-import { usePlaylistStore, useStore } from "~/core/store";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useStore } from "~/core/store";
 import { cn } from "~/utils/utils";
 import { ToastCva } from "./cva/ToastCva";
 import ThemeSwitcher from "./ui/ThemeSwitcher";
@@ -89,8 +88,6 @@ const UserNavbar = ({
   name,
   image
 }: UserNavbarProps) => {
-  const { playlists: storeLibrary } = usePlaylistStore();
-  const { progress, currentPlaylist } = useContext(UserDataContext);
 
   return (
     <div className="navbar bg-base-300 bg-gradient-to-r shadow">
@@ -145,17 +142,17 @@ const UserNavbar = ({
 };
 
 const BottomNavigation = () => {
-  const [selectedPage, setSelectedPage] = useState<number>(0);
-  
+  const router = useRouter();
   return (
     <div className="btm-nav bg-base-300 sm:hidden">
       {pages.map((page, i) => (
         <Link key={i} href={page.url} className="btm-nav">
           <button
             key={i}
-            onClick={() => setSelectedPage(i)}
             className={`${
-              selectedPage === i ? "border-t-2 bg-base-100" : " bg-base-300"
+              router.route.includes(page.url)
+                ? "border-t-2 bg-base-100"
+                : " bg-base-300"
             } flex h-full w-full items-center justify-center`}
           >
             {page.icon}
