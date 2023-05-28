@@ -1,6 +1,6 @@
 import { useTranslation } from "next-i18next";
 import TrackRow from "~/components/ui/TrackRow";
-import RowsSkeleton from "~/components/ui/skeletons/SingleRowSkeleton";
+import RowsSkeleton from "~/components/ui/skeletons/RowSkeleton";
 import { api } from "~/utils/api";
 import RecapCard from "../RecapCard";
 

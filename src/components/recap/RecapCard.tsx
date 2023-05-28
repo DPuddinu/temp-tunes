@@ -3,7 +3,7 @@ import type { VariantProps } from "cva";
 import type { PropsWithChildren } from "react";
 import type { RecapSelectItemPropsType } from "~/types/spotify-types";
 import { RecapCardHeaderCva } from "../cva/RecapCardHeaderCva";
-import RowsSkeleton from "../ui/skeletons/SingleRowSkeleton";
+import RowsSkeleton from "../ui/skeletons/RowSkeleton";
 
 type RecapHeaderType = RecapSelectItemPropsType & PropsWithChildren;
 type RecapCardProps = { loading?: boolean } & PropsWithChildren &
