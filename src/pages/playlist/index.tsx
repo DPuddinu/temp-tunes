@@ -3,15 +3,16 @@ import { ColumnDef, ColumnFiltersState, getCoreRowModel, getFilteredRowModel, ge
 import { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useMemo, useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useMemo, useRef, useState } from "react";
 import MainLayout from "~/components/MainLayout";
 import { DropdownMenu } from "~/components/ui/DropdownMenu";
-import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { CopySVG } from "~/components/ui/icons/CopySVG";
 import { DeleteSVG } from "~/components/ui/icons/DeleteSVG";
 import { MergeSVG } from "~/components/ui/icons/MergeSVG";
 import { PencilSVG } from "~/components/ui/icons/PencilSVG";
 import { ShuffleSVG } from "~/components/ui/icons/ShuffleSVG";
+import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { usePlaylistStore, useStore } from "~/core/store";
 import { PageWithLayout } from "~/types/page-types";
 import { Playlist } from "~/types/spotify-types";
@@ -135,11 +136,11 @@ function DataTable<TData, TValue>({
           </Transition>
         </Disclosure>
       </div>
-      <div className="flex flex-col sm:grid w-full gap-4 sm:grid-cols-2 md:grid-cols-3 lg:w-3/4">
+      <div className="flex w-full flex-col gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:w-3/4">
         {table.getRowModel().rows?.length ? (
           table
             .getRowModel()
-            .rows.map((row) => (
+            .rows.map((row, i) => (
               <PlaylistComponent
                 key={row.id}
                 playlist={row.original as Playlist}
@@ -172,11 +173,12 @@ function DataTable<TData, TValue>({
 }
 
 interface PlaylistComponentProps{
-  playlist: Playlist
+  playlist: Playlist,
 }
 
 function PlaylistComponent({playlist}: PlaylistComponentProps) {
   const { t } = useTranslation("playlists");
+  const router = useRouter();
   const { isError, isLoading, mutate: shuffle} = api.spotify_playlist.randomizePlaylist.useMutation({
     onSuccess(){
       setMessage(`${playlist.name} ${t("operations.shuffled")}`);
@@ -187,12 +189,29 @@ function PlaylistComponent({playlist}: PlaylistComponentProps) {
       setMessage(`${playlist.name} ${t("operations.copied")}`);
     },
   });
-
-  const [openMenu, setOpenMenu] = useState(false)
+  const ref = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   const {setMessage} = useStore()
 
+  const [position, setPosition] = useState("");
+
+  useEffect(() => {
+    if (
+      ref.current &&
+      listRef.current &&
+      window.innerHeight - ref.current.getBoundingClientRect().bottom <
+        listRef.current.offsetHeight
+    ) {
+      setPosition("dropdown-top");
+    } else setPosition("dropdown-bottom"); 
+  },[ref, listRef])
+  
+
   return (
-    <div className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 shadow">
+    <div
+      ref={ref}
+      className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 shadow "
+    >
       <div className="h-20 w-20 min-w-[5rem]">
         <img
           src={
@@ -210,49 +229,49 @@ function PlaylistComponent({playlist}: PlaylistComponentProps) {
       ) : (
         <DropdownMenu
           intent={"darkest"}
-          className="max-h-10 pr-4 "
-          onClick={() => setOpenMenu((open) => !open)}
-          open={openMenu}
+          className={`max-h-10 pr-4 ${position}`}
         >
-          <li
-            onClick={() => {
-              shuffle({ playlist: playlist });
-              setOpenMenu(false);
-            }}
-          >
-            <div className="flex gap-2 rounded-xl">
-              <ShuffleSVG />
-              <a>{t("operations.shuffle")}</a>
-            </div>
-          </li>
-          <li onClick={() => {
-            copy({ playlist: playlist });
-            setOpenMenu(false);
-
-          }}>
-            <div className="flex gap-2 rounded-xl">
-              <CopySVG />
-              <a>{t("operations.copy")}</a>
-            </div>
-          </li>
-          <li className="disabled bg-transparent">
-            <div className="flex gap-2 rounded-xl">
-              <MergeSVG />
-              <a>{t("operations.merge")}</a>
-            </div>
-          </li>
-          <li className="disabled bg-transparent">
-            <div className="flex gap-2 rounded-xl">
-              <DeleteSVG />
-              <a>{t("operations.delete")}</a>
-            </div>
-          </li>
-          <li className="disabled bg-transparent">
-            <div className="flex gap-2 rounded-xl">
-              <PencilSVG />
-              <a>{t("operations.rename")}</a>
-            </div>
-          </li>
+          <div ref={listRef}>
+            <li
+              onClick={() => {
+                shuffle({ playlist: playlist });
+              }}
+            >
+              <div className="flex gap-2 rounded-xl">
+                <ShuffleSVG />
+                <a>{t("operations.shuffle")}</a>
+              </div>
+            </li>
+            <li
+              onClick={() => {
+                copy({ playlist: playlist });
+                router.reload();
+              }}
+            >
+              <div className="flex gap-2 rounded-xl">
+                <CopySVG />
+                <a>{t("operations.copy")}</a>
+              </div>
+            </li>
+            <li className="disabled bg-transparent">
+              <div className="flex gap-2 rounded-xl">
+                <MergeSVG />
+                <a>{t("operations.merge")}</a>
+              </div>
+            </li>
+            <li className="disabled bg-transparent">
+              <div className="flex gap-2 rounded-xl">
+                <DeleteSVG />
+                <a>{t("operations.delete")}</a>
+              </div>
+            </li>
+            <li className="disabled bg-transparent">
+              <div className="flex gap-2 rounded-xl">
+                <PencilSVG />
+                <a>{t("operations.rename")}</a>
+              </div>
+            </li>
+          </div>
         </DropdownMenu>
       )}
     </div>
