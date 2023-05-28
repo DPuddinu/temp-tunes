@@ -5,9 +5,14 @@
   },
   "operations": {
     "shuffle": "Shuffle",
+    "shuffled": "Shuffled",
     "copy": "Copy",
+    "copied": "Copied",
     "merge": "Merge",
+    "merged": "Merged",
     "delete": "Delete",
-    "rename": "Rename"
+    "deleted": "Deleted",
+    "rename": "Rename",
+    "renamed": "Renamed"
   }
 }

@@ -18,14 +18,19 @@ const UserDataProvider = ({ children }: { children: ReactNode }) => {
 
   // LOADING USER
   // prettier-ignore
-  const { data: user } = api.user_router.getUserBySpotifyId.useQuery({ spotifyId: session?.user?.id}, { refetchOnWindowFocus: false, enabled: session?.user?.id !== undefined})
-
-  useEffect(() => {
-    if(!storeUser && user){
-      setUser(user.user)
-      setStoreTags(user.tags)
+  const { data: user } = api.user_router.getUserBySpotifyId.useQuery(
+    { spotifyId: session?.user?.id}, 
+    { 
+      refetchOnWindowFocus: false, 
+      enabled: session?.user?.id !== undefined,
+      onSuccess(data) {
+        if (!storeUser && user) {
+          setUser(data.user);
+          setStoreTags(data.tags);
+        }
+      }
     }
-  }, [user, setUser, storeUser, setStoreTags]);
+  )
 
   return (
     <UserDataContext.Provider

@@ -19,9 +19,11 @@ import { api } from "~/utils/api";
 
 const PlaylistsPage: PageWithLayout = () => {
 
-  const { playlists } = usePlaylistStore();
-  const { t } = useTranslation("playlists");
-
+  const { playlists, setPlaylists } = usePlaylistStore();
+  const {data, isLoading, isError} = api.spotify_playlist.getAllPlaylists.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+    enabled: !playlists})
+  
   const columns: ColumnDef<Playlist>[] = useMemo(() => {
     return [
       {
@@ -34,11 +36,21 @@ const PlaylistsPage: PageWithLayout = () => {
     ];
   }, []); 
 
-  return <div className="flex flex-col w-full items-center">{
-    playlists && playlists.length > 0 ? <DataTable columns={columns} data={playlists}></DataTable> : <p>No Data!</p>
-  }
-    
-  </div>;
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center">
+      {isLoading ? (
+          <LoadingSpinner />
+        ) : (
+          (playlists && playlists.length > 0) ||
+          (data && data.length > 0 && (
+            <DataTable
+              columns={columns}
+              data={playlists !== undefined ? playlists : data}
+            />
+          ))
+        )}
+    </div>
+  );
 };
 
 interface DataTableProps<TData, TValue> {
@@ -138,7 +150,7 @@ function DataTable<TData, TValue>({
               <PlaylistComponent
                 key={row.id}
                 playlist={row.original as Playlist}
-              ></PlaylistComponent>
+              />
             ))
         ) : (
           <div>No results</div>
@@ -203,6 +215,7 @@ function PlaylistComponent({playlist}: PlaylistComponentProps) {
             onClick={() => {
               mutate({ playlist: playlist });
               setOpenMenu(false);
+              setMessage(`playlist.name ${t("operations.shuffled")}`);
             }}
           >
             <div className="flex gap-2 rounded-xl">
@@ -210,7 +223,7 @@ function PlaylistComponent({playlist}: PlaylistComponentProps) {
               <a>{t("operations.shuffle")}</a>
             </div>
           </li>
-          <li className="" onClick={() => setMessage(playlist.name)}>
+          <li className="disabled" >
             <div className="flex gap-2 rounded-xl">
               <CopySVG />
               <a>{t("operations.copy")}</a>

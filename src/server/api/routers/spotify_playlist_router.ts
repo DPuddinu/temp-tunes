@@ -6,13 +6,8 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 export const spotifyPlaylistRouter = createTRPCRouter({
   getAllPlaylists: protectedProcedure
     .query(async ({ ctx }) => {
-      const params = new URLSearchParams({
-        limit: "50",
-      });
-      const url = "/me/playlists?" + params.toString();
-      const data = await getUserPlaylists(url, ctx.session.accessToken);
-
-      return data;
+      const playlists = await getUserPlaylists(ctx.session.accessToken);
+      return playlists;
     }),
   randomizePlaylist: protectedProcedure.input(
     z.object({
