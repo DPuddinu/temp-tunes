@@ -26,7 +26,7 @@ export async function getUserPlaylists(
           id: temp.id,
           images: temp.images,
           name: temp.name,
-          owner: { display_name: temp.owner.display_name },
+          owner: { display_name: temp.owner.display_name, id: temp.owner.id },
           tracks: [],
           type: temp.type,
           uri: temp.uri,

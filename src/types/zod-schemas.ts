@@ -44,6 +44,7 @@ export const PlaylistSchema = z.object({
   name: z.string(),
   owner: z.object({
     display_name: z.string(),
+    id: z.string()
   }),
   tracks: TrackSchema.array(),
   type: z.string(),

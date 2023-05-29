@@ -9,9 +9,9 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { GetServerSideProps } from "next";
+import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import MainLayout from "~/components/MainLayout";
@@ -23,7 +23,7 @@ import { PencilSVG } from "~/components/ui/icons/PencilSVG";
 import { ShuffleSVG } from "~/components/ui/icons/ShuffleSVG";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { PlaylistPageSkeleton } from "~/components/ui/skeletons/Skeleton";
-import { usePlaylistStore, useStore } from "~/core/store";
+import { useStore } from "~/core/store";
 import { PageWithLayout } from "~/types/page-types";
 import { Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
@@ -201,7 +201,7 @@ function PaginationComponent<TData>({ table }: { table: Table<TData> }) {
 function PlaylistComponent({ playlist, data }: { playlist: Playlist, data: Playlist[] }) {
   const { t } = useTranslation("playlists");
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter();
+  const {data: session} = useSession()
   const {
     isError,
     mutate: shuffle,
@@ -216,7 +216,6 @@ function PlaylistComponent({ playlist, data }: { playlist: Playlist, data: Playl
   });
   const {
     mutate: copy,
-    isLoading: copyLoading,
     isError: copyError,
   } = api.spotify_playlist.copyPlaylist.useMutation({
     onMutate(){
@@ -316,7 +315,7 @@ function PlaylistComponent({ playlist, data }: { playlist: Playlist, data: Playl
                   </span>
                 </button>
                 <ul className="group-hover:block overflow-y-scroll max-h-80 hidden absolute top-0 right-0 origin-top-left rounded-xl bg-base-300 p-2 hover:bg-base-100">
-                  {data.map((playlist) => (
+                  {data.filter(t => t.owner.id === session?.user?.id ?? '').map((playlist) => (
                     <li className="relative bg-base-300 px-3 py-1 first:rounded-t-xl last:rounded-b-xl hover:bg-primary hover:cursor-pointer">
                       {playlist.name}
                     </li>
