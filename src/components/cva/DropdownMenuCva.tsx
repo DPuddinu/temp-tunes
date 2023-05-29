@@ -1,7 +1,7 @@
 import { cva } from "cva";
 
 export const DropdownMenuContentCva = cva(
-  ["dropdown-content menu rounded-box relative w-52 p-2 shadow"],
+  ["dropdown-content menu rounded-box relative w-52 p-2 shadow scale-0 focus:scale-100"],
   {
     variants: {
       intent: {

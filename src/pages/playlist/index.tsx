@@ -13,6 +13,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
+import styled from "styled-components";
 import MainLayout from "~/components/MainLayout";
 import { DropdownMenu } from "~/components/ui/DropdownMenu";
 import { CopySVG } from "~/components/ui/icons/CopySVG";
@@ -32,11 +33,9 @@ interface DataTableProps<TData, TValue> {
 }
 
 const PlaylistsPage: PageWithLayout = () => {
-  const { playlists } = usePlaylistStore();
   const { data, isLoading, isError } =
     api.spotify_playlist.getAllPlaylists.useQuery(undefined, {
-      refetchOnWindowFocus: false,
-      enabled: !playlists,
+      refetchOnWindowFocus: true,
     });
   const columns: ColumnDef<Playlist>[] = useMemo(() => {
     return [
@@ -57,7 +56,7 @@ const PlaylistsPage: PageWithLayout = () => {
       ) : (
         <DataTable
           columns={columns}
-          data={playlists ? playlists : data ? data : []}
+          data={data ? data : []}
         />
       )}
     </div>
@@ -84,7 +83,7 @@ function DataTable<TData, TValue>({
   return (
     <>
       <FiltersComponent table={table} />
-      <TableBodyComponent table={table} />
+      <TableBodyComponent table={table} data={data as Playlist[]} />
       <PaginationComponent table={table} />
     </>
   );
@@ -157,7 +156,7 @@ function FiltersComponent<TData>({ table }: { table: Table<TData> }) {
     </div>
   );
 }
-function TableBodyComponent<TData>({ table }: { table: Table<TData> }) {
+function TableBodyComponent<TData>({ table, data }: { table: Table<TData>, data: Playlist[] }) {
   return (
     <div className="flex w-full flex-col gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:w-3/4">
       {table.getRowModel().rows?.length ? (
@@ -166,6 +165,7 @@ function TableBodyComponent<TData>({ table }: { table: Table<TData> }) {
           .rows.map((row) => (
             <PlaylistComponent
               key={row.id}
+              data={data}
               playlist={row.original as Playlist}
             />
           ))
@@ -197,16 +197,21 @@ function PaginationComponent<TData>({ table }: { table: Table<TData> }) {
     </div>
   );
 }
-function PlaylistComponent({ playlist }: { playlist: Playlist }) {
+
+function PlaylistComponent({ playlist, data }: { playlist: Playlist, data: Playlist[] }) {
   const { t } = useTranslation("playlists");
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter();
   const {
     isError,
-    isLoading,
     mutate: shuffle,
   } = api.spotify_playlist.randomizePlaylist.useMutation({
+    onMutate(){
+      setIsLoading(true);
+    },
     onSuccess() {
       setMessage(`${playlist.name} ${t("operations.shuffled")}`);
+      setIsLoading(false)
     },
   });
   const {
@@ -214,8 +219,13 @@ function PlaylistComponent({ playlist }: { playlist: Playlist }) {
     isLoading: copyLoading,
     isError: copyError,
   } = api.spotify_playlist.copyPlaylist.useMutation({
+    onMutate(){
+      setIsLoading(true)
+    },
     onSuccess() {
       setMessage(`${playlist.name} ${t("operations.copied")}`);
+      setIsLoading(false)
+      window.dispatchEvent(new Event("focus")); // trigger window focus to refetch playlists
     },
   });
   const ref = useRef<HTMLDivElement>(null);
@@ -253,54 +263,83 @@ function PlaylistComponent({ playlist }: { playlist: Playlist }) {
         <p className="truncate text-sm">{playlist.owner.display_name}</p>
       </div>
       {isLoading ? (
-        <LoadingSpinner/>
+        <LoadingSpinner className="mr-4" />
       ) : (
-        <DropdownMenu
-          intent={"darkest"}
-          className={`max-h-10 pr-4 ${position}`}
-        >
-          <div ref={listRef}>
-            <li
-              onClick={() => {
-                shuffle({ playlist: playlist });
-              }}
-            >
-              <div className="flex gap-2 rounded-xl">
-                <ShuffleSVG />
-                <a>{t("operations.shuffle")}</a>
-              </div>
-            </li>
-            <li
-              onClick={() => {
-                copy({ playlist: playlist });
-                router.reload();
-              }}
-            >
-              <div className="flex gap-2 rounded-xl">
-                <CopySVG />
-                <a>{t("operations.copy")}</a>
-              </div>
-            </li>
-            <li className="disabled bg-transparent">
-              <div className="flex gap-2 rounded-xl">
-                <MergeSVG />
-                <a>{t("operations.merge")}</a>
-              </div>
-            </li>
-            <li className="disabled bg-transparent">
-              <div className="flex gap-2 rounded-xl">
-                <DeleteSVG />
-                <a>{t("operations.delete")}</a>
-              </div>
-            </li>
-            <li className="disabled bg-transparent">
-              <div className="flex gap-2 rounded-xl">
-                <PencilSVG />
-                <a>{t("operations.rename")}</a>
-              </div>
-            </li>
-          </div>
-        </DropdownMenu>
+        <MultiLevel>
+          <DropdownMenu
+            intent={"darkest"}
+            className={`max-h-10 pr-4 ${position}`}
+          >
+            <div ref={listRef}>
+              {/* SHUFFLE */}
+              <li
+                onClick={() => {
+                  shuffle({ playlist: playlist });
+                }}
+              >
+                <div className="flex gap-2 rounded-xl">
+                  <ShuffleSVG />
+                  <a>{t("operations.shuffle")}</a>
+                </div>
+              </li>
+              {/* COPY */}
+              <li
+                onClick={() => {
+                  copy({ playlist: playlist });
+                }}
+              >
+                <div className="flex gap-2 rounded-xl">
+                  <CopySVG />
+                  <a>{t("operations.copy")}</a>
+                </div>
+              </li>
+              {/* MERGE */}
+              <li className="group flex gap-2 rounded-xl hover:bg-base-100 group/merge">
+                <button className="flex grow gap-2 rounded-xl">
+                  <MergeSVG />
+                  <a>{t("operations.merge")}</a>
+                  <span className="flex grow justify-end">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 20"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="arrow h-4 w-4"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                      />
+                    </svg>
+                  </span>
+                </button>
+                <ul className="group-hover:block overflow-y-scroll max-h-80 hidden absolute top-0 right-0 origin-top-left rounded-xl bg-base-300 p-2 hover:bg-base-100">
+                  {data.map((playlist) => (
+                    <li className="relative bg-base-300 px-3 py-1 first:rounded-t-xl last:rounded-b-xl hover:bg-primary hover:cursor-pointer">
+                      {playlist.name}
+                    </li>
+                  ))}
+                </ul>
+              </li>
+              {/* DELETE */}
+              <li className="disabled bg-transparent">
+                <div className="flex gap-2 rounded-xl">
+                  <DeleteSVG />
+                  <a>{t("operations.delete")}</a>
+                </div>
+              </li>
+              {/* RENAME */}
+              <li className="disabled bg-transparent">
+                <div className="flex gap-2 rounded-xl">
+                  <PencilSVG />
+                  <a>{t("operations.rename")}</a>
+                </div>
+              </li>
+            </div>
+          </DropdownMenu>
+        </MultiLevel>
       )}
     </div>
   );
@@ -321,3 +360,31 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   };
 };
+
+
+const MultiLevel = styled.div`
+  li > ul {
+    transform: translatex(100%) scale(0);
+  }
+  li:hover > ul {
+    transform: translatex(101%) scale(1);
+  }
+  li > button .arrow {
+    transform: rotate(-90deg);
+  }
+  li:hover > button .arrow {
+    transform: rotate(-270deg);
+  }
+  .group:hover .group-hover\:scale-100 {
+    transform: scale(1);
+  }
+  .group:hover .group-hover\:-rotate-180 {
+    transform: rotate(180deg);
+  }
+  .scale-0 {
+    transform: scale(0);
+  }
+  
+`;
+
+

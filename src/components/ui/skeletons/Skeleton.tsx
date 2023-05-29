@@ -1,11 +1,14 @@
 export const PlaylistPageSkeleton = () => {
   return (
-    <div className="flex w-full animate-pulse flex-col gap-4 [&>*]:w-full [&>*]:rounded-xl ">
-      <div className="flex h-20 w-full flex-col justify-center gap-2 border-base-300 bg-base-200 pl-4 lg:w-3/4">
+    <div className="flex w-full animate-pulse flex-col gap-4 lg:w-3/4 [&>*]:w-full [&>*]:rounded-xl">
+      <div className="flex-col gap-2 justify-center flex h-20 w-full border-base-300 bg-base-200 pl-4 lg:w-3/4">
         <div className="h-5 w-16 rounded-xl bg-base-300"></div>
         <div className="h-5 w-28 rounded-xl bg-base-300"></div>
       </div>
       <div className="flex w-full grow flex-col items-center justify-center gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:w-3/4">
+        <PlaylistComponentSkeleton />
+        <PlaylistComponentSkeleton />
+        <PlaylistComponentSkeleton />
         <PlaylistComponentSkeleton />
         <PlaylistComponentSkeleton />
         <PlaylistComponentSkeleton />

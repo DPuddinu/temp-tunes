@@ -1,16 +1,18 @@
 import { SortDirection } from "@tanstack/react-table";
 import styles from "~/styles/search.module.css";
+import { cn } from "~/utils/utils";
 
 interface ArrowProps {
   isOpen?: false | SortDirection;
+  className?: string;
 }
 
-export const ArrowSVG = ({ isOpen }: ArrowProps) => {
+export const ArrowSVG = ({ isOpen, className }: ArrowProps) => {
   return (
     <div
-      className={`flex items-center ${
+      className={cn(`flex items-center ${
         !isOpen ? "" : isOpen === "asc" ? styles.rotate : styles.rotate_reverse
-      }`}
+      }`, className)}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

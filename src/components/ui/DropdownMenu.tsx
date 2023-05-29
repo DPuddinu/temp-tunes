@@ -10,7 +10,6 @@ type DropdownProps = {
 } & VariantProps<typeof DropdownMenuContentCva>;
 
 export function DropdownMenu({ children, className, intent }: DropdownProps) {
-  console.log(className)
   return (
     <>
       <div className={cn(`dropdown-end dropdown items-center `, className)}>
