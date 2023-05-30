@@ -346,6 +346,7 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
                     .filter((t) => t.owner.id === session?.user?.id ?? "")
                     .map((p) => (
                       <li
+                        key={self.crypto.randomUUID()}
                         className="relative bg-base-300 px-3 py-1 first:rounded-t-xl last:rounded-b-xl hover:cursor-pointer hover:bg-primary"
                         onClick={() =>
                           merge({
@@ -384,7 +385,7 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
         playlistName={playlist.name}
         onClose={() => setOpenUnfollowModal(false)}
         onSuccess={() => {
-          setIsLoading(false)
+          setIsLoading(false);
           window.dispatchEvent(new Event("focus"));
         }}
         onConfirm={() => setIsLoading(true)}
