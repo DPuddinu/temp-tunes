@@ -78,10 +78,8 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
           ))}
         {data && data.totalItems > itemsPerPage && (
           <PaginationComponent
-            totalPages={data.items.length}
             activePage={selectedPage}
             setActivePage={setSelectedPage}
-            maxVisiblePages={itemsPerPage}
           />
         )}
       </RecapCard.Container>
