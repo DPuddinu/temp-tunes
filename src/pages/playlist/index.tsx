@@ -162,11 +162,12 @@ function TableBodyComponent<TData>({ table, data }: { table: Table<TData>, data:
       {table.getRowModel().rows?.length ? (
         table
           .getRowModel()
-          .rows.map((row) => (
+          .rows.map((row, i) => (
             <PlaylistComponent
               key={row.id}
               data={data}
               playlist={row.original as Playlist}
+              index={i}
             />
           ))
       ) : (
@@ -198,7 +199,7 @@ function PaginationComponent<TData>({ table }: { table: Table<TData> }) {
   );
 }
 
-function PlaylistComponent({ playlist, data }: { playlist: Playlist, data: Playlist[] }) {
+function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data: Playlist[], index: number }) {
   const { t } = useTranslation("playlists");
   const [isLoading, setIsLoading] = useState(false)
   const {data: session} = useSession()
@@ -225,6 +226,18 @@ function PlaylistComponent({ playlist, data }: { playlist: Playlist, data: Playl
       setMessage(`${playlist.name} ${t("operations.copied")}`);
       setIsLoading(false)
       window.dispatchEvent(new Event("focus")); // trigger window focus to refetch playlists
+    },
+  });
+  const {
+    mutate: merge,
+    isError: mergeError,
+  } = api.spotify_playlist.mergePlaylist.useMutation({
+    onMutate(){
+      setIsLoading(true)
+    },
+    onSuccess() {
+      setMessage(`${playlist.name} ${t("operations.merge")}`);
+      setIsLoading(false)
     },
   });
   const ref = useRef<HTMLDivElement>(null);
@@ -293,7 +306,7 @@ function PlaylistComponent({ playlist, data }: { playlist: Playlist, data: Playl
                 </div>
               </li>
               {/* MERGE */}
-              <li className="group flex gap-2 rounded-xl hover:bg-base-100 group/merge">
+              <li className="group/merge relative flex gap-2 rounded-xl hover:bg-base-100">
                 <button className="flex grow gap-2 rounded-xl">
                   <MergeSVG />
                   <a>{t("operations.merge")}</a>
@@ -314,12 +327,34 @@ function PlaylistComponent({ playlist, data }: { playlist: Playlist, data: Playl
                     </svg>
                   </span>
                 </button>
-                <ul className="group-hover:block overflow-y-scroll max-h-80 hidden absolute top-0 right-0 origin-top-left rounded-xl bg-base-300 p-2 hover:bg-base-100">
-                  {data.filter(t => t.owner.id === session?.user?.id ?? '').map((playlist) => (
-                    <li className="relative bg-base-300 px-3 py-1 first:rounded-t-xl last:rounded-b-xl hover:bg-primary hover:cursor-pointer">
-                      {playlist.name}
-                    </li>
-                  ))}
+                <ul
+                  className={`absolute top-0 right-0 hidden max-h-80 -translate-x-full translate-y-[-5rem] overflow-x-auto overflow-y-scroll rounded-xl bg-base-300 p-2 group-hover/merge:block
+                ${
+                  index % 2 === 0
+                    ? "sm:translate-x-full"
+                    : "sm:-translate-x-full"
+                }
+                ${
+                  (index + 1) % 3 === 0
+                    ? "md:-translate-x-full"
+                    : "md:translate-x-full"
+                }`}
+                >
+                  {data
+                    .filter((t) => t.owner.id === session?.user?.id ?? "")
+                    .map((p) => (
+                      <li
+                        className="relative bg-base-300 px-3 py-1 first:rounded-t-xl last:rounded-b-xl hover:cursor-pointer hover:bg-primary"
+                        onClick={() =>
+                          merge({
+                            origin: playlist,
+                            destinationId: p.id,
+                          })
+                        }
+                      >
+                        {p.name}
+                      </li>
+                    ))}
                 </ul>
               </li>
               {/* DELETE */}
@@ -362,12 +397,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 
 const MultiLevel = styled.div`
-  li > ul {
-    transform: translatex(100%) scale(0);
-  }
-  li:hover > ul {
-    transform: translatex(101%) scale(1);
-  }
   li > button .arrow {
     transform: rotate(-90deg);
   }
@@ -383,7 +412,6 @@ const MultiLevel = styled.div`
   .scale-0 {
     transform: scale(0);
   }
-  
 `;
 
 

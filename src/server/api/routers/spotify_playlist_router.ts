@@ -33,6 +33,15 @@ export const spotifyPlaylistRouter = createTRPCRouter({
     const add = await addTracksToPlaylist(tracks.map(track => track.uri), create.id, ctx.session.accessToken)
     create.tracks = [...tracks]
     return create
+  }),
+  mergePlaylist: protectedProcedure.input(z.object({
+    origin: PlaylistSchema,
+    destinationId: z.string()
+  })).mutation(async ({ ctx, input }) => {
+    const { origin, destinationId } = input;
+    const tracks = await getPlaylistTracks(origin.id, ctx.session.accessToken)
+    const add = await addTracksToPlaylist(tracks.map(track => track.uri), destinationId, ctx.session.accessToken)
+    return add
   })
 });
 
