@@ -3,6 +3,7 @@
     "name": "Name",
     "creator": "Creator"
   },
+  "confirmation": "Confirmation",
   "operations": {
     "shuffle": "Shuffle",
     "shuffled": "Shuffled",
@@ -10,8 +11,9 @@
     "copied": "Copied",
     "merge": "Merge",
     "merged": "Merged",
-    "delete": "Delete",
-    "deleted": "Deleted",
+    "unfollow": "Unfollow",
+    "unfollowed": "Unfollowed",
+    "confirm_unfollow": "Are you sure? ",
     "rename": "Rename",
     "renamed": "Renamed"
   }

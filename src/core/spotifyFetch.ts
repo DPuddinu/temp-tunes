@@ -38,12 +38,23 @@ const spotifyPUT = (url: string, headers: IHeader, body: BodyInit) =>
     body,
   });
 
-const spotifyDELETE = ({ url, body, access_token }: { access_token: string, url: string, body: BodyInit} ) =>
-  fetch(`${baseUrl}${url}`, {
+interface ISpotifyDelete{
+  access_token: string,
+  body?: BodyInit,
+  url: string
+}
+const spotifyDELETE = ({ url, body, access_token }: ISpotifyDelete ) =>{
+  if(body)return fetch(`${baseUrl}${url}`, {
     headers: { ...authHeaders(access_token) },
     method: "DELETE",
     body,
   });
+  else fetch(`${baseUrl}${url}`, {
+    headers: { ...authHeaders(access_token) },
+    method: "DELETE",
+  });
+}
+  
 
 export { authHeaders, spotifyGET, spotifyPOST, spotifyPUT, spotifyDELETE };
 

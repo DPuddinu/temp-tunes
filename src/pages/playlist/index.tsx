@@ -15,6 +15,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import MainLayout from "~/components/MainLayout";
+import { UnfollowModal } from "~/components/modals/UnfollowModal";
 import { DropdownMenu } from "~/components/ui/DropdownMenu";
 import { CopySVG } from "~/components/ui/icons/CopySVG";
 import { DeleteSVG } from "~/components/ui/icons/DeleteSVG";
@@ -240,10 +241,11 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
       setIsLoading(false)
     },
   });
+  
   const ref = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const { setMessage } = useStore();
-
+  const [openUnfollowModal, setOpenUnfollowModal] = useState(false)
   const [position, setPosition] = useState("");
 
   useEffect(() => {
@@ -358,10 +360,13 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
                 </ul>
               </li>
               {/* DELETE */}
-              <li className="disabled bg-transparent">
+              <li
+                className="disabled bg-transparent"
+                onClick={() => setOpenUnfollowModal(true)}
+              >
                 <div className="flex gap-2 rounded-xl">
                   <DeleteSVG />
-                  <a>{t("operations.delete")}</a>
+                  <a>{t("operations.unfollow")}</a>
                 </div>
               </li>
               {/* RENAME */}
@@ -375,6 +380,7 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
           </DropdownMenu>
         </MultiLevel>
       )}
+      <UnfollowModal isOpen={openUnfollowModal} playlistID={playlist.id} setIsOpen={setOpenUnfollowModal} onClose={() => setOpenUnfollowModal(false)} ></UnfollowModal>
     </div>
   );
 }

@@ -193,3 +193,8 @@ export async function createPlaylist(userID: string, name: string, access_token:
   }
   return await spotifyPOST({access_token: access_token, url, body: JSON.stringify(body)})
 }
+
+export async function unfollowPlaylist(playlistId: string, access_token: string) {
+  const url = `/playlists/${playlistId}/followers`
+  return await spotifyDELETE({ access_token: access_token, url })
+}
