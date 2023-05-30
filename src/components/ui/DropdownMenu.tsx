@@ -1,5 +1,5 @@
-import { VariantProps } from "cva";
-import { ReactNode } from "react";
+import type { VariantProps } from "cva";
+import type { ReactNode } from "react";
 import { cn } from "~/utils/utils";
 import { DropdownMenuContentCva } from "../cva/DropdownMenuCva";
 import { VerticalDots } from "./icons/VerticalDots";
