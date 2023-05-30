@@ -19,14 +19,14 @@ import { useMemo, useRef, useState, type ChangeEvent } from "react";
 import { z } from "zod";
 import { LoadingScreen } from "~/components/ui/LoadingPlaylistComponent";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/Table";
 import { ArrowSVG } from "~/components/ui/icons/ArrowSVG";
 import { SearchSVG } from "~/components/ui/icons/SearchSVG";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { usePlaylistStore } from "~/core/store";
 import { useLibrary } from "~/hooks/use-library";
 import type { SearchResult } from "~/server/api/routers/spotify_user_router";
 import type { PageWithLayout } from "~/types/page-types";
-import { Playlist } from "~/types/spotify-types";
+import { type Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 
 const Search: PageWithLayout = () => {

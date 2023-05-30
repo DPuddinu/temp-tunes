@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { addTracksToPlaylist, createPlaylist, getPlaylistTracks, getUserPlaylists, removeTracksFromPlaylist, unfollowPlaylist } from "~/core/spotifyCollection";
-import { Playlist } from "~/types/spotify-types";
+import { type Playlist } from "~/types/spotify-types";
 import { PlaylistSchema } from "~/types/zod-schemas";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
@@ -17,7 +17,7 @@ export const spotifyPlaylistRouter = createTRPCRouter({
   )
     .mutation(async ({ ctx, input }) => {
       const { playlist } = input;
-      let uris = playlist.tracks.map(track => track.uri)
+      const uris = playlist.tracks.map(track => track.uri)
       await removeTracksFromPlaylist(uris, playlist.id, ctx.session.accessToken)
       
       const add = await addTracksToPlaylist(shuffle(uris), playlist.id, ctx.session.accessToken)
