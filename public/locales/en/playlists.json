@@ -3,7 +3,7 @@
     "name": "Name",
     "creator": "Creator"
   },
-  "confirmation": "Confirmation",
+  "confirmation": "Delete from your library?",
   "operations": {
     "shuffle": "Shuffle",
     "shuffled": "Shuffled",
@@ -13,7 +13,8 @@
     "merged": "Merged",
     "unfollow": "Unfollow",
     "unfollowed": "Unfollowed",
-    "confirm_unfollow": "Are you sure? ",
+    "confirm_1": "This operation will delete",
+    "confirm_2": "from your library",
     "rename": "Rename",
     "renamed": "Renamed"
   }

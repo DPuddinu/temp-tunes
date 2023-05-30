@@ -10,7 +10,7 @@ type Props = {
 export type BaseModalProps = {
   isOpen?: boolean;
   isLoading?: boolean;
-  onClose?: () => void;
+  onClose: () => void;
 };
 
 const BaseModal = ({
@@ -34,7 +34,7 @@ const BaseModal = ({
       <Dialog
         as="div"
         className="fixed inset-0 z-10 overflow-y-auto "
-        onClose={/* prettier-ignore */ onClose ? onClose : () => {return}}
+        onClose={onClose}
       >
         <div className="flex min-h-screen place-items-center justify-center text-center backdrop-blur-sm">
           <Transition.Child
@@ -60,7 +60,7 @@ const BaseModal = ({
           >
             <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-base-content p-6 text-left shadow-xl">
               {title && (
-                <Dialog.Title className="text-lg font-medium leading-6 text-base-100">
+                <Dialog.Title className="tracking-wide font-bold text-xl leading-6 text-base-100">
                   {title}
                 </Dialog.Title>
               )}

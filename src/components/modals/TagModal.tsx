@@ -18,7 +18,6 @@ type Props = {
   track: Track;
   playlistName?: string;
   tagType: TagType;
-  setIsOpen: (open: boolean) => void;
 } & BaseModalProps;
 interface ConfirmButtonGroupProps {
   onClose?: () => void;
@@ -28,9 +27,6 @@ export function TagModal({
   isOpen,
   onClose,
   track,
-  playlistName,
-  tagType,
-  setIsOpen,
 }: Props) {
   const { t } = useTranslation("modals");
   const [removeTags, setRemoveTags] = useState<TagSchemaType[]>([]);
@@ -53,7 +49,7 @@ export function TagModal({
 
   const saveTags = () => {
     mutate({ addTags: tags, removeTags: removeTags });
-    setIsOpen(false);
+    onClose()
   };
 
   function addTag(tagName: string) {
@@ -84,7 +80,7 @@ export function TagModal({
   }
 
   return (
-    <BaseModal isOpen={isOpen} title={t("new_tag")}>
+    <BaseModal isOpen={isOpen} title={t("new_tag")} onClose={onClose}>
       <div className="flex flex-row flex-wrap gap-2 pb-2">
         {tags.map((tag, i) => (
           <div className="indicator" key={self.crypto.randomUUID()}>

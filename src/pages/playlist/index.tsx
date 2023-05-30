@@ -360,10 +360,7 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
                 </ul>
               </li>
               {/* DELETE */}
-              <li
-                className="disabled bg-transparent"
-                onClick={() => setOpenUnfollowModal(true)}
-              >
+              <li onClick={() => setOpenUnfollowModal(true)}>
                 <div className="flex gap-2 rounded-xl">
                   <DeleteSVG />
                   <a>{t("operations.unfollow")}</a>
@@ -380,7 +377,18 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
           </DropdownMenu>
         </MultiLevel>
       )}
-      <UnfollowModal isOpen={openUnfollowModal} playlistID={playlist.id} setIsOpen={setOpenUnfollowModal} onClose={() => setOpenUnfollowModal(false)} ></UnfollowModal>
+      <UnfollowModal
+        isOpen={openUnfollowModal}
+        setIsOpen={setOpenUnfollowModal}
+        playlistID={playlist.id}
+        playlistName={playlist.name}
+        onClose={() => setOpenUnfollowModal(false)}
+        onSuccess={() => {
+          setIsLoading(false)
+          window.dispatchEvent(new Event("focus"));
+        }}
+        onConfirm={() => setIsLoading(true)}
+      />
     </div>
   );
 }
