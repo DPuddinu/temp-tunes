@@ -3,9 +3,9 @@ const RowsSkeleton = ({ rowsNumber }: { rowsNumber: number }) => {
 
   return (
     <>
-      {rows.map((row) => (
+      {rows.map((_, i) => (
         <div
-          key={row}
+          key={i}
           className="my-1 w-full rounded-md bg-base-100 p-2 shadow"
         >
           <div className="flex animate-pulse space-x-4 ">

@@ -1,9 +1,7 @@
-import { useSession } from "next-auth/react";
 import { createContext, type ReactNode } from "react";
 import { useStore } from "~/core/store";
 import type { TagsObject } from "~/server/api/routers/prisma_router";
 import { api } from "~/utils/api";
-
 interface Data {
   tags: TagsObject | undefined;
 }
@@ -13,16 +11,15 @@ const initialContext = {
 export const UserDataContext = createContext<Data>(initialContext);
 
 const UserDataProvider = ({ children }: { children: ReactNode }) => {
-  const { data: session } = useSession();
-  const { setTags: setStoreTags, tags: storeTags, user: storeUser, setUser } = useStore();
+  const { setTags: setStoreTags, user: storeUser, setUser } = useStore();
 
   // LOADING USER
   // prettier-ignore
   const { data: user } = api.user_router.getUserBySpotifyId.useQuery(
-    { spotifyId: session?.user?.id}, 
+    undefined, 
     { 
       refetchOnWindowFocus: false, 
-      enabled: session?.user?.id !== undefined,
+      enabled: !storeUser,
       onSuccess(data) {
         if (!storeUser && user) {
           setUser(data.user);
@@ -35,7 +32,7 @@ const UserDataProvider = ({ children }: { children: ReactNode }) => {
   return (
     <UserDataContext.Provider
       value={{
-        tags: storeTags
+        tags: user?.tags ?? {}
       }}
     >
       {children}

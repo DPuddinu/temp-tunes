@@ -24,7 +24,6 @@
     "@trpc/react-query": "^10.9.0",
     "@trpc/server": "^10.9.0",
     "clsx": "^1.2.1",
-    "concurrently": "^8.0.1",
     "cva": "npm:class-variance-authority@^0.4.0",
     "daisyui": "^2.51.3",
     "dotenv": "^16.0.3",

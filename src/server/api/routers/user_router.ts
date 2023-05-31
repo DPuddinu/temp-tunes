@@ -1,28 +1,15 @@
 import { type User } from "@prisma/client";
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { createTagsObject } from "./prisma_router";
 import type { TagSchemaType } from "~/types/zod-schemas";
+import { createTagsObject } from "./prisma_router";
 
 export const userRouter = createTRPCRouter({
   getUserBySpotifyId: protectedProcedure
-    .input(
-      z.object({
-        spotifyId: z.string().nullish(),
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      const { spotifyId } = input;
+    .query(async ({ ctx }) => {
 
-      if (!spotifyId)
-        throw new TRPCError({
-          message: "Can't find user if spotifyId is undefined",
-          code: "BAD_REQUEST",
-        });
       let user = await ctx.prisma.user.findFirst({
         where: {
-          id: spotifyId,
+          id: ctx.session.user.id,
         },
       });
       if (!user)
@@ -31,7 +18,7 @@ export const userRouter = createTRPCRouter({
             image: ctx.session.user.image,
             name: ctx.session.user.name,
             email: ctx.session.user.email,
-            id: spotifyId,
+            id: ctx.session.user.id,
           } as User,
         });
       const tags = await ctx.prisma.tag.findMany({

@@ -24,7 +24,7 @@ RecapCard.Header = function RecapCardHeader({
   children,
 }: RecapHeaderType) {
   return (
-    <div className={RecapCardHeaderCva({ intent })} onClick={onClick}>
+    <div className={RecapCardHeaderCva({ intent })} onClick={onClick} key={'RecapHeader'}>
       {children}
     </div>
   );

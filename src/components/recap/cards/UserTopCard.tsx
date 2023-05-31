@@ -40,9 +40,9 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
   return (
     <RecapCard key={"card-top-rated"} intent={"active"} loading={isLoading}>
       <div className="grid grid-cols-2">
-        {TopTypeArray.map((type, i) => (
+        {TopTypeArray.map((type) => (
           <RecapCard.Header
-            key={i}
+            key={type}
             onClick={() => {
               setSelectedType(type);
               setSelectedPage(0);
@@ -50,6 +50,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
             intent={selectedType === type ? "static" : "active"}
           >
             <p
+              key={type}
               className={`${
                 selectedType === type
                   ? "border border-transparent border-b-base-content"
@@ -67,10 +68,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
           data.items[selectedPage]?.map((item: Artist | Track, i) => (
             <>
               {selectedType === "artists" ? (
-                <ArtistRow
-                  artist={item as Artist}
-                  key={i}
-                />
+                <ArtistRow artist={item as Artist} key={i} />
               ) : (
                 <TrackRow track={item as Track} key={i} />
               )}
@@ -78,6 +76,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
           ))}
         {data && data.totalItems > itemsPerPage && (
           <PaginationComponent
+            key={"pagination"}
             activePage={selectedPage}
             setActivePage={setSelectedPage}
           />

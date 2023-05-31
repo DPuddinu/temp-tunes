@@ -38,9 +38,9 @@ const Home: PageWithLayout = () => {
 const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
   return (
     <section className="md:grid md:grid-cols-3 md:gap-3">
-      <TopRatedCard timeRange={timeRange} />
-      <MoodCard />
-      <RecommendedCard />
+      <TopRatedCard timeRange={timeRange} key={'topRatedCard'} />
+      <MoodCard key={'moodCard'}/>
+      <RecommendedCard key={'recommendedCard'}/>
     </section>
   );
 };
