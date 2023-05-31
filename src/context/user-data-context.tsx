@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import { createContext, type ReactNode } from "react";
 import { useStore } from "~/core/store";
 import type { TagsObject } from "~/server/api/routers/prisma_router";
@@ -11,6 +12,7 @@ const initialContext = {
 export const UserDataContext = createContext<Data>(initialContext);
 
 const UserDataProvider = ({ children }: { children: ReactNode }) => {
+  const {data} = useSession()
   const { setTags: setStoreTags, user: storeUser, setUser } = useStore();
 
   // LOADING USER
@@ -19,7 +21,7 @@ const UserDataProvider = ({ children }: { children: ReactNode }) => {
     undefined, 
     { 
       refetchOnWindowFocus: false, 
-      enabled: !storeUser,
+      enabled: !storeUser && data?.user?.id !== undefined,
       onSuccess(data) {
         if (!storeUser && user) {
           setUser(data.user);
