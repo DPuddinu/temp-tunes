@@ -13,7 +13,7 @@ export type BaseModalProps = {
   onClose: () => void;
 };
 
-const BaseModal = ({
+export const BottomModal = ({
   isOpen,
   title,
   description,
@@ -21,40 +21,37 @@ const BaseModal = ({
   onClose,
 }: Props) => {
   return (
-    <Transition
-      show={isOpen}
-      
-    >
+    <Transition show={isOpen}>
       <Dialog
         as="div"
-        className="fixed inset-0 z-10 overflow-y-auto "
+        className="fixed bottom-0 left-0 z-10 overflow-y-auto"
         onClose={onClose}
       >
-        <div className="flex min-h-screen place-items-center justify-center text-center backdrop-blur-sm">
+        <div className="flex min-h-screen justify-center items-end text-center backdrop-blur-sm">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
+            enterFrom="translate-y-full"
+            enterTo="translate-y-0"
             leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
+            leaveFrom="translate-y-0"
+            leaveTo="translate-y-full"
           >
             <Dialog.Overlay className="fixed inset-0" />
           </Transition.Child>
 
           <Transition.Child
             as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0 scale-95"
-            enterTo="opacity-100 scale-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100 scale-10 0"
-            leaveTo="opacity-0 scale-95"
+            enter="ease-in-out duration-300"
+            enterFrom="translate-y-full"
+            enterTo="translate-y-0"
+            leave="ease-in-out duration-200"
+            leaveFrom="translate-y-0"
+            leaveTo="translate-y-full"
           >
-            <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-base-content p-6 text-left shadow-xl">
+            <div className="h-[50vh] w-screen overflow-hidden rounded-t-2xl bg-base-content p-6  text-left shadow-xl">
               {title && (
-                <Dialog.Title className="tracking-wide font-bold text-xl leading-6 text-base-100">
+                <Dialog.Title className="text-xl font-bold leading-6 tracking-wide text-base-100">
                   {title}
                 </Dialog.Title>
               )}
@@ -66,7 +63,7 @@ const BaseModal = ({
                 </Dialog.Description>
               )}
 
-              <Dialog.Panel className="mt-2 mb-2 pt-4 pb-4">
+              <Dialog.Panel className="mt-2 mb-2 pt-4 pb-4 h-full">
                 {children}
               </Dialog.Panel>
             </div>
@@ -77,4 +74,3 @@ const BaseModal = ({
   );
 };
 
-export default BaseModal;

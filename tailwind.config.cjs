@@ -4,7 +4,7 @@ const config = {
   theme: {
     extend: {
       screens: {
-        xxs: "425px",
+        xxs: "320px",
       },
     },
   },

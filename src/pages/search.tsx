@@ -11,7 +11,7 @@ import {
   type ColumnFiltersState,
   type SortingState
 } from "@tanstack/react-table";
-import type { GetServerSideProps } from "next";
+import type { GetStaticProps } from "next";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -423,9 +423,7 @@ function DataTable<TData, TValue>({
   );
 }
 
-
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getStaticProps: GetStaticProps = async (context) => {
   return {
     props: {
       //prettier- ignore

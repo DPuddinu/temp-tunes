@@ -1,14 +1,14 @@
 import { Disclosure, Transition } from "@headlessui/react";
 import {
-  ColumnDef,
-  ColumnFiltersState,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
-  Table,
   useReactTable,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type Table,
 } from "@tanstack/react-table";
-import { GetServerSideProps } from "next";
+import type { GetStaticProps } from "next";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -25,8 +25,8 @@ import { ShuffleSVG } from "~/components/ui/icons/ShuffleSVG";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { PlaylistPageSkeleton } from "~/components/ui/skeletons/Skeleton";
 import { useStore } from "~/core/store";
-import { PageWithLayout } from "~/types/page-types";
-import { Playlist } from "~/types/spotify-types";
+import { type PageWithLayout } from "~/types/page-types";
+import { type Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -226,7 +226,7 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
     onSuccess() {
       setMessage(`${playlist.name} ${t("operations.copied")}`);
       setIsLoading(false)
-      window.dispatchEvent(new Event("focus")); // trigger window focus to refetch playlists
+      setTimeout(() => window.dispatchEvent(new Event("focus"), 300))
     },
   });
   const {
@@ -386,7 +386,8 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
         onClose={() => setOpenUnfollowModal(false)}
         onSuccess={() => {
           setIsLoading(false);
-          window.dispatchEvent(new Event("focus"));
+          setTimeout(() => window.dispatchEvent(new Event("focus"), 300))
+          
         }}
         onConfirm={() => setIsLoading(true)}
       />
@@ -398,7 +399,7 @@ export default PlaylistsPage;
 
 PlaylistsPage.getLayout = (page) => <MainLayout>{page}</MainLayout>;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getStaticProps: GetStaticProps = async (context) => {
   return {
     props: {
       //prettier- ignore
