@@ -67,23 +67,13 @@ export function UnfollowModal({
                 {` ${t("operations.confirm_2")}.`}
               </p>
             </div>
-            <div className="flex w-full gap-2 pb-4">
-              <div
-                className="text-semibold btn relative grow border-none bg-red-400 text-info-content shadow-sm"
-                onClick={onClose}
-              >
-                {t("cancel")}
-              </div>
-              <div
-                className="text-semibold btn grow border-none bg-green-400 text-info-content shadow-sm "
-                 onClick={() => {
-                  mutate({ playlistID: playlistID });
-                  onConfirm();
-                }}
-              >
-                {t("confirm")}
-              </div>
-            </div>
+            <ConfirmButtonGroup
+              onConfirm={() => {
+                mutate({ playlistID: playlistID });
+                onConfirm();
+              }}
+              onClose={onClose}
+            />
           </div>
         </BottomModal>
       )}

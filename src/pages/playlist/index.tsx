@@ -226,8 +226,10 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
     onSuccess() {
       setMessage(`${playlist.name} ${t("operations.copied")}`);
       setIsLoading(false)
-      setTimeout(() => window.dispatchEvent(new Event("focus"), 300))
-    },
+      setTimeout(() => {
+        window.dispatchEvent(new Event("focus"))
+      },300)
+    }
   });
   const {
     mutate: merge,
@@ -386,7 +388,9 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
         onClose={() => setOpenUnfollowModal(false)}
         onSuccess={() => {
           setIsLoading(false);
-          setTimeout(() => window.dispatchEvent(new Event("focus"), 300))
+          setTimeout(() => {
+            window.dispatchEvent(new Event("focus"));
+          }, 300);
           
         }}
         onConfirm={() => setIsLoading(true)}

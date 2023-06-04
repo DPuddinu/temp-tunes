@@ -10,17 +10,17 @@ export function ConfirmButtonGroup({
 }: ConfirmButtonGroupProps) {
   const { t } = useTranslation("modals");
   return (
-    <div className="mt-4 flex flex-row-reverse gap-2">
+    <div className="mt-4 mb-4 flex flex-row-reverse gap-2">
       <button
-        type="button"
-        className="bg- inline-flex justify-center rounded-md border border-transparent bg-accent-focus px-4 py-2 text-white duration-300 "
+        tabIndex={-1}
+        className="btn w-40 border-none bg-emerald-600 font-semibold text-black hover:bg-green-500"
         onClick={onConfirm}
       >
         {t("confirm")}
       </button>
       <button
-        type="button"
-        className="inline-flex justify-center rounded-md border border-transparent  bg-error px-4 py-2 text-white duration-300 "
+        tabIndex={-1}
+        className="btn w-40 border-none bg-red-600 bg-opacity-90  font-semibold text-black"
         onClick={onClose}
       >
         {t("cancel")}

@@ -1,28 +1,30 @@
 import { useTranslation } from "next-i18next";
 import {
+  useCallback,
   useEffect,
+  useMemo,
   useRef,
-  useState,
-  type ChangeEvent,
+  useState
 } from "react";
 import { z } from "zod";
 import { useStore } from "~/core/store";
+import useMediaQuery from "~/hooks/use-media-query";
 import type { Track } from "~/types/spotify-types";
 import type { TagSchemaType, TagType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
+import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
+import { PlusSVG } from "../ui/icons/PlusSVG";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
+import { BottomModal } from "./BottomModal";
 
 type Props = {
   track: Track;
   playlistName?: string;
   tagType: TagType;
 } & BaseModalProps;
-interface ConfirmButtonGroupProps {
-  onClose?: () => void;
-  onConfirm?: () => void;
-}
+
 export function TagModal({
   isOpen,
   onClose,
@@ -32,7 +34,7 @@ export function TagModal({
   const [removeTags, setRemoveTags] = useState<TagSchemaType[]>([]);
   const { tags: storeTags, setTags: setStoreTags } = useStore();
   const [tags, setTags] = useState<TagSchemaType[]>([]);
-
+  const sm = useMediaQuery('(min-width: 640px)')
   //prettier-ignore
   const { data, isLoading, isSuccess, mutate, isError } = api.prisma_router.setTags.useMutation();
 
@@ -47,13 +49,13 @@ export function TagModal({
     if (data) setStoreTags(data);
   }, [data, isSuccess, setStoreTags]);
 
-  const saveTags = () => {
+  const saveTags = useCallback(() => {
     mutate({ addTags: tags, removeTags: removeTags });
-    onClose()
-  };
+    onClose();
+  },[mutate, onClose, removeTags, tags]);  
 
-  function addTag(tagName: string) {
-    if(track.id){
+  const addTag = useCallback((tagName: string) => {
+    if (track.id) {
       const newTag: TagSchemaType = {
         name: tagName,
         spotifyId: track.id,
@@ -63,74 +65,69 @@ export function TagModal({
         return [...oldTags, newTag];
       });
     }
-  }
+  }, [track.id]);
+  
+  const removeTag = useCallback((i: number) => {
+      const tagToRemove = tags[i] as TagSchemaType;
+      setRemoveTags((oldTags) => {
+        return [...oldTags, tagToRemove];
+      });
+      setTags((oldTags) => {
+        const temp = [...oldTags];
+        if (i > -1) {
+          temp.splice(i, 1);
+        }
+        return temp;
+      });
+  }, [tags])
+  
+  const ModalBody = useMemo(
+    () => (
+      <>
+        <div className="flex flex-row flex-wrap gap-2 pb-2">
+          {tags.map((tag, i) => (
+            <div className="indicator" key={self.crypto.randomUUID()}>
+              <span
+                className="badge indicator-item h-5 w-5 cursor-pointer pb-[2px] text-white"
+                onClick={() => removeTag(i)}
+              >
+                <p className=" m-0 text-center">x</p>
+              </span>
+              <p className="w-fit rounded-3xl bg-warning pr-3 pl-3 text-white">
+                {tag.name}
+              </p>
+            </div>
+          ))}
+        </div>
 
-  function removeTag(i: number) {
-    const tagToRemove = tags[i] as TagSchemaType;
-    setRemoveTags((oldTags) => {
-      return [...oldTags, tagToRemove];
-    });
-    setTags((oldTags) => {
-      const temp = [...oldTags];
-      if (i > -1) {
-        temp.splice(i, 1);
-      }
-      return temp;
-    });
-  }
-
-  return (
-    <BaseModal isOpen={isOpen} title={t("new_tag")} onClose={onClose}>
-      <div className="flex flex-row flex-wrap gap-2 pb-2">
-        {tags.map((tag, i) => (
-          <div className="indicator" key={self.crypto.randomUUID()}>
-            <span
-              className="badge indicator-item h-5 w-5 cursor-pointer pb-[2px] text-white"
-              onClick={() => removeTag(i)}
-            >
-              <p className=" m-0 text-center">x</p>
-            </span>
-            <p className="w-fit rounded-3xl bg-warning pr-3 pl-3 text-white">
-              {tag.name}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <AddTagComponent
-        onAdd={(tagName: string) => addTag(tagName)}
-        tags={tags}
-      />
-      <div
-        className="flex justify-between"
-        style={{ justifyContent: isLoading ? "space-between" : "end" }}
-      >
-        {isLoading && <LoadingSpinner />}
-        <ConfirmButtonGroup onConfirm={saveTags} onClose={onClose} />
-      </div>
-    </BaseModal>
+        <AddTagComponent
+          onAdd={(tagName: string) => addTag(tagName)}
+          tags={tags}
+        />
+        <div
+          className="flex justify-between"
+          style={{ justifyContent: isLoading ? "space-between" : "end" }}
+        >
+          {isLoading && <LoadingSpinner />}
+          <ConfirmButtonGroup onConfirm={saveTags} onClose={onClose} />
+        </div>
+      </>
+    ),
+    [addTag, isLoading, onClose, removeTag, saveTags, tags]
   );
-}
 
-function ConfirmButtonGroup({ onConfirm, onClose }: ConfirmButtonGroupProps) {
-  const { t } = useTranslation("modals");
   return (
-    <div className="mt-4 flex flex-row-reverse gap-2">
-      <button
-        type="button"
-        className="bg- inline-flex justify-center rounded-md border border-transparent bg-accent-focus px-4 py-2 text-white duration-300 "
-        onClick={onConfirm}
-      >
-        {t("confirm")}
-      </button>
-      <button
-        type="button"
-        className="inline-flex justify-center rounded-md border border-transparent  bg-error px-4 py-2 text-white duration-300 "
-        onClick={onClose}
-      >
-        {t("cancel")}
-      </button>
-    </div>
+    <>
+      {sm ? (
+        <BaseModal isOpen={isOpen} title={t("new_tag")} onClose={onClose}>
+          {ModalBody}
+        </BaseModal>
+      ) : (
+        <BottomModal isOpen={isOpen} title={t("new_tag")} onClose={onClose}>
+          {ModalBody}
+        </BottomModal>
+      )}
+    </>
   );
 }
 interface AddTagProps {
@@ -142,25 +139,17 @@ function AddTagComponent({ onAdd, tags }: AddTagProps) {
   const [error, setError] = useState(" ");
   const { t } = useTranslation("modals");
 
-  function handleAddTag() {
-    if (tagNameRef.current) {
-      onAdd(tagNameRef.current.value);
-      tagNameRef.current.value = "";
-    }
-  }
-  function onInputChange(event: ChangeEvent<HTMLInputElement>) {
-    setError(validateTag(event.target.value, tags));
-  }
-  
   return (
-    <div className="flex gap-2">
-      <div className="w-full">
+    <div className="flex gap-2 pt-2">
+      <div className="w-full ">
         <input
+          tabIndex={-1}
           ref={tagNameRef}
           type="text"
-          placeholder=""
-          className="input w-full max-w-xs"
-          onChange={onInputChange}
+          className="input w-full "
+          onChange={(event) => {
+            setError(validateTag(event.target.value, tags));
+          }}
         />
         {!!error && (
           <label className="label text-red-700">
@@ -170,26 +159,17 @@ function AddTagComponent({ onAdd, tags }: AddTagProps) {
           </label>
         )}
       </div>
-
       <button
         disabled={!!error}
-        className="btn-circle btn border-transparent bg-accent-focus"
-        onClick={handleAddTag}
+        className="btn-circle btn border-transparent  transition-transform"
+        onClick={() => {
+          if (tagNameRef.current) {
+            onAdd(tagNameRef.current.value);
+            tagNameRef.current.value = "";
+          }
+        }}
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="white"
-          className="h-6 w-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M12 4.5v15m7.5-7.5h-15"
-          />
-        </svg>
+        <PlusSVG/>
       </button>
     </div>
   );

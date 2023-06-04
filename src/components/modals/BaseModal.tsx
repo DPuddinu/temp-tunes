@@ -21,10 +21,7 @@ const BaseModal = ({
   onClose,
 }: Props) => {
   return (
-    <Transition
-      show={isOpen}
-      
-    >
+    <Transition show={isOpen}>
       <Dialog
         as="div"
         className="fixed inset-0 z-10 overflow-y-auto "
@@ -52,9 +49,9 @@ const BaseModal = ({
             leaveFrom="opacity-100 scale-10 0"
             leaveTo="opacity-0 scale-95"
           >
-            <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-base-content p-6 text-left shadow-xl">
+            <Dialog.Panel className="mt-2 mb-2 w-full max-w-lg overflow-hidden rounded-2xl bg-base-content p-6 pt-4 pb-4 text-left shadow-xl">
               {title && (
-                <Dialog.Title className="tracking-wide font-bold text-xl leading-6 text-base-100">
+                <Dialog.Title className="text-xl font-bold leading-6 tracking-wide text-base-100">
                   {title}
                 </Dialog.Title>
               )}
@@ -65,11 +62,8 @@ const BaseModal = ({
                   </p>
                 </Dialog.Description>
               )}
-
-              <Dialog.Panel className="mt-2 mb-2 pt-4 pb-4">
-                {children}
-              </Dialog.Panel>
-            </div>
+              {children}
+            </Dialog.Panel>
           </Transition.Child>
         </div>
       </Dialog>
