@@ -17,7 +17,6 @@ import { LoadingSpinner } from "../ui/LoadingSpinner";
 import { PlusSVG } from "../ui/icons/PlusSVG";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
-import { BottomModal } from "./BottomModal";
 
 type Props = {
   track: Track;
@@ -34,7 +33,7 @@ export function TagModal({
   const [removeTags, setRemoveTags] = useState<TagSchemaType[]>([]);
   const { tags: storeTags, setTags: setStoreTags } = useStore();
   const [tags, setTags] = useState<TagSchemaType[]>([]);
-  const sm = useMediaQuery('(min-width: 640px)')
+
   //prettier-ignore
   const { data, isLoading, isSuccess, mutate, isError } = api.prisma_router.setTags.useMutation();
 
@@ -117,17 +116,9 @@ export function TagModal({
   );
 
   return (
-    <>
-      {sm ? (
-        <BaseModal isOpen={isOpen} title={t("new_tag")} onClose={onClose}>
-          {ModalBody}
-        </BaseModal>
-      ) : (
-        <BottomModal isOpen={isOpen} title={t("new_tag")} onClose={onClose}>
-          {ModalBody}
-        </BottomModal>
-      )}
-    </>
+    <BaseModal isOpen={isOpen} title={t("new_tag")} onClose={onClose}>
+      {ModalBody}
+    </BaseModal>
   );
 }
 interface AddTagProps {
