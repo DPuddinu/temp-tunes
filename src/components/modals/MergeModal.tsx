@@ -38,7 +38,7 @@ export const MergeModal = ({onClose, onSuccess, origin, playlists, setIsOpen, is
       isOpen={isOpen}
       title={t("operations.merge_destination")}
     >
-      <div className="overflow-y-auto">
+      <div>
         {playlists.map((destination) => (
           <button
             tabIndex={-1}

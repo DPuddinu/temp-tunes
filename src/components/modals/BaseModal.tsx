@@ -121,7 +121,7 @@ return (
           leaveFrom=""
           leaveTo="translate-y-full"
         >
-          <Dialog.Panel className="z-50 h-[50vh] w-screen overflow-hidden rounded-t-2xl bg-base-content p-6 text-left shadow-xl">
+          <Dialog.Panel className="z-50 h-[50vh] w-screen overflow-auto rounded-t-2xl bg-base-content p-6 text-left shadow-xl">
             {title && (
               <Dialog.Title className="text-xl font-bold leading-6 tracking-wide text-base-100">
                 {title}
