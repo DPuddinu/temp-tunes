@@ -25,7 +25,7 @@ import { MergeSVG } from "~/components/ui/icons/MergeSVG";
 import { PencilSVG } from "~/components/ui/icons/PencilSVG";
 import { ShuffleSVG } from "~/components/ui/icons/ShuffleSVG";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
-import { PlaylistPageSkeleton } from "~/components/ui/skeletons/Skeleton";
+import { PlaylistPageSkeleton } from "~/components/ui/skeletons/PlaylistPageSkeleton";
 import { SquareSkeleton } from "~/components/ui/skeletons/SquareSkeleton";
 import { useStore } from "~/core/store";
 import useMediaQuery from "~/hooks/use-media-query";
@@ -55,7 +55,7 @@ const PlaylistsPage: PageWithLayout = () => {
   }, []);
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center">
+    <div className="flex h-full w-full flex-col items-center ">
       {isLoading ? (
         <PlaylistPageSkeleton />
       ) : (
