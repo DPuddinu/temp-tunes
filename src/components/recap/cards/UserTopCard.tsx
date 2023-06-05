@@ -1,5 +1,5 @@
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   TopTypeArray,
   type Artist,
@@ -36,6 +36,10 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
       refetchOnWindowFocus: false,
     }
   );
+
+  useEffect(() => {
+    setSelectedPage(0)
+  }, [timeRange])
 
   return (
     <RecapCard key={"card-top-rated"} intent={"active"} loading={isLoading}>
