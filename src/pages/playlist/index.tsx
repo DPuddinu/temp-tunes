@@ -15,6 +15,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import MainLayout from "~/components/MainLayout";
+import { MergeModal } from "~/components/modals/MergeModal";
 import { UnfollowModal } from "~/components/modals/UnfollowModal";
 import { DropdownMenu } from "~/components/ui/DropdownMenu";
 import { CopySVG } from "~/components/ui/icons/CopySVG";
@@ -25,6 +26,7 @@ import { ShuffleSVG } from "~/components/ui/icons/ShuffleSVG";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { PlaylistPageSkeleton } from "~/components/ui/skeletons/Skeleton";
 import { useStore } from "~/core/store";
+import useMediaQuery from "~/hooks/use-media-query";
 import { type PageWithLayout } from "~/types/page-types";
 import { type Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
@@ -203,6 +205,8 @@ function PaginationComponent<TData>({ table }: { table: Table<TData> }) {
 function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data: Playlist[], index: number }) {
   const { t } = useTranslation("playlists");
   const [isLoading, setIsLoading] = useState(false)
+  const xxs = useMediaQuery("(max-width: 425px)");
+  
   const {data: session} = useSession()
   const {
     isError,
@@ -248,6 +252,7 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
   const listRef = useRef<HTMLDivElement>(null);
   const { setMessage } = useStore();
   const [openUnfollowModal, setOpenUnfollowModal] = useState(false)
+  const [openMergeModal, setOpenMergeModal] = useState(false)
   const [position, setPosition] = useState("");
 
   useEffect(() => {
@@ -311,7 +316,10 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
               </li>
               {/* MERGE */}
               <li className="group/merge relative flex gap-2 rounded-xl hover:bg-base-100">
-                <button className="flex grow gap-2 rounded-xl">
+                <button
+                  className="flex grow gap-2 rounded-xl"
+                  onClick={() => setOpenMergeModal((open) => !open)}
+                >
                   <MergeSVG />
                   <a>{t("operations.merge")}</a>
                   <span className="flex grow justify-end">
@@ -331,8 +339,9 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
                     </svg>
                   </span>
                 </button>
-                <ul
-                  className={`absolute top-0 right-0 hidden max-h-80 -translate-x-full translate-y-[-5rem] overflow-x-auto overflow-y-scroll rounded-xl bg-base-300 p-2 group-hover/merge:block
+                {!xxs && (
+                  <ul
+                    className={`absolute top-0 right-0 hidden max-h-80 -translate-x-full translate-y-[-5rem] overflow-x-auto overflow-y-scroll rounded-xl bg-base-300 p-2 group-hover/merge:block
                 ${
                   index % 2 === 0
                     ? "sm:translate-x-full"
@@ -343,24 +352,25 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
                     ? "md:-translate-x-full"
                     : "md:translate-x-full"
                 }`}
-                >
-                  {data
-                    .filter((t) => t.owner.id === session?.user?.id ?? "")
-                    .map((p) => (
-                      <li
-                        key={self.crypto.randomUUID()}
-                        className="relative bg-base-300 px-3 py-1 first:rounded-t-xl last:rounded-b-xl hover:cursor-pointer hover:bg-primary"
-                        onClick={() =>
-                          merge({
-                            origin: playlist,
-                            destinationId: p.id,
-                          })
-                        }
-                      >
-                        {p.name}
-                      </li>
-                    ))}
-                </ul>
+                  >
+                    {data
+                      .filter((t) => t.owner.id === session?.user?.id ?? "")
+                      .map((p) => (
+                        <li
+                          key={self.crypto.randomUUID()}
+                          className="relative bg-base-300 px-3 py-1 first:rounded-t-xl last:rounded-b-xl hover:cursor-pointer hover:bg-primary"
+                          onClick={() =>
+                            merge({
+                              origin: playlist,
+                              destinationId: p.id,
+                            })
+                          }
+                        >
+                          {p.name}
+                        </li>
+                      ))}
+                  </ul>
+                )}
               </li>
               {/* DELETE */}
               <li onClick={() => setOpenUnfollowModal(true)}>
@@ -391,10 +401,22 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
           setTimeout(() => {
             window.dispatchEvent(new Event("focus"));
           }, 300);
-          
         }}
         onConfirm={() => setIsLoading(true)}
       />
+      {xxs && <MergeModal
+        isOpen={openMergeModal}
+        setIsOpen={setOpenMergeModal}
+        origin={playlist}
+        playlists={data}
+        onClose={() => setOpenMergeModal(false)}
+        onSuccess={() => {
+          setIsLoading(false);
+          setTimeout(() => {
+            window.dispatchEvent(new Event("focus"));
+          }, 300);
+        }}
+      />}
     </div>
   );
 }
