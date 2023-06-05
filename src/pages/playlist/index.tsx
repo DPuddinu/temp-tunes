@@ -12,7 +12,8 @@ import type { GetStaticProps } from "next";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import MainLayout from "~/components/MainLayout";
 import { MergeModal } from "~/components/modals/MergeModal";
@@ -25,6 +26,7 @@ import { PencilSVG } from "~/components/ui/icons/PencilSVG";
 import { ShuffleSVG } from "~/components/ui/icons/ShuffleSVG";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { PlaylistPageSkeleton } from "~/components/ui/skeletons/Skeleton";
+import { SquareSkeleton } from "~/components/ui/skeletons/SquareSkeleton";
 import { useStore } from "~/core/store";
 import useMediaQuery from "~/hooks/use-media-query";
 import { type PageWithLayout } from "~/types/page-types";
@@ -272,12 +274,19 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
       className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 shadow "
     >
       <div className="h-20 w-20 min-w-[5rem]">
-        <img
-          src={
-            playlist.images && playlist.images[0] ? playlist.images[0].url : ""
-          }
-          className="aspect-square h-full w-full rounded-xl object-cover"
-        ></img>
+        <Suspense fallback={<SquareSkeleton/>}>
+          <Image
+            src={
+              playlist.images && playlist.images[0]
+                ? playlist.images[0].url
+                : ""
+            }
+            alt=""
+            height={256}
+            width={256}
+            className="aspect-square h-full w-full rounded-xl object-cover"
+          />
+        </Suspense>
       </div>
       <div className="flex grow flex-col justify-center gap-2 truncate px-4">
         <p className="truncate font-semibold">{playlist.name}</p>
@@ -355,18 +364,20 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
                   >
                     {data
                       .filter((t) => t.owner.id === session?.user?.id ?? "")
-                      .map((p) => (
+                      .map((destination) => (
                         <li
                           key={self.crypto.randomUUID()}
                           className="relative bg-base-300 px-3 py-1 first:rounded-t-xl last:rounded-b-xl hover:cursor-pointer hover:bg-primary"
                           onClick={() =>
                             merge({
-                              origin: playlist,
-                              destinationId: p.id,
+                              originId: playlist.id,
+                              originName: playlist.name,
+                              destinationName: destination.name,
+                              destinationId: destination.id,
                             })
                           }
                         >
-                          {p.name}
+                          {destination.name}
                         </li>
                       ))}
                   </ul>
@@ -404,19 +415,21 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
         }}
         onConfirm={() => setIsLoading(true)}
       />
-      {xxs && <MergeModal
-        isOpen={openMergeModal}
-        setIsOpen={setOpenMergeModal}
-        origin={playlist}
-        playlists={data}
-        onClose={() => setOpenMergeModal(false)}
-        onSuccess={() => {
-          setIsLoading(false);
-          setTimeout(() => {
-            window.dispatchEvent(new Event("focus"));
-          }, 300);
-        }}
-      />}
+      {xxs && (
+        <MergeModal
+          isOpen={openMergeModal}
+          setIsOpen={setOpenMergeModal}
+          origin={playlist}
+          playlists={data}
+          onClose={() => setOpenMergeModal(false)}
+          onSuccess={() => {
+            setIsLoading(false);
+            setTimeout(() => {
+              window.dispatchEvent(new Event("focus"));
+            }, 300);
+          }}
+        />
+      )}
     </div>
   );
 }

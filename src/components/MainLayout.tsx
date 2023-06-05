@@ -1,9 +1,10 @@
 import { Transition } from "@headlessui/react";
-import { VariantProps } from "cva";
+import type { VariantProps } from "cva";
 import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Suspense, useEffect, useRef, useState, type ReactNode } from "react";
 import { useStore } from "~/core/store";
 import { cn } from "~/utils/utils";
 import { ToastCva } from "./cva/ToastCva";
@@ -12,6 +13,7 @@ import { HomeSVG } from "./ui/icons/HomeSVG";
 import { PlaylistSVG } from "./ui/icons/PlaylistSVG";
 import { SearchSVG } from "./ui/icons/SearchSVG";
 import { TemplateSVG } from "./ui/icons/TemplateSVG";
+import { RoundSkeleton } from "./ui/skeletons/SquareSkeleton";
 
 type PageType = 'Home'| 'Search'| 'Playlists' | 'Templates'
 interface Page {
@@ -92,7 +94,7 @@ const UserNavbar = ({
   return (
     <div className="navbar bg-base-300 bg-gradient-to-r shadow">
       <div className="flex w-full justify-end sm:justify-between">
-        <div className="p-2 hidden sm:block">
+        <div className="hidden p-2 sm:block">
           <label htmlFor="my-drawer-2" className="btn-ghost drawer-button btn ">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -109,7 +111,6 @@ const UserNavbar = ({
               />
             </svg>
           </label>
-          
         </div>
 
         <div className="dropdown-end flex">
@@ -121,7 +122,9 @@ const UserNavbar = ({
               </h1>
               <label tabIndex={0} className="btn-ghost btn-circle avatar btn">
                 <div className="w-10 rounded-full">
-                  <img src={image} alt="" />
+                  <Suspense fallback={<RoundSkeleton />}>
+                    <Image src={image} alt="" height={64} width={64} />
+                  </Suspense>
                 </div>
               </label>
             </div>

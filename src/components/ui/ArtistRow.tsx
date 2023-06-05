@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { Artist } from "~/types/spotify-types";
 
 interface Props {
@@ -12,7 +13,7 @@ export const ArtistRow = ({ artist }: Props) => {
       style={{ gridTemplateColumns: "1fr 6fr" }}
     >
       {artist.images && artist.images[2]?.url ? (
-        <img src={artist.images[2].url} alt="user_image" className="rounded-xl p-1" />
+        <Image alt="" src={artist.images[2].url} className="rounded-xl p-1" height={128} width={128}/>
       ) : (
         <div className="h-20 w-20 rounded-xl bg-slate-400"></div>
       )}
