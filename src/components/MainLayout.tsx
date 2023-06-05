@@ -13,7 +13,8 @@ import { HomeSVG } from "./ui/icons/HomeSVG";
 import { PlaylistSVG } from "./ui/icons/PlaylistSVG";
 import { SearchSVG } from "./ui/icons/SearchSVG";
 import { TemplateSVG } from "./ui/icons/TemplateSVG";
-import { RoundSkeleton } from "./ui/skeletons/SquareSkeleton";
+import { RoundSkeleton } from "./ui/skeletons/RoundSkeleton";
+
 
 type PageType = 'Home'| 'Search'| 'Playlists' | 'Templates'
 interface Page {
