@@ -22,7 +22,7 @@ export function UnfollowModal({
   playlistName,
 }: Props) {
   const { t } = useTranslation("playlists");
-  const { mutate } = api.spotify_playlist.unfollowPlaylist.useMutation({
+  const { mutate } = api.spotify_playlist.unfollow.useMutation({
     onSuccess() {
       setIsOpen(false);
       onSuccess();

@@ -17,7 +17,7 @@ export const MergeModal = ({onClose, onSuccess, origin, playlists, setIsOpen, is
   const [isLoading, setIsLoading] = useState(false);
   const { setMessage } = useStore();
 
-  const { mutate: merge } = api.spotify_playlist.mergePlaylist.useMutation({
+  const { mutate: merge } = api.spotify_playlist.merge.useMutation({
     onMutate() {
       setIsLoading(true);
     },

@@ -5,26 +5,28 @@ import { PlaylistSchema } from "~/types/zod-schemas";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const spotifyPlaylistRouter = createTRPCRouter({
-  getAllPlaylists: protectedProcedure
+  getAll: protectedProcedure
     .query(async ({ ctx }) => {
       const playlists = await getUserPlaylists(ctx.session.accessToken);
       return playlists;
     }),
-  randomizePlaylist: protectedProcedure.input(
+  shuffle: protectedProcedure.input(
     z.object({
       playlist: PlaylistSchema,
     })
   )
     .mutation(async ({ ctx, input }) => {
       const { playlist } = input;
-      const uris = playlist.tracks.map(track => track.uri)
+      const tracks = await getPlaylistTracks(playlist.id, ctx.session.accessToken)
+      const uris = tracks.map(track => track.uri)
       await removeTracksFromPlaylist(uris, playlist.id, ctx.session.accessToken)
-      
-      const add = await addTracksToPlaylist(shuffle(uris), playlist.id, ctx.session.accessToken)
-
+      const shuffledUris = shuffle(uris)
+      console.log(shuffledUris)
+      const add = await addTracksToPlaylist(shuffledUris, playlist.id, ctx.session.accessToken)
+      console.log(shuffledUris)
       return add
     }),
-  copyPlaylist: protectedProcedure.input(z.object({
+  copy: protectedProcedure.input(z.object({
     playlist: PlaylistSchema,
   })).mutation(async ({ ctx, input }) => {
     const { playlist } = input;
@@ -34,7 +36,7 @@ export const spotifyPlaylistRouter = createTRPCRouter({
     create.tracks = [...tracks]
     return create
   }),
-  mergePlaylist: protectedProcedure.input(z.object({
+  merge: protectedProcedure.input(z.object({
     originId: z.string(),
     originName: z.string(),
     destinationId: z.string(),
@@ -45,7 +47,7 @@ export const spotifyPlaylistRouter = createTRPCRouter({
     const add = await addTracksToPlaylist(tracks.map(track => track.uri), destinationId, ctx.session.accessToken)
     return add
   }),
-  unfollowPlaylist: protectedProcedure.input(z.object({
+  unfollow: protectedProcedure.input(z.object({
     playlistID: z.string(),
   })).mutation(async ({ ctx, input }) => {
     const { playlistID } = input;

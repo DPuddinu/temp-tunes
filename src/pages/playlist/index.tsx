@@ -39,7 +39,7 @@ interface DataTableProps<TData, TValue> {
 
 const PlaylistsPage: PageWithLayout = () => {
   const { data, isLoading, isError } =
-    api.spotify_playlist.getAllPlaylists.useQuery(undefined, {
+    api.spotify_playlist.getAll.useQuery(undefined, {
       refetchOnWindowFocus: true,
     });
   const columns: ColumnDef<Playlist>[] = useMemo(() => {
@@ -213,7 +213,7 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
   const {
     isError,
     mutate: shuffle,
-  } = api.spotify_playlist.randomizePlaylist.useMutation({
+  } = api.spotify_playlist.shuffle.useMutation({
     onMutate(){
       setIsLoading(true);
     },
@@ -225,7 +225,7 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
   const {
     mutate: copy,
     isError: copyError,
-  } = api.spotify_playlist.copyPlaylist.useMutation({
+  } = api.spotify_playlist.copy.useMutation({
     onMutate(){
       setIsLoading(true)
     },
@@ -240,7 +240,7 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
   const {
     mutate: merge,
     isError: mergeError,
-  } = api.spotify_playlist.mergePlaylist.useMutation({
+  } = api.spotify_playlist.merge.useMutation({
     onMutate(){
       setIsLoading(true)
     },
