@@ -43,7 +43,12 @@ const userStore = create<UserStore>()((set) => ({
   message: undefined,
   setTags: (tags) => set(() => ({ tags: tags })),
   setUser: (user) => set(() => ({ user: user })),
-  setMessage: (message) => set(() => ({ message: message}))
+  setMessage: (message) => {
+    set(() => ({ message: message }))
+    setTimeout(() => {
+      set(() => ({ message: undefined }))
+    }, 3000)
+  }
 }));
 
 export const useStore = () => {

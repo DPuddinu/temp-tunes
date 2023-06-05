@@ -169,22 +169,14 @@ const BottomNavigation = () => {
 
 type ToastProps = {
   className?: string;
-  duration?: number;
   message: string | undefined;
 } & VariantProps<typeof ToastCva>;
-const Toast = ({ className, intent, message, duration = 3000 }: ToastProps) => {
-  const [show, setShow] = useState(false)
-  
-  useEffect(() => {
-    setShow(true)
-    setTimeout(() => setShow(false), duration);
-       
-  },[message])
+const Toast = ({ className, intent, message}: ToastProps) => {
 
   return (
     <>
       <Transition
-        show={show}
+        show={!!message}
         enter="transition-opacity duration-75"
         enterFrom="opacity-0"
         enterTo="opacity-100"
