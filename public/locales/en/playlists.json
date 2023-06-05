@@ -10,7 +10,7 @@
     "copy": "Copy",
     "copied": "Copied",
     "merge": "Merge",
-    "merged": "Merged",
+    "merged": "merged into",
     "merge_origin": "Select origin",
     "merge_destination": "Select destination",
     "unfollow": "Unfollow",

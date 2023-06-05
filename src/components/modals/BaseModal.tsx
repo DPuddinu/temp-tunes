@@ -32,7 +32,7 @@ const BaseModal = ({
           isOpen={isOpen}
           description={description}
           title={title}>
-          {children}
+        {children}
         </Center>
       ) : (
         <Bottom
@@ -110,10 +110,10 @@ return (
       onClose={onClose}
     >
       <div className="flex min-h-screen items-end justify-center text-center backdrop-blur-sm">
-        <Dialog.Overlay className="fixed inset-0" />
+        <Dialog.Overlay className="fixed inset-0 z-0" />
 
         <Transition.Child
-          as="div"
+          as={Fragment}
           enter="ease-in-out duration-300"
           enterFrom="translate-y-full"
           enterTo=""
@@ -121,7 +121,7 @@ return (
           leaveFrom=""
           leaveTo="translate-y-full"
         >
-          <Dialog.Panel className="h-[50vh] w-screen overflow-hidden rounded-t-2xl bg-base-content p-6 text-left shadow-xl">
+          <Dialog.Panel className="z-50 h-[50vh] w-screen overflow-hidden rounded-t-2xl bg-base-content p-6 text-left shadow-xl">
             {title && (
               <Dialog.Title className="text-xl font-bold leading-6 tracking-wide text-base-100">
                 {title}
