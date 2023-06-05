@@ -23,7 +23,7 @@ const UserDataProvider = ({ children }: { children: ReactNode }) => {
       refetchOnWindowFocus: false, 
       enabled: !storeUser && data?.user?.id !== undefined,
       onSuccess(data) {
-        if (!storeUser && user) {
+        if (!storeUser && data) {
           setUser(data.user);
           setStoreTags(data.tags);
         }
