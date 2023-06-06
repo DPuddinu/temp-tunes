@@ -1,6 +1,6 @@
 import { useTranslation } from "next-i18next";
 import TrackRow from "~/components/ui/TrackRow";
-import RowsSkeleton from "~/components/ui/skeletons/RowSkeleton";
+import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import { api } from "~/utils/api";
 import RecapCard from "../RecapCard";
 
@@ -17,7 +17,7 @@ const RecommendedCard = () => {
       <RecapCard.Container key={"container-recommended"} error={isError}>
         {isLoading && (
           <div className="flex flex-col gap-2">
-            <RowsSkeleton rowsNumber={3} />
+            <RecapSkeleton/> 
           </div>
         )}
         {data &&

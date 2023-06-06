@@ -1,7 +1,7 @@
 import MainLayout from "@components/MainLayout";
 import type { GetStaticProps } from "next";
 import { useSession } from "next-auth/react";
-import { TFunction, useTranslation } from "next-i18next";
+import { useTranslation, type TFunction } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
 import type { TimeRangeType } from "src/types/spotify-types";
@@ -9,6 +9,7 @@ import { TimeRangeArray } from "src/types/spotify-types";
 import MoodCard from "~/components/recap/cards/MoodCard";
 import RecommendedCard from "~/components/recap/cards/RecommendedCard";
 import type { RecapPropsType } from "~/components/recap/cards/UserTopCard";
+import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import TopRatedCard from "../components/recap/cards/UserTopCard";
 import type { PageWithLayout } from "../types/page-types";
 
@@ -25,11 +26,15 @@ const Home: PageWithLayout = () => {
 
   return (
     <section className="h-full p-4">
-      <Greetings
-        name={sessionData?.user?.name}
-        timeRange={timeRange}
-        selectTimeRange={setTimeRange}
-      />
+      {sessionData?.user?.name ? (
+        <Greetings
+          name={sessionData?.user?.name}
+          timeRange={timeRange}
+          selectTimeRange={setTimeRange}
+        />
+      ) : (
+        <GreetingsSkeleton />
+      )}
       <Recap timeRange={timeRange} />
     </section>
   );
@@ -38,13 +43,25 @@ const Home: PageWithLayout = () => {
 const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
   return (
     <section className="md:grid md:grid-cols-3 md:gap-3">
-      <TopRatedCard timeRange={timeRange} key={'topRatedCard'} />
-      <MoodCard key={'moodCard'}/>
-      <RecommendedCard key={'recommendedCard'}/>
+      <TopRatedCard timeRange={timeRange} key={"topRatedCard"} />
+      <MoodCard key={"moodCard"} />
+      <RecommendedCard key={"recommendedCard"} />
     </section>
   );
 };
-
+function GreetingsSkeleton() {
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex h-16 w-full animate-pulse flex-col gap-2 rounded-xl bg-base-300 p-2 [&>div]:rounded-2xl">
+        <div className="h-8 w-3/4 bg-base-200"></div>
+        <div className="h-8 w-1/2 bg-base-200"></div>
+      </div>
+      <div className="flex h-8 w-32 animate-pulse flex-col justify-center rounded-lg bg-base-300 p-2">
+        <div className="h-4 rounded-2xl bg-base-200"></div>
+      </div>
+    </div>
+  );
+}
 function Greetings({ name, timeRange, selectTimeRange }: GreetingsProps) {
   const { t } = useTranslation("home");
 
@@ -55,11 +72,13 @@ function Greetings({ name, timeRange, selectTimeRange }: GreetingsProps) {
           <h1 className="text-2xl font-bold text-base-content md:text-3xl">
             {`${salute(t)},`}&nbsp;
           </h1>
-          <h1 className="text-2xl font-bold text-base-content md:text-3xl">{`${name ?? ''} 👋🏻`}</h1>
+          <h1 className="text-2xl font-bold text-base-content md:text-3xl">{`${
+            name ?? ""
+          } 👋🏻`}</h1>
         </div>
         <p className="mt-2 font-medium text-base-content">{t("recap.title")}</p>
         <select
-          className="select select-sm mt-4 bg-base-300"
+          className="select select-sm mt-4 w-32 bg-base-300"
           value={timeRange}
           onChange={(e) => selectTimeRange(e.target.value as TimeRangeType)}
         >
@@ -72,8 +91,6 @@ function Greetings({ name, timeRange, selectTimeRange }: GreetingsProps) {
       </div>
     </div>
   );
-
-  
 }
 
 function salute(t: TFunction) {

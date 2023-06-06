@@ -13,7 +13,7 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Image from "next/image";
-import { Suspense, useMemo, useRef, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import MainLayout from "~/components/MainLayout";
 import { UnfollowModal } from "~/components/modals/UnfollowModal";
 import { DropdownMenu } from "~/components/ui/DropdownMenu";
@@ -26,7 +26,6 @@ import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { PlaylistPageSkeleton } from "~/components/ui/skeletons/PlaylistPageSkeleton";
 import { SquareSkeleton } from "~/components/ui/skeletons/SquareSkeleton";
 import { useStore } from "~/core/store";
-import useMediaQuery from "~/hooks/use-media-query";
 import { type PageWithLayout } from "~/types/page-types";
 import { type Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
@@ -202,10 +201,9 @@ function PaginationComponent<TData>({ table }: { table: Table<TData> }) {
   );
 }
 
-function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data: Playlist[], index: number }) {
+function PlaylistComponent({ playlist, data }: { playlist: Playlist, data: Playlist[] }) {
   const { t } = useTranslation("playlists");
   const [isLoading, setIsLoading] = useState(false)
-  const xxs = useMediaQuery("(max-width: 425px)");
   
   const {data: session} = useSession()
   const {
@@ -248,16 +246,11 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
     },
   });
   
-  const ref = useRef<HTMLDivElement>(null);
-  const listRef = useRef<HTMLDivElement>(null);
   const { setMessage } = useStore();
   const [openUnfollowModal, setOpenUnfollowModal] = useState(false)
 
   return (
-    <div
-      ref={ref}
-      className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 shadow "
-    >
+    <div className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 shadow ">
       <div className="h-20 w-20 min-w-[5rem]">
         <Suspense fallback={<SquareSkeleton />}>
           <Image
@@ -283,7 +276,7 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
         <LoadingSpinner className="mr-4" />
       ) : (
         <DropdownMenu intent={"darkest"}>
-          <div ref={listRef}>
+          <div className="min-h-[15rem] flex flex-col [&>li]:grow [&>li]:text-base">
             {/* SHUFFLE */}
             <li
               onClick={() => {

@@ -25,6 +25,7 @@ specifiers:
   dotenv: ^16.0.3
   eslint: ^8.34.0
   eslint-config-next: ^13.2.1
+  eslint-config-prettier: ^8.8.0
   i18next: ^22.4.9
   next: ^13.2.1
   next-auth: ^4.19.0
@@ -89,6 +90,7 @@ devDependencies:
   daisyui: 3.0.3_postcss@8.4.21
   eslint: 8.35.0
   eslint-config-next: 13.2.3_ycpbpc6yetojsgtrx3mwntkhsu
+  eslint-config-prettier: 8.8.0_eslint@8.35.0
   postcss: 8.4.21
   prettier: 2.8.4
   prettier-plugin-tailwindcss: 0.2.3_prettier@2.8.4
@@ -1460,6 +1462,15 @@ packages:
     transitivePeerDependencies:
       - eslint-import-resolver-webpack
       - supports-color
+    dev: true
+
+  /eslint-config-prettier/8.8.0_eslint@8.35.0:
+    resolution: {integrity: sha512-wLbQiFre3tdGgpDv67NQKnJuTlcUVYHas3k+DZCc2U2BadthoEY4B7hLPvAxaqdyOGCzuLfii2fqGph10va7oA==}
+    hasBin: true
+    peerDependencies:
+      eslint: '>=7.0.0'
+    dependencies:
+      eslint: 8.35.0
     dev: true
 
   /eslint-import-resolver-node/0.3.7:
