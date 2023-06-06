@@ -169,7 +169,6 @@ function TableBodyComponent<TData>({ table, data }: { table: Table<TData>, data:
               key={row.id}
               data={data}
               playlist={row.original as Playlist}
-              index={i}
             />
           ))
       ) : (
