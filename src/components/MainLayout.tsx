@@ -14,6 +14,7 @@ import { PlaylistSVG } from "./ui/icons/PlaylistSVG";
 import { SearchSVG } from "./ui/icons/SearchSVG";
 import { TemplateSVG } from "./ui/icons/TemplateSVG";
 import { RoundSkeleton } from "./ui/skeletons/RoundSkeleton";
+import { MenuSVG } from "./ui/icons/MenuSVG";
 
 
 type PageType = 'Home'| 'Search'| 'Playlists' | 'Templates'
@@ -60,8 +61,8 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
         </main>
       </div>
       <div className="drawer-side">
-        <label htmlFor="my-drawer-2" className="drawer-overlay" />
-        <ul className="menu w-80 bg-base-200 p-4 text-base-content">
+        <label htmlFor="my-drawer-2" className="drawer-overlay " />
+        <ul className="menu h-full w-80 bg-base-200 p-4 text-base-content">
           {pages.map((page) => (
             <li
               key={page.name}
@@ -95,22 +96,12 @@ const UserNavbar = ({
   return (
     <div className="navbar bg-base-300 bg-gradient-to-r shadow">
       <div className="flex w-full justify-end sm:justify-between">
-        <div className="hidden p-2 sm:block">
-          <label htmlFor="my-drawer-2" className="btn-ghost drawer-button btn ">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="rgb(226 232 240)"
-              className="h-6 w-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-              />
-            </svg>
+        <div className="hidden border-none p-2  sm:block">
+          <label
+            htmlFor="my-drawer-2"
+            className="drawer-button btn-ghost btn hover:bg-base-300"
+          >
+            <MenuSVG/>
           </label>
         </div>
 
@@ -132,7 +123,7 @@ const UserNavbar = ({
 
             <ul
               tabIndex={0}
-              className="dropdown-content menu rounded-box menu-compact mt-3 w-52 bg-base-200 p-2 shadow"
+              className="menu-compact dropdown-content menu rounded-box mt-3 w-52 bg-base-200 p-2 shadow"
             >
               <li>
                 <a onClick={() => signOut({ callbackUrl: "/" })}>Logout</a>

@@ -13,10 +13,8 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Image from "next/image";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import styled from "styled-components";
+import { Suspense, useMemo, useRef, useState } from "react";
 import MainLayout from "~/components/MainLayout";
-import { MergeModal } from "~/components/modals/MergeModal";
 import { UnfollowModal } from "~/components/modals/UnfollowModal";
 import { DropdownMenu } from "~/components/ui/DropdownMenu";
 import { CopySVG } from "~/components/ui/icons/CopySVG";
@@ -254,19 +252,6 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
   const listRef = useRef<HTMLDivElement>(null);
   const { setMessage } = useStore();
   const [openUnfollowModal, setOpenUnfollowModal] = useState(false)
-  const [openMergeModal, setOpenMergeModal] = useState(false)
-  const [position, setPosition] = useState("");
-
-  useEffect(() => {
-    if (
-      ref.current &&
-      listRef.current &&
-      window.innerHeight - ref.current.getBoundingClientRect().bottom <
-        listRef.current.offsetHeight
-    ) {
-      setPosition("dropdown-top");
-    } else setPosition("dropdown-bottom");
-  }, [ref, listRef]);
 
   return (
     <div
@@ -274,7 +259,7 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
       className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 shadow "
     >
       <div className="h-20 w-20 min-w-[5rem]">
-        <Suspense fallback={<SquareSkeleton/>}>
+        <Suspense fallback={<SquareSkeleton />}>
           <Image
             src={
               playlist.images && playlist.images[0]
@@ -282,8 +267,10 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
                 : ""
             }
             alt=""
-            height={256}
-            width={256}
+            quality={10}
+            priority={true}
+            height={80}
+            width={80}
             className="aspect-square h-full w-full rounded-xl object-cover"
           />
         </Suspense>
@@ -295,36 +282,60 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
       {isLoading ? (
         <LoadingSpinner className="mr-4" />
       ) : (
-        <MultiLevel>
-          <DropdownMenu
-            intent={"darkest"}
-            className={`max-h-10 pr-4 ${position}`}
-          >
-            <div ref={listRef}>
-              {/* SHUFFLE */}
-              <li
-                onClick={() => {
-                  shuffle({ playlist: playlist });
-                }}
-              >
-                <div className="flex gap-2 rounded-xl">
-                  <ShuffleSVG />
-                  <a>{t("operations.shuffle")}</a>
-                </div>
-              </li>
-              {/* COPY */}
-              <li
-                onClick={() => {
-                  copy({ playlist: playlist });
-                }}
-              >
-                <div className="flex gap-2 rounded-xl">
-                  <CopySVG />
-                  <a>{t("operations.copy")}</a>
-                </div>
-              </li>
-              {/* MERGE */}
-              <li className="group/merge relative flex gap-2 rounded-xl hover:bg-base-100">
+        <DropdownMenu intent={"darkest"}>
+          <div ref={listRef}>
+            {/* SHUFFLE */}
+            <li
+              onClick={() => {
+                shuffle({ playlist: playlist });
+              }}
+            >
+              <div className="flex gap-2 rounded-xl">
+                <ShuffleSVG />
+                <a>{t("operations.shuffle")}</a>
+              </div>
+            </li>
+            {/* COPY */}
+            <li
+              onClick={() => {
+                copy({ playlist: playlist });
+              }}
+            >
+              <div className="flex gap-2 rounded-xl">
+                <CopySVG />
+                <a>{t("operations.copy")}</a>
+              </div>
+            </li>
+            {/* MERGE */}
+            <li>
+              <details>
+                <summary>
+                  <MergeSVG />
+                  <span>{t("operations.merge")}</span>
+                </summary>
+                <ul className="px-0 pt-2 m-2 max-h-40 w-[11rem] overflow-auto rounded-xl bg-base-200 bg-opacity-80 before:hidden">
+                  {data
+                    .filter((t) => t.owner.id === session?.user?.id ?? "")
+                    .map((destination) => (
+                      <li
+                        key={destination.id}
+                        className="px-3 py-1 hover:cursor-pointer z-20"
+                        onClick={() =>
+                          merge({
+                            originId: playlist.id,
+                            originName: playlist.name,
+                            destinationName: destination.name,
+                            destinationId: destination.id,
+                          })
+                        }
+                      >
+                        <p className="p-2">{destination.name}</p>
+                      </li>
+                    ))}
+                </ul>
+              </details>
+            </li>
+            {/* <li className="group/merge relative flex gap-2 rounded-xl hover:bg-base-100">
                 <button
                   className="flex grow gap-2 rounded-xl"
                   onClick={() => setOpenMergeModal((open) => !open)}
@@ -382,24 +393,37 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
                       ))}
                   </ul>
                 )}
-              </li>
-              {/* DELETE */}
-              <li onClick={() => setOpenUnfollowModal(true)}>
-                <div className="flex gap-2 rounded-xl">
-                  <DeleteSVG />
-                  <a>{t("operations.unfollow")}</a>
-                </div>
-              </li>
-              {/* RENAME */}
-              <li className="disabled bg-transparent">
-                <div className="flex gap-2 rounded-xl">
-                  <PencilSVG />
-                  <a>{t("operations.rename")}</a>
-                </div>
-              </li>
-            </div>
-          </DropdownMenu>
-        </MultiLevel>
+              </li> */}
+            {/* <li>
+                <details open>
+                  <summary>Parent</summary>
+                  <ul>
+                    <li>
+                      <a>level 2 item 1</a>
+                    </li>
+                    <li>
+                      <a>level 2 item 2</a>
+                    </li>
+                  </ul>
+                </details>
+              </li> */}
+
+            {/* DELETE */}
+            <li onClick={() => setOpenUnfollowModal(true)}>
+              <div className="flex gap-2 rounded-xl">
+                <DeleteSVG />
+                <a>{t("operations.unfollow")}</a>
+              </div>
+            </li>
+            {/* RENAME */}
+            <li className="disabled bg-transparent">
+              <div className="flex gap-2 rounded-xl">
+                <PencilSVG />
+                <a>{t("operations.rename")}</a>
+              </div>
+            </li>
+          </div>
+        </DropdownMenu>
       )}
       <UnfollowModal
         isOpen={openUnfollowModal}
@@ -415,21 +439,6 @@ function PlaylistComponent({ playlist, data, index }: { playlist: Playlist, data
         }}
         onConfirm={() => setIsLoading(true)}
       />
-      {xxs && (
-        <MergeModal
-          isOpen={openMergeModal}
-          setIsOpen={setOpenMergeModal}
-          origin={playlist}
-          playlists={data}
-          onClose={() => setOpenMergeModal(false)}
-          onSuccess={() => {
-            setIsLoading(false);
-            setTimeout(() => {
-              window.dispatchEvent(new Event("focus"));
-            }, 300);
-          }}
-        />
-      )}
     </div>
   );
 }
@@ -449,24 +458,5 @@ export const getStaticProps: GetStaticProps = async (context) => {
     },
   };
 };
-
-
-const MultiLevel = styled.div`
-  li > button .arrow {
-    transform: rotate(-90deg);
-  }
-  li:hover > button .arrow {
-    transform: rotate(-270deg);
-  }
-  .group:hover .group-hover\:scale-100 {
-    transform: scale(1);
-  }
-  .group:hover .group-hover\:-rotate-180 {
-    transform: rotate(180deg);
-  }
-  .scale-0 {
-    transform: scale(0);
-  }
-`;
 
 
