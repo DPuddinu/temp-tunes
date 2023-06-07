@@ -217,7 +217,7 @@ function PlaylistComponent({
 }) {
   const { t } = useTranslation("playlists");
   const [isLoading, setIsLoading] = useState(false);
-
+  const { data: session } = useSession();
   const {
     data: _data,
     fetchNextPage,
@@ -238,21 +238,25 @@ function PlaylistComponent({
     }
   );
 
-  const paginatedData = _data?.pages.flatMap((page) => page);
-  const lastPlaylistRef = useRef<HTMLULElement>(null);
+  const paginatedData = useMemo(
+    () =>
+      _data?.pages
+        .flatMap((page) => page)
+        .filter((t) => t.owner.id === session?.user?.id ?? ""),
+    [session, _data]
+  );
+  const containerRef = useRef<HTMLDivElement>(null);
   const { ref, entry } = useIntersection({
-    root: lastPlaylistRef.current,
+    root: containerRef.current,
     threshold: 1,
   });
 
   useEffect(() => {
-    console.log(entry);
-    console.log(ref);
-    console.log();
-    if (entry?.isIntersecting) fetchNextPage();
-  }, [entry, fetchNextPage]);
+    if (entry?.isIntersecting) {
+      fetchNextPage();
+    }
+  }, [entry]);
 
-  const { data: session } = useSession();
   const { isError, mutate: shuffle } = api.spotify_playlist.shuffle.useMutation(
     {
       onMutate() {
@@ -342,36 +346,31 @@ function PlaylistComponent({
               </div>
             </li>
             {/* MERGE */}
+
             <li>
               <details>
                 <summary>
                   <MergeSVG />
                   <span>{t("operations.merge")}</span>
                 </summary>
-                <ul
-                  ref={lastPlaylistRef}
-                  className="m-2 max-h-40 w-[11rem] overflow-auto rounded-xl bg-base-200 bg-opacity-80 px-0 pt-2 before:hidden"
-                >
-                  {paginatedData
-                    ?.filter((t) => t.owner.id === session?.user?.id ?? "")
-                    .map((destination, i) => (
-                      <li
-                        ref={i === paginatedData.length - 1 ? ref : null}
-                        key={destination.id}
-                        className="z-20 px-3 py-1 hover:cursor-pointer"
-                        onClick={() =>
-                          merge({
-                            originId: playlist.id,
-                            originName: playlist.name,
-                            destinationName: destination.name,
-                            destinationId: destination.id,
-                          })
-                        }
-                      >
-                        <p className="p-2">{destination.name}</p>
-                        
-                      </li>
-                    ))}
+                <ul className="m-2 max-h-40 w-[11rem] overflow-auto rounded-xl bg-base-200 bg-opacity-80 px-0 pt-2 before:hidden">
+                  {paginatedData?.map((destination, i) => (
+                    <li
+                      ref={i === paginatedData.length - 1 ? ref : null}
+                      key={destination.id}
+                      className="z-20 px-3 py-1 hover:cursor-pointer"
+                      onClick={() =>
+                        merge({
+                          originId: playlist.id,
+                          originName: playlist.name,
+                          destinationName: destination.name,
+                          destinationId: destination.id,
+                        })
+                      }
+                    >
+                      <p className="p-2">{destination.name}</p>
+                    </li>
+                  ))}
                 </ul>
               </details>
             </li>
