@@ -4,20 +4,19 @@ import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Suspense, useRef, type ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import { useStore } from "~/core/store";
 import { cn } from "~/utils/utils";
 import { ToastCva } from "./cva/ToastCva";
 import ThemeSwitcher from "./ui/ThemeSwitcher";
 import { HomeSVG } from "./ui/icons/HomeSVG";
+import { MenuSVG } from "./ui/icons/MenuSVG";
 import { PlaylistSVG } from "./ui/icons/PlaylistSVG";
 import { SearchSVG } from "./ui/icons/SearchSVG";
 import { TemplateSVG } from "./ui/icons/TemplateSVG";
 import { RoundSkeleton } from "./ui/skeletons/RoundSkeleton";
-import { MenuSVG } from "./ui/icons/MenuSVG";
 
-
-type PageType = 'Home'| 'Search'| 'Playlists' | 'Templates'
+type PageType = "Home" | "Search" | "Playlists" | "Templates";
 interface Page {
   url: string;
   name: PageType;
@@ -33,7 +32,7 @@ const pages: Page[] = [
 
 const MainLayout = ({ children }: { children: ReactNode }) => {
   const { data: session, status } = useSession();
-  const {message} = useStore();
+  const { message } = useStore();
   const router = useRouter();
   const openDrawer = useRef<HTMLInputElement>(null);
 
@@ -83,16 +82,11 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   );
 };
 
-
 interface UserNavbarProps {
   name: string;
   image: string;
 }
-const UserNavbar = ({
-  name,
-  image
-}: UserNavbarProps) => {
-
+const UserNavbar = ({ name, image }: UserNavbarProps) => {
   return (
     <div className="navbar bg-base-300 bg-gradient-to-r shadow">
       <div className="flex w-full justify-end sm:justify-between">
@@ -101,7 +95,7 @@ const UserNavbar = ({
             htmlFor="my-drawer-2"
             className="drawer-button btn-ghost btn hover:bg-base-300"
           >
-            <MenuSVG/>
+            <MenuSVG />
           </label>
         </div>
 
@@ -114,9 +108,18 @@ const UserNavbar = ({
               </h1>
               <label tabIndex={0} className="btn-ghost btn-circle avatar btn">
                 <div className="w-10 rounded-full">
-                  <Suspense fallback={<RoundSkeleton />}>
-                    <Image src={image} alt="" height={64} width={64} />
-                  </Suspense>
+                  {!!image ? (
+                    <Image
+                      priority
+                      quality={60}
+                      src={image}
+                      alt="blur"
+                      height={40}
+                      width={40}
+                    />
+                  ) : (
+                    <RoundSkeleton />
+                  )}
                 </div>
               </label>
             </div>
@@ -156,14 +159,13 @@ const BottomNavigation = () => {
       ))}
     </div>
   );
-}
+};
 
 type ToastProps = {
   className?: string;
   message: string | undefined;
 } & VariantProps<typeof ToastCva>;
-const Toast = ({ className, intent, message}: ToastProps) => {
-
+const Toast = ({ className, intent, message }: ToastProps) => {
   return (
     <>
       <Transition
@@ -184,4 +186,3 @@ const Toast = ({ className, intent, message}: ToastProps) => {
 };
 
 export default MainLayout;
-

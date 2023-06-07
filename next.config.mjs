@@ -14,6 +14,7 @@ const config = {
       "mosaic.scdn.co",
       "newjams-images.scdn.co",
       "i.scdn.co",
+      "wrapped-images.spotifycdn.com"
     ],
   },
   /**

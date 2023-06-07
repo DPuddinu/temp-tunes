@@ -21,9 +21,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider themes={themesList} defaultTheme={"dark"}>
-        <SessionProvider session={session}>
+    <SessionProvider session={session}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider themes={themesList} defaultTheme={"dark"}>
           <UserDataProvider>
             <style jsx global>{`
               html {
@@ -32,9 +32,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
             `}</style>
             {getLayout(<Component {...pageProps} />)}
           </UserDataProvider>
-        </SessionProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </SessionProvider>
   );
 };
 

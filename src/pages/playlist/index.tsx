@@ -1,4 +1,6 @@
 import { Disclosure, Transition } from "@headlessui/react";
+import { useIntersection } from "@mantine/hooks";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   getCoreRowModel,
   getFilteredRowModel,
@@ -13,32 +15,35 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Image from "next/image";
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import MainLayout from "~/components/MainLayout";
 import { UnfollowModal } from "~/components/modals/UnfollowModal";
 import { DropdownMenu } from "~/components/ui/DropdownMenu";
+import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { CopySVG } from "~/components/ui/icons/CopySVG";
 import { DeleteSVG } from "~/components/ui/icons/DeleteSVG";
 import { MergeSVG } from "~/components/ui/icons/MergeSVG";
 import { PencilSVG } from "~/components/ui/icons/PencilSVG";
 import { ShuffleSVG } from "~/components/ui/icons/ShuffleSVG";
-import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { PlaylistPageSkeleton } from "~/components/ui/skeletons/PlaylistPageSkeleton";
 import { SquareSkeleton } from "~/components/ui/skeletons/SquareSkeleton";
 import { useStore } from "~/core/store";
 import { type PageWithLayout } from "~/types/page-types";
 import { type Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
+import { spliceArray } from "~/utils/helpers";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
 const PlaylistsPage: PageWithLayout = () => {
-  const { data, isLoading, isError } =
-    api.spotify_playlist.getAll.useQuery(undefined, {
+  const { data, isLoading, isError } = api.spotify_playlist.getAll.useQuery(
+    undefined,
+    {
       refetchOnWindowFocus: true,
-    });
+    }
+  );
   const columns: ColumnDef<Playlist>[] = useMemo(() => {
     return [
       {
@@ -56,10 +61,7 @@ const PlaylistsPage: PageWithLayout = () => {
       {isLoading ? (
         <PlaylistPageSkeleton />
       ) : (
-        <DataTable
-          columns={columns}
-          data={data ? data : []}
-        />
+        <DataTable columns={columns} data={data ? data : []} />
       )}
     </div>
   );
@@ -158,7 +160,13 @@ function FiltersComponent<TData>({ table }: { table: Table<TData> }) {
     </div>
   );
 }
-function TableBodyComponent<TData>({ table, data }: { table: Table<TData>, data: Playlist[] }) {
+function TableBodyComponent<TData>({
+  table,
+  data,
+}: {
+  table: Table<TData>;
+  data: Playlist[];
+}) {
   return (
     <div className="flex w-full flex-col gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:w-3/4">
       {table.getRowModel().rows?.length ? (
@@ -200,53 +208,88 @@ function PaginationComponent<TData>({ table }: { table: Table<TData> }) {
   );
 }
 
-function PlaylistComponent({ playlist, data }: { playlist: Playlist, data: Playlist[] }) {
+function PlaylistComponent({
+  playlist,
+  data,
+}: {
+  playlist: Playlist;
+  data: Playlist[];
+}) {
   const { t } = useTranslation("playlists");
-  const [isLoading, setIsLoading] = useState(false)
-  
-  const {data: session} = useSession()
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
-    isError,
-    mutate: shuffle,
-  } = api.spotify_playlist.shuffle.useMutation({
-    onMutate(){
-      setIsLoading(true);
+    data: _data,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery(
+    ["query"],
+    ({ pageParam = 1 }) => {
+      return data.slice((pageParam - 1) * 4, pageParam * 4);
     },
-    onSuccess() {
-      setMessage(`${playlist.name} ${t("operations.shuffled")}`);
-      setIsLoading(false)
-    },
-  });
-  const {
-    mutate: copy,
-    isError: copyError,
-  } = api.spotify_playlist.copy.useMutation({
-    onMutate(){
-      setIsLoading(true)
-    },
-    onSuccess() {
-      setMessage(`${playlist.name} ${t("operations.copied")}`);
-      setIsLoading(false)
-      setTimeout(() => {
-        window.dispatchEvent(new Event("focus"))
-      },300)
+    {
+      getNextPageParam: (_, pages) => {
+        return pages.length + 1;
+      },
+      initialData: {
+        pages: [data.slice(0, 4)],
+        pageParams: [1],
+      },
     }
+  );
+
+  const paginatedData = _data?.pages.flatMap((page) => page);
+  const lastPlaylistRef = useRef<HTMLULElement>(null);
+  const { ref, entry } = useIntersection({
+    root: lastPlaylistRef.current,
+    threshold: 1,
   });
-  const {
-    mutate: merge,
-    isError: mergeError,
-  } = api.spotify_playlist.merge.useMutation({
-    onMutate(){
-      setIsLoading(true)
-    },
-    onSuccess() {
-      setMessage(`${playlist.name} ${t("operations.merge")}`);
-      setIsLoading(false)
-    },
-  });
-  
+
+  useEffect(() => {
+    console.log(entry);
+    console.log(ref);
+    console.log();
+    if (entry?.isIntersecting) fetchNextPage();
+  }, [entry, fetchNextPage]);
+
+  const { data: session } = useSession();
+  const { isError, mutate: shuffle } = api.spotify_playlist.shuffle.useMutation(
+    {
+      onMutate() {
+        setIsLoading(true);
+      },
+      onSuccess() {
+        setMessage(`${playlist.name} ${t("operations.shuffled")}`);
+        setIsLoading(false);
+      },
+    }
+  );
+  const { mutate: copy, isError: copyError } =
+    api.spotify_playlist.copy.useMutation({
+      onMutate() {
+        setIsLoading(true);
+      },
+      onSuccess() {
+        setMessage(`${playlist.name} ${t("operations.copied")}`);
+        setIsLoading(false);
+        setTimeout(() => {
+          window.dispatchEvent(new Event("focus"));
+        }, 300);
+      },
+    });
+  const { mutate: merge, isError: mergeError } =
+    api.spotify_playlist.merge.useMutation({
+      onMutate() {
+        setIsLoading(true);
+      },
+      onSuccess() {
+        setMessage(`${playlist.name} ${t("operations.merge")}`);
+        setIsLoading(false);
+      },
+    });
+
   const { setMessage } = useStore();
-  const [openUnfollowModal, setOpenUnfollowModal] = useState(false)
+  const [openUnfollowModal, setOpenUnfollowModal] = useState(false);
 
   return (
     <div className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 shadow ">
@@ -258,9 +301,9 @@ function PlaylistComponent({ playlist, data }: { playlist: Playlist, data: Playl
                 ? playlist.images[0].url
                 : ""
             }
-            alt=""
-            quality={10}
-            priority={true}
+            alt="blur"
+            quality={60}
+            priority
             height={80}
             width={80}
             className="aspect-square h-full w-full rounded-xl object-cover"
@@ -275,7 +318,7 @@ function PlaylistComponent({ playlist, data }: { playlist: Playlist, data: Playl
         <LoadingSpinner className="mr-4" />
       ) : (
         <DropdownMenu intent={"darkest"}>
-          <div className="min-h-[15rem] flex flex-col [&>li]:grow [&>li]:text-base">
+          <div className="flex min-h-[15rem] flex-col [&>li]:grow [&>li]:text-base">
             {/* SHUFFLE */}
             <li
               onClick={() => {
@@ -305,13 +348,17 @@ function PlaylistComponent({ playlist, data }: { playlist: Playlist, data: Playl
                   <MergeSVG />
                   <span>{t("operations.merge")}</span>
                 </summary>
-                <ul className="px-0 pt-2 m-2 max-h-40 w-[11rem] overflow-auto rounded-xl bg-base-200 bg-opacity-80 before:hidden">
-                  {data
-                    .filter((t) => t.owner.id === session?.user?.id ?? "")
-                    .map((destination) => (
+                <ul
+                  ref={lastPlaylistRef}
+                  className="m-2 max-h-40 w-[11rem] overflow-auto rounded-xl bg-base-200 bg-opacity-80 px-0 pt-2 before:hidden"
+                >
+                  {paginatedData
+                    ?.filter((t) => t.owner.id === session?.user?.id ?? "")
+                    .map((destination, i) => (
                       <li
+                        ref={i === paginatedData.length - 1 ? ref : null}
                         key={destination.id}
-                        className="px-3 py-1 hover:cursor-pointer z-20"
+                        className="z-20 px-3 py-1 hover:cursor-pointer"
                         onClick={() =>
                           merge({
                             originId: playlist.id,
@@ -322,84 +369,12 @@ function PlaylistComponent({ playlist, data }: { playlist: Playlist, data: Playl
                         }
                       >
                         <p className="p-2">{destination.name}</p>
+                        
                       </li>
                     ))}
                 </ul>
               </details>
             </li>
-            {/* <li className="group/merge relative flex gap-2 rounded-xl hover:bg-base-100">
-                <button
-                  className="flex grow gap-2 rounded-xl"
-                  onClick={() => setOpenMergeModal((open) => !open)}
-                >
-                  <MergeSVG />
-                  <a>{t("operations.merge")}</a>
-                  <span className="flex grow justify-end">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 20"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="arrow h-4 w-4"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                      />
-                    </svg>
-                  </span>
-                </button>
-                {!xxs && (
-                  <ul
-                    className={`absolute top-0 right-0 hidden max-h-80 -translate-x-full translate-y-[-5rem] overflow-x-auto overflow-y-scroll rounded-xl bg-base-300 p-2 group-hover/merge:block
-                ${
-                  index % 2 === 0
-                    ? "sm:translate-x-full"
-                    : "sm:-translate-x-full"
-                }
-                ${
-                  (index + 1) % 3 === 0
-                    ? "md:-translate-x-full"
-                    : "md:translate-x-full"
-                }`}
-                  >
-                    {data
-                      .filter((t) => t.owner.id === session?.user?.id ?? "")
-                      .map((destination) => (
-                        <li
-                          key={self.crypto.randomUUID()}
-                          className="relative bg-base-300 px-3 py-1 first:rounded-t-xl last:rounded-b-xl hover:cursor-pointer hover:bg-primary"
-                          onClick={() =>
-                            merge({
-                              originId: playlist.id,
-                              originName: playlist.name,
-                              destinationName: destination.name,
-                              destinationId: destination.id,
-                            })
-                          }
-                        >
-                          {destination.name}
-                        </li>
-                      ))}
-                  </ul>
-                )}
-              </li> */}
-            {/* <li>
-                <details open>
-                  <summary>Parent</summary>
-                  <ul>
-                    <li>
-                      <a>level 2 item 1</a>
-                    </li>
-                    <li>
-                      <a>level 2 item 2</a>
-                    </li>
-                  </ul>
-                </details>
-              </li> */}
-
             {/* DELETE */}
             <li onClick={() => setOpenUnfollowModal(true)}>
               <div className="flex gap-2 rounded-xl">
@@ -450,5 +425,3 @@ export const getStaticProps: GetStaticProps = async (context) => {
     },
   };
 };
-
-
