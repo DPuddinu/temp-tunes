@@ -17,6 +17,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Image from "next/image";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import MainLayout from "~/components/MainLayout";
+import { RenameModal } from "~/components/modals/RemaneModal";
 import { UnfollowModal } from "~/components/modals/UnfollowModal";
 import { DropdownMenu } from "~/components/ui/DropdownMenu";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
@@ -217,7 +218,13 @@ function PlaylistComponent({
 }) {
   const { t } = useTranslation("playlists");
   const [isLoading, setIsLoading] = useState(false);
+  const { setMessage } = useStore();
+  const [openUnfollowModal, setOpenUnfollowModal] = useState(false);
+  const [openRenameModal, setOpenRenameModal] = useState(false);
+
   const { data: session } = useSession();
+
+  // INFINITE SCROLLING
   const {
     data: _data,
     fetchNextPage,
@@ -292,9 +299,6 @@ function PlaylistComponent({
       },
     });
 
-  const { setMessage } = useStore();
-  const [openUnfollowModal, setOpenUnfollowModal] = useState(false);
-
   return (
     <div className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 shadow ">
       <div className="h-20 w-20 min-w-[5rem]">
@@ -346,7 +350,6 @@ function PlaylistComponent({
               </div>
             </li>
             {/* MERGE */}
-
             <li>
               <details>
                 <summary>
@@ -382,7 +385,7 @@ function PlaylistComponent({
               </div>
             </li>
             {/* RENAME */}
-            <li className="disabled bg-transparent">
+            <li onClick={() => setOpenRenameModal(true)}>
               <div className="flex gap-2 rounded-xl">
                 <PencilSVG />
                 <a>{t("operations.rename")}</a>
@@ -397,6 +400,20 @@ function PlaylistComponent({
         playlistID={playlist.id}
         playlistName={playlist.name}
         onClose={() => setOpenUnfollowModal(false)}
+        onSuccess={() => {
+          setIsLoading(false);
+          setTimeout(() => {
+            window.dispatchEvent(new Event("focus"));
+          }, 300);
+        }}
+        onConfirm={() => setIsLoading(true)}
+      />
+      <RenameModal
+        isOpen={openRenameModal}
+        setIsOpen={setOpenRenameModal}
+        playlistID={playlist.id}
+        playlistName={playlist.name}
+        onClose={() => setOpenRenameModal(false)}
         onSuccess={() => {
           setIsLoading(false);
           setTimeout(() => {

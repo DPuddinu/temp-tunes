@@ -199,10 +199,10 @@ export async function unfollowPlaylist(playlistId: string, access_token: string)
   return await spotifyDELETE({ access_token: access_token, url })
 }
 
-export async function renamePlaylist(playlistId: string, name: string){
+export async function renamePlaylist(playlistId: string, name: string, access_token: string) {
   const url = `/playlists/${playlistId}`
   const body = {
     name: name
   }
-  return await spotifyPUT({ access_token: access_token, url })
+  return await spotifyPUT({ access_token: access_token, url, body: JSON.stringify(body) })
 }

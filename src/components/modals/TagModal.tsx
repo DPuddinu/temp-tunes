@@ -8,7 +8,6 @@ import {
 } from "react";
 import { z } from "zod";
 import { useStore } from "~/core/store";
-import useMediaQuery from "~/hooks/use-media-query";
 import type { Track } from "~/types/spotify-types";
 import type { TagSchemaType, TagType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
@@ -80,10 +79,9 @@ export function TagModal({
       });
   }, [tags])
   
-  const ModalBody = useMemo(
-    () => (
-      <>
-        <div className="flex flex-row flex-wrap gap-2 pb-2">
+  return (
+    <BaseModal isOpen={isOpen} title={t("new_tag")} onClose={onClose}>
+      <div className="flex flex-row flex-wrap gap-2 pb-2">
           {tags.map((tag, i) => (
             <div className="indicator" key={self.crypto.randomUUID()}>
               <span
@@ -110,14 +108,6 @@ export function TagModal({
           {isLoading && <LoadingSpinner />}
           <ConfirmButtonGroup onConfirm={saveTags} onClose={onClose} />
         </div>
-      </>
-    ),
-    [addTag, isLoading, onClose, removeTag, saveTags, tags]
-  );
-
-  return (
-    <BaseModal isOpen={isOpen} title={t("new_tag")} onClose={onClose}>
-      {ModalBody}
     </BaseModal>
   );
 }
