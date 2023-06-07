@@ -106,7 +106,7 @@ return (
   <Transition show={isOpen}>
     <Dialog
       as="div"
-      className="fixed bottom-0 left-0 z-10 overflow-y-auto"
+      className="fixed bottom-0 left-0 z-10 overflow-y-auto w-full"
       onClose={onClose}
     >
       <div className="flex min-h-screen items-end justify-center text-center backdrop-blur-sm">
@@ -121,7 +121,7 @@ return (
           leaveFrom=""
           leaveTo="translate-y-full"
         >
-          <Dialog.Panel className="z-50 h-[50vh] w-screen overflow-auto rounded-t-2xl bg-base-content p-6 text-left shadow-xl">
+          <Dialog.Panel className="z-50 h-[50vh] overflow-auto rounded-t-2xl bg-base-content p-6 text-left shadow-xl w-full">
             {title && (
               <Dialog.Title className="text-xl font-bold leading-6 tracking-wide text-base-100">
                 {title}
