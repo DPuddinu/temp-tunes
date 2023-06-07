@@ -5,7 +5,11 @@ interface IHeader {
   "Content-Type": string;
   Accept: string;
 }
-
+interface ISpotifyBody {
+  access_token: string,
+  body?: BodyInit,
+  url: string
+}
 const authHeaders = (access_token: string): IHeader => {
   return {
     Authorization: `Bearer ${access_token}`,
@@ -31,19 +35,19 @@ const spotifyPOST = ({ url, body, access_token }: { access_token: string, url: s
     body,
   });
 
-const spotifyPUT = (url: string, headers: IHeader, body: BodyInit) =>
-  fetch(`${baseUrl}${url}`, {
-    headers: { ...headers },
+const spotifyPUT = ({ url, body, access_token }: ISpotifyBody) =>{
+  if (body) return fetch(`${baseUrl}${url}`, {
+    headers: { ...authHeaders(access_token) },
     method: "PUT",
     body,
   });
-
-interface ISpotifyDelete{
-  access_token: string,
-  body?: BodyInit,
-  url: string
+  else fetch(`${baseUrl}${url}`, {
+    headers: { ...authHeaders(access_token) },
+    method: "PUT",
+  });
 }
-const spotifyDELETE = ({ url, body, access_token }: ISpotifyDelete ) =>{
+
+const spotifyDELETE = ({ url, body, access_token }: ISpotifyBody ) =>{
   if(body)return fetch(`${baseUrl}${url}`, {
     headers: { ...authHeaders(access_token) },
     method: "DELETE",

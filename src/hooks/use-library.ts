@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { getLibrary } from "~/core/spotifyCollection";
-import { Playlist } from "~/types/spotify-types";
+import type { Playlist } from "~/types/spotify-types";
 
 interface Props {
   token: string | undefined | null;
