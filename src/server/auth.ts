@@ -38,7 +38,7 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session({ session, token }) {
+    async session({ session, token }) {
       const now = new Date();
       if (session.user) {
         session.user.id = token.userId as string;
@@ -50,7 +50,7 @@ export const authOptions: NextAuthOptions = {
       session.tokenExpired = now.getTime() > new Date(session.expiresIn).getTime() + 3600 * 1000;
       return session;
     },
-    jwt({ token, account }) {
+    async jwt({ token, account }) {
       // Persist the OAuth access_token and or the user id to the token right after signin
       if (account) {
         token.accessToken = account.access_token;

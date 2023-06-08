@@ -34,10 +34,8 @@ const Search: PageWithLayout = () => {
   const { playlists, setPlaylists } = usePlaylistStore();
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
-  const [currentPlaylist, setCurrentPlaylist] = useState<string | undefined>(
-    undefined
-  );
-  const [progress, setProgress] = useState<number | undefined>(undefined);
+  const [currentPlaylist, setCurrentPlaylist] = useState<string>();
+  const [progress, setProgress] = useState<number>();
 
   const { t } = useTranslation("search");
   const [error, setError] = useState(" ");
@@ -45,7 +43,7 @@ const Search: PageWithLayout = () => {
   const { data, mutate, isLoading } = api.spotify_user.searchTracks.useMutation();
 
   // LOADING LIBRARY
-  const { loadLibrary, isLoadingLibrary, isErrorLibrary } = useLibrary({
+  const { loadLibrary } = useLibrary({
     token: session?.accessToken,
     onStart: () => setLoading(true),
     onProgress: (progress: number, name: string) => {
@@ -149,10 +147,6 @@ const Search: PageWithLayout = () => {
     ];
   }, []);
 
-  const onSearchInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setError(validateSearchInput(event.target.value));
-  };
-
   const search = () => {
     if(!playlists){
       loadLibrary();
@@ -174,14 +168,14 @@ const Search: PageWithLayout = () => {
             type="text"
             placeholder={t("search") ?? "..."}
             className="input-bordered input grow bg-secondary-content sm:max-w-sm"
-            onChange={onSearchInputChange}
+            onChange={(e) => setError(validateSearchInput(e.target.value))}
           />
           <button
             disabled={!!error && playlists && playlists?.length > 0}
-            className="btn btn-square"
+            className="btn-square btn"
             onClick={search}
           >
-            <SearchSVG/>
+            <SearchSVG />
           </button>
         </div>
         {!!error && (

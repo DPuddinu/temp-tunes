@@ -4,7 +4,7 @@ import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useRef, type ReactNode } from "react";
+import { useRef, type ReactNode, useEffect } from "react";
 import { useStore } from "~/core/store";
 import { cn } from "~/utils/utils";
 import { ToastCva } from "./cva/ToastCva";
@@ -23,7 +23,7 @@ interface Page {
   icon: ReactNode;
 }
 
-const pages: Page[] = [
+export const pages: Page[] = [
   { url: "/home", name: "Home", icon: <HomeSVG /> },
   { url: "/search", name: "Search", icon: <SearchSVG /> },
   { url: "/playlist", name: "Playlists", icon: <PlaylistSVG /> },
@@ -36,7 +36,9 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const openDrawer = useRef<HTMLInputElement>(null);
 
-  if (session?.tokenExpired || status === "unauthenticated") router.push("/");
+  useEffect(() => {
+    if (session?.tokenExpired || status === "unauthenticated") router.push("/");
+  }, [router, session, status]);
 
   return (
     <div className="drawer">

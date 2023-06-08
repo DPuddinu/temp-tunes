@@ -32,7 +32,6 @@ import { useStore } from "~/core/store";
 import { type PageWithLayout } from "~/types/page-types";
 import { type Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
-import { spliceArray } from "~/utils/helpers";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -219,8 +218,7 @@ function PlaylistComponent({
   const { t } = useTranslation("playlists");
   const [isLoading, setIsLoading] = useState(false);
   const { setMessage } = useStore();
-  const [openUnfollowModal, setOpenUnfollowModal] = useState(false);
-  const [openRenameModal, setOpenRenameModal] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false)
 
   const { data: session } = useSession();
 
@@ -262,7 +260,7 @@ function PlaylistComponent({
     if (entry?.isIntersecting) {
       fetchNextPage();
     }
-  }, [entry]);
+  }, [entry, fetchNextPage]);
 
   const { isError, mutate: shuffle } = api.spotify_playlist.shuffle.useMutation(
     {
@@ -378,14 +376,14 @@ function PlaylistComponent({
               </details>
             </li>
             {/* DELETE */}
-            <li onClick={() => setOpenUnfollowModal(true)}>
+            <li onClick={() => setModalOpen(true)}>
               <div className="flex gap-2 rounded-xl">
                 <DeleteSVG />
                 <a>{t("operations.unfollow")}</a>
               </div>
             </li>
             {/* RENAME */}
-            <li onClick={() => setOpenRenameModal(true)}>
+            <li onClick={() => setModalOpen(true)}>
               <div className="flex gap-2 rounded-xl">
                 <PencilSVG />
                 <a>{t("operations.rename")}</a>
@@ -395,11 +393,11 @@ function PlaylistComponent({
         </DropdownMenu>
       )}
       <UnfollowModal
-        isOpen={openUnfollowModal}
-        setIsOpen={setOpenUnfollowModal}
+        isOpen={modalOpen}
+        setIsOpen={setModalOpen}
         playlistID={playlist.id}
         playlistName={playlist.name}
-        onClose={() => setOpenUnfollowModal(false)}
+        onClose={() => setModalOpen(false)}
         onSuccess={() => {
           setIsLoading(false);
           setTimeout(() => {
@@ -409,11 +407,11 @@ function PlaylistComponent({
         onConfirm={() => setIsLoading(true)}
       />
       <RenameModal
-        isOpen={openRenameModal}
-        setIsOpen={setOpenRenameModal}
+        isOpen={modalOpen}
+        setIsOpen={setModalOpen}
         playlistID={playlist.id}
         playlistName={playlist.name}
-        onClose={() => setOpenRenameModal(false)}
+        onClose={() => setModalOpen(false)}
         onSuccess={() => {
           setIsLoading(false);
           setTimeout(() => {
