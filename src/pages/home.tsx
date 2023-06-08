@@ -9,7 +9,6 @@ import { TimeRangeArray } from "src/types/spotify-types";
 import MoodCard from "~/components/recap/cards/MoodCard";
 import RecommendedCard from "~/components/recap/cards/RecommendedCard";
 import type { RecapPropsType } from "~/components/recap/cards/UserTopCard";
-import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import TopRatedCard from "../components/recap/cards/UserTopCard";
 import type { PageWithLayout } from "../types/page-types";
 

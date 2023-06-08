@@ -1,4 +1,4 @@
-import { SortDirection } from "@tanstack/react-table";
+import type { SortDirection } from "@tanstack/react-table";
 import styles from "~/styles/search.module.css";
 import { cn } from "~/utils/utils";
 

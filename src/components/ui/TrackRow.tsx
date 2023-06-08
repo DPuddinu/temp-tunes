@@ -22,7 +22,7 @@ const TrackRow = ({ track }: Props) => {
             {track.artists.map((artist) => artist.name).join(", ")}
           </p>
         </div>
-        <DropdownMenu className=" max-h-10" intent={"light"}>
+        <DropdownMenu intent={"light"}>
           <li onClick={() => setIsModalOpen(true)} className="bg-transparent">
             <div className="flex gap-2 rounded-xl">
               <TagIcon />

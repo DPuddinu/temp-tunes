@@ -15,7 +15,7 @@ import type { GetStaticProps } from "next";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useMemo, useRef, useState, type ChangeEvent } from "react";
+import { useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { LoadingScreen } from "~/components/ui/LoadingPlaylistComponent";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";

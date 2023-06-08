@@ -1,5 +1,6 @@
 import type { VariantProps } from "cva";
 import type { ReactNode } from "react";
+import { cn } from "~/utils/utils";
 import { DropdownMenuContentCva } from "../cva/DropdownMenuCva";
 import { VerticalDots } from "./icons/VerticalDots";
 
@@ -8,12 +9,12 @@ type DropdownProps = {
   className?: string;
 } & VariantProps<typeof DropdownMenuContentCva>;
 
-export function DropdownMenu({ children, intent }: DropdownProps) {
+export function DropdownMenu({ children, intent, className }: DropdownProps) {
   return (
-    <div className="dropdown-end dropdown-bottom dropdown ">
+    <div className={cn("dropdown-bottom dropdown-end dropdown", className)}>
       <label
         tabIndex={0}
-        className="btn w-14 border-none bg-transparent p-0 hover:bg-transparent"
+        className="btn border-none bg-transparent p-0 hover:bg-transparent"
       >
         <VerticalDots />
       </label>

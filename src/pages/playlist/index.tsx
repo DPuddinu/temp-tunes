@@ -15,7 +15,7 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Image from "next/image";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import MainLayout from "~/components/MainLayout";
 import { RenameModal } from "~/components/modals/RemaneModal";
 import { UnfollowModal } from "~/components/modals/UnfollowModal";
@@ -27,7 +27,6 @@ import { MergeSVG } from "~/components/ui/icons/MergeSVG";
 import { PencilSVG } from "~/components/ui/icons/PencilSVG";
 import { ShuffleSVG } from "~/components/ui/icons/ShuffleSVG";
 import { PlaylistPageSkeleton } from "~/components/ui/skeletons/PlaylistPageSkeleton";
-import { SquareSkeleton } from "~/components/ui/skeletons/SquareSkeleton";
 import { useStore } from "~/core/store";
 import { type PageWithLayout } from "~/types/page-types";
 import { type Playlist } from "~/types/spotify-types";
@@ -218,7 +217,9 @@ function PlaylistComponent({
   const { t } = useTranslation("playlists");
   const [isLoading, setIsLoading] = useState(false);
   const { setMessage } = useStore();
-  const [modalOpen, setModalOpen] = useState(false)
+  const [renameModalOpen, setRenameModalOpen] = useState(false);
+  const [unfollowModalOpen, setUnfollowModalOpen] = useState(false);
+
 
   const { data: session } = useSession();
 
@@ -298,23 +299,19 @@ function PlaylistComponent({
     });
 
   return (
-    <div className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 shadow ">
+    <div className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 pr-3 shadow">
       <div className="h-20 w-20 min-w-[5rem]">
-        <Suspense fallback={<SquareSkeleton />}>
-          <Image
-            src={
-              playlist.images && playlist.images[0]
-                ? playlist.images[0].url
-                : ""
-            }
-            alt="blur"
-            quality={60}
-            priority
-            height={80}
-            width={80}
-            className="aspect-square h-full w-full rounded-xl object-cover"
-          />
-        </Suspense>
+        <Image
+          src={
+            playlist.images && playlist.images[0] ? playlist.images[0].url : ""
+          }
+          alt="blur"
+          quality={60}
+          priority
+          height={80}
+          width={80}
+          className="aspect-square h-full w-full rounded-xl object-cover"
+        />
       </div>
       <div className="flex grow flex-col justify-center gap-2 truncate px-4">
         <p className="truncate font-semibold">{playlist.name}</p>
@@ -376,14 +373,14 @@ function PlaylistComponent({
               </details>
             </li>
             {/* DELETE */}
-            <li onClick={() => setModalOpen(true)}>
+            <li onClick={() => setUnfollowModalOpen(true)}>
               <div className="flex gap-2 rounded-xl">
                 <DeleteSVG />
                 <a>{t("operations.unfollow")}</a>
               </div>
             </li>
             {/* RENAME */}
-            <li onClick={() => setModalOpen(true)}>
+            <li onClick={() => setRenameModalOpen(true)}>
               <div className="flex gap-2 rounded-xl">
                 <PencilSVG />
                 <a>{t("operations.rename")}</a>
@@ -393,11 +390,11 @@ function PlaylistComponent({
         </DropdownMenu>
       )}
       <UnfollowModal
-        isOpen={modalOpen}
-        setIsOpen={setModalOpen}
+        isOpen={unfollowModalOpen}
+        setIsOpen={setUnfollowModalOpen}
         playlistID={playlist.id}
         playlistName={playlist.name}
-        onClose={() => setModalOpen(false)}
+        onClose={() => setUnfollowModalOpen(false)}
         onSuccess={() => {
           setIsLoading(false);
           setTimeout(() => {
@@ -407,11 +404,11 @@ function PlaylistComponent({
         onConfirm={() => setIsLoading(true)}
       />
       <RenameModal
-        isOpen={modalOpen}
-        setIsOpen={setModalOpen}
+        isOpen={renameModalOpen}
+        setIsOpen={setRenameModalOpen}
         playlistID={playlist.id}
         playlistName={playlist.name}
-        onClose={() => setModalOpen(false)}
+        onClose={() => setRenameModalOpen(false)}
         onSuccess={() => {
           setIsLoading(false);
           setTimeout(() => {

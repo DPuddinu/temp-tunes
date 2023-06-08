@@ -1,4 +1,3 @@
-import { useState } from "react";
 import MainLayout from "~/components/MainLayout";
 import type { PageWithLayout } from "~/types/page-types";
 
