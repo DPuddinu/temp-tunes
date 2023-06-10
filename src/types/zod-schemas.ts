@@ -51,6 +51,21 @@ export const PlaylistSchema = z.object({
   uri: z.string(),
 });
 
+export const TemplateEntrySchema = z.object({
+  id: z.string().optional(),
+  templateId: z.string().optional(),
+  entry: z.string(),
+})
 
+export const TemplateSchema = z.object({
+  id: z.string().optional(),
+  userId: z.string(),
+  name: z.string(),
+  stars: z.number(),
+  templateEntries: TemplateEntrySchema.array()
+})
+
+export type TemplateSchemaEntryType = z.infer<typeof TemplateEntrySchema>
+export type TemplateSchemaType = z.infer<typeof TemplateSchema>
 
 
