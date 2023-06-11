@@ -2,6 +2,7 @@ import { createTRPCRouter } from "~/server/api/trpc";
 import { prismaRouter } from "./routers/prisma_router";
 import { spotifyPlaylistRouter } from "./routers/spotify_playlist_router";
 import { spotifyUserRouter } from "./routers/spotify_user_router";
+import { templatesRouter } from "./routers/templates_router";
 import { userRouter } from "./routers/user_router";
 
 /**
@@ -12,8 +13,9 @@ import { userRouter } from "./routers/user_router";
 export const appRouter = createTRPCRouter({
   spotify_playlist: spotifyPlaylistRouter,
   spotify_user: spotifyUserRouter,
-  prisma_router: prismaRouter,
-  user_router: userRouter,
+  tags: prismaRouter,
+  user: userRouter,
+  template: templatesRouter
 });
 
 // export type definition of API

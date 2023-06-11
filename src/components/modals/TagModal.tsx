@@ -1,10 +1,5 @@
 import { useTranslation } from "next-i18next";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { useStore } from "~/core/store";
 import type { Track } from "~/types/spotify-types";
@@ -22,18 +17,14 @@ type Props = {
   tagType: TagType;
 } & BaseModalProps;
 
-export function TagModal({
-  isOpen,
-  onClose,
-  track,
-}: Props) {
+export function TagModal({ isOpen, onClose, track }: Props) {
   const { t } = useTranslation("modals");
   const [removeTags, setRemoveTags] = useState<TagSchemaType[]>([]);
   const { tags: storeTags, setTags: setStoreTags } = useStore();
   const [tags, setTags] = useState<TagSchemaType[]>([]);
 
   //prettier-ignore
-  const { data, isLoading, isSuccess, mutate, isError } = api.prisma_router.setTags.useMutation();
+  const { data, isLoading, isSuccess, mutate, isError } = api.tags.setTags.useMutation();
 
   useEffect(() => {
     if (storeTags && track.id) {
@@ -49,22 +40,26 @@ export function TagModal({
   const saveTags = useCallback(() => {
     mutate({ addTags: tags, removeTags: removeTags });
     onClose();
-  },[mutate, onClose, removeTags, tags]);  
+  }, [mutate, onClose, removeTags, tags]);
 
-  const addTag = useCallback((tagName: string) => {
-    if (track.id) {
-      const newTag: TagSchemaType = {
-        name: tagName,
-        spotifyId: track.id,
-      };
+  const addTag = useCallback(
+    (tagName: string) => {
+      if (track.id) {
+        const newTag: TagSchemaType = {
+          name: tagName,
+          spotifyId: track.id,
+        };
 
-      setTags((oldTags) => {
-        return [...oldTags, newTag];
-      });
-    }
-  }, [track.id]);
-  
-  const removeTag = useCallback((i: number) => {
+        setTags((oldTags) => {
+          return [...oldTags, newTag];
+        });
+      }
+    },
+    [track.id]
+  );
+
+  const removeTag = useCallback(
+    (i: number) => {
       const tagToRemove = tags[i] as TagSchemaType;
       setRemoveTags((oldTags) => {
         return [...oldTags, tagToRemove];
@@ -76,37 +71,39 @@ export function TagModal({
         }
         return temp;
       });
-  }, [tags])
-  
+    },
+    [tags]
+  );
+
   return (
     <BaseModal isOpen={isOpen} title={t("new_tag")} onClose={onClose}>
       <div className="flex flex-row flex-wrap gap-2 pb-2">
-          {tags.map((tag, i) => (
-            <div className="indicator" key={self.crypto.randomUUID()}>
-              <span
-                className="badge indicator-item h-5 w-5 cursor-pointer pb-[2px] text-white"
-                onClick={() => removeTag(i)}
-              >
-                <p className=" m-0 text-center">x</p>
-              </span>
-              <p className="w-fit rounded-3xl bg-warning pr-3 pl-3 text-white">
-                {tag.name}
-              </p>
-            </div>
-          ))}
-        </div>
+        {tags.map((tag, i) => (
+          <div className="indicator" key={self.crypto.randomUUID()}>
+            <span
+              className="badge indicator-item h-5 w-5 cursor-pointer pb-[2px] text-white"
+              onClick={() => removeTag(i)}
+            >
+              <p className=" m-0 text-center">x</p>
+            </span>
+            <p className="w-fit rounded-3xl bg-warning pr-3 pl-3 text-white">
+              {tag.name}
+            </p>
+          </div>
+        ))}
+      </div>
 
-        <AddTagComponent
-          onAdd={(tagName: string) => addTag(tagName)}
-          tags={tags}
-        />
-        <div
-          className="flex justify-between"
-          style={{ justifyContent: isLoading ? "space-between" : "end" }}
-        >
-          {isLoading && <LoadingSpinner />}
-          <ConfirmButtonGroup onConfirm={saveTags} onClose={onClose} />
-        </div>
+      <AddTagComponent
+        onAdd={(tagName: string) => addTag(tagName)}
+        tags={tags}
+      />
+      <div
+        className="flex justify-between"
+        style={{ justifyContent: isLoading ? "space-between" : "end" }}
+      >
+        {isLoading && <LoadingSpinner />}
+        <ConfirmButtonGroup onConfirm={saveTags} onClose={onClose} />
+      </div>
     </BaseModal>
   );
 }
@@ -149,7 +146,7 @@ function AddTagComponent({ onAdd, tags }: AddTagProps) {
           }
         }}
       >
-        <PlusSVG/>
+        <PlusSVG />
       </button>
     </div>
   );

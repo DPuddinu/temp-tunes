@@ -7,17 +7,17 @@ interface Data {
   tags: TagsObject | undefined;
 }
 const initialContext = {
-  tags: undefined
+  tags: undefined,
 };
 export const UserDataContext = createContext<Data>(initialContext);
 
 const UserDataProvider = ({ children }: { children: ReactNode }) => {
-  const {data} = useSession()
+  const { data } = useSession();
   const { setTags: setStoreTags, user: storeUser, setUser } = useStore();
 
   // LOADING USER
   // prettier-ignore
-  const { data: user } = api.user_router.getUserBySpotifyId.useQuery(
+  const { data: user } = api.user.getUserBySpotifyId.useQuery(
     undefined, 
     { 
       refetchOnWindowFocus: false, 
@@ -34,7 +34,7 @@ const UserDataProvider = ({ children }: { children: ReactNode }) => {
   return (
     <UserDataContext.Provider
       value={{
-        tags: user?.tags ?? {}
+        tags: user?.tags ?? {},
       }}
     >
       {children}

@@ -12,12 +12,12 @@ export const templatesRouter = createTRPCRouter({
     })
   )
     .mutation(async ({ ctx, input }) => {
-      const {entries, name} = input
-      if(!ctx.session.user.name){
-        throw new TRPCError({message: "Username is required", code: "BAD_REQUEST"})
+      const { entries, name } = input
+      if (!ctx.session.user.name) {
+        throw new TRPCError({ message: "Username is required", code: "BAD_REQUEST" })
       }
-
-      return ctx.prisma.playlistTemplate.create({
+      
+      return await ctx.prisma.playlistTemplate.create({
         data: {
           stars: 0,
           userId: ctx.session.user.id,
@@ -58,8 +58,10 @@ export const templatesRouter = createTRPCRouter({
   getTemplatesByUser: protectedProcedure
     .query(async ({ ctx }) => {
 
-     return ctx.prisma.playlistTemplate.findMany({where: {
-      userId: ctx.session.user.id
-     }})
+      return ctx.prisma.playlistTemplate.findMany({
+        where: {
+          userId: ctx.session.user.id
+        }
+      })
     }),
 });

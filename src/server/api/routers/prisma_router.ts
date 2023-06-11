@@ -8,6 +8,7 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 export interface TagsObject {
   [z: string]: TagSchemaType[];
 }
+
 export const prismaRouter = createTRPCRouter({
   getTagsByUser: protectedProcedure.query(async ({ ctx }) => {
     const userTags = await ctx.prisma.tag.findMany({
@@ -34,19 +35,19 @@ export const prismaRouter = createTRPCRouter({
         where: { userId: ctx.session.user.id },
       });
 
-      const sameTag = (a: any, b: any) => a.id === b.id;
+      const sameTag = (a: TagSchemaType, b: TagSchemaType) => a.id === b.id;
       const filterTagsToAdd = (
-        a: any[],
-        b: any[],
-        compareFunction: (a: any, b: any) => boolean
+        a: TagSchemaType[],
+        b: TagSchemaType[],
+        compareFunction: (a: TagSchemaType, b: TagSchemaType) => boolean
       ) => a.filter((left) => !b.some((right) => compareFunction(left, right)));
       const filterTagsToRemove = (
-        a: any[],
-        b: any[],
-        compareFunction: (a: any, b: any) => boolean
+        a: TagSchemaType[],
+        b: TagSchemaType[],
+        compareFunction: (a: TagSchemaType, b: TagSchemaType) => boolean
       ) => a.filter((left) => b.some((right) => compareFunction(left, right)));
-      tagsToAdd = filterTagsToAdd(addTags, oldTags, sameTag);
-      tagsToRemove = filterTagsToRemove(removeTags, oldTags, sameTag);
+      tagsToAdd = filterTagsToAdd(addTags, oldTags, sameTag) as Tag[];
+      tagsToRemove = filterTagsToRemove(removeTags, oldTags, sameTag) as Tag[];
       console.log("ADDING ---> ", tagsToAdd);
       console.log("--------------------");
       console.log("REMOVING ---> ", tagsToRemove);

@@ -59,12 +59,12 @@ export const spotifyPlaylistRouter = createTRPCRouter({
     name: z.string()
   })).mutation(async ({ ctx, input }) => {
     const { playlistID, name } = input;
-    const rename = await renamePlaylist(playlistID, name,  ctx.session.accessToken)
+    const rename = await renamePlaylist(playlistID, name, ctx.session.accessToken)
     return rename
   })
 });
 
-function shuffle(array: any[]) {
+function shuffle(array: unknown[]) {
   let currentIndex = array.length, randomIndex;
 
   // While there remain elements to shuffle.
