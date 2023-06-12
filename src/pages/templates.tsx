@@ -1,6 +1,8 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Transition } from "@headlessui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRef, useState } from "react";
+import { useForm, type SubmitHandler, Control, useWatch } from "react-hook-form";
 import { z } from "zod";
 import MainLayout from "~/components/MainLayout";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
@@ -31,68 +33,82 @@ const TemplateFormSchema = z.object({
   name: z.string().min(3).max(16),
   entries: TemplateEntrySchema.array().min(1),
 });
+type TemplateFormType = z.infer<typeof TemplateFormSchema>;
 
 function CreateTemplate() {
   const { setMessage } = useStore();
+  const entryRef = useRef<HTMLInputElement>(null);
+  const [parent] = useAutoAnimate();
+  const [selectedRow, setSelectedRow] = useState<number | undefined>();
 
   const { mutate, isLoading } = api.template.createTemplate.useMutation({
     onError() {
       setMessage("Error");
     },
   });
-  const [entries, setEntries] = useState<TemplateSchemaEntryType[]>([]);
-  const entryRef = useRef<HTMLInputElement>(null);
-  const nameRef = useRef<HTMLInputElement>(null);
 
-  const [selectedRow, setSelectedRow] = useState<number | undefined>();
-  const [parent] = useAutoAnimate();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    getValues,
+    control,
+    formState: { errors, isValid },
+  } = useForm<TemplateFormType>({ resolver: zodResolver(TemplateFormSchema) });
+
+  const watchedEntries = useWatch({
+    control,
+    name: "entries", 
+    defaultValue: [], 
+  });
+
+  const onSubmit: SubmitHandler<TemplateFormType> = (data) =>
+    mutate({
+      name: data.name,
+      entries: data.entries,
+    });
 
   return (
-    <div className="min-h-60 flex flex-col justify-between gap-2 rounded-xl bg-base-200 p-2 shadow">
+    <form
+      className="min-h-60 flex flex-col justify-between gap-2 rounded-xl bg-base-300 p-2 shadow"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <div className="flex w-full flex-col gap-2" ref={parent}>
-        <div className="flex gap-2">
+        <div className="flex justify-between gap-2">
           <input
-            ref={nameRef}
             type="text"
             placeholder="Template Name"
-            className="input-ghost input w-full max-w-xs grow text-xl"
+            className="input-ghost input w-full max-w-xs grow text-xl hover:bg-base-200"
+            {...register("name")}
           />
           {isLoading && <LoadingSpinner />}
         </div>
         <ul ref={parent} className="[&>li]:py-1">
-          {entries.map((entry, i) => (
+          {watchedEntries.map((entry, i) => (
             <TemplateRow
               key={i}
               name={entry.entry}
               open={i === selectedRow}
               setOpen={() => setSelectedRow(i)}
               onMoveUp={() => {
-                setEntries(
-                  (entries) =>
-                    arrayMoveImmutable(
-                      entries,
-                      i,
-                      i - 1
-                    ) as TemplateSchemaEntryType[]
+                setValue(
+                  "entries",
+                  // prettier-ignore
+                  arrayMoveImmutable(getValues().entries, i, i - 1) as TemplateSchemaEntryType[]
                 );
                 if (i - 1 >= 0) setSelectedRow(i - 1);
               }}
               onMoveDown={() => {
-                setEntries(
-                  (entries) =>
-                    arrayMoveImmutable(
-                      entries,
-                      i,
-                      i + 1
-                    ) as TemplateSchemaEntryType[]
+                setValue(
+                  "entries",
+                  // prettier-ignore
+                  arrayMoveImmutable(getValues().entries, i, i + 1) as TemplateSchemaEntryType[]
                 );
-                if (i + 1 <= entries.length - 1) setSelectedRow(i + 1);
+                if (i + 1 <= getValues().entries.length - 1)
+                  setSelectedRow(i + 1);
               }}
               onDelete={() => {
-                setEntries((entries) => {
-                  entries.splice(i, 1);
-                  return [...entries];
-                });
+                setValue("entries", getValues().entries.splice(i, 1));
                 setSelectedRow(undefined);
               }}
             />
@@ -107,42 +123,34 @@ function CreateTemplate() {
           placeholder="Template Entry"
           className="input w-full max-w-xs grow"
         />
-        <button
-          className="btn-circle btn bg-base-100 p-2 text-xl"
+        <div
+          className="btn-circle btn bg-base-100 p-2 text-xl hover:bg-base-200"
           onClick={() => {
             if (entryRef.current !== null) {
-              setEntries((entries) => [
-                ...entries,
-                { entry: entryRef.current?.value ?? "" },
-              ]);
+              console.log(entryRef.current.value);
+              const newEntries = [
+                ...(getValues().entries ?? []),
+                { entry: entryRef.current.value },
+              ];
+              console.log(newEntries);
+              setValue("entries", newEntries);
             }
           }}
         >
           +
-        </button>
+        </div>
       </div>
       <button
-        disabled={
-          !TemplateFormSchema.safeParse({
-            name: nameRef.current?.value ?? "",
-            entries: entries,
-          }).success
-        }
-        className="btn w-full bg-base-100"
-        onClick={() => {
-          if (nameRef.current?.value) {
-            mutate({
-              name: nameRef.current.value,
-              entries: entries,
-            });
-          }
-        }}
+        type="submit"
+        disabled={!isValid}
+        className="btn w-full bg-base-100 hover:bg-base-200"
       >
         Confirm
       </button>
-    </div>
+    </form>
   );
 }
+
 interface TemplateRowProps {
   name: string;
   open: boolean;
@@ -161,7 +169,11 @@ const TemplateRow = ({
 }: TemplateRowProps) => {
   return (
     <li className="flex items-center gap-2">
-      <button className="btn grow bg-base-100" onClick={setOpen}>
+      <button
+        className="btn grow bg-base-100 hover:bg-base-200"
+        onClick={setOpen}
+        type="button"
+      >
         {name}
       </button>
 
