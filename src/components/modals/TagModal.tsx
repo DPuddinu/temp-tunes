@@ -100,7 +100,7 @@ const AddTagSchema = z.object({
   tag: z
     .string()
     .min(3, { message: "tag_errors.short" })
-    .max(16, { message: "tag_errors.long" }),
+    .max(16, { message: "tag_errors.long" })
 });
 
 type AddTagSchemaType = z.infer<typeof AddTagSchema>;
@@ -112,10 +112,9 @@ interface AddTagComponentProps {
 }
 function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
   const { t } = useTranslation("modals");
-  const tagSchema = AddTagSchema.refine(
-    (item) => !tags.includes(item.tag),
-    "tag_errors.used"
-  );
+  const tagSchema = AddTagSchema.refine((item) => !tags.includes(item.tag), {
+    message: "tag_errors.used"
+  });
   const {
     register,
     handleSubmit,
@@ -123,7 +122,7 @@ function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
   } = useForm<AddTagSchemaType>({
     resolver: zodResolver(tagSchema),
   });
-
+  console.log(errors);
   const onSubmit: SubmitHandler<AddTagSchemaType> = (data) =>
     onTagSubmit({
       name: data.tag,
@@ -137,12 +136,16 @@ function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
           className="input w-full "
           {...register("tag", { required: true })}
         />
-        {errors.tag && (
-          <label className="label text-red-700">
-            <span className="label-text-alt font-bold text-red-700">
-              {`${t(errors.tag?.message ?? "")}`}
-            </span>
-          </label>
+        {Object.keys(errors).length > 0 && (
+          <>
+            {Object.values(errors).map((error, i) => (
+              <label key={i} className="label text-red-700">
+                <span className="label-text-alt font-bold text-red-700">
+                  {`${t(error.message ?? "")}`}
+                </span>
+              </label>
+            ))}
+          </>
         )}
       </div>
       <button
