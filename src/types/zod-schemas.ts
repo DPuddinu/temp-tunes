@@ -6,7 +6,7 @@ export const TagSchema = z.object({
   id: z.string().optional(),
   spotifyId: z.string(),
   userId: z.string().optional(),
-  name: z.string(),
+  name: z.string().min(3).max(16),
 });
 
 export type TagSchemaType = z.infer<typeof TagSchema>;

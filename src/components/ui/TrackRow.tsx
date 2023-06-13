@@ -31,17 +31,16 @@ const TrackRow = ({ track }: Props) => {
           </li>
         </DropdownMenu>
       </div>
-
-      <TagModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        track={track}
-        tagType="track"
-      />
+      {track.id && (
+        <TagModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          trackId={track.id}
+          tagType="track"
+        />
+      )}
     </div>
   );
 };
-
-
 
 export default TrackRow;

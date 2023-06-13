@@ -2,7 +2,7 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRef, useState } from "react";
-import { useForm, type SubmitHandler, Control, useWatch } from "react-hook-form";
+import { useForm, useWatch, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import MainLayout from "~/components/MainLayout";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
@@ -127,12 +127,8 @@ function CreateTemplate() {
           className="btn-circle btn bg-base-100 p-2 text-xl hover:bg-base-200"
           onClick={() => {
             if (entryRef.current !== null) {
-              console.log(entryRef.current.value);
-              const newEntries = [
-                ...(getValues().entries ?? []),
-                { entry: entryRef.current.value },
-              ];
-              console.log(newEntries);
+              // prettier-ignore
+              const newEntries = [...(getValues().entries ?? []),{ entry: entryRef.current.value }];
               setValue("entries", newEntries);
             }
           }}

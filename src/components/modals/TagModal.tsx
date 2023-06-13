@@ -1,62 +1,45 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "next-i18next";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { useStore } from "~/core/store";
-import type { Track } from "~/types/spotify-types";
-import type { TagSchemaType, TagType } from "~/types/zod-schemas";
+import { type TagSchemaType, type TagType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
 import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
-import { PlusSVG } from "../ui/icons/PlusSVG";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
 
 type Props = {
-  track: Track;
+  trackId: string;
   playlistName?: string;
   tagType: TagType;
 } & BaseModalProps;
 
-export function TagModal({ isOpen, onClose, track }: Props) {
+export function TagModal({ isOpen, onClose, trackId }: Props) {
   const { t } = useTranslation("modals");
   const [removeTags, setRemoveTags] = useState<TagSchemaType[]>([]);
-  const { tags: storeTags, setTags: setStoreTags } = useStore();
+  const { tags: storeTags, setTags: setStoreTags, setMessage } = useStore();
+
   const [tags, setTags] = useState<TagSchemaType[]>([]);
 
-  //prettier-ignore
-  const { data, isLoading, isSuccess, mutate, isError } = api.tags.setTags.useMutation();
-
   useEffect(() => {
-    if (storeTags && track.id) {
-      const tags = storeTags[track.id];
-      setTags(tags !== undefined ? tags : []);
+    if (storeTags) {
+      const stored = storeTags[trackId];
+      if (stored) setTags(stored);
     }
-  }, [storeTags, track.id]);
+  }, [storeTags, setTags, trackId]);
 
-  useEffect(() => {
-    if (data) setStoreTags(data);
-  }, [data, isSuccess, setStoreTags]);
-
-  const saveTags = useCallback(() => {
-    mutate({ addTags: tags, removeTags: removeTags });
-    onClose();
-  }, [mutate, onClose, removeTags, tags]);
-
-  const addTag = useCallback(
-    (tagName: string) => {
-      if (track.id) {
-        const newTag: TagSchemaType = {
-          name: tagName,
-          spotifyId: track.id,
-        };
-
-        setTags((oldTags) => {
-          return [...oldTags, newTag];
-        });
-      }
+  //prettier-ignore
+  const { isLoading, mutate } = api.tags.setTags.useMutation({
+    onSuccess(data) {
+      setStoreTags(data);
     },
-    [track.id]
-  );
+    onError(){
+      setMessage(t("wrong") ?? "Something went wrong");
+    }
+  });
 
   const removeTag = useCallback(
     (i: number) => {
@@ -64,22 +47,20 @@ export function TagModal({ isOpen, onClose, track }: Props) {
       setRemoveTags((oldTags) => {
         return [...oldTags, tagToRemove];
       });
-      setTags((oldTags) => {
-        const temp = [...oldTags];
-        if (i > -1) {
-          temp.splice(i, 1);
-        }
-        return temp;
-      });
+      const temp = [...tags];
+      if (i > -1) {
+        temp.splice(i, 1);
+      }
+      setTags(temp);
     },
-    [tags]
+    [setTags, tags]
   );
 
   return (
     <BaseModal isOpen={isOpen} title={t("new_tag")} onClose={onClose}>
-      <div className="flex flex-row flex-wrap gap-2 pb-2">
+      <div className="flex flex-row flex-wrap gap-2 pb-2 pt-6">
         {tags.map((tag, i) => (
-          <div className="indicator" key={self.crypto.randomUUID()}>
+          <div className="indicator mr-2" key={i}>
             <span
               className="badge indicator-item h-5 w-5 cursor-pointer pb-[2px] text-white"
               onClick={() => removeTag(i)}
@@ -94,76 +75,82 @@ export function TagModal({ isOpen, onClose, track }: Props) {
       </div>
 
       <AddTagComponent
-        onAdd={(tagName: string) => addTag(tagName)}
-        tags={tags}
+        trackId={trackId}
+        tags={tags.map((tag) => tag.name)}
+        onTagSubmit={(tag: TagSchemaType) => setTags((tags) => [...tags, tag])}
       />
       <div
         className="flex justify-between"
         style={{ justifyContent: isLoading ? "space-between" : "end" }}
       >
         {isLoading && <LoadingSpinner />}
-        <ConfirmButtonGroup onConfirm={saveTags} onClose={onClose} />
+        <ConfirmButtonGroup
+          onConfirm={() => {
+            mutate({ addTags: tags, removeTags: removeTags });
+            onClose();
+          }}
+          onClose={onClose}
+        />
       </div>
     </BaseModal>
   );
 }
-interface AddTagProps {
-  onAdd: (tagName: string) => void;
-  tags: TagSchemaType[];
+
+const AddTagSchema = z.object({
+  tag: z
+    .string()
+    .min(3, { message: "tag_errors.short" })
+    .max(16, { message: "tag_errors.long" }),
+});
+
+type AddTagSchemaType = z.infer<typeof AddTagSchema>;
+
+interface AddTagComponentProps {
+  tags: string[];
+  trackId: string;
+  onTagSubmit: (tag: TagSchemaType) => void;
 }
-function AddTagComponent({ onAdd, tags }: AddTagProps) {
-  const tagNameRef = useRef<HTMLInputElement>(null);
-  const [error, setError] = useState(" ");
+function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
   const { t } = useTranslation("modals");
+  const tagSchema = AddTagSchema.refine(
+    (item) => !tags.includes(item.tag),
+    "tag_errors.used"
+  );
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AddTagSchemaType>({
+    resolver: zodResolver(tagSchema),
+  });
+
+  const onSubmit: SubmitHandler<AddTagSchemaType> = (data) =>
+    onTagSubmit({
+      name: data.tag,
+      spotifyId: trackId,
+    });
 
   return (
-    <div className="flex gap-2 pt-2">
+    <form className="flex gap-2 pt-2" onSubmit={handleSubmit(onSubmit)}>
       <div className="w-full ">
         <input
-          tabIndex={-1}
-          ref={tagNameRef}
-          type="text"
           className="input w-full "
-          onChange={(event) => {
-            setError(validateTag(event.target.value, tags));
-          }}
+          {...register("tag", { required: true })}
         />
-        {!!error && (
+        {errors.tag && (
           <label className="label text-red-700">
-            <span className="label-text-alt font-bold text-base-100">
-              {t(error)}
+            <span className="label-text-alt font-bold text-red-700">
+              {`${t(errors.tag?.message ?? "")}`}
             </span>
           </label>
         )}
       </div>
       <button
-        disabled={!!error}
-        className="btn-circle btn border-transparent  transition-transform"
-        onClick={() => {
-          if (tagNameRef.current) {
-            onAdd(tagNameRef.current.value);
-            tagNameRef.current.value = "";
-          }
-        }}
+        type="submit"
+        className="btn-circle btn border-transparent text-xl transition-transform"
       >
-        <PlusSVG />
+        +
       </button>
-    </div>
+    </form>
   );
-}
-
-function validateTag(tagName: string, tags: TagSchemaType[]) {
-  let error = "";
-  if (!z.string().min(3).safeParse(tagName).success || !tagName) {
-    error = "tag_errors.short";
-  }
-  if (!z.string().max(18).safeParse(tagName).success) {
-    error = "tag_errors.long";
-  }
-  if (
-    tags.map((tag) => tag.name.toLowerCase()).includes(tagName.toLowerCase())
-  ) {
-    error = "tag_errors.used";
-  }
-  return error;
 }

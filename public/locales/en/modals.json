@@ -10,5 +10,6 @@
     "short":"Tag too short!",
     "long":"Tag too long!",
     "used":"Tag already used!"
-  }
+  },
+  "wrong": "Something went wrong"
 }
