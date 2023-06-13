@@ -51,15 +51,14 @@ function CreateTemplate() {
     register,
     handleSubmit,
     setValue,
-    getValues,
     control,
     formState: { errors, isValid },
   } = useForm<TemplateFormType>({ resolver: zodResolver(TemplateFormSchema) });
 
   const watchedEntries = useWatch({
     control,
-    name: "entries", 
-    defaultValue: [], 
+    name: "entries",
+    defaultValue: [],
   });
 
   const onSubmit: SubmitHandler<TemplateFormType> = (data) =>
@@ -94,7 +93,7 @@ function CreateTemplate() {
                 setValue(
                   "entries",
                   // prettier-ignore
-                  arrayMoveImmutable(getValues().entries, i, i - 1) as TemplateSchemaEntryType[]
+                  arrayMoveImmutable(watchedEntries, i, i - 1) as TemplateSchemaEntryType[]
                 );
                 if (i - 1 >= 0) setSelectedRow(i - 1);
               }}
@@ -102,13 +101,13 @@ function CreateTemplate() {
                 setValue(
                   "entries",
                   // prettier-ignore
-                  arrayMoveImmutable(getValues().entries, i, i + 1) as TemplateSchemaEntryType[]
+                  arrayMoveImmutable(watchedEntries, i, i + 1) as TemplateSchemaEntryType[]
                 );
-                if (i + 1 <= getValues().entries.length - 1)
-                  setSelectedRow(i + 1);
+                if (i + 1 <= watchedEntries.length - 1) setSelectedRow(i + 1);
               }}
               onDelete={() => {
-                setValue("entries", getValues().entries.splice(i, 1));
+                watchedEntries.splice(i, 1);
+                setValue("entries", watchedEntries);
                 setSelectedRow(undefined);
               }}
             />
@@ -128,7 +127,10 @@ function CreateTemplate() {
           onClick={() => {
             if (entryRef.current !== null) {
               // prettier-ignore
-              const newEntries = [...(getValues().entries ?? []),{ entry: entryRef.current.value }];
+              const newEntries = [
+                ...(watchedEntries ?? []),
+                { entry: entryRef.current.value },
+              ];
               setValue("entries", newEntries);
             }
           }}
