@@ -52,7 +52,7 @@ function CreateTemplate() {
     handleSubmit,
     setValue,
     control,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = useForm<TemplateFormType>({ resolver: zodResolver(TemplateFormSchema) });
 
   const watchedEntries = useWatch({

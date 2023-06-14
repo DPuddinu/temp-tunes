@@ -69,7 +69,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
       <RecapCard.Container error={isError}>
         {data &&
           data.items[selectedPage] &&
-          data.items[selectedPage]?.map((item: Artist | Track, i) => (
+          data.items[selectedPage]?.map((item, i) => (
             <>
               {selectedType === "artists" ? (
                 <ArtistRow artist={item as Artist} key={i} />

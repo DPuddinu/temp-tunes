@@ -4,7 +4,7 @@ import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useRef, type ReactNode, useEffect } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { useStore } from "~/core/store";
 import { cn } from "~/utils/utils";
 import { ToastCva } from "./cva/ToastCva";

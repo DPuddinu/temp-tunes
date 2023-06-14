@@ -20,10 +20,8 @@ export const spotifyPlaylistRouter = createTRPCRouter({
       const tracks = await getPlaylistTracks(playlist.id, ctx.session.accessToken)
       const uris = tracks.map(track => track.uri)
       await removeTracksFromPlaylist(uris, playlist.id, ctx.session.accessToken)
-      const shuffledUris = shuffle(uris)
-      console.log(shuffledUris)
+      const shuffledUris = shuffle(uris) as string[]
       const add = await addTracksToPlaylist(shuffledUris, playlist.id, ctx.session.accessToken)
-      console.log(shuffledUris)
       return add
     }),
   copy: protectedProcedure.input(z.object({
