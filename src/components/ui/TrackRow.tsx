@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import { useState } from "react";
 import type { Track } from "~/types/spotify-types";
 import { DropdownMenu } from "./DropdownMenu";
-import { TagIcon } from "./icons/TagSVG";
+import { TagSVG } from "./icons/TagSVG";
 
 interface Props {
   track: Track;
@@ -25,7 +25,7 @@ const TrackRow = ({ track }: Props) => {
         <DropdownMenu intent={"light"}>
           <li onClick={() => setIsModalOpen(true)} className="bg-transparent">
             <div className="flex gap-2 rounded-xl">
-              <TagIcon />
+              <TagSVG />
               <a>{t("add_tag")}</a>
             </div>
           </li>

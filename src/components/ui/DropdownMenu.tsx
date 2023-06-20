@@ -2,7 +2,7 @@ import type { VariantProps } from "cva";
 import type { ReactNode } from "react";
 import { cn } from "~/utils/utils";
 import { DropdownMenuContentCva } from "../cva/DropdownMenuCva";
-import { VerticalDots } from "./icons/VerticalDots";
+import { VerticalDotsSVG } from "./icons/VerticalDotsSVG";
 
 type DropdownProps = {
   children: ReactNode;
@@ -16,7 +16,7 @@ export function DropdownMenu({ children, intent, className }: DropdownProps) {
         tabIndex={0}
         className="btn border-none bg-transparent p-0 hover:bg-transparent"
       >
-        <VerticalDots />
+        <VerticalDotsSVG />
       </label>
       <ul tabIndex={0} className={DropdownMenuContentCva({ intent })}>
         {children}

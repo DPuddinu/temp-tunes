@@ -2,21 +2,26 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRef, useState } from "react";
-import { useForm, useWatch, type SubmitHandler } from "react-hook-form";
+import {
+  useFieldArray,
+  useForm,
+  type SubmitHandler,
+  type UseFormRegister,
+} from "react-hook-form";
 import { z } from "zod";
 import MainLayout from "~/components/MainLayout";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
-import { ArrowDownSVG } from "~/components/ui/icons/ArrowDownSVG";
-import { ArrowUpSVG } from "~/components/ui/icons/ArrowUpSVG";
-import { DeleteSVG } from "~/components/ui/icons/DeleteSVG";
+import {} from "~/components/ui/icons/ArrowUpSVG";
+import {} from "~/components/ui/icons/DeleteSVG";
+import {
+  ArrowDownSVG,
+  ArrowUpSVG,
+  DeleteSVG,
+} from "~/components/ui/icons/index";
 import { useStore } from "~/core/store";
 import type { PageWithLayout } from "~/types/page-types";
-import {
-  TemplateEntrySchema,
-  type TemplateSchemaEntryType,
-} from "~/types/zod-schemas";
+import { TemplateEntrySchema } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
-import { arrayMoveImmutable } from "~/utils/helpers";
 
 const Templates: PageWithLayout = () => {
   return (
@@ -50,22 +55,21 @@ function CreateTemplate() {
   const {
     register,
     handleSubmit,
-    setValue,
     control,
     formState: { isValid },
   } = useForm<TemplateFormType>({ resolver: zodResolver(TemplateFormSchema) });
 
-  const watchedEntries = useWatch({
-    control,
-    name: "entries",
-    defaultValue: [],
+  const { fields, append, remove, move } = useFieldArray({
+    control, // control props comes from useForm (optional: if you are using FormContext)
+    name: "entries", // unique name for your Field Array
   });
 
   const onSubmit: SubmitHandler<TemplateFormType> = (data) =>
-    mutate({
-      name: data.name,
-      entries: data.entries,
-    });
+    console.log("data", data);
+  // mutate({
+  //   name: data.name,
+  //   entries: data.entries,
+  // });
 
   return (
     <form
@@ -73,41 +77,41 @@ function CreateTemplate() {
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex w-full flex-col gap-2" ref={parent}>
-        <div className="flex justify-between gap-2">
+        <div className="flex justify-between gap-2 bg-base-300">
           <input
             type="text"
             placeholder="Template Name"
-            className="input-ghost input w-full max-w-xs grow text-xl hover:bg-base-200"
+            className="input-ghost input w-full max-w-xs grow  text-xl "
             {...register("name")}
           />
           {isLoading && <LoadingSpinner />}
         </div>
         <ul ref={parent} className="[&>li]:py-1">
-          {watchedEntries.map((entry, i) => (
+          {fields.map((entry, i) => (
             <TemplateRow
+              register={register}
+              id={entry.id}
+              index={i}
               key={i}
               name={entry.entry}
               open={i === selectedRow}
-              setOpen={() => setSelectedRow(i)}
+              setOpen={() =>
+                setSelectedRow((row) => (row === i ? undefined : i))
+              }
               onMoveUp={() => {
-                setValue(
-                  "entries",
-                  // prettier-ignore
-                  arrayMoveImmutable(watchedEntries, i, i - 1) as TemplateSchemaEntryType[]
-                );
-                if (i - 1 >= 0) setSelectedRow(i - 1);
+                if (i - 1 >= 0) {
+                  move(i, i - 1);
+                  setSelectedRow(i - 1);
+                }
               }}
               onMoveDown={() => {
-                setValue(
-                  "entries",
-                  // prettier-ignore
-                  arrayMoveImmutable(watchedEntries, i, i + 1) as TemplateSchemaEntryType[]
-                );
-                if (i + 1 <= watchedEntries.length - 1) setSelectedRow(i + 1);
+                if (i + 1 <= fields.length - 1) {
+                  move(i, i + 1);
+                  setSelectedRow(i + 1);
+                }
               }}
               onDelete={() => {
-                watchedEntries.splice(i, 1);
-                setValue("entries", watchedEntries);
+                remove(i);
                 setSelectedRow(undefined);
               }}
             />
@@ -122,21 +126,17 @@ function CreateTemplate() {
           placeholder="Template Entry"
           className="input w-full max-w-xs grow"
         />
-        <div
+        <button
+          type="button"
           className="btn-circle btn bg-base-100 p-2 text-xl hover:bg-base-200"
           onClick={() => {
             if (entryRef.current !== null) {
-              // prettier-ignore
-              const newEntries = [
-                ...(watchedEntries ?? []),
-                { entry: entryRef.current.value },
-              ];
-              setValue("entries", newEntries);
+              append({ entry: entryRef.current.value });
             }
           }}
         >
           +
-        </div>
+        </button>
       </div>
       <button
         type="submit"
@@ -152,6 +152,9 @@ function CreateTemplate() {
 interface TemplateRowProps {
   name: string;
   open: boolean;
+  register: UseFormRegister<TemplateFormType>;
+  id: string;
+  index: number;
   setOpen: () => void;
   onDelete: () => void;
   onMoveUp: () => void;
@@ -164,16 +167,20 @@ const TemplateRow = ({
   onDelete,
   onMoveUp,
   onMoveDown,
+  index,
+  id,
+  register,
 }: TemplateRowProps) => {
   return (
-    <li className="flex items-center gap-2">
-      <button
+    <li key={id} className="flex items-center gap-2">
+      <input
         className="btn grow bg-base-100 hover:bg-base-200"
         onClick={setOpen}
-        type="button"
-      >
-        {name}
-      </button>
+        type="text"
+        defaultValue={name}
+        placeholder={"name"}
+        {...register(`entries.${index}.entry`)}
+      />
 
       <Transition
         show={open}
