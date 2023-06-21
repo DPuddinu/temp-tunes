@@ -1,8 +1,13 @@
 import { useTranslation } from "next-i18next";
-import TrackRow from "~/components/ui/TrackRow";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import { api } from "~/utils/api";
 import RecapCard from "../RecapCard";
+import dynamic from "next/dynamic";
+import { SquareSkeleton } from "~/components/ui/skeletons/SquareSkeleton";
+
+const TrackRow = dynamic(() => import("~/components/ui/TrackRow"), {
+  loading: () => <SquareSkeleton />,
+});
 
 const RecommendedCard = () => {
   //prettier-ignore

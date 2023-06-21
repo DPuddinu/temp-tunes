@@ -3,7 +3,7 @@ interface LoadingStateProps {
   current: string | undefined;
 }
 
-export const LoadingScreen = ({ progress, current }: LoadingStateProps) => {
+const LoadingScreen = ({ progress, current }: LoadingStateProps) => {
   return (
     <section className="flex flex-col items-center justify-center gap-3">
       <p className="text-sm">Loading your playlists</p>
@@ -20,3 +20,5 @@ export const LoadingScreen = ({ progress, current }: LoadingStateProps) => {
     </section>
   );
 };
+
+export default LoadingScreen;

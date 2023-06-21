@@ -1,35 +1,39 @@
 import MainLayout from "@components/MainLayout";
-import { Disclosure, Transition } from "@headlessui/react";
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
-  type ColumnFiltersState,
-  type SortingState
-} from "@tanstack/react-table";
+import { zodResolver } from "@hookform/resolvers/zod";
 import type { GetStaticProps } from "next";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import { useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
-import { LoadingScreen } from "~/components/ui/LoadingPlaylistComponent";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/TableComponent";
 import { ArrowSVG, SearchSVG } from "~/components/ui/icons/index";
 import { usePlaylistStore } from "~/core/store";
 import { useLibrary } from "~/hooks/use-library";
-import type { SearchResult } from "~/server/api/routers/spotify_user_router";
 import type { PageWithLayout } from "~/types/page-types";
 import { type Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 
+const SearchDataTable = dynamic(() => import("~/components/ui/SearchTable"), {
+  loading: () => <div></div>,
+});
+
+const LoadingScreen = dynamic(
+  () => import("~/components/ui/LoadingPlaylistComponent"),
+  {
+    loading: () => <div></div>,
+  }
+);
+
+const SearchFormSchema = z.object({
+  name: z.string().min(3),
+});
+type SearchFormSchemaType = z.infer<typeof SearchFormSchema>;
+
 const Search: PageWithLayout = () => {
-  const searchInput = useRef<HTMLInputElement>(null);
   const { playlists, setPlaylists } = usePlaylistStore();
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
@@ -37,9 +41,17 @@ const Search: PageWithLayout = () => {
   const [progress, setProgress] = useState<number>();
 
   const { t } = useTranslation("search");
-  const [error, setError] = useState(" ");
   // prettier-ignore
   const { data, mutate, isLoading } = api.spotify_user.searchTracks.useMutation();
+
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { isValid },
+  } = useForm<SearchFormSchemaType>({
+    resolver: zodResolver(SearchFormSchema),
+  });
 
   // LOADING LIBRARY
   const { loadLibrary } = useLibrary({
@@ -52,138 +64,55 @@ const Search: PageWithLayout = () => {
     onFinish: (library: Playlist[]) => {
       setLoading(false);
       setPlaylists(library);
-      if (searchInput.current)
+      const searchInput = getValues().name
+      if (searchInput)
         mutate({
           playlists: library,
-          query: searchInput.current.value,
+          query: searchInput,
         });
     },
   });
 
-  const columns: ColumnDef<SearchResult>[] = useMemo(() => {
-    return [
-      {
-        accessorKey: "title",
-        header: ({ column }) => {
-          return (
-            <button
-              className="flex w-full items-center gap-1"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("search_table_headers.title") ?? "Title"}
-              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
-            </button>
-          );
-        },
-      },
-      {
-        accessorKey: "artists",
-        header: ({ column }) => {
-          return (
-            <button
-              className="flex items-center justify-center gap-1"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("search_table_headers.author") ?? "Author"}
-              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
-            </button>
-          );
-        },
-      },
-      {
-        accessorKey: "playlist",
-        header: ({ column }) => {
-          return (
-            <button
-              className="flex items-center justify-center gap-1"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("search_table_headers.playlist") ?? "playlist"}
-              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
-            </button>
-          );
-        },
-      },
-
-      {
-        accessorKey: "creator",
-        header: ({ column }) => {
-          return (
-            <button
-              className="flex items-center justify-center gap-1"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("search_table_headers.creator") ?? "Creator"}
-              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
-            </button>
-          );
-        },
-      },
-      {
-        accessorKey: "tags",
-        header: ({ column }) => {
-          return (
-            <button
-              className="flex items-center justify-center gap-1"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("search_table_headers.tags") ?? "Tags"}
-              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
-            </button>
-          );
-        },
-      },
-    ];
-  }, [t]);
-
-  const search = () => {
-    if(!playlists){
+  const onSubmit: SubmitHandler<SearchFormSchemaType> = (data) => {
+    if (!playlists) {
       loadLibrary();
       return;
     }
-    if (searchInput.current)
-      mutate({
-        playlists: playlists,
-        query: searchInput.current.value,
+    mutate({
+      playlists: playlists,
+      query: data.name,
     });
+      
   };
 
   return (
     <div className="flex flex-col items-center justify-center gap-2">
       <div className="form-control w-full pb-4 sm:max-w-sm md:max-w-md">
-        <div className="input-group">
-          <input
-            ref={searchInput}
-            type="text"
-            placeholder={t("search") ?? "..."}
-            className="input-bordered input grow bg-secondary-content sm:max-w-sm"
-            onChange={(e) => setError(validateSearchInput(e.target.value))}
-          />
-          <button
-            disabled={!!error && playlists && playlists?.length > 0}
-            className="btn-square btn"
-            onClick={search}
-          >
-            <SearchSVG />
-          </button>
-        </div>
-        {!!error && (
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="input-group">
+            <input
+              {...register("name")}
+              type="text"
+              placeholder={t("search") ?? "..."}
+              className="input-bordered input grow bg-secondary-content sm:max-w-sm"
+            />
+            <button
+              type="submit"
+              disabled={!isValid}
+              className="btn-square btn"
+            >
+              <SearchSVG />
+            </button>
+          </div>
+        </form>
+
+        {/* {!!error && (
           <label className="label text-red-700">
             <span className="label-text-alt font-bold text-error">
               {t(error)}
             </span>
           </label>
-        )}
+        )} */}
       </div>
       {loading && (
         <LoadingScreen current={currentPlaylist} progress={progress} />
@@ -192,255 +121,22 @@ const Search: PageWithLayout = () => {
 
       {data && (
         <div className="flex w-full flex-col gap-2 p-1">
-          <DataTable columns={columns} data={data} />
+          <SearchDataTable data={data} />
         </div>
       )}
     </div>
   );
 };
-export interface TableConfig {
-  headers: string[];
-  data: SearchResult[];
-}
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-}
-
-function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [filterOpen, setFilterOpen] = useState(false);
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      sorting,
-      columnFilters,
-    },
-  });
-  
-  return (
-    <div className=" w-full overflow-x-auto ">
-      <div key="filters" className="mb-2 gap-2 rounded-lg bg-base-200 text-lg font-medium tracking-wide">
-        <Disclosure>
-          <Disclosure.Button>
-            <div onClick={() => setFilterOpen((open) => !open)} className="p-4">
-              {`Filters ${filterOpen ? "-" : "+"}`}
-            </div>
-          </Disclosure.Button>
-
-          <Transition
-            enter="transition duration-100 ease-out"
-            enterFrom="transform scale-95 opacity-0"
-            enterTo="transform scale-100 opacity-100"
-            leave="transition duration-75 ease-out"
-            leaveFrom="transform scale-100 opacity-100"
-            leaveTo="transform scale-95 opacity-0"
-          >
-            <Disclosure.Panel>
-              <div className="flex flex-wrap gap-2 rounded-b-lg bg-base-200 p-4 md:flex-nowrap">
-                <div className="form-control w-full max-w-xs">
-                  <label className="label">
-                    <span className="label-text">Title</span>
-                  </label>
-                  <input
-                    value={
-                      (table.getColumn("title")?.getFilterValue() as string) ??
-                      ""
-                    }
-                    onChange={(event) =>
-                      table
-                        .getColumn("title")
-                        ?.setFilterValue(event.target.value)
-                    }
-                    type="text"
-                    placeholder=""
-                    className="input-bordered input w-full max-w-xs"
-                  />
-                </div>
-                <div className="form-control w-full max-w-xs">
-                  <label className="label">
-                    <span className="label-text">Artists</span>
-                  </label>
-                  <input
-                    value={
-                      (table
-                        .getColumn("artists")
-                        ?.getFilterValue() as string) ?? ""
-                    }
-                    onChange={(event) => {
-                      table
-                        .getColumn("artists")
-                        ?.setFilterValue(event.target.value);
-                    }}
-                    type="text"
-                    placeholder=""
-                    className="input-bordered input w-full max-w-xs"
-                  />
-                </div>
-                <div className="form-control w-full max-w-xs">
-                  <label className="label">
-                    <span className="label-text">Playlist</span>
-                  </label>
-                  <input
-                    value={
-                      (table
-                        .getColumn("playlist")
-                        ?.getFilterValue() as string) ?? ""
-                    }
-                    onChange={(event) => {
-                      table
-                        .getColumn("playlist")
-                        ?.setFilterValue(event.target.value);
-                    }}
-                    type="text"
-                    placeholder=""
-                    className="input-bordered input w-full max-w-xs"
-                  />
-                </div>
-                <div className="form-control w-full max-w-xs">
-                  <label className="label">
-                    <span className="label-text">Creator</span>
-                  </label>
-                  <input
-                    value={
-                      (table
-                        .getColumn("creator")
-                        ?.getFilterValue() as string) ?? ""
-                    }
-                    onChange={(event) => {
-                      table
-                        .getColumn("creator")
-                        ?.setFilterValue(event.target.value);
-                    }}
-                    type="text"
-                    placeholder=""
-                    className="input-bordered input w-full max-w-xs"
-                  />
-                </div>
-                <div className="form-control w-full max-w-xs">
-                  <label className="label">
-                    <span className="label-text">Tags</span>
-                  </label>
-                  <input
-                    value={
-                      (table.getColumn("tags")?.getFilterValue() as string) ??
-                      ""
-                    }
-                    onChange={(event) => {
-                      table
-                        .getColumn("tags")
-                        ?.setFilterValue(event.target.value);
-                    }}
-                    type="text"
-                    placeholder=""
-                    className="input-bordered input w-full max-w-xs"
-                  />
-                </div>
-              </div>
-            </Disclosure.Panel>
-          </Transition>
-        </Disclosure>
-      </div>
-      <Table>
-        <TableHeader >
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-      <div className="btn-group mt-3 flex justify-center">
-        <div className="flex">
-          <button
-            className="btn  bg-neutral"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {"<"}
-          </button>
-          <button
-            className="btn"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            {">"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export const getStaticProps: GetStaticProps = async (context) => {
   return {
     props: {
       //prettier- ignore
-      ...(await serverSideTranslations(context.locale ?? "en", [
-        "search",
-      ])),
+      ...(await serverSideTranslations(context.locale ?? "en", ["search"])),
     },
   };
 };
 
-
-
 Search.getLayout = (page) => <MainLayout>{page}</MainLayout>;
-
-function validateSearchInput(searchInput: string) {
-  let error = "";
-
-  if (!z.string().min(2).safeParse(searchInput).success || !searchInput) {
-    error = "search_errors.short";
-  }
-  if (!z.string().max(18).safeParse(searchInput).success) {
-    error = "search_errors.long";
-  }
-  return error;
-}
 
 export default Search;
