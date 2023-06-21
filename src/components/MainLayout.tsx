@@ -1,15 +1,11 @@
-import { Transition } from "@headlessui/react";
-import type { VariantProps } from "cva";
-import { signOut, useSession } from "next-auth/react";
-import Image from "next/image";
+import { useSession } from "next-auth/react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef, type ReactNode } from "react";
 import { useStore } from "~/core/store";
-import { cn } from "~/utils/utils";
-import { ToastCva } from "./cva/ToastCva";
-import ThemeSwitcher from "./ui/ThemeSwitcher";
-import { HomeSVG, MenuSVG, PlaylistSVG, SearchSVG, TemplateSVG } from "./ui/icons/index";
+import { HomeSVG, PlaylistSVG, SearchSVG, TemplateSVG } from "./ui/icons/index";
+import NavbarSkeleton from "./ui/skeletons/NavbarSkeleton";
 import { RoundSkeleton } from "./ui/skeletons/RoundSkeleton";
 
 type PageType = "Home" | "Search" | "Playlists" | "Templates";
@@ -25,6 +21,13 @@ export const pages: Page[] = [
   { url: "/playlist", name: "Playlists", icon: <PlaylistSVG /> },
   { url: "/templates", name: "Templates", icon: <TemplateSVG /> },
 ];
+
+const UserNavbar = dynamic(() => import("./ui/UserNavbar"), {
+  loading: () => <RoundSkeleton />,
+});
+const Toast = dynamic(() => import("./ui/Toast"), {
+  loading: () => <RoundSkeleton />,
+});
 
 const MainLayout = ({ children }: { children: ReactNode }) => {
   const { data: session, status } = useSession();
@@ -46,10 +49,14 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
       />
       <div className="drawer-content flex h-full w-full flex-col bg-base-100">
         <nav>
-          <UserNavbar
-            name={session?.user?.name ?? ""}
-            image={session?.user?.image ?? ""}
-          />
+          {session ? (
+            <UserNavbar
+              name={session.user?.name ?? ""}
+              image={session.user?.image ?? ""}
+            />
+          ) : (
+            <NavbarSkeleton />
+          )}
         </nav>
         <main className="grow p-6 pb-20 sm:pb-6">
           {children}
@@ -80,63 +87,6 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   );
 };
 
-interface UserNavbarProps {
-  name: string;
-  image: string;
-}
-const UserNavbar = ({ name, image }: UserNavbarProps) => {
-  return (
-    <div className="navbar bg-base-300 bg-gradient-to-r shadow">
-      <div className="flex w-full justify-end sm:justify-between">
-        <div className="hidden border-none p-2  sm:block">
-          <label
-            htmlFor="my-drawer-2"
-            className="drawer-button btn-ghost btn hover:bg-base-300"
-          >
-            <MenuSVG />
-          </label>
-        </div>
-
-        <div className="dropdown-end flex">
-          <ThemeSwitcher />
-          <div className="dropdown-end dropdown ">
-            <div className=" flex items-center gap-2 rounded pl-6">
-              <h1 className="text-sm font-medium text-primary-content">
-                {name}
-              </h1>
-              <label tabIndex={0} className="btn-ghost btn-circle avatar btn">
-                <div className="w-10 rounded-full">
-                  {!!image ? (
-                    <Image
-                      priority
-                      quality={60}
-                      src={image}
-                      alt="blur"
-                      height={40}
-                      width={40}
-                    />
-                  ) : (
-                    <RoundSkeleton />
-                  )}
-                </div>
-              </label>
-            </div>
-
-            <ul
-              tabIndex={0}
-              className="menu-compact dropdown-content menu rounded-box mt-3 w-52 bg-base-200 p-2 shadow"
-            >
-              <li>
-                <a onClick={() => signOut({ callbackUrl: "/" })}>Logout</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const BottomNavigation = () => {
   const router = useRouter();
   return (
@@ -156,30 +106,6 @@ const BottomNavigation = () => {
         </Link>
       ))}
     </div>
-  );
-};
-
-type ToastProps = {
-  className?: string;
-  message: string | undefined;
-} & VariantProps<typeof ToastCva>;
-const Toast = ({ className, intent, message }: ToastProps) => {
-  return (
-    <>
-      <Transition
-        show={!!message}
-        enter="transition-opacity duration-75"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave="transition-opacity duration-125"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
-      >
-        <div className={cn("toast pb-20", className)}>
-          <div className={ToastCva({ intent })}>{message}</div>
-        </div>
-      </Transition>
-    </>
   );
 };
 
