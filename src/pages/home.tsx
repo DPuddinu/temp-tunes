@@ -1,22 +1,13 @@
 import MainLayout from "@components/MainLayout";
 import type { GetStaticProps } from "next";
 import { useSession } from "next-auth/react";
-import { useTranslation, type TFunction } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import type { TimeRangeType } from "src/types/spotify-types";
-import { TimeRangeArray } from "src/types/spotify-types";
-import MoodCard from "~/components/recap/cards/MoodCard";
-import RecommendedCard from "~/components/recap/cards/RecommendedCard";
 import type { RecapPropsType } from "~/components/recap/cards/UserTopCard";
-import TopRatedCard from "../components/recap/cards/UserTopCard";
+import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import type { PageWithLayout } from "../types/page-types";
-
-type GreetingsProps = {
-  name: string | undefined | null;
-  timeRange: TimeRangeType;
-  selectTimeRange: (range: TimeRangeType) => void;
-};
 
 const Home: PageWithLayout = () => {
   const { data: sessionData } = useSession();
@@ -38,6 +29,17 @@ const Home: PageWithLayout = () => {
     </section>
   );
 };
+//prettier-ignore
+const Greetings = dynamic(() => import("~/components/ui/Greetings"),{ loading: () => <GreetingsSkeleton />});
+
+//prettier-ignore
+const TopRatedCard = dynamic(() => import("~/components/recap/cards/UserTopCard"),{loading: () => <RecapSkeleton />});
+
+//prettier-ignore
+const MoodCard = dynamic(() => import("~/components/recap/cards/MoodCard"),{loading: () => <RecapSkeleton />});
+
+//prettier-ignore
+const RecommendedCard = dynamic(() => import("~/components/recap/cards/RecommendedCard"),{loading: () => <RecapSkeleton />});
 
 const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
   return (
@@ -60,44 +62,6 @@ function GreetingsSkeleton() {
       </div>
     </div>
   );
-}
-function Greetings({ name, timeRange, selectTimeRange }: GreetingsProps) {
-  const { t } = useTranslation("home");
-
-  return (
-    <div className="">
-      <div className="p-2">
-        <div className="flex flex-col sm:flex-row">
-          <h1 className="text-2xl font-bold text-base-content md:text-3xl">
-            {`${salute(t)},`}&nbsp;
-          </h1>
-          <h1 className="text-2xl font-bold text-base-content md:text-3xl">{`${
-            name ?? ""
-          } 👋🏻`}</h1>
-        </div>
-        <p className="mt-2 font-medium text-base-content">{t("recap.title")}</p>
-        <select
-          className="select select-sm mt-4 w-32 bg-base-300"
-          value={timeRange}
-          onChange={(e) => selectTimeRange(e.target.value as TimeRangeType)}
-        >
-          {TimeRangeArray.map((range, i) => (
-            <option className="mt-1 p-1" key={i} value={range}>
-              {t(range)}
-            </option>
-          ))}
-        </select>
-      </div>
-    </div>
-  );
-}
-
-function salute(t: TFunction) {
-  const hours = new Date().getHours();
-  if (hours >= 0 && hours <= 12) return t("morning");
-  if (hours >= 13 && hours <= 17) return t("afternoon");
-  if (hours >= 18 && hours <= 22) return t("evening");
-  return t("night");
 }
 
 Home.getLayout = (page) => <MainLayout>{page}</MainLayout>;

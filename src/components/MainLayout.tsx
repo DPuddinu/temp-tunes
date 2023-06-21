@@ -9,11 +9,7 @@ import { useStore } from "~/core/store";
 import { cn } from "~/utils/utils";
 import { ToastCva } from "./cva/ToastCva";
 import ThemeSwitcher from "./ui/ThemeSwitcher";
-import { HomeSVG } from "./ui/icons/HomeSVG";
-import { MenuSVG } from "./ui/icons/MenuSVG";
-import { PlaylistSVG } from "./ui/icons/PlaylistSVG";
-import { SearchSVG } from "./ui/icons/SearchSVG";
-import { TemplateSVG } from "./ui/icons/TemplateSVG";
+import { HomeSVG, MenuSVG, PlaylistSVG, SearchSVG, TemplateSVG } from "./ui/icons/index";
 import { RoundSkeleton } from "./ui/skeletons/RoundSkeleton";
 
 type PageType = "Home" | "Search" | "Playlists" | "Templates";
