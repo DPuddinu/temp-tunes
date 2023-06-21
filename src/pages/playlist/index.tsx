@@ -60,13 +60,13 @@ const PlaylistsPage: PageWithLayout = () => {
       {isLoading ? (
         <PlaylistPageSkeleton />
       ) : (
-        <DataTable columns={columns} data={data ? data : []} />
+        <PlaylistTable columns={columns} data={data ? data : []} />
       )}
     </div>
   );
 };
 
-function DataTable<TData, TValue>({
+function PlaylistTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {

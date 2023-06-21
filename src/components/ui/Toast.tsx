@@ -1,6 +1,7 @@
 import type { VariantProps } from "cva";
 import { ToastCva } from "../cva/ToastCva";
 import { Transition } from "@headlessui/react";
+import { cn } from "~/utils/utils";
 
 type ToastProps = {
   className?: string;
