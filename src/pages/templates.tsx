@@ -65,11 +65,10 @@ function CreateTemplate() {
   });
 
   const onSubmit: SubmitHandler<TemplateFormType> = (data) =>
-    console.log("data", data);
-  // mutate({
-  //   name: data.name,
-  //   entries: data.entries,
-  // });
+  mutate({
+    name: data.name,
+    entries: data.entries,
+  });
 
   return (
     <form

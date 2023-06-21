@@ -20,8 +20,7 @@ import { z } from "zod";
 import { LoadingScreen } from "~/components/ui/LoadingPlaylistComponent";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/TableComponent";
-import { ArrowSVG } from "~/components/ui/icons/ArrowSVG";
-import { SearchSVG } from "~/components/ui/icons/SearchSVG";
+import { ArrowSVG, SearchSVG } from "~/components/ui/icons/index";
 import { usePlaylistStore } from "~/core/store";
 import { useLibrary } from "~/hooks/use-library";
 import type { SearchResult } from "~/server/api/routers/spotify_user_router";
@@ -145,7 +144,7 @@ const Search: PageWithLayout = () => {
         },
       },
     ];
-  }, []);
+  }, [t]);
 
   const search = () => {
     if(!playlists){

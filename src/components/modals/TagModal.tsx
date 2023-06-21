@@ -1,3 +1,4 @@
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "next-i18next";
 import { useCallback, useEffect, useState } from "react";
@@ -21,7 +22,6 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
   const { t } = useTranslation("modals");
   const [removeTags, setRemoveTags] = useState<TagSchemaType[]>([]);
   const { tags: storeTags, setTags: setStoreTags, setMessage } = useStore();
-
   const [tags, setTags] = useState<TagSchemaType[]>([]);
 
   useEffect(() => {
@@ -35,8 +35,10 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
   const { isLoading, mutate } = api.tags.setTags.useMutation({
     onSuccess(data) {
       setStoreTags(data);
+      onClose();
     },
     onError(){
+      onClose();
       setMessage(t("wrong") ?? "Something went wrong");
     }
   });
@@ -58,7 +60,7 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
 
   return (
     <BaseModal isOpen={isOpen} title={t("new_tag")} onClose={onClose}>
-      <div className="flex flex-row flex-wrap gap-2 pb-2 pt-6">
+      <div className="flex flex-row flex-wrap gap-2 overflow-hidden pb-2 pt-6">
         {tags.map((tag, i) => (
           <div className="indicator mr-2" key={i}>
             <span
@@ -67,7 +69,7 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
             >
               <p className=" m-0 text-center">x</p>
             </span>
-            <p className="w-fit rounded-3xl bg-warning pr-3 pl-3 text-white">
+            <p className="rounded-3xl bg-warning py-1 pr-3 pl-3 text-center font-semibold text-stone-900">
               {tag.name}
             </p>
           </div>
@@ -79,19 +81,10 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
         tags={tags.map((tag) => tag.name)}
         onTagSubmit={(tag: TagSchemaType) => setTags((tags) => [...tags, tag])}
       />
-      <div
-        className="flex justify-between"
-        style={{ justifyContent: isLoading ? "space-between" : "end" }}
-      >
-        {isLoading && <LoadingSpinner />}
-        <ConfirmButtonGroup
-          onConfirm={() => {
-            mutate({ addTags: tags, removeTags: removeTags });
-            onClose();
-          }}
-          onClose={onClose}
-        />
-      </div>
+      <ConfirmButtonGroup
+        onConfirm={() => mutate({ addTags: tags, removeTags: removeTags })}
+        onClose={onClose}
+      />
     </BaseModal>
   );
 }
@@ -100,7 +93,7 @@ const AddTagSchema = z.object({
   tag: z
     .string()
     .min(3, { message: "tag_errors.short" })
-    .max(16, { message: "tag_errors.long" })
+    .max(16, { message: "tag_errors.long" }),
 });
 
 type AddTagSchemaType = z.infer<typeof AddTagSchema>;
@@ -113,7 +106,7 @@ interface AddTagComponentProps {
 function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
   const { t } = useTranslation("modals");
   const tagSchema = AddTagSchema.refine((item) => !tags.includes(item.tag), {
-    message: "tag_errors.used"
+    message: "tag_errors.used",
   });
   const {
     register,
@@ -133,6 +126,7 @@ function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
     <form className="flex gap-2 pt-2" onSubmit={handleSubmit(onSubmit)}>
       <div className="w-full ">
         <input
+          tabIndex={-1}
           className="input w-full "
           {...register("tag", { required: true })}
         />
@@ -149,6 +143,7 @@ function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
         )}
       </div>
       <button
+        tabIndex={-1}
         type="submit"
         className="btn-circle btn border-transparent text-xl transition-transform"
       >

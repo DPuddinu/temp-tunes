@@ -21,7 +21,6 @@ const BaseModal = ({
   children,
   onClose,
 }: Props) => {
-
   const matches = useMediaQuery("(min-width: 425px)");
 
   return (
@@ -31,16 +30,18 @@ const BaseModal = ({
           onClose={onClose}
           isOpen={isOpen}
           description={description}
-          title={title}>
-        {children}
+          title={title}
+        >
+          {children}
         </Center>
       ) : (
         <Bottom
           onClose={onClose}
           isOpen={isOpen}
           description={description}
-          title={title}>
-        {children}
+          title={title}
+        >
+          {children}
         </Bottom>
       )}
     </>
@@ -49,7 +50,7 @@ const BaseModal = ({
 
 export default BaseModal;
 
-const Center = ({ onClose, isOpen, description, title, children}: Props) => {
+const Center = ({ onClose, isOpen, description, title, children }: Props) => {
   return (
     <Transition show={isOpen}>
       <Dialog
@@ -101,44 +102,44 @@ const Center = ({ onClose, isOpen, description, title, children}: Props) => {
   );
 };
 
-const Bottom = ({onClose, children, description, isOpen, title}: Props) => {
-return (
-  <Transition show={isOpen}>
-    <Dialog
-      as="div"
-      className="fixed bottom-0 left-0 z-10 overflow-y-auto w-full"
-      onClose={onClose}
-    >
-      <div className="flex min-h-screen items-end justify-center text-center backdrop-blur-sm">
-        <Dialog.Overlay className="fixed inset-0 z-0" />
+const Bottom = ({ onClose, children, description, isOpen, title }: Props) => {
+  return (
+    <Transition show={isOpen}>
+      <Dialog
+        as="div"
+        className="fixed bottom-0 left-0 z-10 w-screen overflow-hidden"
+        onClose={onClose}
+      >
+        <div className="flex min-h-screen items-end justify-center text-center backdrop-blur-sm">
+          <Dialog.Overlay className="fixed inset-0 z-0" />
 
-        <Transition.Child
-          as={Fragment}
-          enter="ease-in-out duration-300"
-          enterFrom="translate-y-full"
-          enterTo=""
-          leave="ease-in-out duration-200"
-          leaveFrom=""
-          leaveTo="translate-y-full"
-        >
-          <Dialog.Panel className="z-50 h-[50vh] overflow-auto rounded-t-2xl bg-base-content p-6 text-left shadow-xl w-full">
-            {title && (
-              <Dialog.Title className="text-xl font-bold leading-6 tracking-wide text-base-100">
-                {title}
-              </Dialog.Title>
-            )}
-            {description && (
-              <Dialog.Description className="mt-2">
-                <p className="text-md border-t pt-2 text-base-100">
-                  {description}
-                </p>
-              </Dialog.Description>
-            )}
-            <div className="h-100 pt-6">{children}</div>
-          </Dialog.Panel>
-        </Transition.Child>
-      </div>
-    </Dialog>
-  </Transition>
-);
-}
+          <Transition.Child
+            as={Fragment}
+            enter="ease-in-out duration-300"
+            enterFrom="translate-y-full"
+            enterTo=""
+            leave="ease-in-out duration-200"
+            leaveFrom=""
+            leaveTo="translate-y-full"
+          >
+            <Dialog.Panel className="z-50 h-[50vh] w-full overflow-y-auto rounded-t-2xl bg-base-content p-6 text-left shadow-xl">
+              {title && (
+                <Dialog.Title className="text-xl font-bold leading-6 tracking-wide text-base-100">
+                  {title}
+                </Dialog.Title>
+              )}
+              {description && (
+                <Dialog.Description className="mt-2">
+                  <p className="text-md border-t pt-2 text-base-100">
+                    {description}
+                  </p>
+                </Dialog.Description>
+              )}
+              <div className="h-100 pt-6">{children}</div>
+            </Dialog.Panel>
+          </Transition.Child>
+        </div>
+      </Dialog>
+    </Transition>
+  );
+};
