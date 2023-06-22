@@ -1,6 +1,6 @@
 import { type Table } from "@tanstack/react-table";
 
-export function PaginationComponent<TData>({ table }: { table: Table<TData> }) {
+function PaginationComponent<TData>({ table }: { table: Table<TData> }) {
   return (
     <div className="btn-group mt-3 flex justify-center lg:w-3/4">
       <div className="flex">
@@ -22,3 +22,4 @@ export function PaginationComponent<TData>({ table }: { table: Table<TData> }) {
     </div>
   );
 }
+export default PaginationComponent

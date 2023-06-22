@@ -1,8 +1,8 @@
 import { type Table } from "@tanstack/react-table";
 import { type Playlist } from "~/types/spotify-types";
-import { PlaylistComponent } from "./PlaylistComponent";
+import PlaylistComponent from "./PlaylistComponent";
 
-export function TableBodyComponent<TData>({
+function TableBodyComponent<TData>({
   table,
   data,
 }: {
@@ -14,7 +14,7 @@ export function TableBodyComponent<TData>({
       {table.getRowModel().rows?.length ? (
         table
           .getRowModel()
-          .rows.map((row, i) => (
+          .rows.map((row) => (
             <PlaylistComponent
               key={row.id}
               data={data}
@@ -27,3 +27,4 @@ export function TableBodyComponent<TData>({
     </div>
   );
 }
+export default TableBodyComponent;

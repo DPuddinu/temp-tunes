@@ -8,16 +8,13 @@ import { RenameModal } from "~/components/modals/RemaneModal";
 import { UnfollowModal } from "~/components/modals/UnfollowModal";
 import { DropdownMenu } from "~/components/ui/DropdownMenu";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
-import { CopySVG } from "~/components/ui/icons/CopySVG";
-import { DeleteSVG } from "~/components/ui/icons/DeleteSVG";
-import { MergeSVG } from "~/components/ui/icons/MergeSVG";
-import { PencilSVG } from "~/components/ui/icons/PencilSVG";
-import { ShuffleSVG } from "~/components/ui/icons/ShuffleSVG";
+import { CopySVG, DeleteSVG, MergeSVG, PencilSVG, ShuffleSVG } from "~/components/ui/icons";
 import { useStore } from "~/core/store";
-import { type Playlist } from "~/types/spotify-types";
+import type { Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 
-export function PlaylistComponent({
+
+function PlaylistComponent({
   playlist,
   data,
 }: {
@@ -221,3 +218,4 @@ export function PlaylistComponent({
     </div>
   );
 }
+export default PlaylistComponent;

@@ -12,7 +12,7 @@ const PlaylistsPage: PageWithLayout = () => {
   });
 
   //prettier-ignore
-  const PlaylistTable = dynamic(() => import("./components/PlaylistTable"), {loading: () => <PlaylistPageSkeleton /> });
+  const PlaylistTable = dynamic(() => import("~/components/ui/playlist/PlaylistTable"), {loading: () => <PlaylistPageSkeleton /> });
 
   return (
     <div className="flex h-full w-full flex-col items-center ">

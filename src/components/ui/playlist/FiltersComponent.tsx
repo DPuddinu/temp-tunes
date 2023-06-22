@@ -2,7 +2,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { type Table } from "@tanstack/react-table";
 import { useState } from "react";
 
-export function FiltersComponent<TData>({ table }: { table: Table<TData> }) {
+function FiltersComponent<TData>({ table }: { table: Table<TData> }) {
   const [filterOpen, setFilterOpen] = useState(false);
 
   return (
@@ -69,3 +69,4 @@ export function FiltersComponent<TData>({ table }: { table: Table<TData> }) {
     </div>
   );
 }
+export default FiltersComponent;
