@@ -23,7 +23,7 @@ export const pages: Page[] = [
 ];
 
 const UserNavbar = dynamic(() => import("./ui/UserNavbar"), {
-  loading: () => <RoundSkeleton />,
+  loading: () => <NavbarSkeleton />,
 });
 const Toast = dynamic(() => import("./ui/Toast"), {
   loading: () => <RoundSkeleton />,

@@ -16,7 +16,7 @@ const ThemeSwitcher = dynamic(() => import("./ThemeSwitcher"), {
 
 const UserNavbar = ({ name, image }: UserNavbarProps) => {
   return (
-    <div className="navbar bg-base-300 shadow">
+    <div className="navbar bg-base-300 shadow h-16">
       <div className="flex w-full justify-end sm:justify-between">
         <div className="hidden border-none p-2  sm:block">
           <label

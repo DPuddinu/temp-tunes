@@ -1,5 +1,4 @@
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
 import { useStore } from "~/core/store";
 import type { Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
@@ -14,13 +13,9 @@ type Props = {
 
 export const MergeModal = ({onClose, onSuccess, origin, playlists, setIsOpen, isOpen}: Props) => {
   const { t } = useTranslation("playlists");
-  const [isLoading, setIsLoading] = useState(false);
   const { setMessage } = useStore();
 
   const { mutate: merge } = api.spotify_playlist.merge.useMutation({
-    onMutate() {
-      setIsLoading(true);
-    },
     onSuccess(data, variables, context) {
       setIsOpen(false);
       setMessage(`${variables.originName} ${t("operations.merged")} ${variables.destinationName}` );

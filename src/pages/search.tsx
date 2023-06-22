@@ -16,19 +16,17 @@ import type { PageWithLayout } from "~/types/page-types";
 import { type Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 
-const SearchDataTable = dynamic(() => import("~/components/ui/SearchTable"), {
-  loading: () => <div></div>,
-});
+//prettier-ignore
+const SearchDataTable = dynamic(() => import("~/components/ui/SearchTable"), {loading: () => <div></div>});
 
-const LoadingScreen = dynamic(
-  () => import("~/components/ui/LoadingPlaylistComponent"),
-  {
-    loading: () => <div></div>,
-  }
-);
+//prettier-ignore
+const LoadingScreen = dynamic(() => import("~/components/ui/LoadingPlaylistComponent"),{ loading: () => <div></div>});
 
 const SearchFormSchema = z.object({
-  name: z.string().min(3),
+  name: z
+    .string()
+    .min(3, { message: "search_errors.short" })
+    .max(18, { message: "search_errors.long" }),
 });
 type SearchFormSchemaType = z.infer<typeof SearchFormSchema>;
 
@@ -47,7 +45,7 @@ const Search: PageWithLayout = () => {
     register,
     handleSubmit,
     getValues,
-    formState: { isValid },
+    formState: { isValid, errors },
   } = useForm<SearchFormSchemaType>({
     resolver: zodResolver(SearchFormSchema),
   });
@@ -98,20 +96,20 @@ const Search: PageWithLayout = () => {
             <button
               type="submit"
               disabled={!isValid}
-              className="btn-square btn"
+              className="btn-square btn disabled:bg-base-200"
             >
               <SearchSVG />
             </button>
           </div>
         </form>
 
-        {/* {!!error && (
+        {errors.name?.message && (
           <label className="label text-red-700">
             <span className="label-text-alt font-bold text-error">
-              {t(error)}
+              {t(errors.name?.message ?? "Not Valid")}
             </span>
           </label>
-        )} */}
+        )}
       </div>
       {loading && (
         <LoadingScreen current={currentPlaylist} progress={progress} />

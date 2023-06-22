@@ -1,4 +1,3 @@
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "next-i18next";
 import { useCallback, useEffect, useState } from "react";
@@ -8,7 +7,6 @@ import { useStore } from "~/core/store";
 import { type TagSchemaType, type TagType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
 import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
-import { LoadingSpinner } from "../ui/LoadingSpinner";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
 
@@ -32,7 +30,7 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
   }, [storeTags, setTags, trackId]);
 
   //prettier-ignore
-  const { isLoading, mutate } = api.tags.setTags.useMutation({
+  const {mutate } = api.tags.setTags.useMutation({
     onSuccess(data) {
       setStoreTags(data);
       onClose();
