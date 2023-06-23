@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { addTracksToPlaylist, createPlaylist, getPlaylistTracks, getUserPlaylists, removeTracksFromPlaylist, renamePlaylist, unfollowPlaylist } from "~/core/spotifyCollection";
+import { addTracksToPlaylist, createPlaylist, getPlaylistById, getPlaylistTracks, getUserPlaylists, removeTracksFromPlaylist, renamePlaylist, unfollowPlaylist } from "~/core/spotifyCollection";
 import { type Playlist } from "~/types/spotify-types";
 import { PlaylistSchema } from "~/types/zod-schemas";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -59,6 +59,11 @@ export const spotifyPlaylistRouter = createTRPCRouter({
     const { playlistID, name } = input;
     const rename = await renamePlaylist(playlistID, name, ctx.session.accessToken)
     return rename
+  }),
+  getById: protectedProcedure.input(z.object({id: z.string()})).mutation(async ({ ctx, input }) => {
+    const { id } = input;
+    const playlist = await getPlaylistById(id, ctx.session.accessToken)
+    return playlist
   })
 });
 

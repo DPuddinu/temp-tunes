@@ -68,7 +68,7 @@ export async function getLibrary(
   async function loadTracks(index = 0, list: Playlist[]) {
 
     const playlist = list[index];
-    if(!playlist) return;
+    if (!playlist) return;
 
     progressCallback(
       Math.floor((100 / (total + 1)) * (currentIndex + 1)),
@@ -81,7 +81,7 @@ export async function getLibrary(
     if (currentIndex === total) {
       finishCallback(playlists);
     } else {
-      loadTracks(index +1, list);
+      loadTracks(index + 1, list);
     }
   }
 }
@@ -221,4 +221,14 @@ export async function renamePlaylist(playlistId: string, name: string, access_to
     name: name
   }
   return await spotifyPUT({ access_token: access_token, url, body: JSON.stringify(body) })
+}
+
+export async function getPlaylistById(playlistId: string, access_token: string) {
+  const url = `/me/playlists/${playlistId}`
+
+  const playlist = (await spotifyGET(url, access_token).then((resp) => resp.json())
+    .catch((error) => console.error(error))) as Playlist;
+  const tracks = await getPlaylistTracks(playlistId, access_token)
+  playlist.tracks = tracks
+  return playlist
 }
