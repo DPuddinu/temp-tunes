@@ -44,28 +44,44 @@ export async function getLibrary(
   progressCallback: (progress: number, current: string) => void,
   finishCallback: (playlists: Playlist[]) => void
 ) {
-  //get playlists
-  const playlists = await getUserPlaylists(accessToken);
-  //populate playlists
 
-  await loadTracks();
+  let batchesCount = 0
+  let currentIndex = 0;
+
+  const playlists = await getUserPlaylists(accessToken);
+  const batches = [];
+  const chunkSize = Math.floor(playlists.length / 2);
+  for (let i = 0; i < playlists.length; i += chunkSize) {
+    batches.push(playlists.slice(i, i + chunkSize))
+  }
+  const total = playlists.length - 1
+  while (batchesCount !== batches.length) {
+
+    const tempBatch = batches[batchesCount]
+    if (!tempBatch) break
+    await loadTracks(0, tempBatch as Playlist[])
+    batchesCount++
+  }
+
   return playlists;
 
-  async function loadTracks(index = 0) {
-    const playlist = playlists[index];
+  async function loadTracks(index = 0, list: Playlist[]) {
 
-    if (playlist) {
-      progressCallback(
-        Math.floor((100 / playlists.length) * (index + 1)),
-        playlist.name
-      );
+    const playlist = list[index];
+    if(!playlist) return;
 
-      playlist.tracks = await getPlaylistTracks(playlist.id, accessToken);
-      if (index === playlists.length - 1) {
-        finishCallback(playlists);
-      } else {
-        loadTracks(index + 1);
-      }
+    progressCallback(
+      Math.floor((100 / (total + 1)) * (currentIndex + 1)),
+      playlist.name
+    );
+
+    playlist.tracks = await getPlaylistTracks(playlist.id, accessToken);
+    currentIndex++
+
+    if (currentIndex === total) {
+      finishCallback(playlists);
+    } else {
+      loadTracks(index +1, list);
     }
   }
 }
@@ -86,25 +102,25 @@ export async function getPlaylistTracks(
 
     const tracks = response.items
       ? response.items.map((temp) => {
-          const track: Track = {
-            duration_ms: temp.track.duration_ms,
-            id: temp.track.id,
-            images: temp.track.images,
-            type: temp.track.type,
-            uri: temp.track.uri,
-            name: temp.track.name,
-            artists: temp.track.artists.map((artist) => {
-              return {
-                genres: artist.genres,
-                id: artist.id,
-                name: artist.name,
-                uri: artist.uri,
-                images: artist.images,
-              };
-            }),
-          };
-          return track;
-        })
+        const track: Track = {
+          duration_ms: temp.track.duration_ms,
+          id: temp.track.id,
+          images: temp.track.images,
+          type: temp.track.type,
+          uri: temp.track.uri,
+          name: temp.track.name,
+          artists: temp.track.artists.map((artist) => {
+            return {
+              genres: artist.genres,
+              id: artist.id,
+              name: artist.name,
+              uri: artist.uri,
+              images: artist.images,
+            };
+          }),
+        };
+        return track;
+      })
       : [];
     data = data.concat(tracks);
     url = response.next ? `${response.next?.split("v1")[1]}` : undefined;
@@ -120,10 +136,10 @@ export async function getTracksByIds(
   const chunks = spliceArray(ids, 50)
   let i = 0;
 
-  while(i !== chunks.length) {
+  while (i !== chunks.length) {
     const chunk = chunks[i]
     const formattedIds = chunk?.join(',')
-    const tracksUrl = `/tracks?ids=${formattedIds}` 
+    const tracksUrl = `/tracks?ids=${formattedIds}`
 
     const tracksByTags = await spotifyGET(tracksUrl, accessToken).then(res => res.json());
     const formattedTracks: Track[] = tracksByTags.tracks.map((track: Track) => {
@@ -161,8 +177,8 @@ export async function removeTracksFromPlaylist(uris: string[], playlistId: strin
       }
     })
   }
-  
-  const response = await spotifyDELETE({access_token: token, url: url, body: JSON.stringify(body) })
+
+  const response = await spotifyDELETE({ access_token: token, url: url, body: JSON.stringify(body) })
   return response
 }
 
@@ -177,21 +193,21 @@ export async function addTracksToPlaylist(uris: string[], playlistId: string, to
     const chunk = chunks[i] as string[]
     const body = {
       uris: chunk ?? [],
-      position: i == 0 ? 0 : chunk.length -1
+      position: i == 0 ? 0 : chunk.length - 1
     }
     responses.push(spotifyPOST({ access_token: token, url: url, body: JSON.stringify(body) }))
-    
+
     i++
   }
   return await Promise.all(responses)
 }
 
-export async function createPlaylist(userID: string, name: string, access_token: string){
+export async function createPlaylist(userID: string, name: string, access_token: string) {
   const url = `/users/${userID}/playlists`
   const body = {
     name: name
   }
-  return await spotifyPOST({access_token: access_token, url, body: JSON.stringify(body)})
+  return await spotifyPOST({ access_token: access_token, url, body: JSON.stringify(body) })
 }
 
 export async function unfollowPlaylist(playlistId: string, access_token: string) {
