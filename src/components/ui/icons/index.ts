@@ -20,8 +20,9 @@ import { TagSVG } from "./TagSVG";
 import { TemplateSVG } from "./TemplateSVG";
 import { TwitterSVG } from "./TwitterSVG";
 import { VerticalDotsSVG } from "./VerticalDotsSVG";
+import { ErrorSVG } from "./ErrorSVG";
 
 export {
   ArrowDownSVG, ArrowSVG, ArrowUpDownSVG, ArrowUpSVG, CopySVG, DeleteSVG, EditSVG, FacebookSVG, HomeSVG,
-  InstagramSVG, LinkedinSVG, MenuSVG, MergeSVG, PencilSVG, PlaylistSVG, PlusSVG, SearchSVG, ShuffleSVG, TagSVG, TemplateSVG, TwitterSVG, VerticalDotsSVG
+  InstagramSVG, LinkedinSVG, MenuSVG, MergeSVG, PencilSVG, PlaylistSVG, PlusSVG, SearchSVG, ShuffleSVG, TagSVG, TemplateSVG, TwitterSVG, VerticalDotsSVG, ErrorSVG
 };

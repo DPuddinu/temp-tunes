@@ -8,11 +8,18 @@ import { RenameModal } from "~/components/modals/RemaneModal";
 import { UnfollowModal } from "~/components/modals/UnfollowModal";
 import { DropdownMenu } from "~/components/ui/DropdownMenu";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
-import { CopySVG, DeleteSVG, MergeSVG, PencilSVG, ShuffleSVG } from "~/components/ui/icons";
+import {
+  CopySVG,
+  DeleteSVG,
+  ErrorSVG,
+  MergeSVG,
+  PencilSVG,
+  ShuffleSVG,
+} from "~/components/ui/icons";
 import { useStore } from "~/core/store";
 import type { Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
-
+import { ImageWithFallback } from "../ImageWithFallback";
 
 function PlaylistComponent({
   playlist,
@@ -99,16 +106,19 @@ function PlaylistComponent({
   return (
     <div className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 pr-3 shadow">
       <div className="h-20 w-20 min-w-[5rem]">
-        <Image
+        <ImageWithFallback
           src={
             playlist.images && playlist.images[0] ? playlist.images[0].url : ""
           }
-          alt="blur"
+          fallback={
+            <div className="aspect-square h-full w-full rounded-xl bg-base-200 bg-opacity-50 flex items-center justify-center">
+              <ErrorSVG/>
+            </div>
+          }
           quality={60}
-          priority
           height={80}
           width={80}
-          className="aspect-square h-full w-full rounded-xl object-cover"
+          className="aspect-square h-full w-full rounded-xl bg-base-100 object-cover"
         />
       </div>
       <div className="flex grow flex-col justify-center gap-2 truncate px-4">

@@ -11,10 +11,11 @@ const config = {
   reactStrictMode: true,
   images: {
     domains: [
-      "mosaic.scdn.co",
-      "newjams-images.scdn.co",
-      "i.scdn.co",
-      "wrapped-images.spotifycdn.com"
+      // "mosaic.scdn.co",
+      // "newjams-images.scdn.co",
+      // "i.scdn.co",
+      "wrapped-images.spotifycdn.com",
+      "lineup-images.scdn.co",
     ],
   },
   /**

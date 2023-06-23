@@ -1,8 +1,10 @@
-import dynamic from "next/dynamic";
-import { RoundSkeleton } from "./skeletons/RoundSkeleton";
-import { MenuSVG } from "./icons";
 import { signOut } from "next-auth/react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
+import ImageErrorBoundary from "../ErrorBoundary";
+import { ImageWithFallback } from "./ImageWithFallback";
+import { ErrorSVG, MenuSVG } from "./icons";
+import { RoundSkeleton } from "./skeletons/RoundSkeleton";
 
 interface UserNavbarProps {
   name: string;
@@ -16,7 +18,7 @@ const ThemeSwitcher = dynamic(() => import("./ThemeSwitcher"), {
 
 const UserNavbar = ({ name, image }: UserNavbarProps) => {
   return (
-    <div className="navbar bg-base-300 shadow h-16">
+    <div className="navbar h-16 bg-base-300 shadow">
       <div className="flex w-full justify-end sm:justify-between">
         <div className="hidden border-none p-2  sm:block">
           <label
@@ -37,13 +39,13 @@ const UserNavbar = ({ name, image }: UserNavbarProps) => {
               <label tabIndex={0} className="btn-ghost btn-circle avatar btn">
                 <div className="w-10 rounded-full">
                   {!!image ? (
-                    <Image
-                      priority
-                      quality={60}
+                    <ImageWithFallback
                       src={image}
-                      alt="blur"
                       height={40}
                       width={40}
+                      quality={60}
+                      fallback={<ErrorSVG/>}
+                      className="bg-base-100 h-full w-full flex items-center justify-center"
                     />
                   ) : (
                     <RoundSkeleton />
@@ -66,4 +68,4 @@ const UserNavbar = ({ name, image }: UserNavbarProps) => {
     </div>
   );
 };
-export default UserNavbar
+export default UserNavbar;

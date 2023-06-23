@@ -1,35 +1,30 @@
-import { type Dispatch, type SetStateAction } from "react";
 interface PropsPagination {
-  activePage: number;
-  setActivePage: Dispatch<SetStateAction<number>>;
+  prevDisabled: boolean;
+  nextDisabled: boolean;
+  onNext: () => void;
+  onPrev: () => void;
 }
 const PaginationComponent = ({
-  activePage,
-  setActivePage,
+  onNext,
+  prevDisabled,
+  nextDisabled,
+  onPrev,
 }: PropsPagination) => {
-  
-  function nextPage() {
-    setActivePage((page) => {
-      return page + 1;
-    });
-  }
-  function prevPage() {
-    setActivePage((page) => {
-      return page - 1;
-    });
-  }
-
   return (
-    <div className="btn-group mt-3 flex justify-center">
+    <div className="btn-group mt-3 flex justify-center lg:w-3/4">
       <div className="flex">
         <button
-          className="btn  bg-neutral"
-          onClick={() => prevPage()}
-          disabled={activePage - 1 < 0}
+          className="btn border-none hover:bg-neutral disabled:bg-base-200 disabled:bg-opacity-50"
+          onClick={onPrev}
+          disabled={prevDisabled}
         >
           {"<"}
         </button>
-        <button className="btn" onClick={() => nextPage()}>
+        <button
+          className="btn border-none  hover:bg-neutral"
+          onClick={onNext}
+          disabled={nextDisabled}
+        >
           {">"}
         </button>
       </div>

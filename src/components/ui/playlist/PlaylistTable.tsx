@@ -10,7 +10,7 @@ import { useMemo, useState } from "react";
 import { type Playlist } from "~/types/spotify-types";
 import FiltersComponent from "./FiltersComponent";
 import TableBodyComponent from "./TableBodyComponent";
-import PaginationComponent from "./PaginationComponent";
+import PaginationComponent from "../PaginationComponent";
 
 function PlaylistTable({ data}: {data: Playlist[]}) {
   const columns: ColumnDef<Playlist>[] = useMemo(() => {
@@ -42,7 +42,12 @@ function PlaylistTable({ data}: {data: Playlist[]}) {
     <>
       <FiltersComponent table={table} />
       <TableBodyComponent table={table} data={data as Playlist[]} />
-      <PaginationComponent table={table} />
+      <PaginationComponent
+        onNext={() => table.nextPage()}
+        onPrev={() => table.previousPage()}
+        nextDisabled={!table.getCanNextPage()}
+        prevDisabled={!table.getCanPreviousPage()}
+      />
     </>
   );
 }

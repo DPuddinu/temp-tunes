@@ -38,8 +38,8 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
   );
 
   useEffect(() => {
-    setSelectedPage(0)
-  }, [timeRange])
+    setSelectedPage(0);
+  }, [timeRange]);
 
   return (
     <RecapCard key={"card-top-rated"} intent={"active"} loading={isLoading}>
@@ -81,8 +81,18 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
         {data && data.totalItems > itemsPerPage && (
           <PaginationComponent
             key={"pagination"}
-            activePage={selectedPage}
-            setActivePage={setSelectedPage}
+            nextDisabled={selectedPage + 1 > data.items.length -1}
+            prevDisabled={selectedPage - 1 < 0}
+            onNext={() =>
+              setSelectedPage((page) => {
+                return page + 1;
+              })
+            }
+            onPrev={() =>
+              setSelectedPage((page) => {
+                return page - 1;
+              })
+            }
           />
         )}
       </RecapCard.Container>
