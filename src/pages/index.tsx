@@ -3,6 +3,8 @@ import { signIn } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { FacebookSVG } from "../components/ui/icons/FacebookSVG";
 import { InstagramSVG } from "../components/ui/icons/InstagramSVG";
 import { LinkedinSVG } from "../components/ui/icons/LinkedinSVG";
@@ -73,8 +75,13 @@ const Features = () => {
     </section>
   );
 };
-
+interface LanguageProps{
+  selectedLanguage:string;
+  setSelectedLanguage: (language:string) => void;
+}
 const Footer = () => {
+  const router = useRouter();
+
   return (
     <footer className="pb-4 text-gray-400">
       <div className=" flex justify-center pt-3 pb-5">
@@ -94,6 +101,16 @@ const Footer = () => {
           <a className="ml-3 text-gray-400">
             <LinkedinSVG></LinkedinSVG>
           </a>
+          <button
+            className="btn-primary btn"
+            onClick={() =>
+              router.push({ pathname: "/index" }, router.asPath, {
+                locale: "it",
+              })
+            }
+          >
+            It
+          </button>
         </span>
       </div>
     </footer>

@@ -1,0 +1,24 @@
+{
+  "table_headers": {
+    "name": "Name",
+    "creator": "Creator"
+  },
+  "confirmation": "Delete from your library?",
+  "operations": {
+    "shuffle": "Shuffle",
+    "shuffled": "Shuffled",
+    "copy": "Copy",
+    "copied": "Copied",
+    "merge": "Merge",
+    "merged": "merged into",
+    "merge_origin": "Select origin",
+    "merge_destination": "Select destination",
+    "unfollow": "Unfollow",
+    "unfollowed": "Unfollowed",
+    "confirm_1": "This operation will delete",
+    "confirm_2": "from your library",
+    "rename": "Rename",
+    "renamed": "Renamed",
+    "newname": "New Name"
+  }
+}

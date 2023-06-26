@@ -1,0 +1,19 @@
+{
+  "search": "Search for tracks, artists, tags...",
+  "filter": "Filter",
+  "track_name": "Track Name",
+  "track_artist": "Track Artist",
+  "playlist": "Playlist",
+  "tags": "Tags",
+  "search_errors": {
+    "short": "text too short",
+    "long": "text too long"
+  },
+  "search_table_headers": {
+    "title":"Title",
+    "author":"Author",
+    "creator": "Creator",
+    "playlist":"Playlist",
+    "tags":"Tags"
+  }
+}

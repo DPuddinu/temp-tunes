@@ -1,8 +1,14 @@
 {
-   "spice":"Let's add some spice to your playlists",
-   "templates":"Create custom playlists based on a pre-set template or create your own, share it and have it voted ⭐",
-   "share":"Share with your loved ones ❤️",
-   "tape":"\"I got you a tape\" but in 2023",
-   "tags":"That song reminds you of summer? Add the tag \"summer\" to it and next time you'll search for that tag, you'll see that song",
-   "stats":"Get a deeper understanding of your music listening habits. Add tags to songs or playlists to make them easier to find. Search for everything inside your playlists  🔎"
+  "spice": "Dai un volto nuovo alle tue playlist",
+  "templates-1": "Crea playlist personalizzate a partire da un template predefinito",
+  "templates-2": "o creane uno nuovo, condividilo e vota i tuoi preferiti ⭐",
+  "share": "Condividi con una persona speciale ❤️",
+  "tape": "\"Ti ho fatto una cassetta\" ma nel 2023",
+  "tags": "Quel brano ti ricorda l'estate? Aggiungici il tag \"estate\" per trovarla nella sezione ricerca",
+  "stats-1": "Conosci più a fondo le tue abitudini musicali",
+  "stats-2": "Aggiungi tag alle canzoni o alle playlist per trovarle facilmente",
+  "stats-3": "Cerca all'interno di tutta la tua libreria 🔎",
+  "create": "Crea",
+  "explore": "Esplora i tuoi gusti musicali",
+  "surprise": "Sorprendi"
 }
