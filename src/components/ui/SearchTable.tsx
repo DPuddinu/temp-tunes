@@ -1,10 +1,27 @@
 import { Disclosure, Transition } from "@headlessui/react";
-import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type ColumnDef, type ColumnFiltersState, type SortingState } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./TableComponent";
-import type { SearchResult } from "~/server/api/routers/spotify_user_router";
-import { ArrowSVG } from "./icons/index";
+import {
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type SortingState,
+} from "@tanstack/react-table";
 import { useTranslation } from "next-i18next";
+import { useMemo, useState } from "react";
+import type { SearchResult } from "~/server/api/routers/spotify_user_router";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./TableComponent";
+import { ArrowSVG } from "./icons/index";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -101,7 +118,6 @@ function SearchTable({ data }: { data: SearchResult[] }) {
   return <DataTable columns={columns} data={data} />;
 }
 
-
 function DataTable<TData, TValue>({
   columns,
   data,
@@ -125,10 +141,10 @@ function DataTable<TData, TValue>({
   });
 
   return (
-    <div className=" w-full overflow-x-auto ">
+    <div className="w-[85vw]">
       <div
         key="filters"
-        className="mb-2 gap-2 rounded-lg bg-base-200 text-lg font-medium tracking-wide"
+        className="mb-2 w-full gap-2 rounded-lg bg-base-300 text-lg font-medium tracking-wide"
       >
         <Disclosure>
           <Disclosure.Button>
@@ -257,12 +273,10 @@ function DataTable<TData, TValue>({
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
                   </TableHead>
                 );
               })}
@@ -313,6 +327,5 @@ function DataTable<TData, TValue>({
     </div>
   );
 }
-
 
 export default SearchTable;
