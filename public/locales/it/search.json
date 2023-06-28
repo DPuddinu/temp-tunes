@@ -1,19 +1,18 @@
 {
-  "search": "Search for tracks, artists, tags...",
-  "filter": "Filter",
-  "track_name": "Track Name",
-  "track_artist": "Track Artist",
+  "search": "Cerca brani, artisti, tags...",
+  "track_name": "Nome Brano",
+  "track_artist": "Artista",
   "playlist": "Playlist",
-  "tags": "Tags",
+  "tags": "Tag",
   "search_errors": {
-    "short": "text too short",
-    "long": "text too long"
+    "short": "testo troppo corto",
+    "long": "testo troppo lungo"
   },
   "search_table_headers": {
-    "title":"Title",
-    "author":"Author",
-    "creator": "Creator",
-    "playlist":"Playlist",
-    "tags":"Tags"
+    "title": "Titolo",
+    "author": "Artista",
+    "creator": "Creatore",
+    "playlist": "Playlist",
+    "tags": "Tag"
   }
 }

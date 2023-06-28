@@ -1,24 +1,24 @@
 {
   "table_headers": {
-    "name": "Name",
-    "creator": "Creator"
+    "name": "Nome",
+    "creator": "Creatore"
   },
-  "confirmation": "Delete from your library?",
+  "confirmation": "Cancellare dalla propria liberia?",
   "operations": {
-    "shuffle": "Shuffle",
-    "shuffled": "Shuffled",
-    "copy": "Copy",
-    "copied": "Copied",
-    "merge": "Merge",
-    "merged": "merged into",
-    "merge_origin": "Select origin",
-    "merge_destination": "Select destination",
-    "unfollow": "Unfollow",
-    "unfollowed": "Unfollowed",
-    "confirm_1": "This operation will delete",
-    "confirm_2": "from your library",
-    "rename": "Rename",
-    "renamed": "Renamed",
-    "newname": "New Name"
+    "shuffle": "Mischia",
+    "shuffled": "Mischiata",
+    "copy": "Copia",
+    "copied": "Copiata",
+    "merge": "Unisci",
+    "merged": "Unita in",
+    "merge_origin": "Scegli origine",
+    "merge_destination": "Scegli destinazione",
+    "unfollow": "Non seguire",
+    "unfollowed": "Cancellata dalla libreria",
+    "confirm_1": "Questa operazione cancellerà",
+    "confirm_2": "dalla tua libreria",
+    "rename": "Rinomina",
+    "renamed": "Rinominata",
+    "newname": "Nuovo nome"
   }
 }

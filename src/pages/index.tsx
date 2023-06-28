@@ -3,8 +3,14 @@ import { signIn } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect, useRef } from "react";
+import {
+  Languages,
+  useSettingsStore,
+  type Language,
+} from "~/core/settingsStore";
+import { useLanguage } from "~/hooks/use-language";
 import { FacebookSVG } from "../components/ui/icons/FacebookSVG";
 import { InstagramSVG } from "../components/ui/icons/InstagramSVG";
 import { LinkedinSVG } from "../components/ui/icons/LinkedinSVG";
@@ -40,7 +46,7 @@ export default Landing;
 
 const Features = () => {
   const { t } = useTranslation("landing");
-
+  const { language } = useLanguage();
   return (
     <section className="flex grow flex-col text-center text-gray-800 md:text-left">
       <div className=" diagonal grid grow place-items-center p-10 pb-16 text-white">
@@ -66,52 +72,60 @@ const Features = () => {
       </div>
       <div className="mb-8 flex w-full grow items-center justify-center">
         <button
-          className="mt-16 w-max rounded-full bg-primary px-10 py-3 font-semibold  text-gray-900 no-underline"
-          onClick={() => signIn("spotify", { callbackUrl: "/home" })}
+          className="mt-16 w-52 rounded-full bg-primary px-10 py-3 font-semibold  text-gray-900 no-underline"
+          onClick={() =>
+            signIn("spotify", { callbackUrl: `/${language}/home` })
+          }
         >
-          Get Started
+          {t("getstarted")}
         </button>
       </div>
     </section>
   );
 };
-interface LanguageProps{
-  selectedLanguage:string;
-  setSelectedLanguage: (language:string) => void;
-}
+
 const Footer = () => {
   const router = useRouter();
+  const { setLanguage } = useLanguage();
+  const ref = useRef<HTMLSelectElement>(null);
 
   return (
-    <footer className="pb-4 text-gray-400">
-      <div className=" flex justify-center pt-3 pb-5">
-        <span className="mt-4 inline-flex items-center justify-end sm:mt-0">
-          <p className=" mr-4 text-sm text-gray-400 sm:ml-4 sm:mt-0   sm:border-gray-800">
-            Dario Puddinu 2023
-          </p>
-          <a className="text-gray-400">
-            <FacebookSVG></FacebookSVG>
-          </a>
-          <a className="ml-3 text-gray-400">
-            <TwitterSVG></TwitterSVG>
-          </a>
-          <a className="ml-3 text-gray-400">
-            <InstagramSVG></InstagramSVG>
-          </a>
-          <a className="ml-3 text-gray-400">
-            <LinkedinSVG></LinkedinSVG>
-          </a>
-          <button
-            className="btn-primary btn"
-            onClick={() =>
-              router.push({ pathname: "/index" }, router.asPath, {
-                locale: "it",
-              })
-            }
-          >
-            It
-          </button>
+    <footer className="mb-10 pb-4 text-gray-400">
+      <div className=" flex flex-col items-center justify-center gap-5 ">
+        <span className="text-center text-sm text-gray-400 ">
+          Dario Puddinu
         </span>
+        <span className="inline-flex w-32 items-center justify-around sm:mt-0">
+          <a className="text-gray-400">
+            <FacebookSVG />
+          </a>
+          <a className="ml-3 text-gray-400">
+            <TwitterSVG />
+          </a>
+          <a className="ml-3 text-gray-400">
+            <InstagramSVG />
+          </a>
+          <a className="ml-3 text-gray-400">
+            <LinkedinSVG />
+          </a>
+        </span>
+        <select
+          ref={ref}
+          value={router.locale}
+          className="select-bordered select select-sm w-32 bg-base-200 bg-opacity-30"
+          onChange={(e) => setLanguage(e.target.value as Language)}
+        >
+          {Languages.map((lang) => (
+            <option
+              value={lang}
+              key={lang}
+              selected={lang === ref.current?.value}
+              className="bg-base-300 focus:bg-red-200"
+            >
+              {lang}
+            </option>
+          ))}
+        </select>
       </div>
     </footer>
   );

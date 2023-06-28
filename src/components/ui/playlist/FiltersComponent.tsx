@@ -1,10 +1,9 @@
 import { Disclosure, Transition } from "@headlessui/react";
 import { type Table } from "@tanstack/react-table";
-import { useState } from "react";
+import { useTranslation } from "next-i18next";
 
 function FiltersComponent<TData>({ table }: { table: Table<TData> }) {
-  const [filterOpen, setFilterOpen] = useState(false);
-
+  const { t } = useTranslation("common");
   return (
     <div
       key="filters"
@@ -12,9 +11,7 @@ function FiltersComponent<TData>({ table }: { table: Table<TData> }) {
     >
       <Disclosure>
         <Disclosure.Button>
-          <div onClick={() => setFilterOpen((open) => !open)} className="p-4">
-            {`Filters ${filterOpen ? "-" : "+"}`}
-          </div>
+          <div className="p-4">{`${t("filter")}`}</div>
         </Disclosure.Button>
 
         <Transition

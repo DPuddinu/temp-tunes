@@ -1,15 +1,15 @@
 {
-  "new_tag": "Add new Tags",
-  "add_tag_track": "Add a tag for the selected Track",
-  "add_tag_playlist": "Add a tag for the selected Playlist",
-  "add": "Add",
-  "confirm": "Confirm",
-  "cancel": "Cancel",
+  "new_tag": "Aggiungi nuovi Tag",
+  "add_tag_track": "Aggiungi un Tag per il brano selezionato",
+  "add_tag_playlist": "Aggiungi un Tag per la playlist selezionata",
+  "add": "Aggiungi",
+  "confirm": "Conferma",
+  "cancel": "Annulla",
   "tag_errors": {
-    "generic":"Tag not valid!",
-    "short":"Tag too short!",
-    "long":"Tag too long!",
-    "used":"Tag already used!"
+    "generic":"Tag non valido!",
+    "short":"Tag troppo corto!",
+    "long":"Tag troppo lungo!",
+    "used":"Tag già usato!"
   },
-  "wrong": "Something went wrong"
+  "wrong": "Qualcosa è andato storto"
 }

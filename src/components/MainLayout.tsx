@@ -7,6 +7,7 @@ import { useStore } from "~/core/store";
 import { HomeSVG, PlaylistSVG, SearchSVG, TemplateSVG } from "./ui/icons/index";
 import NavbarSkeleton from "./ui/skeletons/NavbarSkeleton";
 import { RoundSkeleton } from "./ui/skeletons/RoundSkeleton";
+import { useLanguage } from "~/hooks/use-language";
 
 type PageType = "Home" | "Search" | "Playlists" | "Templates";
 interface Page {
@@ -34,6 +35,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   const { message } = useStore();
   const router = useRouter();
   const openDrawer = useRef<HTMLInputElement>(null);
+  const {language, setLanguage} = useLanguage();
 
   useEffect(() => {
     if (session?.tokenExpired || status === "unauthenticated") router.push("/");
