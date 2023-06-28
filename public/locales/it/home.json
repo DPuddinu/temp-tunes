@@ -1,6 +1,27 @@
 {
-   "morning":"Good Morning",
-   "evening":"Good Evening",
-   "night":"Good Night",
-   "afternoon":"Good Afternoon"
+  "morning": "Good Morning",
+  "evening": "Good Evening",
+  "night": "Good Night",
+  "afternoon": "Good Afternoon",
+
+  "short_term": "7 days",
+  "medium_term": "6 months",
+  "long_term": "All time",
+
+  "recap": {
+    "title": "Here is your recap for the last",
+    "top_artists": "Top Artists",
+    "top_tracks": "Top Tracks",
+    "recent_tracks": "Recent Tracks",
+    "mood": "Mood",
+    "for_you": "You may like"
+  },
+  "moodKeys": {
+    "acousticness": "Acousticness",
+    "danceability": "Danceability",
+    "duration_ms": "Duration",
+    "instrumentalness": "Instrumental",
+    "valence": "Positivity",
+    "energy": "Energy"
+  }
 }

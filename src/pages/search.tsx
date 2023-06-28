@@ -61,7 +61,7 @@ const Search: PageWithLayout = () => {
     onFinish: (library: Playlist[]) => {
       setLoading(false);
       setPlaylists(library);
-      const searchInput = getValues().name
+      const searchInput = getValues().name;
       if (searchInput)
         mutate({
           playlists: library,
@@ -79,7 +79,6 @@ const Search: PageWithLayout = () => {
       playlists: playlists,
       query: data.name,
     });
-      
   };
 
   return (
@@ -115,12 +114,7 @@ const Search: PageWithLayout = () => {
         <LoadingScreen current={currentPlaylist} progress={progress} />
       )}
       {isLoading && <LoadingSpinner />}
-
-      {data && (
-        <div className="flex w-full flex-col gap-2 p-1">
-          <SearchDataTable data={data} />
-        </div>
-      )}
+      {data && <SearchDataTable data={data} />}
     </div>
   );
 };

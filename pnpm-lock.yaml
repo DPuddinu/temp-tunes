@@ -131,8 +131,8 @@ devDependencies:
     specifier: ^10.4.7
     version: 10.4.13(postcss@8.4.21)
   daisyui:
-    specifier: ^3.1.0
-    version: 3.1.0(postcss@8.4.21)
+    specifier: ^3.1.6
+    version: 3.1.6(postcss@8.4.21)
   eslint:
     specifier: ^8.34.0
     version: 8.35.0
@@ -1310,8 +1310,8 @@ packages:
   /csstype@3.1.1:
     resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==}
 
-  /daisyui@3.1.0(postcss@8.4.21):
-    resolution: {integrity: sha512-G4dz/bRZVvlhQ/FtezXSg0rXOXzDJ0PcnMqeLSwCYNWXxf46fNJ8LWeV5qwsYOdJbXiXoZLnwyy+BsNoWZ+Bjg==}
+  /daisyui@3.1.6(postcss@8.4.21):
+    resolution: {integrity: sha512-P/2WUn4ZImEc2IfPSYw3qPCUnnJNju0P6ii0fUqtTURUj0oda6L0tm4EzrUmB2EbqB6grZ9nKHPTSniKaPYp1w==}
     engines: {node: '>=16.9.0'}
     peerDependencies:
       postcss: ^8

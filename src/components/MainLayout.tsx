@@ -90,7 +90,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
 const BottomNavigation = () => {
   const router = useRouter();
   return (
-    <div className="btm-nav bg-base-300 sm:hidden">
+    <div className="btm-nav min-h-16 bg-base-300 sm:hidden">
       {pages.map((page, i) => (
         <Link key={i} href={page.url} className="btm-nav">
           <button

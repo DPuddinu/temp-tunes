@@ -1,10 +1,26 @@
-import { Disclosure, Transition } from "@headlessui/react";
-import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type ColumnDef, type ColumnFiltersState, type SortingState } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./TableComponent";
-import type { SearchResult } from "~/server/api/routers/spotify_user_router";
-import { ArrowSVG } from "./icons/index";
+import {
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type SortingState,
+} from "@tanstack/react-table";
 import { useTranslation } from "next-i18next";
+import { useMemo, useState } from "react";
+import type { SearchResult } from "~/server/api/routers/spotify_user_router";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./TableComponent";
+import { ArrowSVG } from "./icons/index";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -101,14 +117,13 @@ function SearchTable({ data }: { data: SearchResult[] }) {
   return <DataTable columns={columns} data={data} />;
 }
 
-
 function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const { t } = useTranslation("search");
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [filterOpen, setFilterOpen] = useState(false);
   const table = useReactTable({
     data,
     columns,
@@ -125,131 +140,118 @@ function DataTable<TData, TValue>({
   });
 
   return (
-    <div className=" w-full overflow-x-auto ">
-      <div
-        key="filters"
-        className="mb-2 gap-2 rounded-lg bg-base-200 text-lg font-medium tracking-wide"
-      >
-        <Disclosure>
-          <Disclosure.Button>
-            <div onClick={() => setFilterOpen((open) => !open)} className="p-4">
-              {`Filters ${filterOpen ? "-" : "+"}`}
-            </div>
-          </Disclosure.Button>
-
-          <Transition
-            enter="transition duration-100 ease-out"
-            enterFrom="transform scale-95 opacity-0"
-            enterTo="transform scale-100 opacity-100"
-            leave="transition duration-75 ease-out"
-            leaveFrom="transform scale-100 opacity-100"
-            leaveTo="transform scale-95 opacity-0"
-          >
-            <Disclosure.Panel>
-              <div className="flex flex-wrap gap-2 rounded-b-lg bg-base-200 p-4 md:flex-nowrap">
-                <div className="form-control w-full max-w-xs">
-                  <label className="label">
-                    <span className="label-text">Title</span>
-                  </label>
-                  <input
-                    value={
-                      (table.getColumn("title")?.getFilterValue() as string) ??
-                      ""
-                    }
-                    onChange={(event) =>
-                      table
-                        .getColumn("title")
-                        ?.setFilterValue(event.target.value)
-                    }
-                    type="text"
-                    placeholder=""
-                    className="input-bordered input w-full max-w-xs"
-                  />
-                </div>
-                <div className="form-control w-full max-w-xs">
-                  <label className="label">
-                    <span className="label-text">Artists</span>
-                  </label>
-                  <input
-                    value={
-                      (table
-                        .getColumn("artists")
-                        ?.getFilterValue() as string) ?? ""
-                    }
-                    onChange={(event) => {
-                      table
-                        .getColumn("artists")
-                        ?.setFilterValue(event.target.value);
-                    }}
-                    type="text"
-                    placeholder=""
-                    className="input-bordered input w-full max-w-xs"
-                  />
-                </div>
-                <div className="form-control w-full max-w-xs">
-                  <label className="label">
-                    <span className="label-text">Playlist</span>
-                  </label>
-                  <input
-                    value={
-                      (table
-                        .getColumn("playlist")
-                        ?.getFilterValue() as string) ?? ""
-                    }
-                    onChange={(event) => {
-                      table
-                        .getColumn("playlist")
-                        ?.setFilterValue(event.target.value);
-                    }}
-                    type="text"
-                    placeholder=""
-                    className="input-bordered input w-full max-w-xs"
-                  />
-                </div>
-                <div className="form-control w-full max-w-xs">
-                  <label className="label">
-                    <span className="label-text">Creator</span>
-                  </label>
-                  <input
-                    value={
-                      (table
-                        .getColumn("creator")
-                        ?.getFilterValue() as string) ?? ""
-                    }
-                    onChange={(event) => {
-                      table
-                        .getColumn("creator")
-                        ?.setFilterValue(event.target.value);
-                    }}
-                    type="text"
-                    placeholder=""
-                    className="input-bordered input w-full max-w-xs"
-                  />
-                </div>
-                <div className="form-control w-full max-w-xs">
-                  <label className="label">
-                    <span className="label-text">Tags</span>
-                  </label>
-                  <input
-                    value={
-                      (table.getColumn("tags")?.getFilterValue() as string) ??
-                      ""
-                    }
-                    onChange={(event) => {
-                      table
-                        .getColumn("tags")
-                        ?.setFilterValue(event.target.value);
-                    }}
-                    type="text"
-                    placeholder=""
-                    className="input-bordered input w-full max-w-xs"
-                  />
-                </div>
+    <div className="w-[85vw]">
+      <ul className="menu mb-6 rounded-xl bg-base-300 p-0 ">
+        <li>
+          <details open>
+            <summary className="flex h-12 items-center justify-between bg-base-300 text-base active:!bg-base-300">
+              {t("filter")}
+            </summary>
+            <div className="flex flex-wrap gap-2 rounded-b-lg bg-base-200 p-4 md:flex-nowrap">
+              <div className="form-control w-full max-w-xs">
+                <label className="label">
+                  <span className="label-text">
+                    {t("search_table_headers.title")}
+                  </span>
+                </label>
+                <input
+                  value={
+                    (table.getColumn("title")?.getFilterValue() as string) ?? ""
+                  }
+                  onChange={(event) =>
+                    table.getColumn("title")?.setFilterValue(event.target.value)
+                  }
+                  type="text"
+                  placeholder=""
+                  className="input-bordered input w-full max-w-xs"
+                />
               </div>
-            </Disclosure.Panel>
-          </Transition>
-        </Disclosure>
-      </div>
+              <div className="form-control w-full max-w-xs">
+                <label className="label">
+                  <span className="label-text">
+                    {t("search_table_headers.author")}
+                  </span>
+                </label>
+                <input
+                  value={
+                    (table.getColumn("artists")?.getFilterValue() as string) ??
+                    ""
+                  }
+                  onChange={(event) => {
+                    table
+                      .getColumn("artists")
+                      ?.setFilterValue(event.target.value);
+                  }}
+                  type="text"
+                  placeholder=""
+                  className="input-bordered input w-full max-w-xs"
+                />
+              </div>
+              <div className="form-control w-full max-w-xs">
+                <label className="label">
+                  <span className="label-text">
+                    {t("search_table_headers.playlist")}
+                  </span>
+                </label>
+                <input
+                  value={
+                    (table.getColumn("playlist")?.getFilterValue() as string) ??
+                    ""
+                  }
+                  onChange={(event) => {
+                    table
+                      .getColumn("playlist")
+                      ?.setFilterValue(event.target.value);
+                  }}
+                  type="text"
+                  placeholder=""
+                  className="input-bordered input w-full max-w-xs"
+                />
+              </div>
+              <div className="form-control w-full max-w-xs">
+                <label className="label">
+                  <span className="label-text">
+                    {t("search_table_headers.creator")}
+                  </span>
+                </label>
+                <input
+                  value={
+                    (table.getColumn("creator")?.getFilterValue() as string) ??
+                    ""
+                  }
+                  onChange={(event) => {
+                    table
+                      .getColumn("creator")
+                      ?.setFilterValue(event.target.value);
+                  }}
+                  type="text"
+                  placeholder=""
+                  className="input-bordered input w-full max-w-xs"
+                />
+              </div>
+              <div className="form-control w-full max-w-xs">
+                <label className="label">
+                  <span className="label-text">
+                    {t("search_table_headers.tags")}
+                  </span>
+                </label>
+                <input
+                  value={
+                    (table.getColumn("tags")?.getFilterValue() as string) ?? ""
+                  }
+                  onChange={(event) => {
+                    table.getColumn("tags")?.setFilterValue(event.target.value);
+                  }}
+                  type="text"
+                  placeholder=""
+                  className="input-bordered input w-full max-w-xs"
+                />
+              </div>
+            </div>
+          </details>
+        </li>
+      </ul>
+
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -257,12 +259,10 @@ function DataTable<TData, TValue>({
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
                   </TableHead>
                 );
               })}
@@ -313,6 +313,5 @@ function DataTable<TData, TValue>({
     </div>
   );
 }
-
 
 export default SearchTable;
