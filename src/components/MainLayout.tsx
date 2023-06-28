@@ -35,7 +35,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   const { message } = useStore();
   const router = useRouter();
   const openDrawer = useRef<HTMLInputElement>(null);
-  const {language, setLanguage} = useLanguage();
+  // const {language, setLanguage} = useLanguage();
 
   useEffect(() => {
     if (session?.tokenExpired || status === "unauthenticated") router.push("/");
@@ -60,7 +60,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
             <NavbarSkeleton />
           )}
         </nav>
-        <main className="grow p-6 pb-20 sm:pb-6">
+        <main className="grow p-4 pb-20 sm:pb-6">
           {children}
           <BottomNavigation />
           {!!message && <Toast intent={"primary"} message={message} />}

@@ -15,7 +15,7 @@ const Home: PageWithLayout = () => {
   const [timeRange, setTimeRange] = useState<TimeRangeType>("short_term");
 
   return (
-    <section className="h-full p-4">
+    <section>
       {sessionData?.user?.name ? (
         <Greetings
           name={sessionData?.user?.name}
