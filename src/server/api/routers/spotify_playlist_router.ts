@@ -60,10 +60,13 @@ export const spotifyPlaylistRouter = createTRPCRouter({
     const rename = await renamePlaylist(playlistID, name, ctx.session.accessToken)
     return rename
   }),
-  getById: protectedProcedure.input(z.object({id: z.string()})).mutation(async ({ ctx, input }) => {
+  getById: protectedProcedure.input(z.object({ id: z.string().nullish() })).query(async ({ ctx, input }) => {
     const { id } = input;
-    const playlist = await getPlaylistById(id, ctx.session.accessToken)
-    return playlist
+    if (id) {
+      const playlist = await getPlaylistById(id, ctx.session.accessToken) as Playlist
+      return playlist
+    }
+    return null
   })
 });
 

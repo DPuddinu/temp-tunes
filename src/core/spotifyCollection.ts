@@ -1,3 +1,4 @@
+import { unknown } from "zod";
 import { spotifyDELETE, spotifyGET, spotifyPOST, spotifyPUT } from "~/core/spotifyFetch";
 import type {
   Artist,
@@ -223,12 +224,19 @@ export async function renamePlaylist(playlistId: string, name: string, access_to
   return await spotifyPUT({ access_token: access_token, url, body: JSON.stringify(body) })
 }
 
+interface getPlaylistByIdTrackType {
+  track: {
+    track: Track
+  }
+}
 export async function getPlaylistById(playlistId: string, access_token: string) {
-  const url = `/me/playlists/${playlistId}`
-
-  const playlist = (await spotifyGET(url, access_token).then((resp) => resp.json())
-    .catch((error) => console.error(error))) as Playlist;
-  const tracks = await getPlaylistTracks(playlistId, access_token)
+  const url = `/playlists/${playlistId}`
+  const playlist = (await spotifyGET(url, access_token).then((resp) => resp.json()).catch((error) => console.error(error)));
+  const tracks = [...playlist.tracks.items.map((t: getPlaylistByIdTrackType) => t.track)] as Track[];
+  if (playlist.tracks.next) {
+    const res = await (getPlaylistTracks(playlistId, access_token, playlist.tracks.next?.split("v1")[1]))
+    tracks.push(...res)
+  }
   playlist.tracks = tracks
   return playlist
 }

@@ -58,7 +58,7 @@ function PlaylistComponent({
     () =>
       _data?.pages
         .flatMap((page) => page)
-        .filter((t) => t.owner.id === session?.user?.id ?? ""),
+        .filter((t) => t.owner?.id === session?.user?.id ?? ""),
     [session, _data]
   );
   const containerRef = useRef<HTMLDivElement>(null);
