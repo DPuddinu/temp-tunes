@@ -1,8 +1,11 @@
-import type { GetStaticProps } from "next";
+import { getCookie } from "cookies-next";
+import type { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
 import MainLayout from "~/components/MainLayout";
 import { PlaylistPageSkeleton } from "~/components/ui/skeletons/PlaylistPageSkeleton";
+import type { Language } from "~/core/settingsStore";
+import { langKey } from "~/hooks/use-language";
 import { type PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 
@@ -26,14 +29,12 @@ export default PlaylistsPage;
 
 PlaylistsPage.getLayout = (page) => <MainLayout>{page}</MainLayout>;
 
-export const getStaticProps: GetStaticProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const language = getCookie(langKey, { req, res }) as Language;
   return {
     props: {
       //prettier- ignore
-      ...(await serverSideTranslations(context.locale ?? "en", [
-        "playlists",
-        "common",
-      ])),
+      ...(await serverSideTranslations(language, ["playlists", "common"])),
     },
   };
 };

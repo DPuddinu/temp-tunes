@@ -1,6 +1,9 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { getCookie } from "cookies-next";
+import { GetServerSideProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRef, useState } from "react";
 import {
   useFieldArray,
@@ -18,7 +21,9 @@ import {
   ArrowUpSVG,
   DeleteSVG,
 } from "~/components/ui/icons/index";
+import { Language } from "~/core/settingsStore";
 import { useStore } from "~/core/store";
+import { langKey } from "~/hooks/use-language";
 import type { PageWithLayout } from "~/types/page-types";
 import { TemplateEntrySchema } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
@@ -205,3 +210,18 @@ const TemplateRow = ({
     </li>
   );
 };
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const language = getCookie(langKey, { req, res }) as Language;
+
+  return {
+    props: {
+      //prettier- ignore
+      ...(await serverSideTranslations(language ?? "en", [
+        "templates",
+        "common",
+      ])),
+    },
+  };
+};
+

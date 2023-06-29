@@ -1,6 +1,7 @@
 import MainLayout from "@components/MainLayout";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { GetStaticProps } from "next";
+import { getCookie } from "cookies-next";
+import type { GetServerSideProps, GetStaticProps } from "next";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -10,7 +11,9 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { SearchSVG } from "~/components/ui/icons/index";
+import { Language } from "~/core/settingsStore";
 import { usePlaylistStore } from "~/core/store";
+import { langKey } from "~/hooks/use-language";
 import { useLibrary } from "~/hooks/use-library";
 import type { PageWithLayout } from "~/types/page-types";
 import { type Playlist } from "~/types/spotify-types";
@@ -119,11 +122,12 @@ const Search: PageWithLayout = () => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const language = getCookie(langKey, { req, res }) as Language;
   return {
     props: {
       //prettier- ignore
-      ...(await serverSideTranslations(context.locale ?? "en", ["search"])),
+      ...(await serverSideTranslations(language, ["search"])),
     },
   };
 };

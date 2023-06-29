@@ -1,5 +1,6 @@
 import MainLayout from "@components/MainLayout";
-import type { GetStaticProps } from "next";
+import { getCookie } from "cookies-next";
+import type { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
@@ -7,6 +8,8 @@ import { useState } from "react";
 import type { TimeRangeType } from "src/types/spotify-types";
 import type { RecapPropsType } from "~/components/recap/cards/UserTopCard";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
+import type { Language } from "~/core/settingsStore";
+import { langKey } from "~/hooks/use-language";
 import type { PageWithLayout } from "../types/page-types";
 
 const Home: PageWithLayout = () => {
@@ -67,11 +70,13 @@ function GreetingsSkeleton() {
 Home.getLayout = (page) => <MainLayout>{page}</MainLayout>;
 export default Home;
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const language = getCookie(langKey, { req, res }) as Language;
+
   return {
     props: {
       //prettier- ignore
-      ...(await serverSideTranslations(locale ?? "en", [
+      ...(await serverSideTranslations(language ?? "en", [
         "home",
         "common",
         "modals",
@@ -79,3 +84,5 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
     },
   };
 };
+
+

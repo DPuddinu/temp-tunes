@@ -1,20 +1,18 @@
-import type { GetStaticProps } from "next";
+import { getCookie } from "cookies-next";
+import type { GetServerSideProps } from "next";
 import { signIn } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { Languages, type Language } from "~/core/settingsStore";
+import { langKey, useLanguage } from "~/hooks/use-language";
 import {
-  Languages,
-  useSettingsStore,
-  type Language,
-} from "~/core/settingsStore";
-import { useLanguage } from "~/hooks/use-language";
-import { FacebookSVG } from "../components/ui/icons/FacebookSVG";
-import { InstagramSVG } from "../components/ui/icons/InstagramSVG";
-import { LinkedinSVG } from "../components/ui/icons/LinkedinSVG";
-import { TwitterSVG } from "../components/ui/icons/TwitterSVG";
+  FacebookSVG,
+  InstagramSVG,
+  LinkedinSVG,
+  TwitterSVG,
+} from "../components/ui/icons/index";
 
 const Landing = () => {
   return (
@@ -33,8 +31,7 @@ const Landing = () => {
               <span className="text-slate-100 ">Manager</span>
             </h1>
           </div>
-
-          <Features />
+          <Features/>
         </section>
         <Footer />
       </main>
@@ -46,7 +43,6 @@ export default Landing;
 
 const Features = () => {
   const { t } = useTranslation("landing");
-  const { language } = useLanguage();
   return (
     <section className="flex grow flex-col text-center text-gray-800 md:text-left">
       <div className=" diagonal grid grow place-items-center p-10 pb-16 text-white">
@@ -73,9 +69,7 @@ const Features = () => {
       <div className="mb-8 flex w-full grow items-center justify-center">
         <button
           className="mt-16 w-52 rounded-full bg-primary px-10 py-3 font-semibold  text-gray-900 no-underline"
-          onClick={() =>
-            signIn("spotify", { callbackUrl: `/${language}/home` })
-          }
+          onClick={() => signIn("spotify", { callbackUrl: `/home` })}
         >
           {t("getstarted")}
         </button>
@@ -85,8 +79,7 @@ const Features = () => {
 };
 
 const Footer = () => {
-  const router = useRouter();
-  const { setLanguage } = useLanguage();
+  const {language, setLanguage } = useLanguage();
   const ref = useRef<HTMLSelectElement>(null);
 
   return (
@@ -111,7 +104,7 @@ const Footer = () => {
         </span>
         <select
           ref={ref}
-          value={router.locale}
+          value={language}
           className="select-bordered select select-sm w-32 bg-base-200 bg-opacity-30"
           onChange={(e) => setLanguage(e.target.value as Language)}
         >
@@ -131,8 +124,13 @@ const Footer = () => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale ?? "en", ["landing"])),
-  },
-});
+//prettier-ignore
+export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
+  const language = getCookie(langKey, { req, res }) as Language;
+  return {
+    props: {
+      ...(await serverSideTranslations(language ?? "en", ["landing"])),
+      language: language,
+    },
+  };
+};

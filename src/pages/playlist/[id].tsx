@@ -1,12 +1,15 @@
 import { useIntersection } from "@mantine/hooks";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { getCookie } from "cookies-next";
 import { type GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef } from "react";
 import MainLayout from "~/components/MainLayout";
 import TrackRow from "~/components/ui/TrackRow";
+import type { Language } from "~/core/settingsStore";
 import { useStore } from "~/core/store";
+import { langKey } from "~/hooks/use-language";
 import type { PageWithLayout } from "~/types/page-types";
 import { type Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
@@ -91,11 +94,12 @@ const PlaylistPage: PageWithLayout = () => {
 export default PlaylistPage;
 PlaylistPage.getLayout = (page) => <MainLayout>{page}</MainLayout>;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const language = getCookie(langKey, { req, res }) as Language;
   return {
     props: {
       //prettier- ignore
-      ...(await serverSideTranslations(context.locale ?? "en", [
+      ...(await serverSideTranslations(language, [
         "playlists",
         "common",
       ])),
