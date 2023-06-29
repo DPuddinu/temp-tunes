@@ -18,10 +18,10 @@ const PlaylistsPage: PageWithLayout = () => {
   const PlaylistTable = dynamic(() => import("~/components/ui/playlist/PlaylistTable"), {loading: () => <PlaylistPageSkeleton /> });
 
   return (
-    <div className="flex h-full w-full flex-col items-center ">
+    <>
       {isLoading && <PlaylistPageSkeleton />}
       {data && <PlaylistTable data={data} />}
-    </div>
+    </>
   );
 };
 

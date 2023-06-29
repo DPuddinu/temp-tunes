@@ -11,7 +11,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { SearchSVG } from "~/components/ui/icons/index";
-import { Language } from "~/core/settingsStore";
+import { type Language } from "~/core/settingsStore";
 import { usePlaylistStore } from "~/core/store";
 import { langKey } from "~/hooks/use-language";
 import { useLibrary } from "~/hooks/use-library";
@@ -95,11 +95,7 @@ const Search: PageWithLayout = () => {
               placeholder={t("search") ?? "..."}
               className="input-bordered input grow bg-secondary-content sm:max-w-sm"
             />
-            <button
-              type="submit"
-              disabled={!isValid}
-              className="btn-square btn disabled:bg-base-200"
-            >
+            <button type="submit" className="btn-square btn">
               <SearchSVG />
             </button>
           </div>
@@ -127,7 +123,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   return {
     props: {
       //prettier- ignore
-      ...(await serverSideTranslations(language, ["search"])),
+      ...(await serverSideTranslations(language, ["search", "common"])),
     },
   };
 };
