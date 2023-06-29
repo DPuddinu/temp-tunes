@@ -32,6 +32,7 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
   //prettier-ignore
   const {mutate } = api.tags.setTags.useMutation({
     onSuccess(data) {
+      console.log(data)
       setStoreTags(data);
       onClose();
     },
@@ -113,7 +114,6 @@ function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
   } = useForm<AddTagSchemaType>({
     resolver: zodResolver(tagSchema),
   });
-  console.log(errors);
   const onSubmit: SubmitHandler<AddTagSchemaType> = (data) =>
     onTagSubmit({
       name: data.tag,

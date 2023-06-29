@@ -1,6 +1,6 @@
 export const PlaylistSkeleton = () => {
   return (
-    <div className="w-full animate-pulse rounded-xl bg-base-200 p-6 shadow">
+    <div className="m-auto w-full animate-pulse rounded-xl bg-base-200  p-6 sm:w-1/2">
       <div className="mb-6 rounded-xl">
         <div className="my-1 h-20 w-4/5 rounded-xl bg-base-300"></div>
         <div className="h-5 w-1/4 rounded-xl bg-base-300 text-sm font-light leading-4" />

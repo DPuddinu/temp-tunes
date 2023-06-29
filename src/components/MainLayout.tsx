@@ -40,7 +40,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   }, [router, session, status]);
 
   return (
-    <div className="drawer">
+    <div className="drawer overflow-hidden">
       <input
         id="my-drawer-2"
         type="checkbox"

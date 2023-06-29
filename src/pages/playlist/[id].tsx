@@ -3,10 +3,10 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { getCookie } from "cookies-next";
 import { type GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef } from "react";
 import MainLayout from "~/components/MainLayout";
+import TrackRow from "~/components/ui/TrackRow";
 import { PlaylistSkeleton } from "~/components/ui/skeletons/PlaylistSkeleton";
 import type { Language } from "~/core/settingsStore";
 import { useStore } from "~/core/store";
@@ -14,10 +14,6 @@ import { langKey } from "~/hooks/use-language";
 import type { PageWithLayout } from "~/types/page-types";
 import { type Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
-
-const TrackRow = dynamic(() => import("~/components/ui/TrackRow"), {
-  loading: () => <div></div>
-});
 
 const PlaylistPage: PageWithLayout = () => {
   const { setMessage } = useStore();
@@ -72,12 +68,12 @@ const PlaylistPage: PageWithLayout = () => {
     <>
       {isLoading && <PlaylistSkeleton />}
       {data && (
-        <div className="rounded-xl bg-base-200 p-2">
+        <div className="m-auto rounded-xl bg-base-200 p-2 sm:w-1/2">
           <div className="p-4">
             <h1 className="my-1 text-4xl font-semibold tracking-wider">
               {data?.name}
             </h1>
-            <p className="text-sm font-light leading-4">
+            <p className="ml-1 text-sm font-medium leading-4">
               {data?.owner.display_name}
             </p>
           </div>

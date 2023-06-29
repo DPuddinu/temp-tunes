@@ -1,6 +1,6 @@
 export const PlaylistPageSkeleton = () => {
   return (
-    <div className="flex w-full animate-pulse flex-col gap-4 lg:w-3/4 [&>*]:w-full [&>*]:rounded-xl">
+    <div className="m-auto flex w-full animate-pulse flex-col gap-4 lg:w-3/4 [&>*]:w-full [&>*]:rounded-xl">
       <div className="flex h-16 w-full flex-col justify-center gap-2 border-base-300 bg-base-200 pl-4 lg:w-3/4">
         <div className="h-5 w-16 rounded-xl bg-base-300"></div>
       </div>
