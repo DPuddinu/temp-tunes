@@ -31,7 +31,7 @@ const Landing = () => {
               <span className="text-slate-100 ">Manager</span>
             </h1>
           </div>
-          <Features/>
+          <Features />
         </section>
         <Footer />
       </main>
@@ -79,7 +79,7 @@ const Features = () => {
 };
 
 const Footer = () => {
-  const {language, setLanguage } = useLanguage();
+  const { language, setLanguage } = useLanguage();
   const ref = useRef<HTMLSelectElement>(null);
 
   return (
@@ -129,8 +129,6 @@ export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
   const language = getCookie(langKey, { req, res }) as Language;
   return {
     props: {
-      ...(await serverSideTranslations(language ?? "en", ["landing"])),
-      language: language,
-    },
+      ...(await serverSideTranslations(language ?? "en", ["landing"]))},
   };
 };

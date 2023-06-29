@@ -9,9 +9,9 @@ export const useLanguage = () => {
   const language = getCookie(langKey) as Language
 
   useEffect(() => {
-    if (!language) setCookie("en", { maxAge: 60 * 60 * 24 });
+    if (!language) setCookie(langKey, 'en', { maxAge: 60 * 60 * 24 });
   }, [language])
-  
+
   const setLang = (lang: Language) => {
     setCookie(langKey, lang);
     router.push({ pathname: router.route }, router.asPath, {
@@ -19,6 +19,6 @@ export const useLanguage = () => {
     });
   }
   return {
-    language, setLanguage: setLang
+    language: language ? language : 'en', setLanguage: setLang
   }
 }
