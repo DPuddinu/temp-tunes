@@ -3,16 +3,21 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { getCookie } from "cookies-next";
 import { type GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef } from "react";
 import MainLayout from "~/components/MainLayout";
-import TrackRow from "~/components/ui/TrackRow";
+import { PlaylistSkeleton } from "~/components/ui/skeletons/PlaylistSkeleton";
 import type { Language } from "~/core/settingsStore";
 import { useStore } from "~/core/store";
 import { langKey } from "~/hooks/use-language";
 import type { PageWithLayout } from "~/types/page-types";
 import { type Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
+
+const TrackRow = dynamic(() => import("~/components/ui/TrackRow"), {
+  loading: () => <div></div>
+});
 
 const PlaylistPage: PageWithLayout = () => {
   const { setMessage } = useStore();
@@ -63,9 +68,9 @@ const PlaylistPage: PageWithLayout = () => {
     [_data]
   );
 
-  useEffect(() => console.log(data), [data]);
   return (
     <>
+      {isLoading && <PlaylistSkeleton />}
       {data && (
         <div className="rounded-xl bg-base-200 p-2">
           <div className="p-4">
@@ -102,6 +107,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
       ...(await serverSideTranslations(language, [
         "playlists",
         "common",
+        "modals",
       ])),
     },
   };

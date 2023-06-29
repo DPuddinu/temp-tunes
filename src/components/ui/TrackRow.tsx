@@ -28,7 +28,7 @@ const TrackRow = forwardRef<HTMLDivElement, Props>((props, ref) => {
           <li onClick={() => setIsModalOpen(true)} className="bg-transparent">
             <div className="flex gap-2 rounded-xl">
               <TagSVG />
-              <a>{t("add_tag")}</a>
+              <a>{t("edit_tag")}</a>
             </div>
           </li>
         </DropdownMenu>

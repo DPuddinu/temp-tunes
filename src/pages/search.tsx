@@ -95,7 +95,7 @@ const Search: PageWithLayout = () => {
               placeholder={t("search") ?? "..."}
               className="input-bordered input grow bg-secondary-content sm:max-w-sm"
             />
-            <button type="submit" className="btn-square btn">
+            <button type="submit" className="btn-square btn bg-base-300">
               <SearchSVG />
             </button>
           </div>
