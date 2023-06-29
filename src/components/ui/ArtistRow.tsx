@@ -9,16 +9,16 @@ interface Props {
 export const ArtistRow = ({ artist }: Props) => {
   return (
     <div
-      className={`grid grid-cols-2 text-accent-content`}
+      className={`grid grid-cols-2 p-1 text-accent-content`}
       style={{ gridTemplateColumns: "1fr 6fr" }}
     >
-      {artist.images && artist.images[2]?.url ? (
+      {artist.images && artist.images[0]?.url ? (
         <ImageWithFallback
-          src={artist.images[2].url}
-          className="m-1 h-16 w-16 rounded-xl bg-base-100 flex items-center justify-center"
-          fallback={<ErrorSVG/>}
-          height={128}
-          width={128}
+          src={artist.images[0].url}
+          className="aspect-square rounded-lg object-contain"
+          fallback={<ErrorSVG />}
+          height={64}
+          width={64}
           quality={60}
         />
       ) : (
