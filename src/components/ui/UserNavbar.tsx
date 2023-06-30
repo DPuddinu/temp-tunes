@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { ImageWithFallback } from "./ImageWithFallback";
 import { ErrorSVG, MenuSVG } from "./icons";
 import { RoundSkeleton } from "./skeletons/RoundSkeleton";
+import { SpotifyWebPlayer } from "../WebPlayback";
 
 interface UserNavbarProps {
   name: string;
@@ -56,8 +57,11 @@ const UserNavbar = ({ name, image }: UserNavbarProps) => {
 
             <ul
               tabIndex={0}
-              className="menu-compact dropdown-content menu rounded-box mt-3 w-52 bg-base-300 p-2 shadow"
+              className="menu-compact dropdown-content menu rounded-box mt-3 w-52 bg-base-300 p-2 shadow-lg border border-base-100"
             >
+              <li>
+                <SpotifyWebPlayer/>
+              </li>
               <li className="flex flex-row items-center">
                 <span>{t("change_theme")}</span>
                 <ThemeSwitcher />

@@ -1,6 +1,7 @@
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { PauseSVG, PlaySVG } from "./ui/icons";
 
 declare global {
   interface Window {
@@ -23,7 +24,6 @@ export const SpotifyWebPlayer = () => {
 
   useEffect(() => {
     if (data?.accessToken) {
-      console.log(data?.accessToken);
       const script = document.createElement("script");
       script.src = "https://sdk.scdn.co/spotify-player.js";
       script.async = true;
@@ -40,6 +40,7 @@ export const SpotifyWebPlayer = () => {
         });
 
         setPlayer(player);
+        console.log(player);
 
         player.addListener("player_state_changed", (state) => {
           if (!state) {
@@ -70,60 +71,52 @@ export const SpotifyWebPlayer = () => {
   }, [data?.accessToken]);
 
   return (
-    <>
-      <div className="container">
-        <div className="main-wrapper">
-          {current_track?.album?.images[0]?.url && (
-            <Image
-              src={current_track.album?.images[0].url}
-              className="now-playing__cover"
-              alt=""
-              width={64}
-              height={64}
-            />
-          )}
-
-          <div className="now-playing__side">
-            <div className="now-playing__name">{current_track.name}</div>
-
-            {current_track.artists[0] && (
-              <div className="now-playing__artist">
-                {current_track.artists[0].name}
-              </div>
-            )}
-          </div>
-          {player && (
-            <div>
-              <button
-                className="btn"
-                onClick={() => {
-                  player?.previousTrack();
-                }}
-              >
-                &lt;&lt;
-              </button>
-
-              <button
-                className="btn"
-                onClick={() => {
-                  player?.togglePlay();
-                }}
-              >
-                {is_paused ? "PLAY" : "PAUSE"}
-              </button>
-
-              <button
-                className="btn"
-                onClick={() => {
-                  player.nextTrack();
-                }}
-              >
-                &gt;&gt;
-              </button>
-            </div>
+    <div className="flex flex-col rounded-xl bg-base-200">
+      <div className="flex justify-center gap-2">
+        {current_track?.album?.images[0]?.url && (
+          <Image
+            src={current_track.album?.images[0].url}
+            className="rounded-md"
+            alt=""
+            width={64}
+            height={64}
+          />
+        )}
+        <div className="flex flex-col justify-center gap-1 text-sm">
+          <p>{current_track.name}</p>
+          {current_track.artists[0] && (
+            <p className="now-playing__artist">
+              {current_track.artists[0].name}
+            </p>
           )}
         </div>
       </div>
-    </>
+
+      {player && (
+        <div className="flex w-full justify-around">
+          <button
+            className="btn-sm btn"
+            onClick={() => {
+              player?.previousTrack();
+            }}
+          >
+            &lt;&lt;
+          </button>
+
+          <button className="btn-sm btn" onClick={() => player?.togglePlay()}>
+            {is_paused ? <PlaySVG /> : <PauseSVG />}
+          </button>
+
+          <button
+            className="btn-sm btn"
+            onClick={() => {
+              player.nextTrack();
+            }}
+          >
+            &gt;&gt;
+          </button>
+        </div>
+      )}
+    </div>
   );
 };
