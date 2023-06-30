@@ -240,3 +240,13 @@ export async function getPlaylistById(playlistId: string, access_token: string) 
   playlist.tracks = tracks
   return playlist
 }
+type PlayProps ={
+  uris?: string[];
+  contextUri?: string
+}
+export async function play(access_token: string, uris?: string[] | undefined | null, contextUri?: string | undefined | null){
+  const body: PlayProps = {}
+  if(uris) body.uris= uris
+  if(contextUri) body.contextUri = contextUri
+  return await spotifyPUT({ url: '/me/player/play', access_token: access_token, body: JSON.stringify(body) })
+}

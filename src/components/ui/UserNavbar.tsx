@@ -1,7 +1,6 @@
 import { signOut } from "next-auth/react";
+import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
-import Image from "next/image";
-import ImageErrorBoundary from "../ErrorBoundary";
 import { ImageWithFallback } from "./ImageWithFallback";
 import { ErrorSVG, MenuSVG } from "./icons";
 import { RoundSkeleton } from "./skeletons/RoundSkeleton";
@@ -17,6 +16,8 @@ const ThemeSwitcher = dynamic(() => import("./ThemeSwitcher"), {
 });
 
 const UserNavbar = ({ name, image }: UserNavbarProps) => {
+  const { t } = useTranslation("common");
+
   return (
     <div className="navbar h-16 bg-base-300 shadow">
       <div className="flex w-full justify-end sm:justify-between">
@@ -30,7 +31,6 @@ const UserNavbar = ({ name, image }: UserNavbarProps) => {
         </div>
 
         <div className="dropdown-end flex">
-          <ThemeSwitcher />
           <div className="dropdown-end dropdown ">
             <div className=" flex items-center gap-2 rounded pl-6">
               <h1 className="text-sm font-medium text-primary-content">
@@ -44,8 +44,8 @@ const UserNavbar = ({ name, image }: UserNavbarProps) => {
                       height={40}
                       width={40}
                       quality={60}
-                      fallback={<ErrorSVG/>}
-                      className="bg-base-100 h-full w-full flex items-center justify-center"
+                      fallback={<ErrorSVG />}
+                      className="flex h-full w-full items-center justify-center bg-base-100"
                     />
                   ) : (
                     <RoundSkeleton />
@@ -56,10 +56,16 @@ const UserNavbar = ({ name, image }: UserNavbarProps) => {
 
             <ul
               tabIndex={0}
-              className="menu-compact dropdown-content menu rounded-box mt-3 w-52 bg-base-200 p-2 shadow"
+              className="menu-compact dropdown-content menu rounded-box mt-3 w-52 bg-base-300 p-2 shadow"
             >
+              <li className="flex flex-row items-center">
+                <span>{t("change_theme")}</span>
+                <ThemeSwitcher />
+              </li>
               <li>
-                <a onClick={() => signOut({ callbackUrl: "/" })}>Logout</a>
+                <a onClick={() => signOut({ callbackUrl: "/" })}>
+                  {t("logout")}
+                </a>
               </li>
             </ul>
           </div>

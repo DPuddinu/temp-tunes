@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { addTracksToPlaylist, createPlaylist, getPlaylistById, getPlaylistTracks, getUserPlaylists, removeTracksFromPlaylist, renamePlaylist, unfollowPlaylist } from "~/core/spotifyCollection";
+import { addTracksToPlaylist, createPlaylist, getPlaylistById, getPlaylistTracks, getUserPlaylists, play, removeTracksFromPlaylist, renamePlaylist, unfollowPlaylist } from "~/core/spotifyCollection";
 import { type Playlist } from "~/types/spotify-types";
 import { PlaylistSchema } from "~/types/zod-schemas";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -67,7 +67,11 @@ export const spotifyPlaylistRouter = createTRPCRouter({
       return playlist
     }
     return null
-  })
+  }),
+  play: protectedProcedure.input(z.object({ uris: z.string().array().nullish(), contextUri: z.string().nullish() })).mutation(async ({ ctx, input }) => {
+    const { uris, contextUri } = input;
+    return await play(ctx.session.accessToken, uris, contextUri)
+  }),
 });
 
 function shuffle(array: unknown[]) {

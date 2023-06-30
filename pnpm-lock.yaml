@@ -41,6 +41,9 @@ dependencies:
   '@trpc/server':
     specifier: ^10.9.0
     version: 10.13.2
+  '@types/spotify-web-playback-sdk':
+    specifier: ^0.1.15
+    version: 0.1.15
   clsx:
     specifier: ^1.2.1
     version: 1.2.1
@@ -769,6 +772,10 @@ packages:
   /@types/semver@7.3.13:
     resolution: {integrity: sha512-21cFJr9z3g5dW8B0CVI9g2O9beqaThGQ6ZFBqHfwhzLDKUxaqTIy3vnfah/UPkfOiF2pLq+tGz+W8RyCskuslw==}
     dev: true
+
+  /@types/spotify-web-playback-sdk@0.1.15:
+    resolution: {integrity: sha512-DBXmPajTtrm4Ykf2waHZAW6UR6Jqv8fKRTTDfXcSkse2VzF9uDdj7gb4mcwKMxdDrjJ4npy4EbnxH/xxuiKtoQ==}
+    dev: false
 
   /@types/styled-components@5.1.26:
     resolution: {integrity: sha512-KuKJ9Z6xb93uJiIyxo/+ksS7yLjS1KzG6iv5i78dhVg/X3u5t1H7juRWqVmodIdz6wGVaIApo1u01kmFRdJHVw==}

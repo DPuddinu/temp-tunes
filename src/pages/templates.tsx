@@ -2,7 +2,7 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getCookie } from "cookies-next";
-import { GetServerSideProps } from "next";
+import type { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRef, useState } from "react";
 import {
@@ -13,6 +13,7 @@ import {
 } from "react-hook-form";
 import { z } from "zod";
 import MainLayout from "~/components/MainLayout";
+import { SpotifyWebPlayer } from "~/components/WebPlayback";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import {} from "~/components/ui/icons/ArrowUpSVG";
 import {} from "~/components/ui/icons/DeleteSVG";
@@ -21,7 +22,7 @@ import {
   ArrowUpSVG,
   DeleteSVG,
 } from "~/components/ui/icons/index";
-import { Language } from "~/core/settingsStore";
+import type { Language } from "~/core/settingsStore";
 import { useStore } from "~/core/store";
 import { langKey } from "~/hooks/use-language";
 import type { PageWithLayout } from "~/types/page-types";
@@ -31,7 +32,8 @@ import { api } from "~/utils/api";
 const Templates: PageWithLayout = () => {
   return (
     <div>
-      <CreateTemplate />
+      {/* <CreateTemplate /> */}
+      <SpotifyWebPlayer/>
     </div>
   );
 };

@@ -26,6 +26,7 @@
     "@trpc/next": "^10.9.0",
     "@trpc/react-query": "^10.9.0",
     "@trpc/server": "^10.9.0",
+    "@types/spotify-web-playback-sdk": "^0.1.15",
     "clsx": "^1.2.1",
     "cookies-next": "^2.1.2",
     "cva": "npm:class-variance-authority@^0.6.0",
