@@ -18,12 +18,11 @@ export const spotifyPlayerRouter = createTRPCRouter({
     if (!playbackState) {
       const devices = await getDevices(ctx.session.accessToken);
       const webPlaybackSDK = devices.devices.filter((device: DeviceType) => device.name === 'Web Playback SDK')
-      const transfer = await (transferPlaybackTo(ctx.session.accessToken, webPlaybackSDK[webPlaybackSDK.length - 1].id))
-      return transfer
+      await (transferPlaybackTo(ctx.session.accessToken, webPlaybackSDK[webPlaybackSDK.length - 1].id))
     }
     const { uris, contextUri } = input;
-
-    return await play(ctx.session.accessToken, uris, contextUri)
+    const _play = await play(ctx.session.accessToken, uris, contextUri)
+    return _play
   }),
   getDevices: protectedProcedure.mutation(async ({ ctx }) => {
     return await getDevices(ctx.session.accessToken)

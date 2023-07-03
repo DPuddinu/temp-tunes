@@ -1,10 +1,10 @@
 import { signOut } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
+import { SpotifyWebPlayer } from "../WebPlayback";
 import { ImageWithFallback } from "./ImageWithFallback";
 import { ErrorSVG, MenuSVG } from "./icons";
 import { RoundSkeleton } from "./skeletons/RoundSkeleton";
-import { SpotifyWebPlayer } from "../WebPlayback";
 
 interface UserNavbarProps {
   name: string;
@@ -31,7 +31,7 @@ const UserNavbar = ({ name, image }: UserNavbarProps) => {
           </label>
         </div>
 
-        <div className="dropdown-end flex">
+        <div className="dropdown-end mr-4 flex">
           <div className="dropdown-end dropdown ">
             <div className=" flex items-center gap-2 rounded pl-6">
               <h1 className="text-sm font-medium text-primary-content">
@@ -57,10 +57,10 @@ const UserNavbar = ({ name, image }: UserNavbarProps) => {
 
             <ul
               tabIndex={0}
-              className="menu-compact dropdown-content menu rounded-box mt-3 w-52 bg-base-300 p-2 shadow-lg border border-base-100"
+              className="menu-compact dropdown-content menu rounded-box mt-3 w-52 border border-base-100 bg-base-300 p-2 shadow-lg"
             >
               <li>
-                <SpotifyWebPlayer/>
+                <SpotifyWebPlayer />
               </li>
               <li className="flex flex-row items-center">
                 <span>{t("change_theme")}</span>

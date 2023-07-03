@@ -23,8 +23,9 @@ import { VerticalDotsSVG } from "./VerticalDotsSVG";
 import { ErrorSVG } from "./ErrorSVG";
 import { PlaySVG } from "./PlaySVG";
 import { PauseSVG } from "./PauseSVG";
+import { MusicalNoteSVG } from "./MusicalNoteSVG";
 
 export {
-  ArrowDownSVG, ArrowSVG, ArrowUpDownSVG, ArrowUpSVG, CopySVG, DeleteSVG, EditSVG, FacebookSVG, HomeSVG, PlaySVG, PauseSVG,
+  ArrowDownSVG, ArrowSVG, ArrowUpDownSVG, ArrowUpSVG, CopySVG, DeleteSVG, EditSVG, FacebookSVG, HomeSVG, PlaySVG, PauseSVG, MusicalNoteSVG,
   InstagramSVG, LinkedinSVG, MenuSVG, MergeSVG, PencilSVG, PlaylistSVG, PlusSVG, SearchSVG, ShuffleSVG, TagSVG, TemplateSVG, TwitterSVG, VerticalDotsSVG, ErrorSVG
 };

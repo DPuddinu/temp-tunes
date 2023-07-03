@@ -22,7 +22,7 @@ export const ArtistRow = ({ artist }: Props) => {
           quality={60}
         />
       ) : (
-        <div className="h-20 w-20 rounded-xl bg-slate-400"></div>
+        <div className="h-20 w-20 rounded-xl bg-slate-400"/>
       )}
 
       <div className="ml-4 flex items-center justify-start font-medium">
