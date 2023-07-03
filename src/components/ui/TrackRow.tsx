@@ -12,15 +12,14 @@ interface Props {
 const TrackRow = forwardRef<HTMLDivElement, Props>(({ track }, ref) => {
   const { t } = useTranslation("common");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { mutate: playTrack, isLoading } =
-    api.spotify_playlist.play.useMutation({
-      onError: () => {
-        console.log("error");
-      },
-      onSuccess: () => {
-        console.log("success");
-      },
-    });
+  const { mutate: playTrack, isLoading } = api.player.play.useMutation({
+    onError: () => {
+      console.log("error");
+    },
+    onSuccess(data, variables, context) {
+      console.log(data);
+    },
+  });
   return (
     <div
       className="group flex rounded-xl px-3 text-accent-content hover:bg-neutral"
