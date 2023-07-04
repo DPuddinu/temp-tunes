@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getDevices, getPlaybackState, play, transferPlaybackTo } from "~/core/spotifyCollection";
+import { getDevices, getPlaybackState, pause, play, transferPlaybackTo } from "~/core/spotifyCollection";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 interface DeviceType {
@@ -13,15 +13,15 @@ interface DeviceType {
 }
 export const spotifyPlayerRouter = createTRPCRouter({
 
-  play: protectedProcedure.input(z.object({ uris: z.string().array().nullish(), contextUri: z.string().nullish() })).mutation(async ({ ctx, input }) => {
+  togglePlayPause: protectedProcedure.input(z.object({ paused: z.boolean().optional(), uris: z.string().array().nullish(), contextUri: z.string().nullish() })).mutation(async ({ ctx, input }) => {
+    const { uris, contextUri, paused = true } = input;
     const playbackState = await getPlaybackState(ctx.session.accessToken);
     if (!playbackState) {
       const devices = await getDevices(ctx.session.accessToken);
       const webPlaybackSDK = devices.devices.filter((device: DeviceType) => device.name === 'Web Playback SDK')
       await (transferPlaybackTo(ctx.session.accessToken, webPlaybackSDK[webPlaybackSDK.length - 1].id))
     }
-    const { uris, contextUri } = input;
-    const _play = await play(ctx.session.accessToken, uris, contextUri)
+    const _play = paused ? await play(ctx.session.accessToken, uris, contextUri) : await pause(ctx.session.accessToken)
     return _play
   }),
   getDevices: protectedProcedure.mutation(async ({ ctx }) => {

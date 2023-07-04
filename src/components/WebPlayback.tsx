@@ -1,11 +1,11 @@
-import Image from "next/image";
 import { useSpotifyPlayback } from "~/hooks/use-spotify-web-playback";
+import { api } from "~/utils/api";
 import { ImageWithFallback } from "./ui/ImageWithFallback";
 import { MusicalNoteSVG, PauseSVG, PlaySVG } from "./ui/icons";
 
 export const SpotifyWebPlayer = () => {
   const { player, current_track, is_active, is_paused } = useSpotifyPlayback();
-  console.log(current_track);
+  const {mutate: togglePlay} = api.player.togglePlayPause.useMutation()
   return (
     <div className="flex w-auto flex-col rounded-xl bg-base-200">
       {current_track && current_track.album?.images[0] ? (
@@ -57,7 +57,7 @@ export const SpotifyWebPlayer = () => {
           <button
             disabled={!is_active || !current_track}
             className="btn-sm btn  bg-base-300"
-            onClick={() => player?.togglePlay()}
+            onClick={() => togglePlay({ paused: is_paused })}
           >
             {is_paused ? <PlaySVG /> : <PauseSVG />}
           </button>

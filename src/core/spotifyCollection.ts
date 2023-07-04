@@ -249,6 +249,10 @@ export async function play(access_token: string, uris?: string[] | undefined | n
   if (contextUri) body.contextUri = contextUri
   return await spotifyPUT({ url: '/me/player/play', access_token: access_token, body: JSON.stringify(body) })
 }
+export async function pause(access_token: string) {
+  return await spotifyPUT({ url: '/me/player/pause', access_token: access_token })
+}
+
 
 export async function getDevices(access_token: string) {
   return (await spotifyGET('/me/player/devices', access_token).then((resp) => resp.json()).catch((error) => console.error(error)));

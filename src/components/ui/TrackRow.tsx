@@ -12,7 +12,7 @@ interface Props {
 const TrackRow = forwardRef<HTMLDivElement, Props>(({ track }, ref) => {
   const { t } = useTranslation("common");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { mutate: playTrack, isLoading } = api.player.play.useMutation({
+  const { mutate: playTrack, isLoading } = api.player.togglePlayPause.useMutation({
     onError: () => {
       console.log("error");
     },
