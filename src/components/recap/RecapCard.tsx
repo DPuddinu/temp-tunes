@@ -1,19 +1,21 @@
 import { RecapCardCva } from "@components/cva/RecapCardCva";
 import type { VariantProps } from "cva";
-import type { PropsWithChildren } from "react";
+import type { PropsWithChildren, ReactNode } from "react";
 import type { RecapSelectItemPropsType } from "~/types/spotify-types";
 import { RecapCardHeaderCva } from "../cva/RecapCardHeaderCva";
-import { RecapSkeleton } from "../ui/skeletons/RecapSkeleton";
 
 type RecapHeaderType = RecapSelectItemPropsType & PropsWithChildren;
-type RecapCardProps = { loading?: boolean } & PropsWithChildren &
+type RecapCardProps = {
+  loading?: boolean;
+  fallback: ReactNode;
+} & PropsWithChildren &
   VariantProps<typeof RecapCardCva>;
 type RecapContainerProps = { error: boolean } & PropsWithChildren;
 
-const RecapCard = ({ children, intent, loading }: RecapCardProps) => {
+const RecapCard = ({ children, intent, loading, fallback }: RecapCardProps) => {
   return (
     <div className={RecapCardCva({ intent })}>
-      {loading ? <RecapSkeleton/> : children}
+      {loading ? fallback : children}
     </div>
   );
 };

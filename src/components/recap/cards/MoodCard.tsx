@@ -1,6 +1,6 @@
-import { Transition } from "@headlessui/react";
 import { useTranslation } from "next-i18next";
-import styled from "styled-components";
+import { ExpandRow } from "~/components/ui/ExpandRow";
+import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import type { Mood } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 import RecapCard from "../RecapCard";
@@ -17,13 +17,17 @@ const MoodCard = () => {
   const { t } = useTranslation("home");
 
   return (
-    <RecapCard key={"card-moody"} loading={isLoading}>
+    <RecapCard
+      key={"card-moody"}
+      loading={isLoading}
+      fallback={<RecapSkeleton />}
+    >
       <RecapCard.Header key={"mood-header"}>
         <p>{t("recap.mood")}</p>
       </RecapCard.Header>
       <RecapCard.Container key={"container-mood"} error={isError}>
         {data && (
-          <div>
+          <div className="p-2">
             {moodKeys.map((key) => (
               <MoodCard.MoodRow
                 key={key}
@@ -39,40 +43,12 @@ const MoodCard = () => {
   );
 };
 
-interface RowValueProps {
-  value: number;
-  color: string;
-}
-const RowValue = styled.div<RowValueProps>`
-  &:after {
-    content: "${(p) => p.value}%";
-  }
-  width: ${(p) => p.value}%;
-  background: ${(p) => p.color};
-`;
-
 MoodCard.MoodRow = function MoodRow({ color, value, label }: MoodRowProps) {
   return (
     <div className="mb-2 flex gap-2 p-2 ">
       <div className="w-1/2 grow text-accent-content ">{label}</div>
       <div className="flex w-1/2 flex-row-reverse">
-        <Transition
-          className="flex flex-row-reverse"
-          appear={true}
-          show={true}
-          enter="transition-width duration-[1200ms]"
-          enterFrom="w-0"
-          enterTo="w-full"
-          leave="transition-width duration-[1200ms]"
-          leaveFrom="w-full"
-          leaveTo="w-0"
-        >
-          <RowValue
-            value={value}
-            color={color}
-            className="flex items-center justify-center rounded-full px-5 py-0 text-center text-sm font-semibold text-accent-content after:flex after:items-center after:justify-center"
-          ></RowValue>
-        </Transition>
+        <ExpandRow value={`${value}%`} width={value} color={color} />
       </div>
     </div>
   );

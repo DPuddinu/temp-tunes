@@ -9,6 +9,7 @@ import { api } from "~/utils/api";
 import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
+import { useToast } from "~/hooks/use-toast";
 
 type Props = {
   trackId: string;
@@ -19,7 +20,8 @@ type Props = {
 export function TagModal({ isOpen, onClose, trackId }: Props) {
   const { t } = useTranslation("modals");
   const [removeTags, setRemoveTags] = useState<TagSchemaType[]>([]);
-  const { tags: storeTags, setTags: setStoreTags, setMessage } = useStore();
+  const { setMessage } = useToast();
+  const { tags: storeTags, setTags: setStoreTags } = useStore();
   const [tags, setTags] = useState<TagSchemaType[]>([]);
 
   useEffect(() => {

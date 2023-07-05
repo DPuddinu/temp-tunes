@@ -2,7 +2,6 @@ import { useIntersection } from "@mantine/hooks";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { RenameModal } from "~/components/modals/RemaneModal";
@@ -17,7 +16,7 @@ import {
   PencilSVG,
   ShuffleSVG,
 } from "~/components/ui/icons";
-import { useStore } from "~/core/store";
+import { useToast } from "~/hooks/use-toast";
 import type { Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 import { ImageWithFallback } from "../ImageWithFallback";
@@ -31,7 +30,8 @@ function PlaylistComponent({
 }) {
   const { t } = useTranslation("playlists");
   const [isLoading, setIsLoading] = useState(false);
-  const { setMessage } = useStore();
+  const { setMessage } = useToast();
+
   const [renameModalOpen, setRenameModalOpen] = useState(false);
   const [unfollowModalOpen, setUnfollowModalOpen] = useState(false);
 
@@ -105,7 +105,7 @@ function PlaylistComponent({
   });
 
   return (
-    <Link href={`/playlist/${playlist.id}`} >
+    <Link href={`/playlist/${playlist.id}`}>
       <div className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 pr-3 shadow">
         <div className="h-20 w-20 min-w-[5rem]">
           <ImageWithFallback

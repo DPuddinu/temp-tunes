@@ -1,7 +1,7 @@
 import MainLayout from "@components/MainLayout";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getCookie } from "cookies-next";
-import type { GetServerSideProps, GetStaticProps } from "next";
+import type { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -48,7 +48,7 @@ const Search: PageWithLayout = () => {
     register,
     handleSubmit,
     getValues,
-    formState: { isValid, errors },
+    formState: { errors },
   } = useForm<SearchFormSchemaType>({
     resolver: zodResolver(SearchFormSchema),
   });

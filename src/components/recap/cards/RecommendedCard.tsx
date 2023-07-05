@@ -15,24 +15,18 @@ const RecommendedCard = () => {
   const { t } = useTranslation("home");
 
   return (
-    <RecapCard key={"card-recommended"} loading={isLoading}>
+    <RecapCard
+      key={"card-recommended"}
+      loading={isLoading}
+      fallback={<RecapSkeleton/>}
+    >
       <RecapCard.Header key={"card-recommended"}>
         <p>{t("recap.for_you")}</p>
       </RecapCard.Header>
       <RecapCard.Container key={"container-recommended"} error={isError}>
-        {isLoading && (
-          <div className="flex flex-col gap-2">
-            <RecapSkeleton/> 
-          </div>
-        )}
         {data &&
           data.tracks.length > 0 &&
-          data.tracks.map((track) => (
-            <TrackRow
-              track={track}
-              key={track.id}
-            />
-          ))}
+          data.tracks.map((track) => <TrackRow track={track} key={track.id} />)}
       </RecapCard.Container>
     </RecapCard>
   );

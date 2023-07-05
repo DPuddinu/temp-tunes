@@ -42,6 +42,9 @@ const TopRatedCard = dynamic(() => import("~/components/recap/cards/UserTopCard"
 const MoodCard = dynamic(() => import("~/components/recap/cards/MoodCard"),{loading: () => <RecapSkeleton />});
 
 //prettier-ignore
+const TagsCard = dynamic(() => import("~/components/recap/cards/TagsCard"),{loading: () => <RecapSkeleton />});
+
+//prettier-ignore
 const RecommendedCard = dynamic(() => import("~/components/recap/cards/RecommendedCard"),{loading: () => <RecapSkeleton />});
 
 const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
@@ -50,6 +53,7 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
       <TopRatedCard timeRange={timeRange} key={"topRatedCard"} />
       <MoodCard key={"moodCard"} />
       <RecommendedCard key={"recommendedCard"} />
+      <TagsCard key={"tagsCard"} />
     </section>
   );
 };
@@ -84,5 +88,3 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     },
   };
 };
-
-

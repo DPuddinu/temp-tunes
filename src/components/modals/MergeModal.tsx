@@ -1,5 +1,5 @@
 import { useTranslation } from "next-i18next";
-import { useStore } from "~/core/store";
+import { useToast } from "~/hooks/use-toast";
 import type { Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 import BaseModal, { type BaseModalProps } from "./BaseModal";
@@ -13,7 +13,7 @@ type Props = {
 
 export const MergeModal = ({onClose, onSuccess, origin, playlists, setIsOpen, isOpen}: Props) => {
   const { t } = useTranslation("playlists");
-  const { setMessage } = useStore();
+  const { setMessage } = useToast();
 
   const { mutate: merge } = api.spotify_playlist.merge.useMutation({
     onSuccess(data, variables, context) {
