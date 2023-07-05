@@ -105,132 +105,133 @@ function PlaylistComponent({
   });
 
   return (
-    <Link href={`/playlist/${playlist.id}`}>
-      <div className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 pr-3 shadow">
-        <div className="h-20 w-20 min-w-[5rem]">
-          <ImageWithFallback
-            src={
-              playlist.images && playlist.images[0]
-                ? playlist.images[0].url
-                : ""
-            }
-            fallback={
-              <div className="flex aspect-square h-full w-full items-center justify-center rounded-xl bg-base-200 bg-opacity-50">
-                <ErrorSVG />
-              </div>
-            }
-            quality={60}
-            height={80}
-            width={80}
-            className="aspect-square h-full w-full rounded-xl bg-base-100 object-cover"
-          />
-        </div>
-        <div className="flex grow flex-col justify-center gap-2 truncate px-4">
+    <div className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 pr-3 shadow">
+      <div className="h-20 w-20 min-w-[5rem]">
+        <ImageWithFallback
+          src={
+            playlist.images && playlist.images[0] ? playlist.images[0].url : ""
+          }
+          fallback={
+            <div className="flex aspect-square h-full w-full items-center justify-center rounded-xl bg-base-200 bg-opacity-50">
+              <ErrorSVG />
+            </div>
+          }
+          quality={60}
+          height={80}
+          width={80}
+          className="aspect-square h-full w-full rounded-xl bg-base-100 object-cover"
+        />
+      </div>
+      <Link
+        href={`/playlist/${playlist.id}`}
+        className="flex grow flex-col justify-center gap-2 truncate px-4"
+      >
+        <div>
           <p className="truncate font-semibold">{playlist.name}</p>
           <p className="truncate text-sm">{playlist.owner.display_name}</p>
         </div>
-        {isLoading ? (
-          <LoadingSpinner className="mr-4" />
-        ) : (
-          <DropdownMenu intent={"darkest"}>
-            <div className="flex min-h-[15rem] flex-col [&>li]:grow [&>li]:text-base">
-              {/* SHUFFLE */}
-              <li
-                onClick={() => {
-                  shuffle({ playlist: playlist });
-                }}
-              >
-                <div className="flex gap-2 rounded-xl">
-                  <ShuffleSVG />
-                  <a>{t("operations.shuffle")}</a>
-                </div>
-              </li>
-              {/* COPY */}
-              <li
-                onClick={() => {
-                  copy({ playlist: playlist });
-                }}
-              >
-                <div className="flex gap-2 rounded-xl">
-                  <CopySVG />
-                  <a>{t("operations.copy")}</a>
-                </div>
-              </li>
-              {/* MERGE */}
-              <li>
-                <details>
-                  <summary>
-                    <MergeSVG />
-                    <span>{t("operations.merge")}</span>
-                  </summary>
-                  <ul className="m-2 max-h-40 w-[11rem] overflow-auto rounded-xl bg-base-200 bg-opacity-80 px-0 pt-2 before:hidden">
-                    {paginatedData?.map((destination, i) => (
-                      <li
-                        ref={i === paginatedData.length - 1 ? ref : null}
-                        key={destination.id}
-                        className="z-20 px-3 py-1 hover:cursor-pointer"
-                        onClick={() =>
-                          merge({
-                            originId: playlist.id,
-                            originName: playlist.name,
-                            destinationName: destination.name,
-                            destinationId: destination.id,
-                          })
-                        }
-                      >
-                        <p className="p-2">{destination.name}</p>
-                      </li>
-                    ))}
-                  </ul>
-                </details>
-              </li>
-              {/* DELETE */}
-              <li onClick={() => setUnfollowModalOpen(true)}>
-                <div className="flex gap-2 rounded-xl">
-                  <DeleteSVG />
-                  <a>{t("operations.unfollow")}</a>
-                </div>
-              </li>
-              {/* RENAME */}
-              <li onClick={() => setRenameModalOpen(true)}>
-                <div className="flex gap-2 rounded-xl">
-                  <PencilSVG />
-                  <a>{t("operations.rename")}</a>
-                </div>
-              </li>
-            </div>
-          </DropdownMenu>
-        )}
-        <UnfollowModal
-          isOpen={unfollowModalOpen}
-          setIsOpen={setUnfollowModalOpen}
-          playlistID={playlist.id}
-          playlistName={playlist.name}
-          onClose={() => setUnfollowModalOpen(false)}
-          onSuccess={() => {
-            setIsLoading(false);
-            setTimeout(() => {
-              window.dispatchEvent(new Event("focus"));
-            }, 300);
-          }}
-          onConfirm={() => setIsLoading(true)}
-        />
-        <RenameModal
-          isOpen={renameModalOpen}
-          setIsOpen={setRenameModalOpen}
-          playlistID={playlist.id}
-          playlistName={playlist.name}
-          onClose={() => setRenameModalOpen(false)}
-          onSuccess={() => {
-            setIsLoading(false);
-            setTimeout(() => {
-              window.dispatchEvent(new Event("focus"));
-            }, 300);
-          }}
-          onConfirm={() => setIsLoading(true)}
-        />
-      </div>
-    </Link>
+      </Link>
+      {isLoading ? (
+        <LoadingSpinner className="mr-4" />
+      ) : (
+        <DropdownMenu intent={"darkest"}>
+          <div className="flex min-h-[15rem] flex-col [&>li]:grow [&>li]:text-base">
+            {/* SHUFFLE */}
+            <li
+              onClick={() => {
+                shuffle({ playlist: playlist });
+              }}
+            >
+              <div className="flex gap-2 rounded-xl">
+                <ShuffleSVG />
+                <a>{t("operations.shuffle")}</a>
+              </div>
+            </li>
+            {/* COPY */}
+            <li
+              onClick={() => {
+                copy({ playlist: playlist });
+              }}
+            >
+              <div className="flex gap-2 rounded-xl">
+                <CopySVG />
+                <a>{t("operations.copy")}</a>
+              </div>
+            </li>
+            {/* MERGE */}
+            <li>
+              <details>
+                <summary>
+                  <MergeSVG />
+                  <span>{t("operations.merge")}</span>
+                </summary>
+                <ul className="m-2 max-h-40 w-[11rem] overflow-auto rounded-xl bg-base-200 bg-opacity-80 px-0 pt-2 before:hidden">
+                  {paginatedData?.map((destination, i) => (
+                    <li
+                      ref={i === paginatedData.length - 1 ? ref : null}
+                      key={destination.id}
+                      className="z-20 px-3 py-1 hover:cursor-pointer"
+                      onClick={() =>
+                        merge({
+                          originId: playlist.id,
+                          originName: playlist.name,
+                          destinationName: destination.name,
+                          destinationId: destination.id,
+                        })
+                      }
+                    >
+                      <p className="p-2">{destination.name}</p>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </li>
+            {/* DELETE */}
+            <li onClick={() => setUnfollowModalOpen(true)}>
+              <div className="flex gap-2 rounded-xl">
+                <DeleteSVG />
+                <a>{t("operations.unfollow")}</a>
+              </div>
+            </li>
+            {/* RENAME */}
+            <li onClick={() => setRenameModalOpen(true)}>
+              <div className="flex gap-2 rounded-xl">
+                <PencilSVG />
+                <a>{t("operations.rename")}</a>
+              </div>
+            </li>
+          </div>
+        </DropdownMenu>
+      )}
+      <UnfollowModal
+        isOpen={unfollowModalOpen}
+        setIsOpen={setUnfollowModalOpen}
+        playlistID={playlist.id}
+        playlistName={playlist.name}
+        onClose={() => setUnfollowModalOpen(false)}
+        onSuccess={() => {
+          setIsLoading(false);
+          setTimeout(() => {
+            window.dispatchEvent(new Event("focus"));
+          }, 300);
+        }}
+        onConfirm={() => setIsLoading(true)}
+      />
+      <RenameModal
+        isOpen={renameModalOpen}
+        setIsOpen={setRenameModalOpen}
+        playlistID={playlist.id}
+        playlistName={playlist.name}
+        onClose={() => setRenameModalOpen(false)}
+        onSuccess={() => {
+          setIsLoading(false);
+          setTimeout(() => {
+            window.dispatchEvent(new Event("focus"));
+          }, 300);
+        }}
+        onConfirm={() => setIsLoading(true)}
+      />
+    </div>
   );
 }
 export default PlaylistComponent;
