@@ -26,7 +26,7 @@
   },
   "tags": {
     "error": "Oops, c'è stato un errore caricando i tag :(",
-    "empty": "Non hai tag, aggiungine qualcuno e torna qui",
+    "empty": "Non hai ancora associato tag a delle canzoni ",
     "most_used": "I tuoi tag più usati"
   }
 }
