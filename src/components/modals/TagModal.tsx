@@ -4,12 +4,12 @@ import { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { useStore } from "~/core/store";
+import { useToast } from "~/hooks/use-toast";
 import { type TagSchemaType, type TagType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
 import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
-import { useToast } from "~/hooks/use-toast";
 
 type Props = {
   trackId: string;
@@ -34,9 +34,11 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
   //prettier-ignore
   const {mutate } = api.tags.setTags.useMutation({
     onSuccess(data) {
-      console.log(data)
       setStoreTags(data);
       onClose();
+       setTimeout(() => {
+         window.dispatchEvent(new Event("focus"));
+       }, 300);
     },
     onError(){
       onClose();

@@ -25,7 +25,7 @@
   },
   "tags": {
     "error": "Oops, can't fetch tags :(",
-    "empty": "You have no tags, add some and come back here",
+    "empty": "You have not associated tags with any songs",
     "most_used": "Your most used Tags"
   }
 }

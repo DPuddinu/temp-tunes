@@ -12,12 +12,6 @@ const TagsCard = () => {
   const { data, isError, isLoading } = api.tags.orderTagsByName.useQuery(
     undefined,
     {
-      onSuccess(data) {
-        if (data.length === 0) {
-          const msg = t("tags.empty");
-          setMessage(msg);
-        }
-      },
       onError() {
         const msg = t("tags.error");
         setMessage(msg);
@@ -29,6 +23,11 @@ const TagsCard = () => {
     <RecapCard loading={isLoading} fallback={<RecapSkeleton />}>
       <RecapCard.Header>{t("tags.most_used")}</RecapCard.Header>
       <RecapCard.Container error={isError}>
+        {data?.length === 0 && (
+          <div className="grid place-items-center p-4">
+            <p>{t("tags.empty")}</p>
+          </div>
+        )}
         {data &&
           data.map((tag) => (
             <div
