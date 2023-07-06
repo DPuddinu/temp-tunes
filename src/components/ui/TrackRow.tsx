@@ -12,14 +12,7 @@ interface Props {
 const TrackRow = forwardRef<HTMLDivElement, Props>(({ track }, ref) => {
   const { t } = useTranslation("common");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { mutate: playTrack } = api.player.togglePlayPause.useMutation({
-    onError: () => {
-      console.log("error");
-    },
-    onSuccess(data, variables, context) {
-      console.log(data);
-    },
-  });
+  const { mutate: playTrack } = api.player.togglePlayPause.useMutation();
   return (
     <div
       className="group flex rounded-xl px-3 text-accent-content hover:bg-neutral"
@@ -50,6 +43,7 @@ const TrackRow = forwardRef<HTMLDivElement, Props>(({ track }, ref) => {
       </div>
       {track.id && (
         <TagModal
+          key={track.id}
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           trackId={track.id}

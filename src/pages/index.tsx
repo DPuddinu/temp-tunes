@@ -4,7 +4,8 @@ import { signIn } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { useRef } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useRef } from "react";
 import { Languages, type Language } from "~/core/settingsStore";
 import { langKey, useLanguage } from "~/hooks/use-language";
 import {
@@ -13,8 +14,14 @@ import {
   LinkedinSVG,
   TwitterSVG,
 } from "../components/ui/icons/index";
-
 const Landing = () => {
+  const router = useRouter();
+  useEffect(() => {
+    if (router.asPath.includes("callbackUrl")) {
+      router.push("/home");
+    }
+  }, [router]);
+
   return (
     <>
       <Head>
