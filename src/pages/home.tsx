@@ -1,12 +1,11 @@
 import MainLayout from "@components/MainLayout";
-import { useIntersection, useOs } from "@mantine/hooks";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useOs } from "@mantine/hooks";
 import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import type { TimeRangeType } from "src/types/spotify-types";
 import type { RecapPropsType } from "~/components/recap/cards/UserTopCard";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
@@ -61,42 +60,38 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
     [timeRange]
   );
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { ref, entry } = useIntersection({
-    root: containerRef.current,
-    threshold: 1,
-  });
-
-  useEffect(() => {
-    if (entry?.isIntersecting) {
-      console.log(entry);
-    }
-    console.log(entry);
-  }, [entry]);
+  const [selectedCard, setSelectedCard] = useState(0)
 
   return (
     <>
       {os === "android" || os === "ios" ? (
         <div className="flex flex-col justify-between gap-2">
-          <section className="carousel rounded-box w-full sm:hidden">
+          <div className="carousel rounded-box w-full sm:hidden">
             {cards?.map((card, i) => (
               <div
                 className="carousel-item w-full justify-center pr-2"
                 key={i}
-                ref={ref}
+                id={`item-${i}`}
               >
                 {card}
               </div>
             ))}
-          </section>
+          </div>
           <section className="hidden sm:grid sm:grid-cols-2 sm:gap-2 lg:grid-cols-3">
             {cards?.map((_, i) => (
               <div key={i} className="h-1 w-1 rounded-full bg-slate-300"></div>
             ))}
           </section>
-          <div className="flex justify-center gap-1 pt-3">
+          <div className="flex justify-center items-center gap-1 pt-3">
             {cards?.map((_, i) => (
-              <div key={i} className="h-1 w-1 rounded-full bg-slate-300"></div>
+              <a
+                href={`#item-${i}`}
+                key={i}
+                className={`btn ${selectedCard === i ? "btn-sm font-bold" : "btn-xs"}`}
+                onClick={()=> setSelectedCard(i)}
+              >
+                {i + 1}
+              </a>
             ))}
           </div>
         </div>
