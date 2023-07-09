@@ -8,19 +8,22 @@ const ThemeSwitcher = () => {
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
-  
+
   if (!mounted) {
     return null;
   }
 
   return (
-    <button onClick={toggleTheme}>
+    <button
+      onClick={toggleTheme}
+      className="bg-base-300 focus:bg-base-300 active:!bg-base-300"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
         strokeWidth={1.5}
-        className="h-6 w-6 stroke-primary-content "
+        className="h-6 w-6 stroke-base-content "
       >
         {theme === "dark" ? <Sun /> : <Moon />}
       </svg>

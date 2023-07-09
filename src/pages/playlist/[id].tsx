@@ -9,14 +9,15 @@ import MainLayout from "~/components/MainLayout";
 import TrackRow from "~/components/ui/TrackRow";
 import { PlaylistSkeleton } from "~/components/ui/skeletons/PlaylistSkeleton";
 import type { Language } from "~/core/settingsStore";
-import { useStore } from "~/core/store";
 import { langKey } from "~/hooks/use-language";
+import { useToast } from "~/hooks/use-toast";
 import type { PageWithLayout } from "~/types/page-types";
 import { type Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 
 const PlaylistPage: PageWithLayout = () => {
-  const { setMessage } = useStore();
+  const { setMessage } = useToast();
+
   const router = useRouter();
 
   const { isLoading, data } = api.spotify_playlist.getById.useQuery(

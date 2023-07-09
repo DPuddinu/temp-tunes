@@ -77,6 +77,41 @@ export const prismaRouter = createTRPCRouter({
       })) as TagSchemaType[];
       return createTagsObject(newTags);
     }),
+  getTagsByTrack: protectedProcedure.input(
+    z.object({
+      trackId: z.string()
+    })
+  ).query(async ({ ctx, input }) => {
+
+    const { trackId } = input;
+
+    const trackTags = await ctx.prisma.tag.findMany({
+      where: {
+        userId: ctx.session.user.id,
+        spotifyId: trackId,
+      },
+    });
+    return trackTags
+  }),
+
+  orderTagsByName: protectedProcedure.query(async ({ ctx }) => {
+    const trackTags = await ctx.prisma.tag.groupBy({
+      where: {
+        userId: ctx.session.user.id,
+      },
+      _count: {
+        name: true
+      },
+      by: ["name"],
+      orderBy: {
+        _count: {
+          name: 'desc'
+        }
+      },
+      take: 5
+    });
+    return trackTags
+  }),
 });
 export function createTagsObject(tags: TagSchemaType[]) {
   const tagsObject: TagsObject = {};

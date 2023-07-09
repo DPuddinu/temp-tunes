@@ -12,6 +12,7 @@ import { ArtistRow } from "../../ui/ArtistRow";
 import PaginationComponent from "../../ui/PaginationComponent";
 import TrackRow from "../../ui/TrackRow";
 import RecapCard from "../RecapCard";
+import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 
 export type RecapPropsType = {
   timeRange: TimeRangeType;
@@ -42,7 +43,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
   }, [timeRange]);
 
   return (
-    <RecapCard key={"card-top-rated"} intent={"active"} loading={isLoading}>
+    <RecapCard key={"card-top-rated"} intent={"active"} loading={isLoading} fallback={<RecapSkeleton/>}>
       <div className="grid grid-cols-2">
         {TopTypeArray.map((type) => (
           <RecapCard.Header

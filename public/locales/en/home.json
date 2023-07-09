@@ -22,5 +22,10 @@
     "instrumentalness": "Instrumental",
     "valence": "Positivity",
     "energy": "Energy"
+  },
+  "tags": {
+    "error": "Oops, can't fetch tags :(",
+    "empty": "You have not associated tags with any songs",
+    "most_used": "Your most used Tags"
   }
 }

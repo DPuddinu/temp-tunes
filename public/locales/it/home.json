@@ -18,10 +18,15 @@
   },
   "moodKeys": {
     "acousticness": "Acustica",
-    "danceability": "Ballabilità",
+    "danceability": "Ballabile",
     "duration_ms": "Durata",
     "instrumentalness": "Strumentale",
     "valence": "Positività",
     "energy": "Energia"
+  },
+  "tags": {
+    "error": "Oops, c'è stato un errore caricando i tag :(",
+    "empty": "Non hai ancora associato tag a delle canzoni ",
+    "most_used": "I tuoi tag più usati"
   }
 }

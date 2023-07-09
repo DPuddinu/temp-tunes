@@ -4,6 +4,7 @@ import { spotifyPlaylistRouter } from "./routers/spotify_playlist_router";
 import { spotifyUserRouter } from "./routers/spotify_user_router";
 import { templatesRouter } from "./routers/templates_router";
 import { userRouter } from "./routers/user_router";
+import { spotifyPlayerRouter } from "./routers/spotify_player";
 
 /**
  * This is the primary router for your server.
@@ -15,7 +16,8 @@ export const appRouter = createTRPCRouter({
   spotify_user: spotifyUserRouter,
   tags: prismaRouter,
   user: userRouter,
-  template: templatesRouter
+  template: templatesRouter,
+  player: spotifyPlayerRouter
 });
 
 // export type definition of API

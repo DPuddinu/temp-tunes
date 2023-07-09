@@ -1,4 +1,3 @@
-import { unknown } from "zod";
 import { spotifyDELETE, spotifyGET, spotifyPOST, spotifyPUT } from "~/core/spotifyFetch";
 import type {
   Artist,
@@ -239,4 +238,34 @@ export async function getPlaylistById(playlistId: string, access_token: string) 
   }
   playlist.tracks = tracks
   return playlist
+}
+type PlayProps = {
+  uris?: string[];
+  contextUri?: string
+}
+export async function play(access_token: string, uris?: string[] | undefined | null, contextUri?: string | undefined | null) {
+  const body: PlayProps = {}
+  if (uris) body.uris = uris
+  if (contextUri) body.contextUri = contextUri
+  return await spotifyPUT({ url: '/me/player/play', access_token: access_token, body: JSON.stringify(body) })
+}
+export async function pause(access_token: string) {
+  return await spotifyPUT({ url: '/me/player/pause', access_token: access_token })
+}
+
+
+export async function getDevices(access_token: string) {
+  return (await spotifyGET('/me/player/devices', access_token).then((resp) => resp.json()).catch((error) => console.error(error)));
+}
+
+export async function getPlaybackState(access_token: string) {
+  return (await spotifyGET('/me/player', access_token).then((resp) => resp.json()).catch((error) => console.error(error)));
+}
+
+export async function transferPlaybackTo(access_token: string, device_id: string) {
+  const body = {
+    device_ids: [device_id],
+    play: false
+  }
+  return await spotifyPUT({ url: '/me/player', access_token: access_token, body: JSON.stringify(body) })
 }

@@ -2,7 +2,7 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getCookie } from "cookies-next";
-import { GetServerSideProps } from "next";
+import type { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRef, useState } from "react";
 import {
@@ -13,17 +13,18 @@ import {
 } from "react-hook-form";
 import { z } from "zod";
 import MainLayout from "~/components/MainLayout";
+import { SpotifyWebPlayer } from "~/components/WebPlayback";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
-import {} from "~/components/ui/icons/ArrowUpSVG";
-import {} from "~/components/ui/icons/DeleteSVG";
+import { } from "~/components/ui/icons/ArrowUpSVG";
+import { } from "~/components/ui/icons/DeleteSVG";
 import {
   ArrowDownSVG,
   ArrowUpSVG,
   DeleteSVG,
 } from "~/components/ui/icons/index";
-import { Language } from "~/core/settingsStore";
-import { useStore } from "~/core/store";
+import type { Language } from "~/core/settingsStore";
 import { langKey } from "~/hooks/use-language";
+import { useToast } from "~/hooks/use-toast";
 import type { PageWithLayout } from "~/types/page-types";
 import { TemplateEntrySchema } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
@@ -31,7 +32,8 @@ import { api } from "~/utils/api";
 const Templates: PageWithLayout = () => {
   return (
     <div>
-      <CreateTemplate />
+      {/* <CreateTemplate /> */}
+      <SpotifyWebPlayer/>
     </div>
   );
 };
@@ -46,7 +48,8 @@ const TemplateFormSchema = z.object({
 type TemplateFormType = z.infer<typeof TemplateFormSchema>;
 
 function CreateTemplate() {
-  const { setMessage } = useStore();
+  const { setMessage } = useToast();
+
   const entryRef = useRef<HTMLInputElement>(null);
   const [parent] = useAutoAnimate();
   const [selectedRow, setSelectedRow] = useState<number | undefined>();
