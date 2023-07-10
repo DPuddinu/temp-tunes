@@ -5,7 +5,8 @@ import type { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { useSwipeable } from "react-swipeable";
 import type { TimeRangeType } from "src/types/spotify-types";
 import type { RecapPropsType } from "~/components/recap/cards/UserTopCard";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
@@ -59,17 +60,22 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
     ],
     [timeRange]
   );
+  const handlers = useSwipeable({
+    onSwipedLeft: (eventData) => console.log("User Swiped Left!", eventData),
+    onSwipedRight: (eventData) => console.log("User Swiped Right!", eventData),
+    preventScrollOnSwipe: true,
+    trackTouch: true,
+  });
 
-  const [selectedCard, setSelectedCard] = useState(0)
-
+  const [selectedCard, setSelectedCard] = useState(0);
   return (
     <>
       {os === "android" || os === "ios" ? (
         <div className="flex flex-col justify-between gap-2">
-          <div className="carousel rounded-box w-full sm:hidden">
+          <div className="carousel rounded-box w-full sm:hidden" {...handlers}>
             {cards?.map((card, i) => (
               <div
-                className="carousel-item w-full justify-center pr-2"
+                className="carousel-item w-full touch-none justify-center pr-2"
                 key={i}
                 id={`item-${i}`}
               >
@@ -82,13 +88,15 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
               <div key={i} className="h-1 w-1 rounded-full bg-slate-300"></div>
             ))}
           </section>
-          <div className="flex justify-center items-center gap-1 pt-3">
+          <div className="flex items-center justify-center gap-1 pt-3">
             {cards?.map((_, i) => (
               <a
                 href={`#item-${i}`}
                 key={i}
-                className={`btn ${selectedCard === i ? "btn-sm font-bold" : "btn-xs"}`}
-                onClick={()=> setSelectedCard(i)}
+                className={`btn ${
+                  selectedCard === i ? "btn-sm font-bold" : "btn-xs"
+                }`}
+                onClick={() => setSelectedCard(i)}
               >
                 {i + 1}
               </a>
