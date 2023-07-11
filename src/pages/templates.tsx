@@ -13,10 +13,9 @@ import {
 } from "react-hook-form";
 import { z } from "zod";
 import MainLayout from "~/components/MainLayout";
-import { SpotifyWebPlayer } from "~/components/WebPlayback";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
-import { } from "~/components/ui/icons/ArrowUpSVG";
-import { } from "~/components/ui/icons/DeleteSVG";
+import {} from "~/components/ui/icons/ArrowUpSVG";
+import {} from "~/components/ui/icons/DeleteSVG";
 import {
   ArrowDownSVG,
   ArrowUpSVG,
@@ -32,8 +31,9 @@ import { api } from "~/utils/api";
 const Templates: PageWithLayout = () => {
   return (
     <div>
-      {/* <CreateTemplate /> */}
-      <SpotifyWebPlayer/>
+      <section></section>
+      <section></section>
+      <CreateTemplate />
     </div>
   );
 };
@@ -73,14 +73,14 @@ function CreateTemplate() {
   });
 
   const onSubmit: SubmitHandler<TemplateFormType> = (data) =>
-  mutate({
-    name: data.name,
-    entries: data.entries,
-  });
+    mutate({
+      name: data.name,
+      entries: data.entries,
+    });
 
   return (
     <form
-      className="min-h-60 flex flex-col justify-between gap-2 rounded-xl bg-base-300 p-2 shadow"
+      className="min-h-60 flex max-w-sm flex-col justify-between gap-2 rounded-xl bg-base-300 p-2 shadow"
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex w-full flex-col gap-2" ref={parent}>
@@ -227,4 +227,3 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     },
   };
 };
-

@@ -9,7 +9,7 @@ type DropdownProps = {
   className?: string;
 } & VariantProps<typeof DropdownMenuContentCva>;
 
-export function DropdownMenu({ children, intent, className }: DropdownProps) {
+const DropdownMenu = ({ children, intent, className }: DropdownProps) => {
   return (
     <div className={cn("dropdown-bottom dropdown-end dropdown", className)}>
       <label
@@ -24,3 +24,28 @@ export function DropdownMenu({ children, intent, className }: DropdownProps) {
     </div>
   );
 }
+DropdownMenu.displayName = "DropdownMenu";
+export interface DropdownOptionProps {
+  label: string;
+  onClick: () => void;
+}
+DropdownMenu.Options = function DropdownMenuOptions({options}: {options: DropdownOptionProps[]}) {
+  return (
+    <>
+      {options.map((opt) => (
+        <li
+          key={opt.label}
+          className="disabled bg-transparent"
+          onClick={opt.onClick}
+        >
+          <div className="flex gap-2 rounded-xl">
+            <a>{opt.label}</a>
+          </div>
+        </li>
+      ))}
+    </>
+  );
+};
+
+
+export default DropdownMenu

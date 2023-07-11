@@ -3,13 +3,13 @@ import { useTranslation } from "next-i18next";
 import React, { forwardRef, useState } from "react";
 import type { Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
-import { DropdownMenu } from "./DropdownMenu";
-import { TagSVG } from "./icons/TagSVG";
+import DropdownMenu, { type DropdownOptionProps } from "./DropdownMenu";
 interface Props {
   track: Track;
+  options?: DropdownOptionProps[];
 }
 
-const TrackRow = forwardRef<HTMLDivElement, Props>(({ track }, ref) => {
+const TrackRow = forwardRef<HTMLDivElement, Props>(({ track, options }, ref) => {
   const { t } = useTranslation("common");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { mutate: playTrack } = api.player.togglePlayPause.useMutation();
@@ -32,14 +32,11 @@ const TrackRow = forwardRef<HTMLDivElement, Props>(({ track }, ref) => {
             {track.artists?.map((artist) => artist.name).join(", ")}
           </p>
         </div>
-        <DropdownMenu intent={"light"}>
-          <li onClick={() => setIsModalOpen(true)} className="bg-transparent">
-            <div className="flex gap-2 rounded-xl">
-              <TagSVG />
-              <a>{t("edit_tag")}</a>
-            </div>
-          </li>
-        </DropdownMenu>
+        {options && (
+          <DropdownMenu intent={"light"}>
+            <DropdownMenu.Options options={options}/>
+          </DropdownMenu>
+        )}
       </div>
       {track.id && (
         <TagModal

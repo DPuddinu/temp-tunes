@@ -97,11 +97,6 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
               </div>
             ))}
           </div>
-          <section className="hidden sm:grid sm:grid-cols-2 sm:gap-2 lg:grid-cols-3">
-            {cards?.map((_, i) => (
-              <div key={i} className="h-1 w-1 rounded-full bg-slate-300"></div>
-            ))}
-          </section>
           <div className="flex items-center justify-center gap-1 pt-3">
             {cards?.map((_, i) => (
               <div
@@ -112,6 +107,9 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
               />
             ))}
           </div>
+          <section className="hidden sm:grid sm:grid-cols-2 sm:gap-2 lg:grid-cols-3">
+            {cards.map((card) => card)}
+          </section>
         </div>
       ) : (
         <section className="sm:grid sm:grid-cols-2 sm:gap-2 lg:grid-cols-3">
