@@ -89,7 +89,7 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
           <div className="carousel rounded-box w-full sm:hidden" {...handlers}>
             {cards?.map((card, i) => (
               <div
-                className="carousel-item w-full touch-none justify-center"
+                className="carousel-item w-full touch-none touch-pan-y justify-center"
                 key={i}
                 id={`item-${i}`}
               >
