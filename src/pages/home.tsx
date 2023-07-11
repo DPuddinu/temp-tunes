@@ -5,8 +5,7 @@ import type { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { useSwipeable } from "react-swipeable";
 import type { TimeRangeType } from "src/types/spotify-types";
 import type { RecapPropsType } from "~/components/recap/cards/UserTopCard";
@@ -52,7 +51,6 @@ const RecommendedCard = dynamic(() => import("~/components/recap/cards/Recommend
 
 const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
   const os = useOs();
-  const router = useRouter();
   const cards = useMemo(
     () => [
       <TopRatedCard timeRange={timeRange} key={"topRatedCard"} />,
