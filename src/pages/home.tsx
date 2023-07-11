@@ -5,6 +5,7 @@ import type { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 import { useMemo, useRef, useState } from "react";
 import { useSwipeable } from "react-swipeable";
 import type { TimeRangeType } from "src/types/spotify-types";
@@ -51,6 +52,7 @@ const RecommendedCard = dynamic(() => import("~/components/recap/cards/Recommend
 
 const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
   const os = useOs();
+  const router = useRouter();
   const cards = useMemo(
     () => [
       <TopRatedCard timeRange={timeRange} key={"topRatedCard"} />,
@@ -61,8 +63,22 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
     [timeRange]
   );
   const handlers = useSwipeable({
-    onSwipedLeft: (eventData) => console.log("User Swiped Left!", eventData),
-    onSwipedRight: (eventData) => console.log("User Swiped Right!", eventData),
+    onSwipedLeft: () =>
+      setSelectedCard((card) => {
+        if (card + 1 < cards.length) {
+          scrollTo(`item-${card + 1}`);
+          return card + 1;
+        }
+        return card;
+      }),
+    onSwipedRight: () =>
+      setSelectedCard((card) => {
+        if (selectedCard - 1 >= 0) {
+          scrollTo(`item-${card - 1}`);
+          return card - 1;
+        }
+        return card;
+      }),
     preventScrollOnSwipe: true,
     trackTouch: true,
   });
@@ -75,7 +91,7 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
           <div className="carousel rounded-box w-full sm:hidden" {...handlers}>
             {cards?.map((card, i) => (
               <div
-                className="carousel-item w-full touch-none justify-center pr-2"
+                className="carousel-item w-full touch-none justify-center"
                 key={i}
                 id={`item-${i}`}
               >
@@ -90,16 +106,12 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
           </section>
           <div className="flex items-center justify-center gap-1 pt-3">
             {cards?.map((_, i) => (
-              <a
-                href={`#item-${i}`}
+              <div
                 key={i}
-                className={`btn ${
-                  selectedCard === i ? "btn-sm font-bold" : "btn-xs"
-                }`}
-                onClick={() => setSelectedCard(i)}
-              >
-                {i + 1}
-              </a>
+                className={`${
+                  selectedCard === i ? "scale-150" : ""
+                } h-1 w-1 rounded-full bg-slate-300 transition-transform`}
+              />
             ))}
           </div>
         </div>
@@ -142,3 +154,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     },
   };
 };
+
+function scrollTo(targetId: string) {
+  document
+    .getElementById(targetId)
+    ?.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+}
