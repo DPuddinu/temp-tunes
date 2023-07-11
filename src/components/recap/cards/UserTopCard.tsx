@@ -1,5 +1,8 @@
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
+import { TagModal } from "~/components/modals/TagModal";
+import type { DropdownOptionProps } from "~/components/ui/DropdownMenu";
+import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import {
   TopTypeArray,
   type Artist,
@@ -10,9 +13,8 @@ import {
 import { api } from "~/utils/api";
 import { ArtistRow } from "../../ui/ArtistRow";
 import PaginationComponent from "../../ui/PaginationComponent";
-import TrackRow from "../../ui/TrackRow";
+import TrackRow, { type TrackDropdownOptions } from "../../ui/TrackRow";
 import RecapCard from "../RecapCard";
-import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 
 export type RecapPropsType = {
   timeRange: TimeRangeType;
@@ -26,6 +28,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
   const { t } = useTranslation("home");
   const [selectedType, setSelectedType] = useState<TopType>("tracks");
   const [selectedPage, setSelectedPage] = useState(0);
+
   const { data, isLoading, isError } = api.spotify_user.getTopRated.useQuery(
     {
       type: selectedType,
@@ -43,7 +46,12 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
   }, [timeRange]);
 
   return (
-    <RecapCard key={"card-top-rated"} intent={"active"} loading={isLoading} fallback={<RecapSkeleton/>}>
+    <RecapCard
+      key={"card-top-rated"}
+      intent={"active"}
+      loading={isLoading}
+      fallback={<RecapSkeleton />}
+    >
       <div className="grid grid-cols-2">
         {TopTypeArray.map((type) => (
           <RecapCard.Header
@@ -75,14 +83,18 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
               {selectedType === "artists" ? (
                 <ArtistRow artist={item as Artist} key={i} />
               ) : (
-                <TrackRow track={item as Track} key={i} />
+                <TrackRow
+                  track={item as Track}
+                  key={i}
+                  options={["EDIT_TAGS", "ADD_TO_PLAYLIST", "ADD_TO_QUEUE"]}
+                />
               )}
             </>
           ))}
         {data && data.totalItems > itemsPerPage && (
           <PaginationComponent
             key={"pagination"}
-            nextDisabled={selectedPage + 1 > data.items.length -1}
+            nextDisabled={selectedPage + 1 > data.items.length - 1}
             prevDisabled={selectedPage - 1 < 0}
             onNext={() =>
               setSelectedPage((page) => {

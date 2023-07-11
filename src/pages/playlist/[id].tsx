@@ -85,6 +85,7 @@ const PlaylistPage: PageWithLayout = () => {
                 key={track?.id ?? i}
                 track={track as Track}
                 ref={i === paginatedData.length - 1 ? ref : null}
+                options={["EDIT_TAGS", "ADD_TO_QUEUE", "ADD_TO_PLAYLIST"]}
               />
             ))}
         </div>

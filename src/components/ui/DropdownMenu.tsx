@@ -23,22 +23,27 @@ const DropdownMenu = ({ children, intent, className }: DropdownProps) => {
       </ul>
     </div>
   );
-}
+};
 DropdownMenu.displayName = "DropdownMenu";
 export interface DropdownOptionProps {
   label: string;
+  disabled?: boolean;
   onClick: () => void;
 }
-DropdownMenu.Options = function DropdownMenuOptions({options}: {options: DropdownOptionProps[]}) {
+DropdownMenu.Options = function DropdownMenuOptions({
+  options,
+}: {
+  options: DropdownOptionProps[];
+}) {
   return (
     <>
       {options.map((opt) => (
         <li
           key={opt.label}
-          className="disabled bg-transparent"
+          className={cn("bg-transparent", opt.disabled && "disabled")}
           onClick={opt.onClick}
         >
-          <div className="flex gap-2 rounded-xl">
+          <div className={"rounded-xl"}>
             <a>{opt.label}</a>
           </div>
         </li>
@@ -47,5 +52,4 @@ DropdownMenu.Options = function DropdownMenuOptions({options}: {options: Dropdow
   );
 };
 
-
-export default DropdownMenu
+export default DropdownMenu;

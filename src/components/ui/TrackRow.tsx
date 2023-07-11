@@ -1,17 +1,54 @@
 import { TagModal } from "@components/modals/TagModal";
 import { useTranslation } from "next-i18next";
-import React, { forwardRef, useState } from "react";
+import { forwardRef, useMemo, useState } from "react";
 import type { Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 import DropdownMenu, { type DropdownOptionProps } from "./DropdownMenu";
 interface Props {
   track: Track;
-  options?: DropdownOptionProps[];
+  options?: TrackDropdownOptions[];
 }
+export type TrackDropdownOptions = 'ADD_TO_QUEUE' | 'ADD_TO_PLAYLIST' | 'EDIT_TAGS'
 
 const TrackRow = forwardRef<HTMLDivElement, Props>(({ track, options }, ref) => {
   const { t } = useTranslation("common");
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const dropdownOptions: DropdownOptionProps[] = useMemo(() => {
+    if(!options) return []
+    const opts: DropdownOptionProps[] = options.map((option) => {
+      let action: DropdownOptionProps;
+      switch (option) {
+        case "EDIT_TAGS": {
+          action = {
+            label: t("edit_tag"),
+            onClick: () => setIsModalOpen(true),
+          };
+          break;
+        }
+        case "ADD_TO_QUEUE": {
+          action = {
+            label: t("add_to_queue"),
+            disabled: true,
+            onClick: () => false,
+          };
+          break;
+        }
+        case "ADD_TO_PLAYLIST": {
+          action = {
+            label: t("add_to_playlist"),
+            disabled: true,
+            onClick: () => false,
+          };
+          break;
+        }
+      }
+      return action;
+    });
+    return opts
+
+  }, [options, t]);
+
   const { mutate: playTrack } = api.player.togglePlayPause.useMutation();
   return (
     <div
@@ -34,7 +71,7 @@ const TrackRow = forwardRef<HTMLDivElement, Props>(({ track, options }, ref) => 
         </div>
         {options && (
           <DropdownMenu intent={"light"}>
-            <DropdownMenu.Options options={options}/>
+            <DropdownMenu.Options options={dropdownOptions} />
           </DropdownMenu>
         )}
       </div>
