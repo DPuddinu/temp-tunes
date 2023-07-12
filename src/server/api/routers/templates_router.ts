@@ -16,7 +16,7 @@ export const templatesRouter = createTRPCRouter({
       if (!ctx.session.user.name) {
         throw new TRPCError({ message: "Username is required", code: "BAD_REQUEST" })
       }
-      
+
       return await ctx.prisma.playlistTemplate.create({
         data: {
           stars: 0,
@@ -30,37 +30,53 @@ export const templatesRouter = createTRPCRouter({
         }
       })
     }),
-  editTemplate: protectedProcedure
-    .query(async ({ ctx }) => {
+  // editTemplate: protectedProcedure
+  //   .query(async ({ ctx }) => {
 
-      return
-    }),
-  deleteTemplate: protectedProcedure
-    .query(async ({ ctx }) => {
+  //     return
+  //   }),
+  // deleteTemplate: protectedProcedure
+  //   .query(async ({ ctx }) => {
 
-      return
-    }),
-  voteTemplate: protectedProcedure
-    .query(async ({ ctx }) => {
+  //     return
+  //   }),
+  // voteTemplate: protectedProcedure
+  //   .query(async ({ ctx }) => {
 
-      return
-    }),
-  searchTemplate: protectedProcedure
-    .query(async ({ ctx }) => {
+  //     return
+  //   }),
+  // searchTemplate: protectedProcedure
+  //   .query(async ({ ctx }) => {
 
-      return
-    }),
-  getMostVotedTemplates: protectedProcedure
-    .query(async ({ ctx }) => {
+  //     return
+  //   }),
+  // getMostVotedTemplates: protectedProcedure
+  //   .query(async ({ ctx }) => {
 
-      return
-    }),
-  getTemplatesByUser: protectedProcedure
+  //     return
+  //   }),
+  getCurrentUserTemplates: protectedProcedure
     .query(async ({ ctx }) => {
 
       return ctx.prisma.playlistTemplate.findMany({
         where: {
           userId: ctx.session.user.id
+        },
+        include: {
+          templateEntries: true
+        }
+      })
+    }),
+  getTemplatesByUser: protectedProcedure.input(
+    z.object({
+      userId: z.string(),
+    })
+  )
+    .query(async ({ ctx, input }) => {
+      const { userId } = input;
+      return ctx.prisma.playlistTemplate.findMany({
+        where: {
+          userId: userId
         }
       })
     }),

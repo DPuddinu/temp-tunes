@@ -37,14 +37,14 @@ DropdownMenu.Options = function DropdownMenuOptions({
 }) {
   return (
     <>
-      {options.map((opt) => (
+      {options.map(({ label, onClick, disabled }) => (
         <li
-          key={opt.label}
-          className={cn("bg-transparent", opt.disabled && "disabled")}
-          onClick={opt.onClick}
+          key={label}
+          className={cn("bg-transparent", disabled && "disabled")}
+          onClick={onClick}
         >
           <div className={"rounded-xl"}>
-            <a>{opt.label}</a>
+            <a>{label}</a>
           </div>
         </li>
       ))}

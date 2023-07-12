@@ -1,7 +1,5 @@
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
-import { TagModal } from "~/components/modals/TagModal";
-import type { DropdownOptionProps } from "~/components/ui/DropdownMenu";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import {
   TopTypeArray,
@@ -13,7 +11,7 @@ import {
 import { api } from "~/utils/api";
 import { ArtistRow } from "../../ui/ArtistRow";
 import PaginationComponent from "../../ui/PaginationComponent";
-import TrackRow, { type TrackDropdownOptions } from "../../ui/TrackRow";
+import TrackRow from "../../ui/TrackRow";
 import RecapCard from "../RecapCard";
 
 export type RecapPropsType = {

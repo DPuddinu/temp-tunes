@@ -14,8 +14,8 @@ const TrackRow = forwardRef<HTMLDivElement, Props>(({ track, options }, ref) => 
   const { t } = useTranslation("common");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const dropdownOptions: DropdownOptionProps[] = useMemo(() => {
-    if(!options) return []
+  const dropdownOptions: DropdownOptionProps[] | undefined = useMemo(() => {
+    if(!options) return undefined;
     const opts: DropdownOptionProps[] = options.map((option) => {
       let action: DropdownOptionProps;
       switch (option) {
@@ -69,7 +69,7 @@ const TrackRow = forwardRef<HTMLDivElement, Props>(({ track, options }, ref) => 
             {track.artists?.map((artist) => artist.name).join(", ")}
           </p>
         </div>
-        {options && (
+        {dropdownOptions && (
           <DropdownMenu intent={"light"}>
             <DropdownMenu.Options options={dropdownOptions} />
           </DropdownMenu>

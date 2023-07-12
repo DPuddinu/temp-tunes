@@ -5,5 +5,9 @@
   "remove_from_playlist": "Remove from playlist",
   "filter": "Filter",
   "logout": "Log out",
-  "change_theme": "Change theme"
+  "change_theme": "Change theme",
+  "create": "Create",
+  "edit": "Edit",
+  "share": "Share",
+  "delete": "Delete"
 }
