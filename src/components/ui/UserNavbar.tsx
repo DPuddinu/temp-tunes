@@ -57,7 +57,7 @@ const UserNavbar = ({ name, image }: UserNavbarProps) => {
 
             <ul
               tabIndex={0}
-              className="menu-compact dropdown-content menu rounded-box mt-3 w-52 border border-base-100 bg-base-300 p-2 shadow-lg"
+              className="menu-compact z-40 dropdown-content menu rounded-box mt-3 w-52 border border-base-100 bg-base-300 p-2 shadow-lg"
             >
               <li>
                 <SpotifyWebPlayer />

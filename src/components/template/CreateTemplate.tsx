@@ -1,45 +1,14 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getCookie } from "cookies-next";
-import type { GetServerSideProps } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRef, useState } from "react";
-import {
-  useFieldArray,
-  useForm,
-  type SubmitHandler,
-  type UseFormRegister,
-} from "react-hook-form";
+import { type SubmitHandler, type UseFormRegister, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import MainLayout from "~/components/MainLayout";
-import { SpotifyWebPlayer } from "~/components/WebPlayback";
-import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
-import { } from "~/components/ui/icons/ArrowUpSVG";
-import { } from "~/components/ui/icons/DeleteSVG";
-import {
-  ArrowDownSVG,
-  ArrowUpSVG,
-  DeleteSVG,
-} from "~/components/ui/icons/index";
-import type { Language } from "~/core/settingsStore";
-import { langKey } from "~/hooks/use-language";
 import { useToast } from "~/hooks/use-toast";
-import type { PageWithLayout } from "~/types/page-types";
 import { TemplateEntrySchema } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
-
-const Templates: PageWithLayout = () => {
-  return (
-    <div>
-      {/* <CreateTemplate /> */}
-      <SpotifyWebPlayer/>
-    </div>
-  );
-};
-
-Templates.getLayout = (page) => <MainLayout>{page}</MainLayout>;
-export default Templates;
+import { LoadingSpinner } from "../ui/LoadingSpinner";
+import { Transition } from "@headlessui/react";
+import { DeleteSVG, ArrowUpSVG, ArrowDownSVG } from "../ui/icons";
 
 const TemplateFormSchema = z.object({
   name: z.string().min(3).max(16),
@@ -73,14 +42,14 @@ function CreateTemplate() {
   });
 
   const onSubmit: SubmitHandler<TemplateFormType> = (data) =>
-  mutate({
-    name: data.name,
-    entries: data.entries,
-  });
+    mutate({
+      name: data.name,
+      entries: data.entries,
+    });
 
   return (
     <form
-      className="min-h-60 flex flex-col justify-between gap-2 rounded-xl bg-base-300 p-2 shadow"
+      className="min-h-60 flex max-w-sm flex-col justify-between gap-2 rounded-xl bg-base-300 p-2 shadow"
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex w-full flex-col gap-2" ref={parent}>
@@ -214,17 +183,4 @@ const TemplateRow = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const language = getCookie(langKey, { req, res }) as Language;
-
-  return {
-    props: {
-      //prettier- ignore
-      ...(await serverSideTranslations(language ?? "en", [
-        "templates",
-        "common",
-      ])),
-    },
-  };
-};
-
+export default CreateTemplate;

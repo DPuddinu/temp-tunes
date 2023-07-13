@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { RenameModal } from "~/components/modals/RemaneModal";
 import { UnfollowModal } from "~/components/modals/UnfollowModal";
-import { DropdownMenu } from "~/components/ui/DropdownMenu";
+import DropdownMenu  from "~/components/ui/DropdownMenu";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import {
   CopySVG,

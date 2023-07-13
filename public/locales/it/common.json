@@ -1,6 +1,14 @@
 {
   "edit_tag": "Modifica tag",
+  "add_to_queue": "Aggiungi in coda",
+  "add_to_playlist": "Aggiungi alla playlist",
+  "remove_from_playlist": "Rimuovi dalla playlist",
   "filter": "Filtra",
   "logout": "Esci",
-  "change_theme": "Cambia tema"
+  "change_theme": "Cambia tema",
+  "create": "Crea",
+  "share": "Condividi",
+  "edit": "Modifica",
+  "delete": "Elimina",
+  "create_playlist": "Crea playlist"
 }

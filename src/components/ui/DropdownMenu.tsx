@@ -9,7 +9,7 @@ type DropdownProps = {
   className?: string;
 } & VariantProps<typeof DropdownMenuContentCva>;
 
-export function DropdownMenu({ children, intent, className }: DropdownProps) {
+const DropdownMenu = ({ children, intent, className }: DropdownProps) => {
   return (
     <div className={cn("dropdown-bottom dropdown-end dropdown", className)}>
       <label
@@ -23,4 +23,33 @@ export function DropdownMenu({ children, intent, className }: DropdownProps) {
       </ul>
     </div>
   );
+};
+DropdownMenu.displayName = "DropdownMenu";
+export interface DropdownOptionProps {
+  label: string;
+  disabled?: boolean;
+  onClick: () => void;
 }
+DropdownMenu.Options = function DropdownMenuOptions({
+  options,
+}: {
+  options: DropdownOptionProps[];
+}) {
+  return (
+    <>
+      {options.map(({ label, onClick, disabled }) => (
+        <li
+          key={label}
+          className={cn("bg-transparent", disabled && "disabled")}
+          onClick={onClick}
+        >
+          <div className={"rounded-xl"}>
+            <a>{label}</a>
+          </div>
+        </li>
+      ))}
+    </>
+  );
+};
+
+export default DropdownMenu;

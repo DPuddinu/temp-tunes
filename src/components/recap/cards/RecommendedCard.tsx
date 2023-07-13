@@ -18,7 +18,7 @@ const RecommendedCard = () => {
     <RecapCard
       key={"card-recommended"}
       loading={isLoading}
-      fallback={<RecapSkeleton/>}
+      fallback={<RecapSkeleton />}
     >
       <RecapCard.Header key={"card-recommended"}>
         <p>{t("recap.for_you")}</p>
@@ -26,7 +26,9 @@ const RecommendedCard = () => {
       <RecapCard.Container key={"container-recommended"} error={isError}>
         {data &&
           data.tracks.length > 0 &&
-          data.tracks.map((track) => <TrackRow track={track} key={track.id} />)}
+          data.tracks.map((track) => (
+            <TrackRow track={track} key={track.id} options={["EDIT_TAGS"]} />
+          ))}
       </RecapCard.Container>
     </RecapCard>
   );
