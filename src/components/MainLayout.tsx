@@ -47,7 +47,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
         className="drawer-toggle"
         ref={openDrawer}
       />
-      <div className="drawer-content flex h-screen w-screen flex-col bg-base-100">
+      <div className="drawer-content flex h-full w-screen flex-col bg-base-100">
         <nav>
           {session ? (
             <UserNavbar
