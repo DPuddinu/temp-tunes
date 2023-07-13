@@ -6,14 +6,6 @@ html,
 body {
   height: 100%;
 }
-@layer base {
-  h1 {
-    @apply text-2xl;
-  }
-  h2 {
-    @apply text-xl;
-  }
-}
 
 ::-webkit-scrollbar {
   width: 8px;

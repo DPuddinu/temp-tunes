@@ -3,12 +3,17 @@ import { cn } from "~/utils/utils";
 interface AccordionProps {
   children: React.ReactNode;
   className?: string;
+  arrow?: boolean;
 }
-const Accordion = ({ children, className }: AccordionProps) => {
+const Accordion = ({ children, className, arrow = true }: AccordionProps) => {
   return (
     <div
       tabIndex={0}
-      className={cn("collapse-arrow collapse bg-base-300", className)}
+      className={cn(
+        " collapse bg-base-300",
+        className,
+        arrow && "collapse-arrow"
+      )}
     >
       <input type="checkbox" />
       {children}
