@@ -1,22 +1,20 @@
 import { type PlaylistTemplate, type TemplateEntry } from "@prisma/client";
 import { useTranslation } from "next-i18next";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useToast } from "~/hooks/use-toast";
 import { api } from "~/utils/api";
 import { cn } from "~/utils/utils";
-import Accordion from "../ui/Accordion";
 import DropdownMenu from "../ui/DropdownMenu";
-import { LoadingSpinner } from "../ui/LoadingSpinner";
-import { ArrowSVG, ArrowUpSVG } from "../ui/icons";
+import { ArrowSVG } from "../ui/icons";
+import { TemplatesSkeleton } from "../ui/skeletons/TemplatesSkeleton";
 
-export const MyTemplates = () => {
+const MyTemplates = () => {
   const { setMessage } = useToast();
   const { t } = useTranslation("templates");
-  const { t: t_common } = useTranslation("common");
   const { data, isLoading } = api.template.getCurrentUserTemplates.useQuery(
     undefined,
     {
-      onError(err) {
+      onError() {
         const msg = t("get_error");
         setMessage(msg);
       },
@@ -24,14 +22,16 @@ export const MyTemplates = () => {
   );
 
   return (
-    <section>
-      <h1 className="mb-4 text-3xl font-semibold">{t("my_templates")}</h1>
-      {data &&
-        data.map((template) => (
-          <TemplateRow key={template.id} template={template} />
-        ))}
-      {isLoading && <LoadingSpinner />}
-    </section>
+    <>
+      {data && (
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {data.map((template) => (
+            <TemplateRow key={template.id} template={template} />
+          ))}
+        </div>
+      )}
+      {isLoading && <TemplatesSkeleton />}
+    </>
   );
 };
 
@@ -49,7 +49,7 @@ const TemplateRow = ({
   return (
     <div className="rounded-box  bg-base-300 p-4 shadow">
       <div className="flex items-center justify-between">
-        <div className="truncate grow" onClick={() => setOpen((open) => !open)}>
+        <div className="grow truncate" onClick={() => setOpen((open) => !open)}>
           <h2 className="truncate text-3xl">{name}</h2>
           <p className="truncate text-sm">{description}</p>
         </div>
@@ -69,6 +69,11 @@ const TemplateRow = ({
               },
               {
                 label: t("share"),
+                onClick: () => false,
+                disabled: true,
+              },
+              {
+                label: t("create_playlist"),
                 onClick: () => false,
                 disabled: true,
               },
@@ -100,3 +105,4 @@ const TemplateRow = ({
     </div>
   );
 };
+export default MyTemplates;

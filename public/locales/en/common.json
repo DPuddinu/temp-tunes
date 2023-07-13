@@ -9,5 +9,6 @@
   "create": "Create",
   "edit": "Edit",
   "share": "Share",
-  "delete": "Delete"
+  "delete": "Delete",
+  "create_playlist": "Create playlist"
 }
