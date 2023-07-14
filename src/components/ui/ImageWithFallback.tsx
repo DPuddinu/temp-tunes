@@ -26,7 +26,7 @@ export const ImageWithFallback = ({
         height={height}
         width={width}
         quality={quality}
-        alt=''
+        alt='' 
       />
     </ImageErrorBoundary>
   );
