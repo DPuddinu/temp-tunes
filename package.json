@@ -11,7 +11,8 @@
     "prisma-align": "pnpx prisma db push",
     "update-prisma-schema": "pnpx prisma migrate dev",
     "prisma-generate-client": "pnpx prisma generate",
-    "tailwind": "pnpx tailwindcss -i ./src/styles/globals.css -o ./src/styles/tailwind.css --watch"
+    "tailwind": "pnpx tailwindcss -i ./src/styles/globals.css -o ./src/styles/tailwind.css --watch",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@formkit/auto-animate": "1.0.0-beta.6",
