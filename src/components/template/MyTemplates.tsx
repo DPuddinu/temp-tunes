@@ -47,10 +47,10 @@ const TemplateRow = ({
 
   const { t } = useTranslation("common");
   return (
-    <div className="rounded-box  bg-base-300 p-4 shadow">
+    <div className="rounded-box h-fit bg-base-300 p-2 px-4 shadow hover:cursor-pointer">
       <div className="flex items-center justify-between">
         <div className="grow truncate" onClick={() => setOpen((open) => !open)}>
-          <h2 className="truncate text-3xl">{name}</h2>
+          <h2 className="truncate text-xl sm:text-3xl">{name}</h2>
           <p className="truncate text-sm">{description}</p>
         </div>
 
@@ -82,8 +82,9 @@ const TemplateRow = ({
         </DropdownMenu>
       </div>
       <div
+        key={name}
         className={cn(
-          "collapse mt-2 bg-base-200 px-2",
+          "rounded-box collapse bg-base-200 px-2",
           open ? "block" : "hidden"
         )}
       >
@@ -95,7 +96,7 @@ const TemplateRow = ({
             ))}
           </div>
           <div
-            className="mt-2 flex w-full justify-center"
+            className="mt-2 flex w-full justify-center hover:animate-bounce"
             onClick={() => setOpen((open) => !open)}
           >
             <ArrowSVG className="w-12 rotate-180 justify-center " />

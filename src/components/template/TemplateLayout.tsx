@@ -6,20 +6,21 @@ const TemplateLayout = ({ children }: { children: ReactNode }) => {
   const { t } = useTranslation("templates");
 
   return (
-    <section>
-      <div className="flex gap-4 sm:gap-10">
+    <section className="flex h-full flex-col justify-between">
+      <div>
         <Link href={"/templates"}>
-          <h1 className="mb-4 text-xl font-semibold transition-transform hover:scale-110 sm:text-3xl">
+          <h1 className="mb-4 ml-2 text-2xl font-semibold transition-transform hover:scale-110 sm:text-3xl">
             {t("my_templates")}
           </h1>
         </Link>
+        {children}
+      </div>
+
+      <div className="flex justify-end ">
         <Link href={"/templates/create"}>
-          <h1 className="mb-4 text-xl font-semibold transition-transform hover:scale-110 sm:text-3xl">
-            {t("create")}
-          </h1>
+          <button className="btn-primary btn-circle btn  text-2xl">+</button>
         </Link>
       </div>
-      {children}
     </section>
   );
 };

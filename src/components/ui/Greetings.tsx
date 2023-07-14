@@ -11,7 +11,7 @@ function Greetings({ name, timeRange, selectTimeRange }: GreetingsProps) {
   const { t } = useTranslation("home");
 
   return (
-    <div className="">
+    <div className="mb-4 px-2">
       <div className="flex flex-col sm:flex-row">
         <h2 className="text-2xl font-bold text-base-content md:text-3xl ">
           {`${salute(t)} ${name} 👋🏻`}&nbsp;
