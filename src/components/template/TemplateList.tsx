@@ -1,37 +1,23 @@
 import { type PlaylistTemplate, type TemplateEntry } from "@prisma/client";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
-import { useToast } from "~/hooks/use-toast";
-import { api } from "~/utils/api";
 import { cn } from "~/utils/utils";
 import DropdownMenu from "../ui/DropdownMenu";
 import { ArrowSVG } from "../ui/icons";
-import { TemplatesSkeleton } from "../ui/skeletons/TemplatesSkeleton";
 
-const MyTemplates = () => {
-  const { setMessage } = useToast();
-  const { t } = useTranslation("templates");
-  const { data, isLoading } = api.template.getCurrentUserTemplates.useQuery(
-    undefined,
-    {
-      onError() {
-        const msg = t("get_error");
-        setMessage(msg);
-      },
-    }
-  );
-
+const TemplateList = ({
+  data,
+}: {
+  data: (PlaylistTemplate & {
+    templateEntries: TemplateEntry[];
+  })[];
+}) => {
   return (
-    <>
-      {data && (
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          {data.map((template) => (
-            <TemplateRow key={template.id} template={template} />
-          ))}
-        </div>
-      )}
-      {isLoading && <TemplatesSkeleton />}
-    </>
+    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+      {data.map((template) => (
+        <TemplateRow key={template.id} template={template} />
+      ))}
+    </div>
   );
 };
 
@@ -106,4 +92,4 @@ const TemplateRow = ({
     </div>
   );
 };
-export default MyTemplates;
+export default TemplateList;

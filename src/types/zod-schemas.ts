@@ -61,6 +61,7 @@ export const TemplateSchema = z.object({
   id: z.string().optional(),
   userId: z.string(),
   name: z.string(),
+  description: z.string().optional(),
   stars: z.number(),
   templateEntries: TemplateEntrySchema.array()
 })

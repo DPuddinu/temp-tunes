@@ -7,9 +7,9 @@ const TemplateLayout = ({ children }: { children: ReactNode }) => {
 
   return (
     <section className="flex h-full flex-col justify-between">
-      <div>
+      <div className="">
         <Link href={"/templates"}>
-          <h1 className="mb-4 ml-2 text-2xl font-semibold transition-transform hover:scale-110 sm:text-3xl">
+          <h1 className="mb-4 ml-2 w-fit pb-2 text-2xl font-semibold transition-transform hover:scale-105 sm:text-3xl">
             {t("my_templates")}
           </h1>
         </Link>
@@ -18,7 +18,9 @@ const TemplateLayout = ({ children }: { children: ReactNode }) => {
 
       <div className="flex justify-end ">
         <Link href={"/templates/create"}>
-          <button className="btn-primary btn-circle btn  text-2xl">+</button>
+          <button className="btn-primary btn-circle btn  text-2xl transition-transform hover:scale-105 hover:cursor-pointer">
+            +
+          </button>
         </Link>
       </div>
     </section>

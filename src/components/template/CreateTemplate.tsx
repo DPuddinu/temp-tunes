@@ -1,31 +1,43 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRef, useState } from "react";
-import { type SubmitHandler, type UseFormRegister, useFieldArray, useForm } from "react-hook-form";
+import {
+  useFieldArray,
+  useForm,
+  type SubmitHandler,
+  type UseFormRegister,
+} from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { useToast } from "~/hooks/use-toast";
 import { TemplateEntrySchema } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
-import { Transition } from "@headlessui/react";
-import { DeleteSVG, ArrowUpSVG, ArrowDownSVG } from "../ui/icons";
+import { ArrowDownSVG, ArrowUpSVG, DeleteSVG } from "../ui/icons";
 
 const TemplateFormSchema = z.object({
   name: z.string().min(3).max(16),
+  description: z.string().max(150).optional(),
   entries: TemplateEntrySchema.array().min(1),
 });
 type TemplateFormType = z.infer<typeof TemplateFormSchema>;
 
 function CreateTemplate() {
   const { setMessage } = useToast();
-
+  const { t } = useTranslation("templates");
   const entryRef = useRef<HTMLInputElement>(null);
   const [parent] = useAutoAnimate();
   const [selectedRow, setSelectedRow] = useState<number | undefined>();
 
   const { mutate, isLoading } = api.template.createTemplate.useMutation({
     onError() {
-      setMessage("Error");
+      const msg = t("error");
+      setMessage(msg);
+    },
+    onSuccess() {
+      const msg = t("created");
+      setMessage(msg);
     },
   });
 
@@ -44,6 +56,7 @@ function CreateTemplate() {
   const onSubmit: SubmitHandler<TemplateFormType> = (data) =>
     mutate({
       name: data.name,
+      description: data.description,
       entries: data.entries,
     });
 
@@ -54,12 +67,20 @@ function CreateTemplate() {
     >
       <div className="flex w-full flex-col gap-2" ref={parent}>
         <div className="flex justify-between gap-2 bg-base-300">
-          <input
-            type="text"
-            placeholder="Template Name"
-            className="input-ghost input w-full max-w-xs grow  text-xl "
-            {...register("name")}
-          />
+          <div>
+            <input
+              type="text"
+              placeholder="Template Name"
+              className="input-ghost input mb-2 w-full max-w-xs grow bg-base-200 text-xl"
+              {...register("name")}
+            />
+            <input
+              type="text"
+              placeholder="Description"
+              className="input-ghost input w-full max-w-xs grow bg-base-200 text-base"
+              {...register("description")}
+            />
+          </div>
           {isLoading && <LoadingSpinner />}
         </div>
         <ul ref={parent} className="[&>li]:py-1">

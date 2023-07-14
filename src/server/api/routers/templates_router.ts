@@ -8,11 +8,12 @@ export const templatesRouter = createTRPCRouter({
   createTemplate: protectedProcedure.input(
     z.object({
       name: z.string(),
+      description: z.string().optional(),
       entries: TemplateEntrySchema.array()
     })
   )
     .mutation(async ({ ctx, input }) => {
-      const { entries, name } = input
+      const { entries, name, description } = input
       if (!ctx.session.user.name) {
         throw new TRPCError({ message: "Username is required", code: "BAD_REQUEST" })
       }
@@ -21,6 +22,7 @@ export const templatesRouter = createTRPCRouter({
         data: {
           stars: 0,
           userId: ctx.session.user.id,
+          description: description,
           name: name,
           templateEntries: {
             createMany: {

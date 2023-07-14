@@ -4,5 +4,6 @@
   "top_rated": "Top Rated",
   "most_voted": "Most Voted",
   "favourites": "Favourites",
-  "get_error": "Cannot get this template"
+  "error": "Errore",
+  "created": "Template created"
 }
