@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { RenameModal } from "~/components/modals/RemaneModal";
 import { UnfollowModal } from "~/components/modals/UnfollowModal";
-import DropdownMenu  from "~/components/ui/DropdownMenu";
+import DropdownMenu from "~/components/ui/DropdownMenu";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import {
   CopySVG,
@@ -105,8 +105,8 @@ function PlaylistComponent({
   });
 
   return (
-    <div className="group flex max-h-20 items-center rounded-2xl border-base-300 bg-base-200 pr-3 shadow">
-      <div className="h-20 w-20 min-w-[5rem]">
+    <div className="group flex max-h-16 items-center rounded-2xl border-base-300 bg-base-200 pr-3 shadow">
+      <div className="h-16 w-16">
         <ImageWithFallback
           src={
             playlist.images && playlist.images[0] ? playlist.images[0].url : ""

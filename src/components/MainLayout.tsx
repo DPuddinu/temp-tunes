@@ -60,9 +60,9 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
         </nav>
         <main className="grow p-4 pb-20 sm:pb-6">
           {children}
-          <BottomNavigation />
           {!!message && <Toast intent={"primary"} message={message} />}
         </main>
+        <BottomNavigation />
       </div>
       <div className="drawer-side">
         <label htmlFor="my-drawer-2" className="drawer-overlay " />
@@ -90,7 +90,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
 const BottomNavigation = () => {
   const router = useRouter();
   return (
-    <div className="btm-nav min-h-16 bg-base-300 sm:hidden">
+    <footer className="btm-nav min-h-16 bg-base-300 sm:hidden">
       {pages.map((page, i) => (
         <Link key={i} href={page.url} className="btm-nav">
           <button
@@ -105,7 +105,7 @@ const BottomNavigation = () => {
           </button>
         </Link>
       ))}
-    </div>
+    </footer>
   );
 };
 
