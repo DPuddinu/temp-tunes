@@ -15,7 +15,7 @@ const TemplateLayout = ({ children }: { children: ReactNode }) => {
         </Link>
         {children}
       </section>
-      <div className="fixed top-[calc(100vh-8rem)] right-5 flex justify-end sm:top-[calc(100vh-4rem)]">
+      <div className="fixed top-[calc(100%-8rem)] right-5 flex justify-end sm:top-[calc(100vh-4rem)]">
         <Link href={"/templates/create"}>
           <button className="btn-primary btn-circle btn  text-2xl transition-transform hover:scale-105 hover:cursor-pointer">
             +
