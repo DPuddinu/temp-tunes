@@ -7,15 +7,15 @@ const TemplateLayout = ({ children }: { children: ReactNode }) => {
 
   return (
     <>
-      <section className="relative flex flex-col justify-between">
+      <section className="relative flex flex-col justify-between mb-12">
         <Link href={"/templates"}>
           <h1 className="mb-4 ml-2 w-fit pb-2 text-2xl font-semibold transition-transform hover:scale-105 sm:text-3xl">
             {t("my_templates")}
           </h1>
         </Link>
-        <div className="max-h-[80vh] overflow-auto">{children}</div>
+        {children}
       </section>
-      <div className="fixed top-[85vh] right-7 flex justify-end">
+      <div className="fixed top-[85%] right-5 flex justify-end">
         <Link href={"/templates/create"}>
           <button className="btn-primary btn-circle btn  text-2xl transition-transform hover:scale-105 hover:cursor-pointer">
             +
