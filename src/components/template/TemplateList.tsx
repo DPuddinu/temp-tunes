@@ -14,8 +14,8 @@ const TemplateList = ({
 }) => {
   return (
     <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-      {data.map((template) => (
-        <TemplateRow key={template.id} template={template} />
+      {data.map((template, i) => (
+        <TemplateRow key={template.id} template={template} index={i}/>
       ))}
     </div>
   );
@@ -23,10 +23,12 @@ const TemplateList = ({
 
 const TemplateRow = ({
   template,
+  index,
 }: {
   template: PlaylistTemplate & {
     templateEntries: TemplateEntry[];
   };
+  index: number;
 }) => {
   const { name, description, templateEntries } = template;
   const [open, setOpen] = useState(false);
@@ -40,7 +42,7 @@ const TemplateRow = ({
           <p className="truncate text-sm">{description}</p>
         </div>
 
-        <DropdownMenu intent={"dark"}>
+        <DropdownMenu intent={"dark"} direction={index > 3 ? "up" : "down"}>
           <DropdownMenu.Options
             options={[
               {
