@@ -15,7 +15,7 @@ const TemplateList = ({
   return (
     <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
       {data.map((template, i) => (
-        <TemplateRow key={template.id} template={template} index={i}/>
+        <TemplateRow key={template.id} template={template} index={i} />
       ))}
     </div>
   );
@@ -35,14 +35,14 @@ const TemplateRow = ({
 
   const { t } = useTranslation("common");
   return (
-    <div className="rounded-box h-fit bg-base-300 p-2 px-4 shadow hover:cursor-pointer">
+    <div className="rounded-box h-fit bg-base-200 p-2 px-4 shadow hover:cursor-pointer">
       <div className="flex items-center justify-between">
         <div className="grow truncate" onClick={() => setOpen((open) => !open)}>
           <h2 className="truncate text-xl sm:text-3xl">{name}</h2>
           <p className="truncate text-sm">{description}</p>
         </div>
 
-        <DropdownMenu intent={"dark"} direction={index > 3 ? "up" : "down"}>
+        <DropdownMenu intent={"darkest"} direction={index > 3 ? "up" : "down"}>
           <DropdownMenu.Options
             options={[
               {
