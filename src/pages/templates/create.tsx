@@ -11,7 +11,7 @@ import type { PageWithLayout } from "~/types/page-types";
 const Templates: PageWithLayout = () => {
 
   return (
-    <section>
+    <section className="flex justify-center">
       <CreateTemplate />
     </section>
   );

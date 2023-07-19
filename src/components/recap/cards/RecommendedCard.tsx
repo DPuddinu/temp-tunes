@@ -27,7 +27,7 @@ const RecommendedCard = () => {
         {data &&
           data.tracks.length > 0 &&
           data.tracks.map((track) => (
-            <TrackRow track={track} key={track.id} options={["EDIT_TAGS"]} />
+            <TrackRow track={track} key={track.id} options={["EDIT_TAGS", "ADD_TO_PLAYLIST", "ADD_TO_QUEUE"]} />
           ))}
       </RecapCard.Container>
     </RecapCard>

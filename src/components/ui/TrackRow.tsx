@@ -52,7 +52,7 @@ const TrackRow = forwardRef<HTMLDivElement, Props>(({ track, options }, ref) => 
   const { mutate: playTrack } = api.player.togglePlayPause.useMutation();
   return (
     <div
-      className="group flex rounded-xl px-3 text-accent-content hover:bg-neutral"
+      className="group flex rounded-xl px-3 text-accent-content hover:bg-neutral hover:cursor-pointer"
       ref={ref}
     >
       <div className="flex grow items-center justify-between p-2 hover:text-primary-content">

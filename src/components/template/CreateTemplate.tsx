@@ -65,18 +65,21 @@ function CreateTemplate({ data }: props) {
     formState: { isValid },
   } = useForm<TemplateFormType>({ resolver: zodResolver(TemplateFormSchema) });
 
-  useEffect(() => {
-    if (data) {
-      if (data.description) setValue("description", data.description);
-      if (data.entries) setValue("entries", data.entries);
-      if (data.name) setValue("name", data.name);
-    }
-  }, [data, setValue]);
-
-  const { fields, append, remove, move } = useFieldArray({
+  const { fields, append, remove, move, replace } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
     name: "entries", // unique name for your Field Array
   });
+
+  useEffect(() => {
+    if (data) {
+      if (data.description) setValue("description", data.description);
+      if (data.entries) replace(data.entries);
+      if (data.name) setValue("name", data.name);
+      setTimeout(() => {
+        console.log("update");
+      }, 100);
+    }
+  }, [data]);
 
   const onSubmit: SubmitHandler<TemplateFormType> = (_data) => {
     if (data?.id) {
@@ -101,82 +104,101 @@ function CreateTemplate({ data }: props) {
       className="min-h-60 flex max-w-sm flex-col justify-between gap-2 rounded-xl bg-base-300 p-2 shadow"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className="flex w-full flex-col gap-2" ref={parent}>
-        <div className="flex justify-between gap-2 bg-base-300">
-          <div>
+      <div className="flex w-full flex-col " ref={parent}>
+        <div className="flex flex-col justify-between gap-2 bg-base-300">
+          <div className="form-control w-full max-w-xs">
+            <label className="label">
+              <span className="label-text">{t("template_name")}</span>
+            </label>
             <input
               type="text"
-              placeholder="Template Name"
-              className="input-ghost input mb-2 w-full max-w-xs grow bg-base-200 text-xl"
+              placeholder={t("type_here") ?? "Type here"}
+              className="input-ghost input w-full max-w-xs grow bg-base-200 text-base"
               {...register("name")}
             />
+          </div>
+          <div className="form-control w-full max-w-xs">
+            <label className="label">
+              <span className="label-text">{t("description")}</span>
+            </label>
             <input
               type="text"
-              placeholder="Description"
+              placeholder={t("type_here") ?? "Type here"}
               className="input-ghost input w-full max-w-xs grow bg-base-200 text-base"
               {...register("description")}
             />
           </div>
           {isLoading && <LoadingSpinner />}
         </div>
-        <ul ref={parent} className="[&>li]:py-1">
-          {fields.map((entry, i) => (
-            <TemplateRow
-              register={register}
-              id={entry.id}
-              index={i}
-              key={i}
-              name={entry.entry}
-              open={i === selectedRow}
-              setOpen={() =>
-                setSelectedRow((row) => (row === i ? undefined : i))
-              }
-              onMoveUp={() => {
-                if (i - 1 >= 0) {
-                  move(i, i - 1);
-                  setSelectedRow(i - 1);
+        <div className="form-control w-full max-w-xs">
+          <label className="label pb-0">
+            <span className="label-text">{t("entries")}</span>
+          </label>
+          <ul ref={parent} className="[&>li]:py-1">
+            {fields.map((entry, i) => (
+              <TemplateRow
+                register={register}
+                id={entry.id}
+                index={i}
+                key={i}
+                name={entry.entry}
+                open={i === selectedRow}
+                setOpen={() =>
+                  setSelectedRow((row) => (row === i ? undefined : i))
                 }
-              }}
-              onMoveDown={() => {
-                if (i + 1 <= fields.length - 1) {
-                  move(i, i + 1);
-                  setSelectedRow(i + 1);
-                }
-              }}
-              onDelete={() => {
-                remove(i);
-                setSelectedRow(undefined);
-              }}
-            />
-          ))}
-        </ul>
+                onMoveUp={() => {
+                  if (i - 1 >= 0) {
+                    move(i, i - 1);
+                    setSelectedRow(i - 1);
+                  }
+                }}
+                onMoveDown={() => {
+                  if (i + 1 <= fields.length - 1) {
+                    move(i, i + 1);
+                    setSelectedRow(i + 1);
+                  }
+                }}
+                onDelete={() => {
+                  remove(i);
+                  setSelectedRow(undefined);
+                }}
+              />
+            ))}
+          </ul>
+        </div>
       </div>
 
-      <div className="flex gap-2">
-        <input
-          ref={entryRef}
-          type="text"
-          placeholder="Template Entry"
-          className="input w-full max-w-xs grow"
-        />
-        <button
-          type="button"
-          className="btn-circle btn bg-base-100 p-2 text-xl hover:bg-base-200"
-          onClick={() => {
-            if (entryRef.current !== null) {
-              append({ entry: entryRef.current.value });
-            }
-          }}
-        >
-          +
-        </button>
+      <div className="form-control w-full max-w-xs">
+        <label className="label pt-0">
+          <span className="label-text">{t("new_entry")}</span>
+        </label>
+        <div className="flex gap-2">
+          <input
+            ref={entryRef}
+            type="text"
+            placeholder={t("type_here") ?? "Type here"}
+            className="input w-full max-w-xs grow outline-none"
+          />
+          <button
+            type="button"
+            className="btn-circle btn bg-base-100 p-2 text-xl hover:bg-base-200"
+            onClick={() => {
+              if (entryRef.current !== null) {
+                append({ entry: entryRef.current.value });
+              }
+            }}
+          >
+            +
+          </button>
+        </div>
       </div>
+
       <button
         type="submit"
         disabled={!isValid}
         className="btn w-full bg-base-100 hover:bg-base-200"
       >
-        Confirm
+        {data ? t("update") : t("create")}
       </button>
     </form>
   );
@@ -207,7 +229,7 @@ const TemplateRow = ({
   return (
     <li key={id} className="flex items-center gap-2">
       <input
-        className="btn grow bg-base-100 hover:bg-base-200"
+        className="btn grow bg-base-100 outline-none hover:bg-base-200"
         onClick={setOpen}
         type="text"
         defaultValue={name}

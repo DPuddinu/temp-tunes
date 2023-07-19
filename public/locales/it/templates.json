@@ -6,5 +6,9 @@
   "favourites": "Preferiti",
   "error": "Errore",
   "created": "Template creato",
-  "updated": "Template modificato"
+  "updated": "Template modificato",
+  "template_name": "Nome Template",
+  "description": "Descrizione",
+  "entries": "Voci del modello",
+  "new_entry": "Nuova voce"
 }
