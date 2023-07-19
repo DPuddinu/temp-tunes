@@ -4,8 +4,8 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { RenameModal } from "~/components/modals/RemaneModal";
-import { UnfollowModal } from "~/components/modals/UnfollowModal";
+import { RenameModal } from "~/components/modals/RenamePlaylistModal";
+import { UnfollowModal } from "~/components/modals/UnfollowPlaylistModal";
 import DropdownMenu from "~/components/ui/DropdownMenu";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import {

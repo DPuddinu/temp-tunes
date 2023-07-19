@@ -1,4 +1,4 @@
-import { TagModal } from "@components/modals/TagModal";
+import { TagModal } from "~/components/modals/EditTagModal";
 import { useTranslation } from "next-i18next";
 import { forwardRef, useMemo, useState } from "react";
 import type { Track } from "~/types/spotify-types";
