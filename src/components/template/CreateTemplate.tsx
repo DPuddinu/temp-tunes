@@ -10,6 +10,7 @@ import {
 } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
+import { useMounted } from "~/hooks/use-mounted";
 import { useToast } from "~/hooks/use-toast";
 import { TemplateEntrySchema } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
@@ -33,6 +34,7 @@ function CreateTemplate({ data }: props) {
   const entryRef = useRef<HTMLInputElement>(null);
   const [parent] = useAutoAnimate();
   const [selectedRow, setSelectedRow] = useState<number | undefined>();
+  const mounted = useMounted();
 
   const { mutate, isLoading } = api.template.createTemplate.useMutation({
     onError() {
@@ -62,6 +64,7 @@ function CreateTemplate({ data }: props) {
     handleSubmit,
     control,
     setValue,
+    getValues,
     formState: { isValid },
   } = useForm<TemplateFormType>({ resolver: zodResolver(TemplateFormSchema) });
 
@@ -72,12 +75,10 @@ function CreateTemplate({ data }: props) {
 
   useEffect(() => {
     if (data) {
-      if (data.description) setValue("description", data.description);
-      if (data.entries) replace(data.entries);
-      if (data.name) setValue("name", data.name);
-      setTimeout(() => {
-        console.log("update");
-      }, 100);
+      if (data.description && !getValues().description)
+        setValue("description", data.description);
+      if (data.entries && getValues().entries.length === 0) replace(data.entries);
+      if (data.name && !getValues().name) setValue("name", data.name);
     }
   }, [data]);
 
@@ -100,107 +101,111 @@ function CreateTemplate({ data }: props) {
   };
 
   return (
-    <form
-      className="min-h-60 flex max-w-sm flex-col justify-between gap-2 rounded-xl bg-base-300 p-2 shadow"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <div className="flex w-full flex-col " ref={parent}>
-        <div className="flex flex-col justify-between gap-2 bg-base-300">
-          <div className="form-control w-full max-w-xs">
-            <label className="label">
-              <span className="label-text">{t("template_name")}</span>
-            </label>
-            <input
-              type="text"
-              placeholder={t("type_here") ?? "Type here"}
-              className="input-ghost input w-full max-w-xs grow bg-base-200 text-base"
-              {...register("name")}
-            />
+    <>
+      {mounted && (
+        <form
+          className="min-h-60 flex max-w-sm flex-col justify-between gap-2 rounded-xl bg-base-300 p-2 shadow"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className="flex w-full flex-col " ref={parent}>
+            <div className="flex flex-col justify-between gap-2 bg-base-300">
+              <div className="form-control w-full max-w-xs">
+                <label className="label">
+                  <span className="label-text">{t("template_name")}</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder={t("type_here") ?? "Type here"}
+                  className="input-ghost input w-full max-w-xs grow bg-base-200 text-base"
+                  {...register("name")}
+                />
+              </div>
+              <div className="form-control w-full max-w-xs">
+                <label className="label">
+                  <span className="label-text">{t("description")}</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder={t("type_here") ?? "Type here"}
+                  className="input-ghost input w-full max-w-xs grow bg-base-200 text-base"
+                  {...register("description")}
+                />
+              </div>
+              {isLoading && <LoadingSpinner />}
+            </div>
+            <div className="form-control w-full max-w-xs">
+              <label className="label pb-0">
+                <span className="label-text">{t("entries")}</span>
+              </label>
+              <ul ref={parent} className="[&>li]:py-1">
+                {fields.map((entry, i) => (
+                  <TemplateRow
+                    register={register}
+                    id={entry.id}
+                    index={i}
+                    key={i}
+                    name={entry.entry}
+                    open={i === selectedRow}
+                    setOpen={() =>
+                      setSelectedRow((row) => (row === i ? undefined : i))
+                    }
+                    onMoveUp={() => {
+                      if (i - 1 >= 0) {
+                        move(i, i - 1);
+                        setSelectedRow(i - 1);
+                      }
+                    }}
+                    onMoveDown={() => {
+                      if (i + 1 <= fields.length - 1) {
+                        move(i, i + 1);
+                        setSelectedRow(i + 1);
+                      }
+                    }}
+                    onDelete={() => {
+                      remove(i);
+                      setSelectedRow(undefined);
+                    }}
+                  />
+                ))}
+              </ul>
+            </div>
           </div>
+
           <div className="form-control w-full max-w-xs">
-            <label className="label">
-              <span className="label-text">{t("description")}</span>
+            <label className="label pt-0">
+              <span className="label-text">{t("new_entry")}</span>
             </label>
-            <input
-              type="text"
-              placeholder={t("type_here") ?? "Type here"}
-              className="input-ghost input w-full max-w-xs grow bg-base-200 text-base"
-              {...register("description")}
-            />
-          </div>
-          {isLoading && <LoadingSpinner />}
-        </div>
-        <div className="form-control w-full max-w-xs">
-          <label className="label pb-0">
-            <span className="label-text">{t("entries")}</span>
-          </label>
-          <ul ref={parent} className="[&>li]:py-1">
-            {fields.map((entry, i) => (
-              <TemplateRow
-                register={register}
-                id={entry.id}
-                index={i}
-                key={i}
-                name={entry.entry}
-                open={i === selectedRow}
-                setOpen={() =>
-                  setSelectedRow((row) => (row === i ? undefined : i))
-                }
-                onMoveUp={() => {
-                  if (i - 1 >= 0) {
-                    move(i, i - 1);
-                    setSelectedRow(i - 1);
-                  }
-                }}
-                onMoveDown={() => {
-                  if (i + 1 <= fields.length - 1) {
-                    move(i, i + 1);
-                    setSelectedRow(i + 1);
-                  }
-                }}
-                onDelete={() => {
-                  remove(i);
-                  setSelectedRow(undefined);
-                }}
+            <div className="flex gap-2">
+              <input
+                ref={entryRef}
+                type="text"
+                placeholder={t("type_here") ?? "Type here"}
+                className="input w-full max-w-xs grow outline-none"
               />
-            ))}
-          </ul>
-        </div>
-      </div>
+              <button
+                type="button"
+                className="btn-circle btn bg-base-100 p-2 text-xl hover:bg-base-200"
+                onClick={() => {
+                  if (entryRef.current !== null) {
+                    append({ entry: entryRef.current.value });
+                  }
+                }}
+              >
+                +
+              </button>
+            </div>
+          </div>
 
-      <div className="form-control w-full max-w-xs">
-        <label className="label pt-0">
-          <span className="label-text">{t("new_entry")}</span>
-        </label>
-        <div className="flex gap-2">
-          <input
-            ref={entryRef}
-            type="text"
-            placeholder={t("type_here") ?? "Type here"}
-            className="input w-full max-w-xs grow outline-none"
-          />
           <button
-            type="button"
-            className="btn-circle btn bg-base-100 p-2 text-xl hover:bg-base-200"
-            onClick={() => {
-              if (entryRef.current !== null) {
-                append({ entry: entryRef.current.value });
-              }
-            }}
+            type="submit"
+            disabled={!isValid}
+            className="btn w-full bg-base-100 hover:bg-base-200"
           >
-            +
+            {data ? t("update") : t("create")}
           </button>
-        </div>
-      </div>
-
-      <button
-        type="submit"
-        disabled={!isValid}
-        className="btn w-full bg-base-100 hover:bg-base-200"
-      >
-        {data ? t("update") : t("create")}
-      </button>
-    </form>
+        </form>
+      )}
+    </>
   );
 }
 
