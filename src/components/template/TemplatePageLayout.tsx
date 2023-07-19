@@ -49,7 +49,7 @@ interface FabChildProps {
 const FabChild = ({ label, children, disabled = false }: FabChildProps) => {
   return (
     <div className="flex items-center gap-4">
-      <div className="rounded-md bg-neutral p-2 px-3 uppercase">{label}</div>
+      <div className="rounded-md bg-neutral p-1 px-3 uppercase">{label}</div>
       <FloatingActionButton
         intent={"secondary"}
         size={"sm"}
