@@ -43,7 +43,7 @@ export const DeleteTemplateModal = ({
       title={t("confirm_delete_title")}
     >
       <div>
-        <p className="text-black text-lg mt-2">
+        <p className="mt-2 text-lg text-black">
           <span>{`${t("confirm_delete_body")} `}</span>
           <b>{`${template.name} `}</b>
           <span>?</span>
