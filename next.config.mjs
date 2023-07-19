@@ -16,6 +16,7 @@ const config = {
       "i.scdn.co",
       "wrapped-images.spotifycdn.com",
       "lineup-images.scdn.co",
+      "images-ak.spotifycdn.com",
     ],
   },
   /**
