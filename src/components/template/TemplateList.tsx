@@ -1,7 +1,9 @@
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { type PlaylistTemplate, type TemplateEntry } from "@prisma/client";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { api } from "~/utils/api";
 import { cn } from "~/utils/utils";
 import DropdownMenu from "../ui/DropdownMenu";
 import { ArrowSVG } from "../ui/icons";
@@ -13,28 +15,50 @@ const TemplateList = ({
     templateEntries: TemplateEntry[];
   })[];
 }) => {
+  const { mutate: deleteTemplate } = api.template.deleteTemplate.useMutation({
+    onError(error, variables, context) {
+      console.log("first");
+    },
+    onSuccess() {
+      setTimeout(() => {
+        window.dispatchEvent(new Event("focus"));
+      }, 300);
+    },
+  });
+  const [parent] = useAutoAnimate();
+
   return (
-    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3" ref={parent}>
       {data.map((template, i) => (
-        <TemplateRow key={template.id} template={template} index={i} />
+        <TemplateRow
+          key={template.id}
+          template={template}
+          index={i}
+          onDelete={() =>
+            deleteTemplate({
+              id: template.id,
+              entries: template.templateEntries.map((t) => t.id),
+            })
+          }
+        />
       ))}
     </div>
   );
 };
 
-const TemplateRow = ({
-  template,
-  index,
-}: {
+type templateRowProps = {
   template: PlaylistTemplate & {
     templateEntries: TemplateEntry[];
   };
   index: number;
-}) => {
+  onDelete: () => void;
+};
+const TemplateRow = ({ template, index, onDelete }: templateRowProps) => {
   const { name, description, templateEntries, id } = template;
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { t } = useTranslation("common");
+
   return (
     <div className="rounded-box h-fit bg-base-200 p-2 px-4 shadow hover:cursor-pointer">
       <div className="flex items-center justify-between">
@@ -52,8 +76,7 @@ const TemplateRow = ({
               },
               {
                 label: t("delete"),
-                onClick: () => false,
-                disabled: true,
+                onClick: () => onDelete(),
               },
               {
                 label: t("share"),

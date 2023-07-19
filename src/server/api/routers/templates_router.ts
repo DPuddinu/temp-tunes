@@ -115,4 +115,26 @@ export const templatesRouter = createTRPCRouter({
         }
       })
     }),
+  deleteTemplate: protectedProcedure.input(
+    z.object({ id: z.string(), entries: z.string().array() })
+  ).mutation(async ({ ctx, input}) => {
+
+    const {id, entries}= input;
+    const deleteEntries = await ctx.prisma.$transaction([
+      // REMOVING ENTRIES
+      ctx.prisma.templateEntry.deleteMany({
+        where: {
+          id: {
+            in: entries,
+          },
+        },
+      }),
+      ctx.prisma.playlistTemplate.delete({
+        where: {
+          id: id
+        },
+      })
+    ]);
+    return await deleteEntries
+  }),
 });
