@@ -1,7 +1,7 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   useFieldArray,
   useForm,
@@ -17,13 +17,17 @@ import { LoadingSpinner } from "../ui/LoadingSpinner";
 import { ArrowDownSVG, ArrowUpSVG, DeleteSVG } from "../ui/icons";
 
 const TemplateFormSchema = z.object({
+  id: z.string().optional(),
   name: z.string().min(3).max(16),
   description: z.string().max(150).optional(),
   entries: TemplateEntrySchema.array().min(1),
 });
 type TemplateFormType = z.infer<typeof TemplateFormSchema>;
 
-function CreateTemplate() {
+interface props {
+  data?: TemplateFormType;
+}
+function CreateTemplate({ data }: props) {
   const { setMessage } = useToast();
   const { t } = useTranslation("templates");
   const entryRef = useRef<HTMLInputElement>(null);
@@ -41,24 +45,56 @@ function CreateTemplate() {
     },
   });
 
+  const { mutate: edit, isLoading: isEditLoading } =
+    api.template.editTemplate.useMutation({
+      onError() {
+        const msg = t("error");
+        setMessage(msg);
+      },
+      onSuccess() {
+        const msg = t("updated");
+        setMessage(msg);
+      },
+    });
+
   const {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { isValid },
   } = useForm<TemplateFormType>({ resolver: zodResolver(TemplateFormSchema) });
+
+  useEffect(() => {
+    if (data) {
+      if (data.description) setValue("description", data.description);
+      if (data.entries) setValue("entries", data.entries);
+      if (data.name) setValue("name", data.name);
+    }
+  }, [data, setValue]);
 
   const { fields, append, remove, move } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
     name: "entries", // unique name for your Field Array
   });
 
-  const onSubmit: SubmitHandler<TemplateFormType> = (data) =>
-    mutate({
-      name: data.name,
-      description: data.description,
-      entries: data.entries,
-    });
+  const onSubmit: SubmitHandler<TemplateFormType> = (_data) => {
+    if (data?.id) {
+      edit({
+        new_entries: _data.entries,
+        old_entries: data.entries,
+        id: data.id,
+        name: _data.name,
+        description: _data.description,
+      });
+    } else {
+      mutate({
+        name: _data.name,
+        description: _data.description,
+        entries: _data.entries,
+      });
+    }
+  };
 
   return (
     <form

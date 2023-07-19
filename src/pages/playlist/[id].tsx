@@ -69,7 +69,7 @@ const PlaylistPage: PageWithLayout = () => {
     <>
       {isLoading && <PlaylistSkeleton />}
       {data && (
-        <div className="m-auto max-h-[30rem] overflow-y-scroll rounded-xl bg-base-200 p-2 sm:max-h-[50rem] sm:w-1/2">
+        <div className="m-auto h-full rounded-xl bg-base-200 p-2 sm:w-1/2">
           <div className="p-4">
             <h1 className="my-1 text-4xl font-semibold tracking-wider">
               {data?.name}

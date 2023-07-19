@@ -1,5 +1,6 @@
 import { type PlaylistTemplate, type TemplateEntry } from "@prisma/client";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { cn } from "~/utils/utils";
 import DropdownMenu from "../ui/DropdownMenu";
@@ -30,9 +31,9 @@ const TemplateRow = ({
   };
   index: number;
 }) => {
-  const { name, description, templateEntries } = template;
+  const { name, description, templateEntries, id } = template;
   const [open, setOpen] = useState(false);
-
+  const router = useRouter();
   const { t } = useTranslation("common");
   return (
     <div className="rounded-box h-fit bg-base-200 p-2 px-4 shadow hover:cursor-pointer">
@@ -47,8 +48,7 @@ const TemplateRow = ({
             options={[
               {
                 label: t("edit"),
-                onClick: () => false,
-                disabled: true,
+                onClick: () => router.push(`/templates/${id}`),
               },
               {
                 label: t("delete"),

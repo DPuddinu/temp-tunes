@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { TemplateEntrySchema } from "~/types/zod-schemas";
+import { TemplateEntrySchema, type TemplateSchemaEntryType } from "~/types/zod-schemas";
 
 export const templatesRouter = createTRPCRouter({
 
@@ -32,31 +32,64 @@ export const templatesRouter = createTRPCRouter({
         }
       })
     }),
-  // editTemplate: protectedProcedure
-  //   .query(async ({ ctx }) => {
-
-  //     return
-  //   }),
-  // deleteTemplate: protectedProcedure
-  //   .query(async ({ ctx }) => {
-
-  //     return
-  //   }),
-  // voteTemplate: protectedProcedure
-  //   .query(async ({ ctx }) => {
-
-  //     return
-  //   }),
-  // searchTemplate: protectedProcedure
-  //   .query(async ({ ctx }) => {
-
-  //     return
-  //   }),
-  // getMostVotedTemplates: protectedProcedure
-  //   .query(async ({ ctx }) => {
-
-  //     return
-  //   }),
+  editTemplate: protectedProcedure.input(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      description: z.string().optional(),
+      new_entries: TemplateEntrySchema.array(),
+      old_entries: TemplateEntrySchema.array(),
+    })
+  )
+    .mutation(async ({ ctx, input }) => {
+      const { id, new_entries, name, description, old_entries } = input
+      const updateEntries = await ctx.prisma.$transaction([
+        // REMOVING ENTRIES
+        ctx.prisma.templateEntry.deleteMany({
+          where: {
+            id: {
+              in: old_entries.map((entry: TemplateSchemaEntryType) => entry.id ?? ''),
+            },
+          },
+        }),
+        ctx.prisma.playlistTemplate.update({
+          where: {
+            id: id
+          },
+          data: {
+            description: description,
+            name: name,
+            templateEntries: {
+              createMany: {
+                data: new_entries.map(t => {
+                  return {
+                    entry: t.entry
+                  }
+                })
+              }
+            },
+          }
+        })
+      ]);
+      return await updateEntries
+    }),
+  getTemplateById: protectedProcedure.input(
+    z.object({
+      id: z.string(),
+    })
+  )
+    .query(async ({ ctx, input }) => {
+      const { id } = input;
+      return ctx.prisma.playlistTemplate.findFirst({
+        where: {
+          userId: ctx.session.user.id,
+          id: id
+        },
+        include: {
+          templateEntries: true
+        }
+      })
+    }),
   getCurrentUserTemplates: protectedProcedure
     .query(async ({ ctx }) => {
 
