@@ -7,22 +7,27 @@ import { api } from "~/utils/api";
 import { cn } from "~/utils/utils";
 import DropdownMenu from "../ui/DropdownMenu";
 import { ArrowSVG } from "../ui/icons";
+import { useToast } from "~/hooks/use-toast";
 
-const TemplateList = ({
-  data,
-}: {
+const TemplateList = ({ data }: {
   data: (PlaylistTemplate & {
     templateEntries: TemplateEntry[];
   })[];
 }) => {
+  const { setMessage } = useToast();
+  const { t } = useTranslation("templates");
+
   const { mutate: deleteTemplate } = api.template.deleteTemplate.useMutation({
-    onError(error, variables, context) {
-      console.log("first");
+    onError() {
+      const msg = t("delete_error");
+      setMessage(msg);
     },
     onSuccess() {
       setTimeout(() => {
         window.dispatchEvent(new Event("focus"));
       }, 300);
+      const msg = t("delete_success");
+      setMessage(msg);
     },
   });
   const [parent] = useAutoAnimate();

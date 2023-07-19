@@ -10,5 +10,7 @@
   "template_name": "Nome Template",
   "description": "Descrizione",
   "entries": "Voci del modello",
-  "new_entry": "Nuova voce"
+  "new_entry": "Nuova voce",
+  "delete_error": "Errore nella cancellazione, riprova",
+  "delete_success": "Template cancellato"
 }

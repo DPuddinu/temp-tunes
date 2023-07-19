@@ -11,5 +11,7 @@
   "type_here": "Type Here",
   "description": "Description",
   "entries": "Entries",
-  "new_entry": "New Entry"
+  "new_entry": "New Entry",
+  "delete_error": "Couldn't delete this template, try again",
+  "delete_success": "Template deleted"
 }
