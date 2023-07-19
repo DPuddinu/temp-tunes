@@ -3,8 +3,6 @@ import { type PlaylistTemplate, type TemplateEntry } from "@prisma/client";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useToast } from "~/hooks/use-toast";
-import { api } from "~/utils/api";
 import { cn } from "~/utils/utils";
 import { DeleteTemplateModal } from "../modals/DeleteTemplateModal";
 import DropdownMenu from "../ui/DropdownMenu";
@@ -17,22 +15,6 @@ const TemplateList = ({
     templateEntries: TemplateEntry[];
   })[];
 }) => {
-  const { setMessage } = useToast();
-  const { t } = useTranslation("templates");
-
-  const { mutate: deleteTemplate } = api.template.deleteTemplate.useMutation({
-    onError() {
-      const msg = t("delete_error");
-      setMessage(msg);
-    },
-    onSuccess() {
-      setTimeout(() => {
-        window.dispatchEvent(new Event("focus"));
-      }, 300);
-      const msg = t("delete_success");
-      setMessage(msg);
-    },
-  });
   const [parent] = useAutoAnimate();
 
   return (
@@ -42,12 +24,6 @@ const TemplateList = ({
           key={template.id}
           template={template}
           index={i}
-          onDelete={() =>
-            deleteTemplate({
-              id: template.id,
-              entries: template.templateEntries.map((t) => t.id),
-            })
-          }
         />
       ))}
     </div>

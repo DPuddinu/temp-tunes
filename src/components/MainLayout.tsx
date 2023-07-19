@@ -7,6 +7,7 @@ import { useStore } from "~/core/store";
 import { HomeSVG, PlaylistSVG, SearchSVG, TemplateSVG } from "./ui/icons/index";
 import NavbarSkeleton from "./ui/skeletons/NavbarSkeleton";
 import { RoundSkeleton } from "./ui/skeletons/RoundSkeleton";
+import Head from "next/head";
 
 type PageType = "Home" | "Search" | "Playlists" | "Templates";
 interface Page {
@@ -41,6 +42,12 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
 
   return (
     <div className="drawer overflow-hidden">
+      
+<Head>
+        <title>Next Spotify Manager</title>
+        <meta name="description" content="A very cool Spotify Manager" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <input
         id="my-drawer-2"
         type="checkbox"

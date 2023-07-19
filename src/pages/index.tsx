@@ -3,7 +3,6 @@ import type { GetServerSideProps } from "next";
 import { signIn } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { Languages, type Language } from "~/core/settingsStore";
@@ -24,11 +23,6 @@ const Landing = () => {
 
   return (
     <>
-      <Head>
-        <title>Next Spotify Manager</title>
-        <meta name="description" content="A very cool Spotify Manager" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <main className="flex min-h-screen flex-col bg-zinc-800">
         <section className="flex grow flex-col pb-0">
           <div className="p-10 sm:p-16">

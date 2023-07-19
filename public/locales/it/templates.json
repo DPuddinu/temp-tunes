@@ -14,5 +14,6 @@
   "delete_error": "Errore nella cancellazione, riprova",
   "delete_success": "Template cancellato",
   "confirm_delete_title": "Conferma cancellazione",
-  "confirm_delete_body": "Sei sicuro di voler cancellare"
+  "confirm_delete_body": "Sei sicuro di voler cancellare",
+  "explore": "Esplora"
 }
