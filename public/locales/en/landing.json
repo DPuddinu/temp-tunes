@@ -1,15 +1,15 @@
 {
-   "spice":"Let's add some spice to your playlists",
-   "templates-1":"Create custom playlists based on a pre-set template",
-   "templates-2":"or create your own, share it and have it voted ⭐",
-   "share":"Share with your loved ones ❤️",
-   "tape":"\"I got you a tape\" but in 2023",
-   "tags":"That song reminds you of summer? Add the tag \"summer\" to it and next time you'll search for that tag, you'll see that song",
-   "stats-1":"Get a deeper understanding of your music listening habits. ",
-   "stats-2":"Add tags to songs or playlists to make them easier to find.",
-   "stats-3":"Search for everything inside your playlists  🔎",
-   "create":"Create",
-   "explore":"Explore your musical taste",
-   "surprise":"Surprise",
-   "getstarted":"Get started"
+  "spice": "Let's add some spice to your playlists",
+  "templates-1": "Create custom playlists based on a pre-set template",
+  "templates-2": "or create your own and share it",
+  "share": "Share with your loved ones ❤️",
+  "tape": "\"I got you a tape\" but in 2023",
+  "tags": "That song reminds you of summer? Add the tag \"summer\" to it and next time you'll search for that tag, you'll see that song",
+  "stats-1": "Get a deeper understanding of your music listening habits. ",
+  "stats-2": "Add tags to any song to make it easier to find.",
+  "stats-3": "Search for everything inside your playlists  🔎",
+  "create": "Create",
+  "explore": "Explore your musical taste",
+  "surprise": "Surprise",
+  "getstarted": "Get started"
 }

@@ -1,11 +1,11 @@
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { type ReactNode } from "react";
+import FloatingActionButton from "../ui/FloatingActionButton";
+import { CreateTemplateSVG, ExploreSVG, ImportSVG, PlusSVG } from "../ui/icons";
 
 const TemplateLayout = ({ children }: { children: ReactNode }) => {
   const { t } = useTranslation("templates");
-  const router = useRouter();
   return (
     <>
       <section className="relative mb-16 flex flex-col justify-between">
@@ -16,17 +16,48 @@ const TemplateLayout = ({ children }: { children: ReactNode }) => {
         </Link>
         {children}
       </section>
-      {router.route === "/templates" && (
-        <div className="fixed top-[calc(100%-8rem)] right-5 flex justify-end sm:top-[calc(100vh-4rem)]">
-          <Link href={"/templates/create"}>
-            <button className="btn-primary btn-circle btn  text-2xl transition-transform hover:scale-105 hover:cursor-pointer">
-              +
-            </button>
-          </Link>
-        </div>
-      )}
+      <div className="fixed bottom-[5rem] right-5 sm:bottom-4 ">
+        <FloatingActionButton
+          intent={"primary"}
+          size={"md"}
+          options={[
+            <FabChild key="explore" label="explore" disabled>
+              <ExploreSVG />
+            </FabChild>,
+            <FabChild key="import" label="import" disabled>
+              <ImportSVG />
+            </FabChild>,
+            <FabChild key="create" label="create">
+              <Link href={"/templates/create"}>
+                <CreateTemplateSVG />
+              </Link>
+            </FabChild>,
+          ]}
+        >
+          <PlusSVG />
+        </FloatingActionButton>
+      </div>
     </>
   );
 };
 
+interface FabChildProps {
+  children: ReactNode;
+  label: string;
+  disabled?: boolean;
+}
+const FabChild = ({ label, children, disabled = false }: FabChildProps) => {
+  return (
+    <div className="flex items-center gap-4">
+      <div className="rounded-md bg-neutral p-2 px-3 uppercase">{label}</div>
+      <FloatingActionButton
+        intent={"secondary"}
+        size={"sm"}
+        disabled={disabled}
+      >
+        {children}
+      </FloatingActionButton>
+    </div>
+  );
+};
 export default TemplateLayout;

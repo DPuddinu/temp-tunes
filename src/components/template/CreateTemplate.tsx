@@ -19,7 +19,7 @@ import { ArrowDownSVG, ArrowUpSVG, DeleteSVG } from "../ui/icons";
 
 const TemplateFormSchema = z.object({
   id: z.string().optional(),
-  name: z.string().min(3).max(16),
+  name: z.string().min(3).max(50),
   description: z.string().max(150).optional(),
   entries: TemplateEntrySchema.array().min(1),
 });
@@ -47,17 +47,16 @@ function CreateTemplate({ data }: props) {
     },
   });
 
-  const { mutate: edit, isLoading: isEditLoading } =
-    api.template.editTemplate.useMutation({
-      onError() {
-        const msg = t("error");
-        setMessage(msg);
-      },
-      onSuccess() {
-        const msg = t("updated");
-        setMessage(msg);
-      },
-    });
+  const { mutate: edit } = api.template.editTemplate.useMutation({
+    onError() {
+      const msg = t("error");
+      setMessage(msg);
+    },
+    onSuccess() {
+      const msg = t("updated");
+      setMessage(msg);
+    },
+  });
 
   const {
     register,
@@ -77,7 +76,8 @@ function CreateTemplate({ data }: props) {
     if (data) {
       if (data.description && !getValues().description)
         setValue("description", data.description);
-      if (data.entries && getValues().entries.length === 0) replace(data.entries);
+      if (data.entries && getValues().entries.length === 0)
+        replace(data.entries);
       if (data.name && !getValues().name) setValue("name", data.name);
     }
   }, [data]);
@@ -109,32 +109,32 @@ function CreateTemplate({ data }: props) {
         >
           <div className="flex w-full flex-col " ref={parent}>
             <div className="flex flex-col justify-between gap-2 bg-base-300">
-              <div className="form-control w-full max-w-xs">
+              <div className="form-control w-full ">
                 <label className="label">
                   <span className="label-text">{t("template_name")}</span>
                 </label>
                 <input
                   type="text"
                   placeholder={t("type_here") ?? "Type here"}
-                  className="input-ghost input w-full max-w-xs grow bg-base-200 text-base"
+                  className="input-ghost input w-full  grow bg-base-200 text-base"
                   {...register("name")}
                 />
               </div>
-              <div className="form-control w-full max-w-xs">
+              <div className="form-control w-full ">
                 <label className="label">
                   <span className="label-text">{t("description")}</span>
                 </label>
                 <input
                   type="text"
                   placeholder={t("type_here") ?? "Type here"}
-                  className="input-ghost input w-full max-w-xs grow bg-base-200 text-base"
+                  className="input-ghost input w-full  grow bg-base-200 text-base"
                   {...register("description")}
                 />
               </div>
               {isLoading && <LoadingSpinner />}
             </div>
             {fields.length > 0 && (
-              <div className="form-control w-full max-w-xs">
+              <div className="form-control w-full ">
                 <label className="label pb-0">
                   <span className="label-text">{t("entries")}</span>
                 </label>
@@ -173,7 +173,7 @@ function CreateTemplate({ data }: props) {
             )}
           </div>
 
-          <div className="form-control w-full max-w-xs">
+          <div className="form-control w-full ">
             <label className="label pt-0">
               <span className="label-text">{t("new_entry")}</span>
             </label>
@@ -182,7 +182,7 @@ function CreateTemplate({ data }: props) {
                 ref={entryRef}
                 type="text"
                 placeholder={t("type_here") ?? "Type here"}
-                className="input w-full max-w-xs grow outline-none"
+                className="input w-full  grow outline-none"
               />
               <button
                 type="button"
