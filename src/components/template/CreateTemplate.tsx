@@ -23,7 +23,7 @@ const TemplateFormSchema = z.object({
   description: z.string().max(150).optional(),
   entries: TemplateEntrySchema.array().min(1),
 });
-type TemplateFormType = z.infer<typeof TemplateFormSchema>;
+export type TemplateFormType = z.infer<typeof TemplateFormSchema>;
 
 interface props {
   data?: TemplateFormType;
@@ -133,42 +133,44 @@ function CreateTemplate({ data }: props) {
               </div>
               {isLoading && <LoadingSpinner />}
             </div>
-            <div className="form-control w-full max-w-xs">
-              <label className="label pb-0">
-                <span className="label-text">{t("entries")}</span>
-              </label>
-              <ul ref={parent} className="[&>li]:py-1">
-                {fields.map((entry, i) => (
-                  <TemplateRow
-                    register={register}
-                    id={entry.id}
-                    index={i}
-                    key={i}
-                    name={entry.entry}
-                    open={i === selectedRow}
-                    setOpen={() =>
-                      setSelectedRow((row) => (row === i ? undefined : i))
-                    }
-                    onMoveUp={() => {
-                      if (i - 1 >= 0) {
-                        move(i, i - 1);
-                        setSelectedRow(i - 1);
+            {fields.length > 0 && (
+              <div className="form-control w-full max-w-xs">
+                <label className="label pb-0">
+                  <span className="label-text">{t("entries")}</span>
+                </label>
+                <ul ref={parent} className="[&>li]:py-1">
+                  {fields.map((entry, i) => (
+                    <TemplateRow
+                      register={register}
+                      id={entry.id}
+                      index={i}
+                      key={i}
+                      name={entry.entry}
+                      open={i === selectedRow}
+                      setOpen={() =>
+                        setSelectedRow((row) => (row === i ? undefined : i))
                       }
-                    }}
-                    onMoveDown={() => {
-                      if (i + 1 <= fields.length - 1) {
-                        move(i, i + 1);
-                        setSelectedRow(i + 1);
-                      }
-                    }}
-                    onDelete={() => {
-                      remove(i);
-                      setSelectedRow(undefined);
-                    }}
-                  />
-                ))}
-              </ul>
-            </div>
+                      onMoveUp={() => {
+                        if (i - 1 >= 0) {
+                          move(i, i - 1);
+                          setSelectedRow(i - 1);
+                        }
+                      }}
+                      onMoveDown={() => {
+                        if (i + 1 <= fields.length - 1) {
+                          move(i, i + 1);
+                          setSelectedRow(i + 1);
+                        }
+                      }}
+                      onDelete={() => {
+                        remove(i);
+                        setSelectedRow(undefined);
+                      }}
+                    />
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
           <div className="form-control w-full max-w-xs">
