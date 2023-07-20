@@ -64,7 +64,7 @@ const TemplateRow = ({ template, index }: templateRowProps) => {
         <div
           key={name}
           className={cn(
-            "collapse rounded-md mt-2  bg-base-100",
+            "collapse mt-2 rounded-md  bg-base-100",
             open ? "block" : "hidden"
           )}
         >
@@ -89,7 +89,7 @@ const TemplateRow = ({ template, index }: templateRowProps) => {
         </div>
       </div>
       <DeleteTemplateModal
-        onClose={() => setOpenDeleteModal(true)}
+        onClose={() => setOpenDeleteModal(false)}
         onSuccess={() => {
           setTimeout(() => {
             window.dispatchEvent(new Event("focus"));

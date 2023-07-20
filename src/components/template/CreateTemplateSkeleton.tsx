@@ -1,6 +1,6 @@
 const CreateTemplateSkeleton = () => {
   return (
-    <div className="flex w-64 animate-pulse flex-col gap-2 rounded-xl bg-base-300 p-2">
+    <div className="min-h-60 flex w-full animate-pulse flex-col gap-2 rounded-xl bg-base-300 p-2 sm:max-w-sm">
       <div className="h-16 w-full rounded-xl bg-base-200"></div>
       <div className="h-16 w-full rounded-xl bg-base-200"></div>
       <div className="h-16 w-full rounded-xl bg-base-200"></div>

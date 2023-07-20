@@ -16,6 +16,7 @@ import { TemplateEntrySchema } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
 import { ArrowDownSVG, ArrowUpSVG, DeleteSVG } from "../ui/icons";
+import EntryRow from "./TemplateRow";
 
 const TemplateFormSchema = z.object({
   id: z.string().optional(),
@@ -104,7 +105,7 @@ function CreateTemplate({ data }: props) {
     <>
       {mounted && (
         <form
-          className="min-h-60 flex max-w-sm flex-col justify-between gap-2 rounded-xl bg-base-300 p-2 shadow"
+          className="min-h-60 w-full sm:max-w-sm flex max-w-sm flex-col justify-between gap-2 rounded-xl bg-base-300 p-2 shadow"
           onSubmit={handleSubmit(onSubmit)}
         >
           <div className="flex w-full flex-col " ref={parent}>
@@ -140,7 +141,7 @@ function CreateTemplate({ data }: props) {
                 </label>
                 <ul ref={parent} className="[&>li]:py-1">
                   {fields.map((entry, i) => (
-                    <TemplateRow
+                    <EntryRow
                       register={register}
                       id={entry.id}
                       index={i}
@@ -211,7 +212,7 @@ function CreateTemplate({ data }: props) {
   );
 }
 
-interface TemplateRowProps {
+interface EntryRow {
   name: string;
   open: boolean;
   register: UseFormRegister<TemplateFormType>;
@@ -222,7 +223,7 @@ interface TemplateRowProps {
   onMoveUp: () => void;
   onMoveDown: () => void;
 }
-const TemplateRow = ({
+const EntryRow = ({
   name,
   open,
   setOpen,
@@ -232,7 +233,7 @@ const TemplateRow = ({
   index,
   id,
   register,
-}: TemplateRowProps) => {
+}: EntryRow) => {
   return (
     <li key={id} className="flex items-center gap-2">
       <input

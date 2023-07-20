@@ -1,12 +1,14 @@
 import { Transition } from "@headlessui/react";
 import { type VariantProps } from "cva";
 import { useState, type ReactNode } from "react";
+import { cn } from "~/utils/utils";
 import { FloatingActionButtonCVA } from "../cva/FloatingActionButtonCva";
 
 type props = {
   options?: ReactNode[];
   children: ReactNode;
   disabled?: boolean;
+  className?: string;
   onClick?: () => void;
 } & VariantProps<typeof FloatingActionButtonCVA>;
 
@@ -16,12 +18,13 @@ const FloatingActionButton = ({
   options,
   onClick,
   children,
+  className,
   disabled,
 }: props) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <Transition appear={true} show={true}>
+    <Transition appear={true} show={true} onBlur={() => setOpen(false)}>
       {open && (
         <Transition
           appear={true}
@@ -33,10 +36,7 @@ const FloatingActionButton = ({
           leaveFrom="scale-100 opacity-100 flex justify-end"
           leaveTo="scale-0 opacity-0"
         >
-          <div
-            className="mb-2 mr-2 flex flex-col items-end gap-2"
-            onClick={() => setOpen((open) => !open)}
-          >
+          <div className="mb-2 mr-2 flex flex-col items-end gap-4">
             {options?.map((option) => (
               <>{option}</>
             ))}
@@ -53,9 +53,11 @@ const FloatingActionButton = ({
         leaveTo="scale-0 opacity-0"
       >
         <button
-          className={`${FloatingActionButtonCVA({ intent, size })} ${
-            disabled && "disabled"
-          }`}
+          className={cn(
+            FloatingActionButtonCVA({ intent, size }),
+            disabled && "hover:!cursor-not-allowed disabled",
+            className
+          )}
           onClick={() => {
             if (options) setOpen((open) => !open);
             if (onClick) onClick();
