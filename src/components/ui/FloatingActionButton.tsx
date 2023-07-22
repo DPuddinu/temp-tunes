@@ -1,9 +1,9 @@
 import { Transition } from "@headlessui/react";
+import { useClickOutside } from "@mantine/hooks";
 import { type VariantProps } from "cva";
 import { useState, type ReactNode } from "react";
 import { cn } from "~/utils/utils";
 import { FloatingActionButtonCVA } from "../cva/FloatingActionButtonCva";
-
 type props = {
   options?: ReactNode[];
   children: ReactNode;
@@ -22,9 +22,10 @@ const FloatingActionButton = ({
   disabled,
 }: props) => {
   const [open, setOpen] = useState(false);
+  const ref = useClickOutside(() => setOpen(false));
 
   return (
-    <Transition appear={true} show={true} onBlur={() => setOpen(false)}>
+    <Transition appear={true} show={true} ref={ref}>
       {open && (
         <Transition
           appear={true}
@@ -55,7 +56,7 @@ const FloatingActionButton = ({
         <button
           className={cn(
             FloatingActionButtonCVA({ intent, size }),
-            disabled && "hover:!cursor-not-allowed disabled",
+            disabled && "disabled hover:!cursor-not-allowed",
             className
           )}
           onClick={() => {

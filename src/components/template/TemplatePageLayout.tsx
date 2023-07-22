@@ -25,7 +25,7 @@ const TemplateLayout = ({ children }: { children: ReactNode }) => {
               key="explore"
               label="explore"
               disabled
-              className="border-yellow-500 bg-yellow-500 hover:bg-yellow-500"
+              className="border-yellow-500 bg-yellow-500 hover:border-yellow-500 hover:bg-yellow-500"
             >
               <ExploreSVG />
             </FabChild>,
@@ -33,14 +33,14 @@ const TemplateLayout = ({ children }: { children: ReactNode }) => {
               key="import"
               label="import"
               disabled
-              className="border-green-500 bg-green-500 hover:bg-green-500"
+              className="border-green-500 bg-green-500 hover:border-green-500  hover:bg-green-500"
             >
               <ImportSVG />
             </FabChild>,
             <FabChild
               key="create"
               label="create"
-              className="border-blue-500 bg-blue-500 hover:bg-blue-500"
+              className="border-blue-500 bg-blue-500 hover:border-blue-500 hover:bg-blue-500"
             >
               <Link href={"/templates/create"}>
                 <CreateTemplateSVG />
@@ -60,12 +60,14 @@ interface FabChildProps {
   label: string;
   disabled?: boolean;
   className?: string;
+  onClick?: () => void;
 }
 const FabChild = ({
   label,
   children,
   disabled = false,
   className,
+  onClick,
 }: FabChildProps) => {
   return (
     <div className="flex items-center gap-4">
@@ -74,6 +76,7 @@ const FabChild = ({
         size={"sm"}
         disabled={disabled}
         className={className}
+        onClick={onClick}
       >
         {children}
       </FloatingActionButton>
