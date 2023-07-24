@@ -15,5 +15,7 @@
   "delete_success": "Template cancellato",
   "confirm_delete_title": "Conferma cancellazione",
   "confirm_delete_body": "Sei sicuro di voler cancellare",
-  "explore": "Esplora"
+  "explore": "Esplora",
+  "details": "Dettagli",
+  "empty": "A quanto pare non hai ancora dei template, creane dei nuovi o prendi spunto nella sezione Esplora"
 }

@@ -45,7 +45,7 @@ const TemplateById: PageWithLayout = () => {
 
 TemplateById.getLayout = (page) => (
   <MainLayout>
-    <TemplateLayout>{page}</TemplateLayout>
+    <TemplateLayout title="details">{page}</TemplateLayout>
   </MainLayout>
 );
 

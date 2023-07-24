@@ -2,16 +2,34 @@ import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { type ReactNode } from "react";
 import FloatingActionButton from "../ui/FloatingActionButton";
-import { CreateTemplateSVG, ExploreSVG, ImportSVG, PlusSVG } from "../ui/icons";
+import {
+  CreateTemplateSVG,
+  ExploreSVG,
+  ImportSVG,
+  PlusSVG,
+  TemplateSVG,
+} from "../ui/icons";
 
-const TemplateLayout = ({ children }: { children: ReactNode }) => {
+export type TemplatePage =
+  | "my_templates"
+  | "create"
+  | "import"
+  | "explore"
+  | "details";
+const TemplateLayout = ({
+  children,
+  title,
+}: {
+  children: ReactNode;
+  title: TemplatePage;
+}) => {
   const { t } = useTranslation("templates");
   return (
     <>
       <section className="relative mb-16 flex flex-col justify-between">
         <Link href={"/templates"}>
           <h1 className="mb-2 ml-2 w-fit pb-2 text-2xl font-semibold transition-transform hover:scale-105 sm:text-3xl">
-            {t("my_templates")}
+            {t(title)}
           </h1>
         </Link>
         {children}
@@ -22,16 +40,26 @@ const TemplateLayout = ({ children }: { children: ReactNode }) => {
           size={"md"}
           options={[
             <FabChild
+              key="myTemplates"
+              label={t("my_templates")}
+              className="border-orange-500 bg-orange-500 hover:border-orange-500 hover:bg-orange-500"
+            >
+              <Link href={"/templates"}>
+                <TemplateSVG />
+              </Link>
+            </FabChild>,
+            <FabChild
               key="explore"
-              label="explore"
-              disabled
+              label={t("explore")}
               className="border-yellow-500 bg-yellow-500 hover:border-yellow-500 hover:bg-yellow-500"
             >
-              <ExploreSVG />
+              <Link href={"/templates/explore"}>
+                <ExploreSVG />
+              </Link>
             </FabChild>,
             <FabChild
               key="import"
-              label="import"
+              label={t("import")}
               disabled
               className="border-green-500 bg-green-500 hover:border-green-500  hover:bg-green-500"
             >
@@ -39,7 +67,7 @@ const TemplateLayout = ({ children }: { children: ReactNode }) => {
             </FabChild>,
             <FabChild
               key="create"
-              label="create"
+              label={t("create")}
               className="border-blue-500 bg-blue-500 hover:border-blue-500 hover:bg-blue-500"
             >
               <Link href={"/templates/create"}>
@@ -70,7 +98,7 @@ const FabChild = ({
   onClick,
 }: FabChildProps) => {
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-4 hover:scale-105">
       <div className="rounded-md bg-neutral p-1 px-3 uppercase">{label}</div>
       <FloatingActionButton
         size={"sm"}

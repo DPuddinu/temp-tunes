@@ -57,6 +57,7 @@ const FloatingActionButton = ({
           className={cn(
             FloatingActionButtonCVA({ intent, size }),
             disabled && "disabled hover:!cursor-not-allowed",
+            open && "rotate-45",
             className
           )}
           onClick={() => {

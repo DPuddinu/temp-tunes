@@ -9,7 +9,6 @@ import { langKey } from "~/hooks/use-language";
 import type { PageWithLayout } from "~/types/page-types";
 
 const Templates: PageWithLayout = () => {
-
   return (
     <section className="flex justify-center">
       <CreateTemplate />
@@ -19,7 +18,7 @@ const Templates: PageWithLayout = () => {
 
 Templates.getLayout = (page) => (
   <MainLayout>
-    <TemplateLayout>{page}</TemplateLayout>
+    <TemplateLayout title="create">{page}</TemplateLayout>
   </MainLayout>
 );
 export default Templates;
