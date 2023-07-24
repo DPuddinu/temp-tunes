@@ -13,7 +13,7 @@ import {
 export type TemplatePage =
   | "my_templates"
   | "create"
-  | "import"
+  | "import_template"
   | "explore"
   | "details";
 const TemplateLayout = ({
@@ -29,7 +29,7 @@ const TemplateLayout = ({
       <section className="relative mb-16 flex flex-col justify-between">
         <Link href={"/templates"}>
           <h1 className="mb-2 ml-2 w-fit pb-2 text-2xl font-semibold transition-transform hover:scale-105 sm:text-3xl">
-            {t(title)}
+            {t(title) ?? "not found"}
           </h1>
         </Link>
         {children}
@@ -63,7 +63,9 @@ const TemplateLayout = ({
               disabled
               className="border-green-500 bg-green-500 hover:border-green-500  hover:bg-green-500"
             >
-              <ImportSVG />
+              <Link href={"/templates/import"}>
+                <ImportSVG />
+              </Link>
             </FabChild>,
             <FabChild
               key="create"

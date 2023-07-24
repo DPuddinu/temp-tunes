@@ -95,7 +95,7 @@ export const templatesRouter = createTRPCRouter({
       id: z.string(),
     })
   )
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const { id } = input;
 
       const template = await ctx.prisma.playlistTemplate.findFirst({

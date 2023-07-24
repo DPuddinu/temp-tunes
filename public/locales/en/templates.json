@@ -18,5 +18,7 @@
   "confirm_delete_body": "Are you sure you want to delete",
   "explore": "Explore",
   "details": "Details",
-  "empty": "Looks like you don't have any template yet, please create some or take inspiration from the explore section"
+  "import_template": "Import Template",
+  "empty": "Looks like you don't have any template yet, please create some or take inspiration from the explore section",
+  "import_placeholder": "Type template id"
 }

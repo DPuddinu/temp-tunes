@@ -17,5 +17,6 @@
   "confirm_delete_body": "Sei sicuro di voler cancellare",
   "explore": "Esplora",
   "details": "Dettagli",
+  "import_template": "Inserisci l'id del template",
   "empty": "A quanto pare non hai ancora dei template, creane dei nuovi o prendi spunto nella sezione Esplora"
 }

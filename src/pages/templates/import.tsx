@@ -1,58 +1,93 @@
-import { useRouter } from "next/router";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { getCookie } from "cookies-next";
+import type { GetServerSideProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import MainLayout from "~/components/MainLayout";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
+import type { Language } from "~/core/settingsStore";
+import { langKey } from "~/hooks/use-language";
+import { useMounted } from "~/hooks/use-mounted";
 import { useToast } from "~/hooks/use-toast";
 import type { PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 
+const FormSchema = z.object({
+  id: z.string().min(25).max(25),
+});
+type FormSchemaType = z.infer<typeof FormSchema>;
 
 const ImportTemplate: PageWithLayout = () => {
-  const router = useRouter();
   const { setMessage } = useToast();
   const { t } = useTranslation("templates");
+  const mounted = useMounted();
 
   //TODO add custom error messages
-  const InputType = z.object({
-    id: z.string().min(25).max(25)
+  const _FormSchema = z.object({
+    id: z.string().min(25).max(25),
   });
 
-  const { isLoading, data: templateData } =
-    api.template.importTemplateById.useQuery(
-      { id: router.query.id?.toString() ?? "" },
-      {
-        onError(err) {
-          const error = t(err.message)
-          setMessage(error);
-        },
-        enabled: router.query.id !== undefined,
-      }
-    );
-  
+  const {
+    register,
+    handleSubmit,
+    formState: { isValid, errors },
+  } = useForm<FormSchemaType>({ resolver: zodResolver(_FormSchema) });
+
+  const { isLoading, mutate } = api.template.importTemplateById.useMutation({
+    onError(err) {
+      const error = t(err.message);
+      setMessage(error);
+    },
+  });
+
+  const onSubmit: SubmitHandler<FormSchemaType> = (data) => {
+    mutate({
+      id: data.id,
+    });
+  };
+
   return (
-    <div>
-      <div className="join">
-        <div>
-          <div>
-            <input
-              className="input-bordered input join-item"
-              placeholder="Search"
-            />
-          </div>
+    <>
+      {mounted && (
+        <div className="flex justify-center">
+          <form className="max-w-sm w-full" onSubmit={handleSubmit(onSubmit)}>
+            <div className="join w-full">
+              <input
+                className="input-bordered input join-item grow bg-white "
+                placeholder={t("import_placeholder") ?? "Insert template id"}
+                {...register("id")}
+              />
+              <div className="indicator">
+                <button className="join-item btn">{t("import")}</button>
+              </div>
+            </div>
+          </form>
         </div>
-        <div className="indicator">
-          <button className="join-item btn">Import</button>
-        </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 
 ImportTemplate.getLayout = (page) => (
   <MainLayout>
-    <TemplateLayout>{page}</TemplateLayout>
+    <TemplateLayout title="import_template">{page}</TemplateLayout>
   </MainLayout>
 );
 
-export default ImportTemplate
+export default ImportTemplate;
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const language = getCookie(langKey, { req, res }) as Language;
+
+  return {
+    props: {
+      // prettier-ignore
+      ...(await serverSideTranslations(language ?? "en", [
+        "templates",
+        "common",
+      ])),
+    },
+  };
+};

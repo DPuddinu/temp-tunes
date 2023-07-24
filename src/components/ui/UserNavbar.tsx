@@ -59,9 +59,7 @@ const UserNavbar = ({ name, image }: UserNavbarProps) => {
               tabIndex={0}
               className="menu-compact z-40 dropdown-content menu rounded-box mt-3 w-52 border border-base-100 bg-base-300 p-2 shadow-lg"
             >
-              <li>
-                <SpotifyWebPlayer />
-              </li>
+              <SpotifyWebPlayer />
               <li className="flex flex-row items-center">
                 <span>{t("change_theme")}</span>
                 <ThemeSwitcher />

@@ -11,5 +11,6 @@
   "share": "Share",
   "delete": "Delete",
   "update": "Update",
+  "import": "Import",
   "create_playlist": "Create playlist"
 }
