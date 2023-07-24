@@ -20,5 +20,6 @@
   "details": "Details",
   "import_template": "Import",
   "empty": "Looks like you don't have any template yet, please create some or take inspiration from the explore section",
-  "import_placeholder": "Type template id"
+  "import_placeholder": "Type template id",
+  "view": "View more..."
 }

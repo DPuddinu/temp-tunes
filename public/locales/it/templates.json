@@ -19,5 +19,6 @@
   "details": "Dettagli",
   "import": "Importa",
   "empty": "A quanto pare non hai ancora dei template, creane dei nuovi o prendi spunto nella sezione Esplora",
-  "import_placeholder": "Inserisci l'id del template"
+  "import_placeholder": "Inserisci l'id del template",
+  "view": "Vedi..."
 }

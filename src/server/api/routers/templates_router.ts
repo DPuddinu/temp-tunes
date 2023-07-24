@@ -175,6 +175,9 @@ export const templatesRouter = createTRPCRouter({
     return ctx.prisma.playlistTemplate.findMany({
       where: {
         type: 'EXPLORE'
+      },
+      include: {
+        templateEntries: true
       }
     })
   }),

@@ -5,9 +5,11 @@ import { DropdownMenuContentCva } from "../cva/DropdownMenuCva";
 import { VerticalDotsSVG } from "./icons/VerticalDotsSVG";
 
 export type DropdownDirection = "up" | "down" | "left" | "right";
+export type DropdownColor = "black" | "white";
 type DropdownProps = {
   children: ReactNode;
   className?: string;
+  color?: DropdownColor;
   direction?: DropdownDirection;
 } & VariantProps<typeof DropdownMenuContentCva>;
 
@@ -15,6 +17,7 @@ const DropdownMenu = ({
   children,
   intent,
   className,
+  color = "white",
   direction = "down",
 }: DropdownProps) => {
   return (
@@ -30,7 +33,10 @@ const DropdownMenu = ({
     >
       <label
         tabIndex={0}
-        className="btn border-none bg-transparent p-0 hover:bg-transparent"
+        className={cn(
+          "btn border-none bg-transparent p-0 hover:bg-transparent",
+          color && `text-${color}`
+        )}
       >
         <VerticalDotsSVG />
       </label>
