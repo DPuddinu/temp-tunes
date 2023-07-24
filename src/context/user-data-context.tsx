@@ -1,7 +1,7 @@
 import { useSession } from "next-auth/react";
 import { createContext, type ReactNode } from "react";
 import { useStore } from "~/core/store";
-import type { TagsObject } from "~/server/api/routers/prisma_router";
+import type { TagsObject } from "~/server/api/routers/tags_router";
 import { api } from "~/utils/api";
 interface Data {
   tags: TagsObject | undefined;

@@ -1,7 +1,7 @@
 import { type User } from "@prisma/client";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import type { TagSchemaType } from "~/types/zod-schemas";
-import { createTagsObject } from "./prisma_router";
+import { createTagsObject } from "./tags_router";
 
 export const userRouter = createTRPCRouter({
   getUserBySpotifyId: protectedProcedure

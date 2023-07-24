@@ -13,7 +13,7 @@ import {
 } from "~/types/spotify-types";
 import { PlaylistSchema, type TagSchemaType } from "~/types/zod-schemas";
 import { spliceArray } from "~/utils/helpers";
-import { createTagsObject } from "./prisma_router";
+import { createTagsObject } from "./tags_router";
 
 export interface SearchResult {
   title: string;
@@ -85,11 +85,10 @@ export const spotifyUserRouter = createTRPCRouter({
     )) as TopArtists;
 
     const params = new URLSearchParams({
-      seed_artists: `${artists.items[0]?.id ?? ""},${
-        artists.items[1]?.id ?? ""
-      }`,
+      seed_artists: `${artists.items[0]?.id ?? ""},${artists.items[1]?.id ?? ""
+        }`,
       seed_tracks: `${tracks.items[0]?.id ?? ""},${tracks.items[1]?.id ?? ""}`,
-      seed_genres: `${artists.items[0] && artists.items[0].genres ?  artists.items[0]?.genres[0] : ""}`,
+      seed_genres: `${artists.items[0] && artists.items[0].genres ? artists.items[0]?.genres[0] : ""}`,
       limit: "5",
     });
     const recommendationsUrl = `/recommendations?${params.toString()}`;
@@ -188,7 +187,7 @@ export const spotifyUserRouter = createTRPCRouter({
             }
           });
         });
-        console.log('playlistMatches',playlistMatches)
+        console.log('playlistMatches', playlistMatches)
       }
       const data = [...tagMatches, ...playlistMatches]
 

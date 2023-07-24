@@ -99,21 +99,21 @@ export const templatesRouter = createTRPCRouter({
       const { id } = input;
 
       const template = await ctx.prisma.playlistTemplate.findFirst({
-          where: {
-            id: id
-          },
-          include: {
-            templateEntries: true
-          }
-        })
-      if(!template) throw new TRPCError({
+        where: {
+          id: id
+        },
+        include: {
+          templateEntries: true
+        }
+      })
+      if (!template) throw new TRPCError({
         code: "BAD_REQUEST",
         message: "Template not found!"
       })
       return await ctx.prisma.playlistTemplate.create({
         data: {
+          type: "CUSTOM",
           name: template?.name,
-          stars: template?.stars,
           templateEntries: {
             createMany: {
               data: template?.templateEntries
