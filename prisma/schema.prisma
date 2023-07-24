@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
@@ -16,21 +16,31 @@ model User {
   name              String?
   email             String?            @unique
   image             String?
+  type              UserType
   playlistTemplates PlaylistTemplate[]
   Tags              Tag[]
 }
-
+enum UserType {
+  ADMIN
+  USER
+}
 
 model PlaylistTemplate {
   id              String          @id @default(cuid())
   userId          String
   name            String
-  stars           Float
   description     String?
+  color           String?
+  type            TemplateType
   templateEntries TemplateEntry[]
   author          User            @relation(fields: [userId], references: [id])
 
   @@index([userId])
+}
+
+enum TemplateType {
+  CUSTOM
+  EXPLORE
 }
 
 model TemplateEntry {
@@ -43,11 +53,11 @@ model TemplateEntry {
 }
 
 model Tag {
-  id          String @id @default(cuid())
-  name        String
-  userId      String
-  spotifyId   String
-  user        User   @relation(fields: [userId], references: [id])
+  id        String @id @default(cuid())
+  name      String
+  userId    String
+  spotifyId String
+  user      User   @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }

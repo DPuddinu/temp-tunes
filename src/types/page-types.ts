@@ -7,6 +7,7 @@ export type NextPageWithLayout = NextPage & {
 };
 export type PageWithLayout = {
   getLayout?: (page: ReactElement) => ReactNode;
+  title?: string
 };
 export type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;

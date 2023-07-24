@@ -16,5 +16,7 @@
   "delete_success": "Template deleted",
   "confirm_delete_title": "Confirm Delete",
   "confirm_delete_body": "Are you sure you want to delete",
-  "explore": "Explore"
+  "explore": "Explore",
+  "details": "Details",
+  "empty": "Looks like you don't have any template yet, please create some or take inspiration from the explore section"
 }

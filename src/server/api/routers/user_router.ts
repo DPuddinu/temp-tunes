@@ -15,6 +15,7 @@ export const userRouter = createTRPCRouter({
       if (!user)
         user = await ctx.prisma.user.create({
           data: {
+            type: 'USER',
             image: ctx.session.user.image,
             name: ctx.session.user.name,
             email: ctx.session.user.email,
@@ -25,7 +26,7 @@ export const userRouter = createTRPCRouter({
         where: {
           userId: user.id,
         },
-      }) as TagSchemaType[]; 
+      }) as TagSchemaType[];
       return { user: user, tags: createTagsObject(tags) };
     }),
 });

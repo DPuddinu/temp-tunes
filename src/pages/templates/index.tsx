@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import MainLayout from "~/components/MainLayout";
 import TemplateList from "~/components/template/TemplateList";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
+import { ErrorSVG } from "~/components/ui/icons";
 import { TemplatesSkeleton } from "~/components/ui/skeletons/TemplatesSkeleton";
 import { type Language } from "~/core/settingsStore";
 import { langKey } from "~/hooks/use-language";
@@ -27,6 +28,16 @@ const Templates: PageWithLayout = () => {
 
   return (
     <>
+      {data && data.length === 0 && (
+        <div className="flex justify-center">
+          <div className="max-w-xs rounded-xl bg-base-200 p-4">
+            <div className="flex w-full justify-center">
+              <ErrorSVG />
+            </div>
+            <p className="mt-2 text-center">{t("empty")}</p>
+          </div>
+        </div>
+      )}
       {data && <TemplateList data={data} />}
       {isLoading && <TemplatesSkeleton />}
     </>
@@ -35,7 +46,7 @@ const Templates: PageWithLayout = () => {
 
 Templates.getLayout = (page) => (
   <MainLayout>
-    <TemplateLayout>{page}</TemplateLayout>
+    <TemplateLayout title="my_templates">{page}</TemplateLayout>
   </MainLayout>
 );
 export default Templates;

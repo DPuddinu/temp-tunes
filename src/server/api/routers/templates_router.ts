@@ -20,7 +20,7 @@ export const templatesRouter = createTRPCRouter({
 
       return await ctx.prisma.playlistTemplate.create({
         data: {
-          stars: 0,
+          type: 'CUSTOM',
           userId: ctx.session.user.id,
           description: description,
           name: name,
@@ -170,5 +170,12 @@ export const templatesRouter = createTRPCRouter({
       })
     ]);
     return await deleteEntries
+  }),
+  getExploreTemplates: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.prisma.playlistTemplate.findMany({
+      where: {
+        type: 'EXPLORE'
+      }
+    })
   }),
 });
