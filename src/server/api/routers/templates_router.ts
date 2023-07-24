@@ -90,6 +90,40 @@ export const templatesRouter = createTRPCRouter({
         }
       })
     }),
+  importTemplateById: protectedProcedure.input(
+    z.object({
+      id: z.string(),
+    })
+  )
+    .query(async ({ ctx, input }) => {
+      const { id } = input;
+
+      const template = await ctx.prisma.playlistTemplate.findFirst({
+          where: {
+            id: id
+          },
+          include: {
+            templateEntries: true
+          }
+        })
+      if(!template) throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Template not found!"
+      })
+      return await ctx.prisma.playlistTemplate.create({
+        data: {
+          name: template?.name,
+          stars: template?.stars,
+          templateEntries: {
+            createMany: {
+              data: template?.templateEntries
+            }
+          },
+          userId: ctx.session.user.id,
+        }
+      })
+    }),
+
   getCurrentUserTemplates: protectedProcedure
     .query(async ({ ctx }) => {
 
@@ -117,9 +151,9 @@ export const templatesRouter = createTRPCRouter({
     }),
   deleteTemplate: protectedProcedure.input(
     z.object({ id: z.string(), entries: z.string().array() })
-  ).mutation(async ({ ctx, input}) => {
+  ).mutation(async ({ ctx, input }) => {
 
-    const {id, entries}= input;
+    const { id, entries } = input;
     const deleteEntries = await ctx.prisma.$transaction([
       // REMOVING ENTRIES
       ctx.prisma.templateEntry.deleteMany({
