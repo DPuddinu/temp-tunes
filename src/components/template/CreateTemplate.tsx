@@ -36,7 +36,7 @@ function CreateTemplate({ data }: props) {
   const [selectedRow, setSelectedRow] = useState<number | undefined>();
   const mounted = useMounted();
 
-  const { mutate, isLoading } = api.template.createTemplate.useMutation({
+  const { mutate } = api.template.createTemplate.useMutation({
     onError() {
       const msg = t("error");
       setMessage(msg);
@@ -131,7 +131,6 @@ function CreateTemplate({ data }: props) {
                   {...register("description")}
                 />
               </div>
-              {isLoading && <LoadingSpinner />}
             </div>
             {fields.length > 0 && (
               <div className="form-control w-full ">

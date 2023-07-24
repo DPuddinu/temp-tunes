@@ -27,18 +27,20 @@ const Templates: PageWithLayout = () => {
   );
 
   return (
-    <div className="flex flex-col items-center">
-      {data && <TemplateList data={data} />}
+    <>
       {data && data.length === 0 && (
-        <div className="max-w-xs rounded-xl bg-base-200 p-4">
-          <div className="flex w-full justify-center">
-            <ErrorSVG />
+        <div className="flex justify-center">
+          <div className="max-w-xs rounded-xl bg-base-200 p-4">
+            <div className="flex w-full justify-center">
+              <ErrorSVG />
+            </div>
+            <p className="mt-2 text-center">{t("empty")}</p>
           </div>
-          <p className="mt-2 text-center">{t("empty")}</p>
         </div>
       )}
+      {data && <TemplateList data={data} />}
       {isLoading && <TemplatesSkeleton />}
-    </div>
+    </>
   );
 };
 
