@@ -1,10 +1,8 @@
-import { useMemo, type ForwardedRef } from "react";
+import { type ForwardedRef } from "react";
 import PlayerDataProvider from "~/context/player-context";
 import { usePlaylistStore } from "~/core/userStore";
 import type { Playlist, Track } from "~/types/spotify-types";
 import TrackRow from "./TrackRow";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 
 export interface TrackProps {
   track: Track;
