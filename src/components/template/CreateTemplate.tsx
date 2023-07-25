@@ -14,7 +14,6 @@ import { useMounted } from "~/hooks/use-mounted";
 import { useToast } from "~/hooks/use-toast";
 import { TemplateEntrySchema } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
-import { LoadingSpinner } from "../ui/LoadingSpinner";
 import { ArrowDownSVG, ArrowUpSVG, DeleteSVG } from "../ui/icons";
 
 const TemplateFormSchema = z.object({

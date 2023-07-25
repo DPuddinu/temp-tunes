@@ -114,6 +114,7 @@ export const templatesRouter = createTRPCRouter({
         data: {
           type: "CUSTOM",
           name: template?.name,
+          description: template?.description,
           templateEntries: {
             createMany: {
               data: template?.templateEntries.map(t => {

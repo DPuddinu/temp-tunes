@@ -42,7 +42,7 @@ const TemplateCard = ({
 
   return (
     <>
-      <div className="card-compact card max-w-md bg-base-300 shadow-xl">
+      <div className="card-compact card min-h-[14rem] w-full max-w-md bg-base-300 shadow-xl">
         <div
           className={cn(
             "flex h-10 !justify-end rounded-t-2xl pr-2",
@@ -73,7 +73,7 @@ const TemplateCard = ({
                       const msg = tmpl("clipboard");
                       setMessage(msg);
                     },
-                  }
+                  },
                 ]}
               />
             </DropdownMenu>

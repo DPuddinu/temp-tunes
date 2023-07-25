@@ -1,7 +1,7 @@
-import type { VariantProps } from "cva";
-import { ToastCva } from "../cva/ToastCva";
 import { Transition } from "@headlessui/react";
+import type { VariantProps } from "cva";
 import { cn } from "~/utils/utils";
+import { ToastCva } from "../cva/ToastCva";
 
 type ToastProps = {
   className?: string;
@@ -19,11 +19,11 @@ const Toast = ({ className, intent, message }: ToastProps) => {
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
       >
-        <div className={cn("toast pb-20", className)}>
+        <div className={cn("toast !whitespace-normal pb-20", className)}>
           <div className={ToastCva({ intent })}>{message}</div>
         </div>
       </Transition>
     </>
   );
 };
-export default Toast
+export default Toast;

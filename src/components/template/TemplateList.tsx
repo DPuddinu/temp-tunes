@@ -14,7 +14,7 @@ const TemplateList = ({
   const { t } = useTranslation("common");
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" ref={parent}>
+    <div className="sm:grid gap-4 flex flex-col items-center sm:grid-cols-2 lg:grid-cols-3" ref={parent}>
       {data.map((template, i) => (
         <TemplateCard
           color={template.color}
