@@ -1,13 +1,13 @@
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef, type ReactNode } from "react";
-import { useStore } from "~/core/store";
+import { useStore } from "~/core/userStore";
 import { HomeSVG, PlaylistSVG, SearchSVG, TemplateSVG } from "./ui/icons/index";
 import NavbarSkeleton from "./ui/skeletons/NavbarSkeleton";
 import { RoundSkeleton } from "./ui/skeletons/RoundSkeleton";
-import Head from "next/head";
 
 type PageType = "Home" | "Search" | "Playlists" | "Templates";
 interface Page {
@@ -42,8 +42,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
 
   return (
     <div className="drawer overflow-hidden">
-      
-<Head>
+      <Head>
         <title>Next Spotify Manager</title>
         <meta name="description" content="A very cool Spotify Manager" />
         <link rel="icon" href="/favicon.ico" />

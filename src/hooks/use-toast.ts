@@ -1,6 +1,6 @@
-import { useStore } from "~/core/store"
+import { useStore } from "~/core/userStore";
 
 export const useToast = () => {
-  const {message, setMessage} = useStore();
-  return {message, setMessage}
+  const { message, setMessage } = useStore();
+  return { message, setMessage }
 }

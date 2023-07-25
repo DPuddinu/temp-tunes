@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
-import { useStore } from "~/core/store";
+import { useStore } from "~/core/userStore";
 import { useToast } from "~/hooks/use-toast";
 import { type TagSchemaType, type TagType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";

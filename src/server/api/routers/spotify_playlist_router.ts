@@ -1,8 +1,9 @@
 import { z } from "zod";
-import { addTracksToPlaylist, createPlaylist, getPlaylistById, getPlaylistTracks, getUserPlaylists, play, removeTracksFromPlaylist, renamePlaylist, unfollowPlaylist } from "~/core/spotifyCollection";
+import { addToPlaylist, addTracksToPlaylist, createPlaylist, getPlaylistById, getPlaylistTracks, getUserPlaylists, play, removeTracksFromPlaylist, renamePlaylist, unfollowPlaylist } from "~/core/spotifyCollection";
 import { type Playlist } from "~/types/spotify-types";
 import { PlaylistSchema } from "~/types/zod-schemas";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { TRPCError } from "@trpc/server";
 
 export const spotifyPlaylistRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -68,9 +69,14 @@ export const spotifyPlaylistRouter = createTRPCRouter({
     }
     return null
   }),
-  play: protectedProcedure.input(z.object({ uris: z.string().array().nullish(), contextUri: z.string().nullish() })).mutation(async ({ ctx, input }) => {
-    const { uris, contextUri } = input;
-    return await play(ctx.session.accessToken, uris, contextUri)
+  addToPlaylist: protectedProcedure.input(z.object({ uri: z.string(), playlistId: z.string(), playlistName: z.string() })).mutation(async ({ ctx, input }) => {
+    const { playlistId, uri } = input;
+    const addTo = await addToPlaylist(uri, playlistId, ctx.session.accessToken)
+    if(addTo.status !== 201) throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Something went wrong, can't add this track to the selected playlist"
+    })
+    return addTo
   }),
 });
 

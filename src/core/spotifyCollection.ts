@@ -284,3 +284,9 @@ export async function previousTrack(access_token: string) {
   const body = {}
   return await spotifyPOST({ url: '/me/player/previous', access_token: access_token, body: JSON.stringify(body) })
 }
+export async function addToPlaylist(uri: string, playlistId: string, access_token: string) {
+  const body = {
+    uris: [uri]
+  }
+  return await spotifyPOST({ url: `/playlists/${playlistId}/tracks`, access_token: access_token, body: JSON.stringify(body) })
+}

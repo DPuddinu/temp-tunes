@@ -12,7 +12,7 @@ import { z } from "zod";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { SearchSVG } from "~/components/ui/icons/index";
 import { type Language } from "~/core/settingsStore";
-import { usePlaylistStore } from "~/core/store";
+import { usePlaylistStore } from "~/core/userStore";
 import { langKey } from "~/hooks/use-language";
 import { useLibrary } from "~/hooks/use-library";
 import type { PageWithLayout } from "~/types/page-types";

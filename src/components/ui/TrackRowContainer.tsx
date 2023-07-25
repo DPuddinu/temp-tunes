@@ -1,26 +1,33 @@
+import { useMemo, type ForwardedRef } from "react";
 import PlayerDataProvider from "~/context/player-context";
-import type { Track } from "~/types/spotify-types";
+import { usePlaylistStore } from "~/core/userStore";
+import type { Playlist, Track } from "~/types/spotify-types";
 import TrackRow from "./TrackRow";
-import type { ForwardedRef } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 
 export interface TrackProps {
   track: Track;
+  playlists?: Playlist[];
   options?: TrackDropdownOptions[];
-  ref?: ForwardedRef<HTMLDivElement>
+  ref?: ForwardedRef<HTMLDivElement>;
 }
 
-export type TrackDropdownOptions =
-  | "ADD_TO_QUEUE"
-  | "ADD_TO_PLAYLIST"
-  | "EDIT_TAGS";
+export type TrackDropdownOptions = "ADD_TO_QUEUE" | "EDIT_TAGS";
 
-
-const TrackRowContainer = ({track, options, ref}: TrackProps) => {
+const TrackRowContainer = ({ track, options, ref }: TrackProps) => {
+  const { playlists } = usePlaylistStore();
+  
   return (
     <PlayerDataProvider>
-      <TrackRow track={track} options={options} ref={ref}></TrackRow>
+      <TrackRow
+        track={track}
+        options={options}
+        ref={ref}
+        playlists={playlists}
+      />
     </PlayerDataProvider>
   );
 };
 
-export default TrackRowContainer
+export default TrackRowContainer;
