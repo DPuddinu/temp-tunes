@@ -1,7 +1,8 @@
 import { useTranslation } from "next-i18next";
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import TrackRowContainer from "~/components/ui/TrackRowContainer";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
+import { SquareSkeleton } from "~/components/ui/skeletons/SquareSkeleton";
 import {
   TopTypeArray,
   type Artist,
@@ -21,6 +22,14 @@ export type RecapPropsType = {
 export const itemsPerPageOptions = ["5", "10", "15", "20"];
 export const totalItems = 50;
 const itemsPerPage = 5;
+
+//TODO create proper skeleton
+const TrackRowContainer = dynamic(
+  () => import("~/components/ui/TrackRowContainer"),
+  {
+    loading: () => <SquareSkeleton />,
+  }
+);
 
 const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
   const { t } = useTranslation("home");
@@ -58,7 +67,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
               setSelectedType(type);
               setSelectedPage(0);
             }}
-            intent={selectedType === type ? "static" : "active"}
+            active={selectedType === type}
           >
             <p
               key={type}
@@ -81,11 +90,11 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
               {selectedType === "artists" ? (
                 <ArtistRow artist={item as Artist} key={i} />
               ) : (
-                  <TrackRowContainer
-                    track={item as Track}
-                    key={i}
-                    options={["EDIT_TAGS", "ADD_TO_QUEUE", "ADD_TO_PLAYLIST"]}
-                  />
+                <TrackRowContainer
+                  track={item as Track}
+                  key={i}
+                  options={["EDIT_TAGS", "ADD_TO_QUEUE"]}
+                />
               )}
             </>
           ))}

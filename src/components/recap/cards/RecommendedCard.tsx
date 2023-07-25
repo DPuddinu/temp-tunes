@@ -1,14 +1,16 @@
 import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
-import TrackRowContainer from "~/components/ui/TrackRowContainer";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import { SquareSkeleton } from "~/components/ui/skeletons/SquareSkeleton";
 import { api } from "~/utils/api";
 import RecapCard from "../RecapCard";
 
-const TrackRow = dynamic(() => import("~/components/ui/TrackRow"), {
-  loading: () => <SquareSkeleton />,
-});
+const TrackRowContainer = dynamic(
+  () => import("~/components/ui/TrackRowContainer"),
+  {
+    loading: () => <SquareSkeleton />,
+  }
+);
 
 const RecommendedCard = () => {
   //prettier-ignore
@@ -25,15 +27,13 @@ const RecommendedCard = () => {
         <p>{t("recap.for_you")}</p>
       </RecapCard.Header>
       <RecapCard.Container key={"container-recommended"} error={isError}>
-        {data &&
-          data.tracks.length > 0 &&
-          data.tracks.map((track) => (
-            <TrackRowContainer
-              key={track.id}
-              track={track}
-              options={["EDIT_TAGS", "ADD_TO_QUEUE", "ADD_TO_PLAYLIST"]}
-            />
-          ))}
+        {data?.tracks.map((track) => (
+          <TrackRowContainer
+            key={track.id}
+            track={track}
+            options={["EDIT_TAGS", "ADD_TO_QUEUE"]}
+          />
+        ))}
       </RecapCard.Container>
     </RecapCard>
   );

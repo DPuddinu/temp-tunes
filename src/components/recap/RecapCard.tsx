@@ -1,10 +1,12 @@
 import { RecapCardCva } from "@components/cva/RecapCardCva";
 import type { VariantProps } from "cva";
 import type { PropsWithChildren, ReactNode } from "react";
-import type { RecapSelectItemPropsType } from "~/types/spotify-types";
-import { RecapCardHeaderCva } from "../cva/RecapCardHeaderCva";
+import { cn } from "~/utils/utils";
 
-type RecapHeaderType = RecapSelectItemPropsType & PropsWithChildren;
+type RecapHeaderType = {
+  onClick?: () => void;
+  active?: boolean;
+} & PropsWithChildren;
 type RecapCardProps = {
   loading?: boolean;
   fallback: ReactNode;
@@ -22,11 +24,18 @@ const RecapCard = ({ children, intent, loading, fallback }: RecapCardProps) => {
 
 RecapCard.Header = function RecapCardHeader({
   onClick,
-  intent,
+  active = false,
   children,
 }: RecapHeaderType) {
   return (
-    <div className={RecapCardHeaderCva({ intent })} onClick={onClick} key={'RecapHeader'}>
+    <div
+      className={cn(
+        "flex items-center justify-center p-4 pb-0 text-center text-lg font-medium tracking-wide text-base-content",
+        active && "hover:cursor-pointer hover:text-base-content"
+      )}
+      onClick={onClick}
+      key={"RecapHeader"}
+    >
       {children}
     </div>
   );
@@ -44,6 +53,5 @@ RecapCard.Container = function RecapContainer({
     </>
   );
 };
-
 
 export default RecapCard;
