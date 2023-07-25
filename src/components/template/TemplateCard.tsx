@@ -34,7 +34,7 @@ const TemplateCard = ({
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const router = useRouter();
   const { t } = useTranslation("common");
-  const { t: t_tmp } = useTranslation("templates");
+  const { t: tmpl } = useTranslation("templates");
 
   return (
     <>
@@ -84,7 +84,9 @@ const TemplateCard = ({
           </h2>
 
           <p>{template.description}</p>
-          <p onClick={() => setOpen(true)}>{t_tmp("view")}</p>
+          <p onClick={() => setOpen(true)} className="hover:cursor-pointer">
+            {open ? tmpl("view_less") : tmpl("view_more")}
+          </p>
           <div
             key={template.name}
             className={cn(
@@ -95,12 +97,12 @@ const TemplateCard = ({
             <input type="checkbox" checked={open} disabled className="hidden" />
             <div className="collapse-content p-1 px-2">
               <div className="p-2">
-                {template.templateEntries.map(({ entry, id }, i) => (
+                {template.templateEntries.map(({ entry, id }) => (
                   <p key={id}>{entry}</p>
                 ))}
               </div>
               <div
-                className="mt-4 flex w-full justify-center hover:animate-bounce"
+                className="mt-4 flex w-full justify-center hover:animate-bounce hover:cursor-pointer"
                 onClick={() => setOpen((open) => !open)}
               >
                 <ArrowSVG className="w-12 rotate-180 justify-center " />
@@ -143,31 +145,30 @@ const TemplateCard = ({
 
 export default TemplateCard;
 
-const colors = [
-  "red",
-  "orange",
-  "amber",
-  "yellow",
-  "lime",
-  "green",
-  "emerald",
-  "teal",
-  "cyan",
-  "sky",
-  "blue",
-  "indigo",
-  "violet",
-  "purple",
-  "fuchsia",
-  "pink",
-  "rose",
-];
-type intensity = "200" | "300" | "400" | "500" | "600";
+const Colors = {
+  red: "bg-red-500 hover:bg-red-500",
+  orange: "bg-orange-500 hover:bg-orange-500",
+  amber: "bg-amber-500 hover:bg-amber-500",
+  yellow: "bg-yellow-500 hover:bg-yellow-500",
+  lime: "bg-lime-500 hover:bg-lime-500",
+  green: "bg-green-500 hover:bg-green-500",
+  emerald: "bg-emerald-500 hover:bg-emerald-500",
+  teal: "bg-teal-500 hover:bg-teal-500",
+  cyan: "bg-cyan-500 hover:bg-cyan-500",
+  sky: "bg-sky-500 hover:bg-sky-500",
+  blue: "bg-blue-500 hover:bg-blue-500",
+  indigo: "bg-indigo-500 hover:bg-indigo-500",
+  violet: "bg-violet-500 hover:bg-violet-500",
+  purple: "bg-purple-500 hover:bg-purple-500",
+  fuchsia: "bg-fuchsia-500 hover:bg-fuchsia-500",
+  pink: "bg-pink-500 hover:bg-pink-500",
+  rose: "bg-rose-500 hover:bg-rose-500",
+};
 
-function getColorByIndex(index: number, intensity: intensity = "500"): string {
+function getColorByIndex(index: number): string {
   let temp = index;
+  const colors = Object.values(Colors);
   while (temp > colors.length) temp -= colors.length;
 
-  const color = colors[temp];
-  return cn(`bg-${color}-${intensity} hover:bg-${color}-${intensity}`);
+  return colors[temp] ?? Colors.blue;
 }
