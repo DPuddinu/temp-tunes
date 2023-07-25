@@ -19,7 +19,12 @@
   "details": "Dettagli",
   "import": "Importa",
   "empty": "A quanto pare non hai ancora dei template, creane dei nuovi o prendi spunto nella sezione Esplora",
-  "import_placeholder": "Inserisci l'id del template",
+  "import_placeholder": "Incolla l'id del template",
   "view_more": "Vedi di più...",
-  "view_less": "Vedi meno..."
+  "view_less": "Vedi meno...",
+  "import_success": "Template importato",
+  "import_error": "Template non importato, riprova",
+  "clipboard": "Copiato id del template, ora puoi condividerlo ❤️",
+  "not_found": "Template non trovato",
+  "char_len": "L'id dovrebbe essere lungo 25 caratteri"
 }

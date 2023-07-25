@@ -108,7 +108,7 @@ export const templatesRouter = createTRPCRouter({
       })
       if (!template) throw new TRPCError({
         code: "BAD_REQUEST",
-        message: "Template not found!"
+        message: "not_found"
       })
       return await ctx.prisma.playlistTemplate.create({
         data: {
@@ -116,7 +116,11 @@ export const templatesRouter = createTRPCRouter({
           name: template?.name,
           templateEntries: {
             createMany: {
-              data: template?.templateEntries
+              data: template?.templateEntries.map(t => {
+                return {
+                  entry: t.entry
+                }
+              })
             }
           },
           userId: ctx.session.user.id,

@@ -1,7 +1,9 @@
+import { useClipboard } from "@mantine/hooks";
 import { type PlaylistTemplate, type TemplateEntry } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useToast } from "~/hooks/use-toast";
 import { cn } from "~/utils/utils";
 import { DeleteTemplateModal } from "../modals/DeleteTemplateModal";
 import DropdownMenu from "../ui/DropdownMenu";
@@ -10,7 +12,7 @@ import { ArrowSVG } from "../ui/icons";
 interface cardAction {
   label: string;
   onClick: () => void;
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 interface TemplateCardProps {
@@ -35,6 +37,8 @@ const TemplateCard = ({
   const router = useRouter();
   const { t } = useTranslation("common");
   const { t: tmpl } = useTranslation("templates");
+  const clipboard = useClipboard({ timeout: 500 });
+  const { setMessage } = useToast();
 
   return (
     <>
@@ -64,14 +68,12 @@ const TemplateCard = ({
                   },
                   {
                     label: t("share"),
-                    onClick: () => false,
-                    disabled: true,
-                  },
-                  {
-                    label: t("create_playlist"),
-                    onClick: () => false,
-                    disabled: true,
-                  },
+                    onClick: () => {
+                      clipboard.copy(template.id);
+                      const msg = tmpl("clipboard");
+                      setMessage(msg);
+                    },
+                  }
                 ]}
               />
             </DropdownMenu>
@@ -84,7 +86,10 @@ const TemplateCard = ({
           </h2>
 
           <p>{template.description}</p>
-          <p onClick={() => setOpen(true)} className="hover:cursor-pointer">
+          <p
+            onClick={() => setOpen((open) => !open)}
+            className="hover:cursor-pointer"
+          >
             {open ? tmpl("view_less") : tmpl("view_more")}
           </p>
           <div
@@ -112,12 +117,14 @@ const TemplateCard = ({
           <div className="card-actions justify-end">
             {actions.map((action) => (
               <button
+                disabled={action.disabled}
                 key={action.label}
                 className={cn(
                   "btn text-black",
                   !color && getColorByIndex(index),
                   color,
-                  color && `hover:${color}`
+                  color && `hover:${color}`,
+                  action.disabled && "disabled"
                 )}
                 onClick={action.onClick}
               >

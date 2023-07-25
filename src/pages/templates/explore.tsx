@@ -7,12 +7,13 @@ import TemplateCard from "~/components/template/TemplateCard";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
 import type { Language } from "~/core/settingsStore";
 import { langKey } from "~/hooks/use-language";
+import { useToast } from "~/hooks/use-toast";
 import type { PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 
 const Explore: PageWithLayout = () => {
   const { t } = useTranslation("templates");
-
+  const { setMessage } = useToast();
   const { data, isLoading } = api.template.getExploreTemplates.useQuery(
     undefined,
     {
@@ -21,6 +22,18 @@ const Explore: PageWithLayout = () => {
       },
     }
   );
+
+  const { mutate } = api.template.importTemplateById.useMutation({
+    onSuccess() {
+      const msg = t("import_success");
+      setMessage(msg);
+    },
+    onError(err) {
+      const msg = t("import_error");
+      setMessage(msg);
+    },
+  });
+
   return (
     <section className="flex flex-col justify-center gap-4">
       {data &&
@@ -33,9 +46,11 @@ const Explore: PageWithLayout = () => {
             isNew
             actions={[
               {
-                disabled: false,
-                label: t("create"),
-                onClick: () => false,
+                label: t("import"),
+                onClick: () =>
+                  mutate({
+                    id: temp.id,
+                  }),
               },
             ]}
           />

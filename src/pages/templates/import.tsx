@@ -24,9 +24,15 @@ const ImportTemplate: PageWithLayout = () => {
   const { t } = useTranslation("templates");
   const mounted = useMounted();
 
-  //TODO add custom error messages
   const _FormSchema = z.object({
-    id: z.string().min(25).max(25),
+    id: z
+      .string()
+      .min(25, {
+        message: t("char_len") ?? "Length not valid, should be 25 characters",
+      })
+      .max(25, {
+        message: t("char_len") ?? "Length not valid, should be 25 characters",
+      }),
   });
 
   const {
@@ -40,6 +46,10 @@ const ImportTemplate: PageWithLayout = () => {
       const error = t(err.message);
       setMessage(error);
     },
+    onSuccess() {
+      const msg = t("import_success");
+      setMessage(msg);
+    },
   });
 
   const onSubmit: SubmitHandler<FormSchemaType> = (data) => {
@@ -52,13 +62,22 @@ const ImportTemplate: PageWithLayout = () => {
     <>
       {mounted && (
         <div className="flex justify-center">
-          <form className="max-w-sm w-full" onSubmit={handleSubmit(onSubmit)}>
-            <div className="join w-full">
-              <input
-                className="input-bordered input join-item grow bg-white "
-                placeholder={t("import_placeholder") ?? "Insert template id"}
-                {...register("id")}
-              />
+          <form className="w-full max-w-sm" onSubmit={handleSubmit(onSubmit)}>
+            <div className="join w-full ">
+              <div className="form-control w-full max-w-xs">
+                <input
+                  className="input-bordered input join-item grow bg-white "
+                  placeholder={t("import_placeholder") ?? "Paste template id"}
+                  {...register("id")}
+                />
+                {errors.id && (
+                  <label className="label">
+                    <span className="label-text-alt text-error">
+                      {t(errors.id?.message ?? "char_len")}
+                    </span>
+                  </label>
+                )}
+              </div>
               <div className="indicator">
                 <button className="join-item btn">{t("import")}</button>
               </div>

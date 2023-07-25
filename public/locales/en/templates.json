@@ -20,7 +20,12 @@
   "details": "Details",
   "import_template": "Import",
   "empty": "Looks like you don't have any template yet, please create some or take inspiration from the explore section",
-  "import_placeholder": "Type template id",
+  "import_placeholder": "Paste template id",
   "view_more": "View more...",
-  "view_less": "View less..."
+  "view_less": "View less...",
+  "import_success": "Template imported",
+  "import_error": "Template import failed, try again",
+  "clipboard": "Template id copied to clipboard, you can share it now ❤️",
+  "not_found": "Template not found",
+  "char_len": "The id should be 25 characters long"
 }

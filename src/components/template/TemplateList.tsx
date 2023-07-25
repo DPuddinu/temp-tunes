@@ -11,7 +11,7 @@ const TemplateList = ({
   })[];
 }) => {
   const [parent] = useAutoAnimate();
-  const { t } = useTranslation("templates");
+  const { t } = useTranslation("common");
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" ref={parent}>
@@ -21,8 +21,8 @@ const TemplateList = ({
           isNew={false}
           actions={[
             {
-              disabled: false,
-              label: t("create"),
+              disabled: true,
+              label: t("create_playlist"),
               onClick: () => false,
             },
           ]}
