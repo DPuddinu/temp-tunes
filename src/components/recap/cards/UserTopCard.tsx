@@ -1,5 +1,6 @@
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
+import TrackRowContainer from "~/components/ui/TrackRowContainer";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import {
   TopTypeArray,
@@ -11,7 +12,6 @@ import {
 import { api } from "~/utils/api";
 import { ArtistRow } from "../../ui/ArtistRow";
 import PaginationComponent from "../../ui/PaginationComponent";
-import TrackRow from "../../ui/TrackRow";
 import RecapCard from "../RecapCard";
 
 export type RecapPropsType = {
@@ -81,11 +81,11 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
               {selectedType === "artists" ? (
                 <ArtistRow artist={item as Artist} key={i} />
               ) : (
-                <TrackRow
-                  track={item as Track}
-                  key={i}
-                  options={["EDIT_TAGS", "ADD_TO_PLAYLIST", "ADD_TO_QUEUE"]}
-                />
+                  <TrackRowContainer
+                    track={item as Track}
+                    key={i}
+                    options={["EDIT_TAGS", "ADD_TO_QUEUE", "ADD_TO_PLAYLIST"]}
+                  />
               )}
             </>
           ))}

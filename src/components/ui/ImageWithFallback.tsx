@@ -9,6 +9,7 @@ interface props {
   src: string;
   fallback?: ReactNode;
   className?: string;
+  priority?: boolean
 }
 export const ImageWithFallback = ({
   height,
@@ -17,10 +18,12 @@ export const ImageWithFallback = ({
   src,
   fallback,
   className,
+  priority = false
 }: props) => {
   return (
     <ImageErrorBoundary fallback={fallback} className={className}>
       <Image
+        priority={priority}
         className={className}
         src={src}
         height={height}

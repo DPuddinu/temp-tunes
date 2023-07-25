@@ -1,6 +1,7 @@
 import { signOut } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
+import PlayerDataProvider from "~/context/player-context";
 import { SpotifyWebPlayer } from "../WebPlayback";
 import { ImageWithFallback } from "./ImageWithFallback";
 import { ErrorSVG, MenuSVG } from "./icons";
@@ -41,6 +42,7 @@ const UserNavbar = ({ name, image }: UserNavbarProps) => {
                 <div className="w-10 rounded-full">
                   {!!image ? (
                     <ImageWithFallback
+                      priority
                       src={image}
                       height={40}
                       width={40}
@@ -57,9 +59,11 @@ const UserNavbar = ({ name, image }: UserNavbarProps) => {
 
             <ul
               tabIndex={0}
-              className="menu-compact z-40 dropdown-content menu rounded-box mt-3 w-52 border border-base-100 bg-base-300 p-2 shadow-lg"
+              className="menu-compact dropdown-content menu rounded-box z-40 mt-3 w-52 border border-base-100 bg-base-300 p-2 shadow-lg"
             >
-              <SpotifyWebPlayer />
+              <PlayerDataProvider>
+                <SpotifyWebPlayer />
+              </PlayerDataProvider>
               <li className="flex flex-row items-center">
                 <span>{t("change_theme")}</span>
                 <ThemeSwitcher />

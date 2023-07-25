@@ -1,5 +1,6 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { getDevices, getPlaybackState, pause, play, transferPlaybackTo } from "~/core/spotifyCollection";
+import { addToQueue, getDevices, nextTrack, pause, play, previousTrack, transferPlaybackTo } from "~/core/spotifyCollection";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 interface DeviceType {
@@ -13,22 +14,43 @@ interface DeviceType {
 }
 export const spotifyPlayerRouter = createTRPCRouter({
 
-  togglePlayPause: protectedProcedure.input(z.object({ paused: z.boolean().optional(), uris: z.string().array().nullish(), contextUri: z.string().nullish() })).mutation(async ({ ctx, input }) => {
-    const { uris, contextUri, paused = true } = input;
-    const playbackState = await getPlaybackState(ctx.session.accessToken);
-    if (!playbackState) {
-      const devices = await getDevices(ctx.session.accessToken);
-      const webPlaybackSDK = devices.devices.filter((device: DeviceType) => device.name === 'Web Playback SDK')
-      await (transferPlaybackTo(ctx.session.accessToken, webPlaybackSDK[webPlaybackSDK.length - 1].id))
-    }
-    const _play = paused ? await play(ctx.session.accessToken, uris, contextUri) : await pause(ctx.session.accessToken)
-    return _play
-  }),
+  togglePlayPause: protectedProcedure.input(z.object({
+    paused: z.boolean().optional(),
+    uris: z.string().array().nullish(),
+    contextUri: z.string().nullish(),
+    playbackState: z.boolean()
+  }))
+    .mutation(async ({ ctx, input }) => {
+      const { uris, contextUri, paused = true, playbackState } = input;
+
+      if (!playbackState) {
+        const devices = await getDevices(ctx.session.accessToken);
+        const webPlaybackSDK = devices.devices.filter((device: DeviceType) => device.name === 'Web Playback SDK')
+        const transfer = await (transferPlaybackTo(ctx.session.accessToken, webPlaybackSDK[webPlaybackSDK.length - 1].id))
+        return transfer
+      }
+
+      const _play = paused ? await play(ctx.session.accessToken, uris, contextUri) : await pause(ctx.session.accessToken)
+      return _play
+    }),
   getDevices: protectedProcedure.mutation(async ({ ctx }) => {
     return await getDevices(ctx.session.accessToken)
   }),
-  transferPlayback: protectedProcedure.input(z.object({ device_id: z.string() })).mutation(async ({ ctx, input }) => {
-    const { device_id } = input;
-    return await transferPlaybackTo(ctx.session.accessToken, device_id)
+  addToQueue: protectedProcedure.input(z.object({ uri: z.string() })).mutation(async ({ ctx, input }) => {
+    const { uri } = input;
+    const addTo = await addToQueue(uri, ctx.session.accessToken)
+
+    if (addTo.status !== 204) throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Could not add to queue, make sure player is playing"
+    })
+    return addTo
+  }),
+
+  nextTrack: protectedProcedure.mutation(async ({ ctx }) => {
+    return await nextTrack(ctx.session.accessToken)
+  }),
+  previousTrack: protectedProcedure.mutation(async ({ ctx }) => {
+    return await previousTrack(ctx.session.accessToken)
   }),
 });

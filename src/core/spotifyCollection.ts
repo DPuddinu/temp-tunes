@@ -253,7 +253,6 @@ export async function pause(access_token: string) {
   return await spotifyPUT({ url: '/me/player/pause', access_token: access_token })
 }
 
-
 export async function getDevices(access_token: string) {
   return (await spotifyGET('/me/player/devices', access_token).then((resp) => resp.json()).catch((error) => console.error(error)));
 }
@@ -265,7 +264,23 @@ export async function getPlaybackState(access_token: string) {
 export async function transferPlaybackTo(access_token: string, device_id: string) {
   const body = {
     device_ids: [device_id],
-    play: false
+    play: true
   }
   return await spotifyPUT({ url: '/me/player', access_token: access_token, body: JSON.stringify(body) })
+}
+
+export async function addToQueue(uri: string, access_token: string) {
+  const params = new URLSearchParams({
+    uri: uri,
+  });
+  return await spotifyPOST({ url: `/me/player/queue?${params.toString()}`, access_token: access_token })
+}
+
+export async function nextTrack(access_token: string) {
+  const body = {}
+  return await spotifyPOST({ url: '/me/player/next', access_token: access_token, body: JSON.stringify(body) })
+}
+export async function previousTrack(access_token: string) {
+  const body = {}
+  return await spotifyPOST({ url: '/me/player/previous', access_token: access_token, body: JSON.stringify(body) })
 }

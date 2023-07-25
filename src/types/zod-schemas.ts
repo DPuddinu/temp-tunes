@@ -70,3 +70,13 @@ export type TemplateSchemaEntryType = z.infer<typeof TemplateEntrySchema>
 export type TemplateSchemaType = z.infer<typeof TemplateSchema>
 
 
+export const DeviceSchema = z.object({
+  id: z.string(),
+  is_active: z.boolean(),
+  is_private_session: z.boolean(),
+  is_restricted: z.boolean(),
+  name: z.string(),
+  type: z.string(),
+  volume_percent: z.number()
+})
+export type DeviceType = z.infer<typeof DeviceSchema>

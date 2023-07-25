@@ -1,14 +1,19 @@
-import { useSpotifyPlayback } from "~/hooks/use-spotify-web-playback";
+import { useContext } from "react";
+import { PlayerDataContext } from "~/context/player-context";
 import { api } from "~/utils/api";
 import { ImageWithFallback } from "./ui/ImageWithFallback";
 import { MusicalNoteSVG, PauseSVG, PlaySVG } from "./ui/icons";
 
 export const SpotifyWebPlayer = () => {
-  const { player, current_track, is_active, is_paused } = useSpotifyPlayback();
+  // prettier-ignore
+  const { player, current_track, is_paused, state } = useContext(PlayerDataContext);
   const { mutate: togglePlay } = api.player.togglePlayPause.useMutation();
+  const { mutate: nextTrack } = api.player.nextTrack.useMutation();
+  const { mutate: previousTrack } = api.player.previousTrack.useMutation();
+  
   return (
     <>
-      {is_active && (
+      {current_track && (
         <li>
           <div className="flex w-auto flex-col rounded-xl bg-base-200">
             {current_track && current_track.album?.images[0] ? (
@@ -48,29 +53,27 @@ export const SpotifyWebPlayer = () => {
             {player && (
               <div className="flex w-full justify-between">
                 <button
-                  disabled={!is_active || !current_track}
                   className="btn-sm btn bg-base-300 px-4"
-                  onClick={() => {
-                    player?.previousTrack();
-                  }}
+                  onClick={() => previousTrack()}
                 >
                   &lt;&lt;
                 </button>
 
                 <button
-                  disabled={!is_active || !current_track}
                   className="btn-sm btn  bg-base-300"
-                  onClick={() => togglePlay({ paused: is_paused })}
+                  onClick={() =>
+                    togglePlay({
+                      paused: is_paused,
+                      playbackState: state !== null,
+                    })
+                  }
                 >
                   {is_paused ? <PlaySVG /> : <PauseSVG />}
                 </button>
 
                 <button
-                  disabled={!is_active || !current_track}
                   className="btn-sm btn bg-base-300 px-4"
-                  onClick={() => {
-                    player.nextTrack();
-                  }}
+                  onClick={() => nextTrack()}
                 >
                   &gt;&gt;
                 </button>

@@ -1,12 +1,7 @@
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-declare global {
-  interface Window {
-    Spotify: typeof Spotify;
-  }
-}
+import { createContext, useState, type ReactNode, useEffect } from "react";
 
-interface TrackType {
+export interface TrackPlaybackType {
   name: string;
   album: {
     images: {
@@ -18,14 +13,33 @@ interface TrackType {
   }[];
 }
 
+interface Data {
+  state: Spotify.PlaybackState | null;
+  current_track: TrackPlaybackType | undefined;
+  is_active: boolean;
+  is_paused: boolean;
+  player: Spotify.Player | undefined;
+}
+const initialContext = {
+  state: null,
+  current_track: undefined,
+  is_active: false,
+  is_paused: true,
+  player: undefined,
+};
 
-export const useSpotifyPlayback = () => {
+export const PlayerDataContext = createContext<Data>(initialContext);
+
+const PlayerDataProvider = ({ children }: { children: ReactNode }) => {
   const { data } = useSession();
   const [player, setPlayer] = useState<Spotify.Player | undefined>(undefined);
   const [is_paused, setPaused] = useState(false);
   const [is_active, setActive] = useState(false);
-  const [current_track, setTrack] = useState<TrackType | undefined>(undefined);
-
+  const [current_track, setTrack] = useState<TrackPlaybackType | undefined>(
+    undefined
+  );
+  const [state, setState] = useState<Spotify.PlaybackState | null>(null);
+  
   useEffect(() => {
     if (data?.accessToken && !player) {
       const script = document.createElement("script");
@@ -38,24 +52,23 @@ export const useSpotifyPlayback = () => {
         const player = new window.Spotify.Player({
           name: "Web Playback SDK",
           getOAuthToken: (cb: any) => {
-            cb(data?.accessToken);
+            cb(data.accessToken);
           },
           volume: 0.5,
         });
 
         setPlayer(player);
-        console.log(player);
 
         player.addListener("player_state_changed", (state) => {
           if (!state) {
             return;
           }
-          console.log(state);
           setTrack(state.track_window.current_track);
           setPaused(state.paused);
 
           player.getCurrentState().then((state) => {
-            !state ? setActive(false) : setActive(true);
+            setState(state);
+            setActive(state !== null);
           });
         });
 
@@ -74,10 +87,21 @@ export const useSpotifyPlayback = () => {
     };
   }, [data?.accessToken]);
 
-  return {
-    player,
-    is_active,
-    is_paused,
-    current_track
-  }
-}
+  
+
+  return (
+    <PlayerDataContext.Provider
+      value={{
+        current_track,
+        is_active,
+        is_paused,
+        player,
+        state,
+      }}
+    >
+      {children}
+    </PlayerDataContext.Provider>
+  );
+};
+
+export default PlayerDataProvider;

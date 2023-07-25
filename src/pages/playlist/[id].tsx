@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef } from "react";
 import MainLayout from "~/components/MainLayout";
 import TrackRow from "~/components/ui/TrackRow";
+import TrackRowContainer from "~/components/ui/TrackRowContainer";
 import { PlaylistSkeleton } from "~/components/ui/skeletons/PlaylistSkeleton";
 import type { Language } from "~/core/settingsStore";
 import { langKey } from "~/hooks/use-language";
@@ -81,7 +82,7 @@ const PlaylistPage: PageWithLayout = () => {
 
           {paginatedData &&
             paginatedData.map((track, i) => (
-              <TrackRow
+              <TrackRowContainer
                 key={track?.id ?? i}
                 track={track as Track}
                 ref={i === paginatedData.length - 1 ? ref : null}

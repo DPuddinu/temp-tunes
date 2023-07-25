@@ -28,12 +28,18 @@ const spotifyGET = async (
   });
 };
 
-const spotifyPOST = ({ url, body, access_token }: { access_token: string, url: string, body: BodyInit }) =>
-  fetch(`${baseUrl}${url}`, {
+const spotifyPOST = ({ url, body, access_token }: ISpotifyBody) => {
+  if (body) return fetch(`${baseUrl}${url}`, {
     headers: { ...authHeaders(access_token) },
     method: "POST",
     body,
   });
+  else return fetch(`${baseUrl}${url}`, {
+    headers: { ...authHeaders(access_token) },
+    method: "POST",
+  });
+}
+  
 
 const spotifyPUT = ({ url, body, access_token }: ISpotifyBody) =>{
   if (body) return fetch(`${baseUrl}${url}`, {
