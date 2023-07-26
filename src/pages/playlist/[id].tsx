@@ -3,11 +3,10 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { getCookie } from "cookies-next";
 import { type GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef } from "react";
 import MainLayout from "~/components/MainLayout";
-import TrackRow from "~/components/ui/TrackRow";
-import TrackRowContainer from "~/components/ui/TrackRowContainer";
 import { PlaylistSkeleton } from "~/components/ui/skeletons/PlaylistSkeleton";
 import type { Language } from "~/core/settingsStore";
 import { langKey } from "~/hooks/use-language";
@@ -15,6 +14,14 @@ import { useToast } from "~/hooks/use-toast";
 import type { PageWithLayout } from "~/types/page-types";
 import { type Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
+import { SquareSkeleton } from "~/components/ui/skeletons/SquareSkeleton";
+
+const TrackRow = dynamic(
+  () => import("~/components/ui/TrackRow"),
+  {
+    loading: () => <SquareSkeleton />,
+  }
+);
 
 const PlaylistPage: PageWithLayout = () => {
   const { setMessage } = useToast();
@@ -82,7 +89,7 @@ const PlaylistPage: PageWithLayout = () => {
 
           {paginatedData &&
             paginatedData.map((track, i) => (
-              <TrackRowContainer
+              <TrackRow
                 key={track?.id ?? i}
                 track={track as Track}
                 ref={i === paginatedData.length - 1 ? ref : null}

@@ -24,8 +24,8 @@ export const totalItems = 50;
 const itemsPerPage = 5;
 
 //TODO create proper skeleton
-const TrackRowContainer = dynamic(
-  () => import("~/components/ui/TrackRowContainer"),
+const TrackRow = dynamic(
+  () => import("~/components/ui/TrackRow"),
   {
     loading: () => <SquareSkeleton />,
   }
@@ -83,16 +83,15 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
         ))}
       </div>
       <RecapCard.Container error={isError}>
-        {data &&
-          data.items[selectedPage] &&
-          data.items[selectedPage]?.map((item, i) => (
+        {data?.items[selectedPage]?.map((item, i) => (
             <>
               {selectedType === "artists" ? (
                 <ArtistRow artist={item as Artist} key={i} />
               ) : (
-                <TrackRowContainer
+                <TrackRow
                   track={item as Track}
                   key={i}
+                  index={i}
                   options={["EDIT_TAGS", "ADD_TO_QUEUE"]}
                 />
               )}

@@ -12,6 +12,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import UserDataProvider from "~/context/user-data-context";
 import "~/styles/globals.css";
+import PlayerDataProvider from "~/context/player-context";
 
 const queryClient = new QueryClient();
 const MyApp: AppType<{ session: Session | null }> = ({
@@ -24,14 +25,14 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider themes={themesList} defaultTheme={"dark"}>
-          <UserDataProvider>
-            <style jsx global>{`
-              html {
-                font-family: ${akshar.style.fontFamily};
-              }
-            `}</style>
-            {getLayout(<Component {...pageProps} />)}
-          </UserDataProvider>
+            <UserDataProvider>
+              <style jsx global>{`
+                html {
+                  font-family: ${akshar.style.fontFamily};
+                }
+              `}</style>
+              {getLayout(<Component {...pageProps} />)}
+            </UserDataProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </SessionProvider>

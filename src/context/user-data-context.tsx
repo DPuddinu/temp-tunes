@@ -14,7 +14,7 @@ export const UserDataContext = createContext<Data>(initialContext);
 const UserDataProvider = ({ children }: { children: ReactNode }) => {
   const { data } = useSession();
   const { setTags: setStoreTags, user: storeUser, setUser } = useStore();
-  const { setPlaylists } = usePlaylistStore();
+  const { playlists, setPlaylists } = usePlaylistStore();
 
   // LOADING USER
   // prettier-ignore
@@ -32,11 +32,13 @@ const UserDataProvider = ({ children }: { children: ReactNode }) => {
     }
   )
 
-  const {} = api.spotify_playlist.getAll.useQuery(undefined, {
+  api.spotify_playlist.getAll.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+    enabled: !playlists,
     onSuccess(data) {
-      setPlaylists(data)
+      setPlaylists(data);
     },
-  })
+  });
 
   return (
     <UserDataContext.Provider

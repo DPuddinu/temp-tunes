@@ -1,15 +1,14 @@
-import { useContext } from "react";
-import { PlayerDataContext } from "~/context/player-context";
+import { useSpotifyPlayer } from "~/hooks/use-spotify-player";
 import { api } from "~/utils/api";
 import { ImageWithFallback } from "./ui/ImageWithFallback";
 import { MusicalNoteSVG, PauseSVG, PlaySVG } from "./ui/icons";
 
 export const SpotifyWebPlayer = () => {
   // prettier-ignore
-  const { player, current_track, is_paused, state } = useContext(PlayerDataContext);
   const { mutate: togglePlay } = api.player.togglePlayPause.useMutation();
   const { mutate: nextTrack } = api.player.nextTrack.useMutation();
   const { mutate: previousTrack } = api.player.previousTrack.useMutation();
+  const {current_track, is_active, is_paused, player, state} = useSpotifyPlayer();
   
   return (
     <>

@@ -5,8 +5,8 @@ import { SquareSkeleton } from "~/components/ui/skeletons/SquareSkeleton";
 import { api } from "~/utils/api";
 import RecapCard from "../RecapCard";
 
-const TrackRowContainer = dynamic(
-  () => import("~/components/ui/TrackRowContainer"),
+const TrackRow = dynamic(
+  () => import("~/components/ui/TrackRow"),
   {
     loading: () => <SquareSkeleton />,
   }
@@ -28,7 +28,7 @@ const RecommendedCard = () => {
       </RecapCard.Header>
       <RecapCard.Container key={"container-recommended"} error={isError}>
         {data?.tracks.map((track) => (
-          <TrackRowContainer
+          <TrackRow
             key={track.id}
             track={track}
             options={["EDIT_TAGS", "ADD_TO_QUEUE"]}

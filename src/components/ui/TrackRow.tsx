@@ -9,21 +9,32 @@ import {
   useMemo,
   useRef,
   useState,
+  type ForwardedRef,
 } from "react";
 import { TagModal } from "~/components/modals/EditTagModal";
 import { PlayerDataContext } from "~/context/player-context";
+import { usePlaylistStore } from "~/core/userStore";
 import { useToast } from "~/hooks/use-toast";
+import { type Playlist, type Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 import DropdownMenu from "./DropdownMenu";
-import type { TrackProps } from "./TrackRowContainer";
+
+export interface TrackProps {
+  track: Track;
+  index?: number;
+  options?: TrackDropdownOptions[];
+  ref?: ForwardedRef<HTMLDivElement>;
+}
+
+export type TrackDropdownOptions = "ADD_TO_QUEUE" | "EDIT_TAGS";
 
 // prettier-ignore
-const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track, playlists }, ref) => {
+const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track, index = 0 }, ref) => {
   const { t } = useTranslation("common");
   const { uri, name, artists, id } = track;
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { state } = useContext(PlayerDataContext);
   const { setMessage } = useToast();
+  const { playlists } = usePlaylistStore();
 
   const { mutate: playTrack } = api.player.togglePlayPause.useMutation();
   const { mutate: addToQueue } = api.player.addToQueue.useMutation({
@@ -48,6 +59,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track, playlists }, r
       return playlists?.slice((pageParam - 1) * 4, pageParam * 4);
     },
     {
+      enabled: playlists !== undefined,
       getNextPageParam: (_, pages) => {
         return pages.length + 1;
       },
@@ -64,6 +76,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track, playlists }, r
         .filter((t) => t?.owner?.id === session?.user?.id ?? ""),
     [session, _data]
   );
+
   const containerRef = useRef<HTMLDivElement>(null);
   const { ref: _ref, entry } = useIntersection({
     root: containerRef.current,
@@ -84,11 +97,14 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track, playlists }, r
       <div className="flex grow items-center justify-between p-2 hover:text-primary-content">
         <div
           className="flex grow flex-col gap-1"
-          onClick={() =>
-            playTrack({
-              uris: [uri],
-              playbackState: state !== null,
-            })
+          onClick={() => {
+            console.log(state)
+            // playTrack({
+            //   uris: [uri],
+            //   playbackState: state !== null,
+            // });
+          }
+            
           }
         >
           <p className="font-medium ">{name}</p>
@@ -96,7 +112,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track, playlists }, r
             {artists?.map((artist) => artist.name).join(", ")}
           </p>
         </div>
-        <DropdownMenu intent={"light"}>
+        <DropdownMenu intent={"light"} direction={index > 2 ? "up" : "down"}>
           <li className="bg-transparent" onClick={() => setIsModalOpen(true)}>
             <div className={"rounded-xl"}>
               <a>{t("edit_tag")}</a>

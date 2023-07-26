@@ -47,8 +47,7 @@ RecapCard.Container = function RecapContainer({
 }: RecapContainerProps) {
   return (
     <>
-      <br />
-      {children && <div className="flex flex-col p-2">{children}</div>}
+      {children && <div className="p-2">{children}</div>}
       {error && <h1>Error!</h1>}
     </>
   );
