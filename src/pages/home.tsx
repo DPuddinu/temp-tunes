@@ -13,6 +13,7 @@ import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import type { Language } from "~/core/settingsStore";
 import { langKey } from "~/hooks/use-language";
 import type { PageWithLayout } from "../types/page-types";
+import GreetingsSkeleton from "~/components/ui/skeletons/GreetingsSkeleton";
 
 const Home: PageWithLayout = () => {
   const { data: sessionData } = useSession();
@@ -35,7 +36,9 @@ const Home: PageWithLayout = () => {
   );
 };
 //prettier-ignore
-const Greetings = dynamic(() => import("~/components/ui/Greetings"),{ loading: () => <GreetingsSkeleton />});
+const Greetings = dynamic(() => import("~/components/ui/Greetings"), {
+  loading: () => <GreetingsSkeleton />,
+});
 
 //prettier-ignore
 const TopRatedCard = dynamic(() => import("~/components/recap/cards/UserTopCard"),{loading: () => <RecapSkeleton />});
@@ -119,19 +122,6 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
     </>
   );
 };
-function GreetingsSkeleton() {
-  return (
-    <div className="flex flex-col gap-2 sm:max-w-sm">
-      <div className="flex h-16 w-full animate-pulse flex-col gap-2 rounded-xl bg-base-300 p-2 [&>div]:rounded-2xl">
-        <div className="h-8 w-3/4 bg-base-200"></div>
-        <div className="h-8 w-1/2 bg-base-200"></div>
-      </div>
-      <div className="flex h-8 w-32 animate-pulse flex-col justify-center rounded-lg bg-base-300 p-2">
-        <div className="h-4 rounded-2xl bg-base-200"></div>
-      </div>
-    </div>
-  );
-}
 
 Home.getLayout = (page) => <MainLayout>{page}</MainLayout>;
 export default Home;

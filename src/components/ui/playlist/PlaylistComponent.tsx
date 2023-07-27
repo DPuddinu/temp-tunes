@@ -19,6 +19,8 @@ import {
 import { useToast } from "~/hooks/use-toast";
 import type { Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
+import DropdownMenuDemo from "../DropdownMenuDemo";
+import HeadlessDropdown from "../HeadlessDropdown";
 import { ImageWithFallback } from "../ImageWithFallback";
 
 function PlaylistComponent({
@@ -134,74 +136,75 @@ function PlaylistComponent({
       {isLoading ? (
         <LoadingSpinner className="mr-4" />
       ) : (
-        <DropdownMenu intent={"darkest"}>
-          <div className="flex min-h-[15rem] flex-col [&>li]:grow [&>li]:text-base">
-            {/* SHUFFLE */}
-            <li
-              onClick={() => {
-                shuffle({ playlist: playlist });
-              }}
-            >
-              <div className="flex gap-2 rounded-xl">
-                <ShuffleSVG />
-                <a>{t("operations.shuffle")}</a>
-              </div>
-            </li>
-            {/* COPY */}
-            <li
-              onClick={() => {
-                copy({ playlist: playlist });
-              }}
-            >
-              <div className="flex gap-2 rounded-xl">
-                <CopySVG />
-                <a>{t("operations.copy")}</a>
-              </div>
-            </li>
-            {/* MERGE */}
-            <li>
-              <details>
-                <summary>
-                  <MergeSVG />
-                  <span>{t("operations.merge")}</span>
-                </summary>
-                <ul className="m-2 max-h-40 w-[11rem] overflow-auto rounded-xl bg-base-200 bg-opacity-80 px-0 pt-2 before:hidden">
-                  {paginatedData?.map((destination, i) => (
-                    <li
-                      ref={i === paginatedData.length - 1 ? ref : null}
-                      key={destination.id}
-                      className="z-20 px-3 py-1 hover:cursor-pointer"
-                      onClick={() =>
-                        merge({
-                          originId: playlist.id,
-                          originName: playlist.name,
-                          destinationName: destination.name,
-                          destinationId: destination.id,
-                        })
-                      }
-                    >
-                      <p className="p-2">{destination.name}</p>
-                    </li>
-                  ))}
-                </ul>
-              </details>
-            </li>
-            {/* DELETE */}
-            <li onClick={() => setUnfollowModalOpen(true)}>
-              <div className="flex gap-2 rounded-xl">
-                <DeleteSVG />
-                <a>{t("operations.unfollow")}</a>
-              </div>
-            </li>
-            {/* RENAME */}
-            <li onClick={() => setRenameModalOpen(true)}>
-              <div className="flex gap-2 rounded-xl">
-                <PencilSVG />
-                <a>{t("operations.rename")}</a>
-              </div>
-            </li>
-          </div>
-        </DropdownMenu>
+        <DropdownMenuDemo />
+        // <DropdownMenu intent={"darkest"}>
+        //   <div className="flex min-h-[15rem] flex-col [&>li]:grow [&>li]:text-base">
+        //     {/* SHUFFLE */}
+        //     <li
+        //       onClick={() => {
+        //         shuffle({ playlist: playlist });
+        //       }}
+        //     >
+        //       <div className="flex gap-2 rounded-xl">
+        //         <ShuffleSVG />
+        //         <a>{t("operations.shuffle")}</a>
+        //       </div>
+        //     </li>
+        //     {/* COPY */}
+        //     <li
+        //       onClick={() => {
+        //         copy({ playlist: playlist });
+        //       }}
+        //     >
+        //       <div className="flex gap-2 rounded-xl">
+        //         <CopySVG />
+        //         <a>{t("operations.copy")}</a>
+        //       </div>
+        //     </li>
+        //     {/* MERGE */}
+        //     <li>
+        //       <details>
+        //         <summary>
+        //           <MergeSVG />
+        //           <span>{t("operations.merge")}</span>
+        //         </summary>
+        //         <ul className="m-2 max-h-40 w-[11rem] overflow-auto rounded-xl bg-base-200 bg-opacity-80 px-0 pt-2 before:hidden">
+        //           {paginatedData?.map((destination, i) => (
+        //             <li
+        //               ref={i === paginatedData.length - 1 ? ref : null}
+        //               key={destination.id}
+        //               className="z-20 px-3 py-1 hover:cursor-pointer"
+        //               onClick={() =>
+        //                 merge({
+        //                   originId: playlist.id,
+        //                   originName: playlist.name,
+        //                   destinationName: destination.name,
+        //                   destinationId: destination.id,
+        //                 })
+        //               }
+        //             >
+        //               <p className="p-2">{destination.name}</p>
+        //             </li>
+        //           ))}
+        //         </ul>
+        //       </details>
+        //     </li>
+        //     {/* DELETE */}
+        //     <li onClick={() => setUnfollowModalOpen(true)}>
+        //       <div className="flex gap-2 rounded-xl">
+        //         <DeleteSVG />
+        //         <a>{t("operations.unfollow")}</a>
+        //       </div>
+        //     </li>
+        //     {/* RENAME */}
+        //     <li onClick={() => setRenameModalOpen(true)}>
+        //       <div className="flex gap-2 rounded-xl">
+        //         <PencilSVG />
+        //         <a>{t("operations.rename")}</a>
+        //       </div>
+        //     </li>
+        //   </div>
+        // </DropdownMenu>
       )}
       <UnfollowModal
         isOpen={unfollowModalOpen}
