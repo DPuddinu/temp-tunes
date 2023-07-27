@@ -7,12 +7,10 @@ import "~/styles/index.css";
 import { api } from "~/utils/api";
 import { themesList, type AppPropsWithLayout } from "../types/page-types";
 const akshar = Quicksand({ subsets: ["latin"] });
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import UserDataProvider from "~/context/user-data-context";
 import "~/styles/globals.css";
-import PlayerDataProvider from "~/context/player-context";
 
 const queryClient = new QueryClient();
 const MyApp: AppType<{ session: Session | null }> = ({

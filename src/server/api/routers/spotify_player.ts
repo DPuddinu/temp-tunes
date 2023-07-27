@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { addToQueue, getDevices, nextTrack, pause, play, previousTrack, transferPlaybackTo } from "~/core/spotifyCollection";
+import { addToQueue, getDevices, getPlaybackState, nextTrack, pause, play, previousTrack, transferPlaybackTo } from "~/core/spotifyCollection";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 interface DeviceType {
@@ -15,23 +15,19 @@ interface DeviceType {
 export const spotifyPlayerRouter = createTRPCRouter({
 
   togglePlayPause: protectedProcedure.input(z.object({
-    paused: z.boolean().optional(),
     uris: z.string().array().nullish(),
     contextUri: z.string().nullish(),
-    playbackState: z.boolean()
   }))
     .mutation(async ({ ctx, input }) => {
-      const { uris, contextUri, paused = true, playbackState } = input;
+      const { uris, contextUri } = input;
 
+      const playbackState = await getPlaybackState(ctx.session.accessToken)
       if (!playbackState) {
         const devices = await getDevices(ctx.session.accessToken);
-        const webPlaybackSDK = devices.devices.filter((device: DeviceType) => device.name === 'Web Playback SDK')
-        const transfer = await (transferPlaybackTo(ctx.session.accessToken, webPlaybackSDK[webPlaybackSDK.length - 1].id))
-        return transfer
+        const webPlaybackSDK = devices.devices.find((device: DeviceType) => device.name === 'Web Playback SDK')
+        const transfer = await (transferPlaybackTo(ctx.session.accessToken, webPlaybackSDK.id))
       }
-
-      const _play = paused ? await play(ctx.session.accessToken, uris, contextUri) : await pause(ctx.session.accessToken)
-      return _play
+      return await play(ctx.session.accessToken, uris, contextUri)
     }),
   getDevices: protectedProcedure.mutation(async ({ ctx }) => {
     return await getDevices(ctx.session.accessToken)
@@ -40,17 +36,19 @@ export const spotifyPlayerRouter = createTRPCRouter({
     const { uri } = input;
     const addTo = await addToQueue(uri, ctx.session.accessToken)
 
-    if (addTo.status !== 204) throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: "Could not add to queue, make sure player is playing"
+    if (addTo.status === 401) throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Token expired"
+    })
+    if (addTo.status === 403) throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Bad OAauth request"
+    })
+    if (addTo.status === 429) throw new TRPCError({
+      code: "TOO_MANY_REQUESTS",
+      message: "Rate limit exceeded"
     })
     return addTo
   }),
 
-  nextTrack: protectedProcedure.mutation(async ({ ctx }) => {
-    return await nextTrack(ctx.session.accessToken)
-  }),
-  previousTrack: protectedProcedure.mutation(async ({ ctx }) => {
-    return await previousTrack(ctx.session.accessToken)
-  }),
 });

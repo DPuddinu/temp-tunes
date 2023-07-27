@@ -264,7 +264,6 @@ export async function getPlaybackState(access_token: string) {
 export async function transferPlaybackTo(access_token: string, device_id: string) {
   const body = {
     device_ids: [device_id],
-    play: true
   }
   return await spotifyPUT({ url: '/me/player', access_token: access_token, body: JSON.stringify(body) })
 }

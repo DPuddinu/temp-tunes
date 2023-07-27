@@ -4,18 +4,16 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import {
   forwardRef,
-  useContext,
   useEffect,
   useMemo,
   useRef,
   useState,
-  type ForwardedRef,
+  type ForwardedRef
 } from "react";
 import { TagModal } from "~/components/modals/EditTagModal";
-import { PlayerDataContext } from "~/context/player-context";
 import { usePlaylistStore } from "~/core/userStore";
 import { useToast } from "~/hooks/use-toast";
-import { type Playlist, type Track } from "~/types/spotify-types";
+import { type Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 import DropdownMenu from "./DropdownMenu";
 
@@ -98,11 +96,9 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track, index = 0 }, r
         <div
           className="flex grow flex-col gap-1"
           onClick={() => {
-            console.log(state)
-            // playTrack({
-            //   uris: [uri],
-            //   playbackState: state !== null,
-            // });
+            playTrack({
+              uris: [uri],
+            });
           }
             
           }
