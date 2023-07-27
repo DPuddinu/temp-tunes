@@ -15,7 +15,7 @@ const PlaylistsPage: PageWithLayout = () => {
   });
 
   //prettier-ignore
-  const PlaylistTable = dynamic(() => import("~/components/ui/playlist/PlaylistTable"), {loading: () => <PlaylistPageSkeleton /> });
+  const PlaylistTable = dynamic(() => import("~/components/playlist/PlaylistTable"), {loading: () => <PlaylistPageSkeleton /> });
 
   return (
     <>
@@ -34,7 +34,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   return {
     props: {
       //prettier- ignore
-      ...(await serverSideTranslations(language, ["playlists", "common"])),
+      ...(await serverSideTranslations(language ?? "en", [
+        "playlists",
+        "common",
+      ])),
     },
   };
 };

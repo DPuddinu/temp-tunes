@@ -3,16 +3,16 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
-  type ColumnFiltersState,
   type ColumnDef,
+  type ColumnFiltersState,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { type Playlist } from "~/types/spotify-types";
+import PaginationComponent from "../ui/PaginationComponent";
 import FiltersComponent from "./FiltersComponent";
 import TableBodyComponent from "./TableBodyComponent";
-import PaginationComponent from "../PaginationComponent";
 
-function PlaylistTable({ data}: {data: Playlist[]}) {
+function PlaylistTable({ data }: { data: Playlist[] }) {
   const columns: ColumnDef<Playlist>[] = useMemo(() => {
     return [
       {
@@ -51,4 +51,4 @@ function PlaylistTable({ data}: {data: Playlist[]}) {
     </>
   );
 }
-export default PlaylistTable
+export default PlaylistTable;

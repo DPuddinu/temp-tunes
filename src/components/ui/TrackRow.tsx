@@ -1,4 +1,5 @@
 import { useIntersection } from "@mantine/hooks";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
@@ -8,14 +9,15 @@ import {
   useMemo,
   useRef,
   useState,
-  type ForwardedRef
+  type ForwardedRef,
 } from "react";
 import { TagModal } from "~/components/modals/EditTagModal";
 import { usePlaylistStore } from "~/core/userStore";
 import { useToast } from "~/hooks/use-toast";
 import { type Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
-import DropdownMenu from "./DropdownMenu";
+import { ArrowSVG, QueueSVG, TagSVG, VerticalDotsSVG } from "./icons";
+import { FolderPlusSVG } from "./icons/FolderPlusSVG";
 
 export interface TrackProps {
   track: Track;
@@ -99,60 +101,89 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track, index = 0 }, r
             playTrack({
               uris: [uri],
             });
-          }
-            
-          }
+          }}
         >
           <p className="font-medium ">{name}</p>
           <p className="text-sm font-medium text-base-content">
             {artists?.map((artist) => artist.name).join(", ")}
           </p>
         </div>
-        <DropdownMenu intent={"light"} direction={index > 2 ? "up" : "down"}>
-          <li className="bg-transparent" onClick={() => setIsModalOpen(true)}>
-            <div className={"rounded-xl"}>
-              <a>{t("edit_tag")}</a>
-            </div>
-          </li>
-          <li
-            className="bg-transparent"
-            onClick={() =>
-              addToQueue({
-                uri: uri,
-              })
-            }
-          >
-            <div className={"rounded-xl"}>
-              <a>{t("add_to_queue")}</a>
-            </div>
-          </li>
-          <li>
-            <details>
-              <summary>
-                <span>{t("add_to_playlist")}</span>
-              </summary>
-              <ul className="m-2 max-h-40 w-[11rem] overflow-auto rounded-xl bg-base-200 bg-opacity-80 px-0 pt-2 before:hidden">
-                {paginatedData?.map((destination, i) => (
-                  <li
-                    ref={i === paginatedData.length - 1 ? _ref : null}
-                    key={destination?.id}
-                    className="z-20 px-3 py-1 hover:cursor-pointer"
-                    onClick={() => {
-                      if(destination?.id)
-                      addToPlaylist({
-                        uri: uri,
-                        playlistId: destination?.id,
-                        playlistName: destination?.name
-                      })
-                    }}
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger asChild>
+            <button aria-label="Customise options">
+              <VerticalDotsSVG />
+            </button>
+          </DropdownMenu.Trigger>
+
+          <DropdownMenu.Portal>
+            <DropdownMenu.Content
+              className="max-w-[50vw] rounded-md border-base-100 bg-base-200 p-2 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade sm:w-auto"
+              sideOffset={5}
+            >
+              <DropdownMenu.Item
+                className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <TagSVG />
+                {t("edit_tag")}
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer"
+                onClick={() =>
+                  addToQueue({
+                    uri: uri,
+                  })
+                }
+              >
+                <QueueSVG />
+                {t("add_to_queue")}
+              </DropdownMenu.Item>
+              <DropdownMenu.Sub>
+                <DropdownMenu.SubTrigger className="group relative flex select-none items-center rounded-md p-2 leading-none outline-none hover:cursor-pointer data-[state=open]:bg-base-100">
+                  <div className="flex items-center gap-2">
+                    <FolderPlusSVG />
+                    {t("add_to_playlist")}
+                  </div>
+                  <div className="group-data-[disabled]:text-mauve ml-auto pl-[20px]">
+                    <ArrowSVG className="-rotate-90" />
+                  </div>
+                </DropdownMenu.SubTrigger>
+                <DropdownMenu.Portal>
+                  <DropdownMenu.SubContent
+                    className="max-h-40 max-w-[50vw] overflow-auto rounded-md border-base-100 bg-base-200 p-1 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade sm:max-h-96"
+                    sideOffset={8}
+                    alignOffset={-5}
                   >
-                    <p className="p-2">{destination?.name}</p>
-                  </li>
-                ))}
-              </ul>
-            </details>
-          </li>
-        </DropdownMenu>
+                    {paginatedData?.map((destination, i) => (
+                      <>
+                        {destination && (
+                          <DropdownMenu.Item
+                            ref={i === paginatedData.length - 1 ? _ref : null}
+                            key={destination.id}
+                            className=" rounded-lg first:mt-2 last:mb-2 hover:cursor-pointer hover:border-base-300 hover:bg-base-300"
+                            onClick={() => {
+                              if (destination?.id)
+                                addToPlaylist({
+                                  uri: uri,
+                                  playlistId: destination?.id,
+                                  playlistName: destination?.name,
+                                });
+                            }}
+                          >
+                            <p className="break-normal p-2 active:border-none">
+                              {destination.name}
+                            </p>
+                          </DropdownMenu.Item>
+                        )}
+                      </>
+                    ))}
+                  </DropdownMenu.SubContent>
+                </DropdownMenu.Portal>
+              </DropdownMenu.Sub>
+              <DropdownMenu.Sub></DropdownMenu.Sub>
+            </DropdownMenu.Content>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
       </div>
       {id && (
         <TagModal
