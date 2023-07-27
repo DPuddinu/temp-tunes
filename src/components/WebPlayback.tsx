@@ -79,7 +79,7 @@ export const SpotifyWebPlayer = () => {
     return () => {
       spotifyPlayer?.disconnect();
     };
-  }, [session, init]);
+  }, [session, init, spotifyPlayer]);
 
   return (
     <>

@@ -1,4 +1,3 @@
-import { type VariantProps } from "cva";
 import z from "zod";
 import type { ArtistSchema, PlaylistSchema, TrackSchema } from "./zod-schemas";
 

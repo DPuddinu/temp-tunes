@@ -1,7 +1,6 @@
 import { signOut } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
-import PlayerDataProvider from "~/context/player-context";
 import { SpotifyWebPlayer } from "../WebPlayback";
 import { ImageWithFallback } from "./ImageWithFallback";
 import { ErrorSVG, MenuSVG } from "./icons";

@@ -42,7 +42,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track, index = 0 }, r
     },
   });
   const { mutate: addToPlaylist } = api.spotify_playlist.addToPlaylist.useMutation({
-    onSuccess(data, variables, context) {
+    onSuccess(data, variables) {
       const msg = `${name} ${t("added_to")} ${variables.playlistName}`;
       setMessage(msg);
     },
