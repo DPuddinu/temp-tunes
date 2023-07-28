@@ -15,7 +15,14 @@ import type { PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 
 const FormSchema = z.object({
-  id: z.string().min(25).max(25),
+  id: z
+    .string()
+    .min(25, {
+      message: "char_len",
+    })
+    .max(25, {
+      message: "char_len",
+    }),
 });
 type FormSchemaType = z.infer<typeof FormSchema>;
 
@@ -24,22 +31,13 @@ const ImportTemplate: PageWithLayout = () => {
   const { t } = useTranslation("templates");
   const mounted = useMounted();
 
-  const _FormSchema = z.object({
-    id: z
-      .string()
-      .min(25, {
-        message: t("char_len") ?? "Length not valid, should be 25 characters",
-      })
-      .max(25, {
-        message: t("char_len") ?? "Length not valid, should be 25 characters",
-      }),
-  });
+  
 
   const {
     register,
     handleSubmit,
     formState: { isValid, errors },
-  } = useForm<FormSchemaType>({ resolver: zodResolver(_FormSchema) });
+  } = useForm<FormSchemaType>({ resolver: zodResolver(FormSchema) });
 
   const { isLoading, mutate } = api.template.importTemplateById.useMutation({
     onError(err) {
@@ -70,10 +68,10 @@ const ImportTemplate: PageWithLayout = () => {
                   placeholder={t("import_placeholder") ?? "Paste template id"}
                   {...register("id")}
                 />
-                {errors.id && (
+                {errors?.id?.message && (
                   <label className="label">
                     <span className="label-text-alt text-error">
-                      {t(errors.id?.message ?? "char_len")}
+                      {t(errors.id?.message)}
                     </span>
                   </label>
                 )}
