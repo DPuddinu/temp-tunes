@@ -21,7 +21,6 @@ import { FolderPlusSVG } from "./icons/FolderPlusSVG";
 
 export interface TrackProps {
   track: Track;
-  index?: number;
   options?: TrackDropdownOptions[];
   ref?: ForwardedRef<HTMLDivElement>;
 }
@@ -29,7 +28,7 @@ export interface TrackProps {
 export type TrackDropdownOptions = "ADD_TO_QUEUE" | "EDIT_TAGS";
 
 // prettier-ignore
-const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track, index = 0 }, ref) => {
+const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
   const { t } = useTranslation("common");
   const { uri, name, artists, id } = track;
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -117,7 +116,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track, index = 0 }, r
 
           <DropdownMenu.Portal>
             <DropdownMenu.Content
-              className="max-w-[50vw] rounded-md border-base-100 bg-base-200 p-2 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade sm:w-auto"
+              className="max-w-[50vw] rounded-md border border-base-300 bg-base-200 p-2 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade sm:w-auto"
               sideOffset={5}
             >
               <DropdownMenu.Item
@@ -150,7 +149,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track, index = 0 }, r
                 </DropdownMenu.SubTrigger>
                 <DropdownMenu.Portal>
                   <DropdownMenu.SubContent
-                    className="max-h-40 max-w-[50vw] overflow-auto rounded-md border-base-100 bg-base-200 p-1 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade sm:max-h-96"
+                    className="max-h-40 max-w-[50vw] overflow-auto rounded-md border border-base-300 bg-base-200 p-1 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade sm:max-h-96"
                     sideOffset={8}
                     alignOffset={-5}
                   >

@@ -1,13 +1,14 @@
 import { useClipboard } from "@mantine/hooks";
 import { type PlaylistTemplate, type TemplateEntry } from "@prisma/client";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useToast } from "~/hooks/use-toast";
 import { cn } from "~/utils/utils";
 import { DeleteTemplateModal } from "../modals/DeleteTemplateModal";
-import DropdownMenu from "../ui/DropdownMenu";
-import { ArrowSVG } from "../ui/icons";
+import { ArrowSVG, DeleteSVG, PencilSVG, ShareSVG, VerticalDotsSVG } from "../ui/icons";
 
 interface cardAction {
   label: string;
@@ -51,32 +52,50 @@ const TemplateCard = ({
           )}
         >
           {template.type === "CUSTOM" && (
-            <DropdownMenu
-              intent={"dark"}
-              direction={index > 3 ? "up" : "down"}
-              color="black"
-            >
-              <DropdownMenu.Options
-                options={[
-                  {
-                    label: t("edit"),
-                    onClick: () => router.push(`/templates/${template.id}`),
-                  },
-                  {
-                    label: t("delete"),
-                    onClick: () => setOpenDeleteModal(true),
-                  },
-                  {
-                    label: t("share"),
-                    onClick: () => {
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <button aria-label="Customise options">
+                  <VerticalDotsSVG className="text-base-300" />
+                </button>
+              </DropdownMenu.Trigger>
+
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content
+                  className=" rounded-md border border-base-300 bg-base-200 p-2 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade sm:w-auto"
+                  sideOffset={5}
+                  side="bottom"
+                  align="end"
+                >
+                  <DropdownMenu.Item className="flex items-center gap-2 p-2 pr-[20px] leading-none outline-none hover:cursor-pointer">
+                    <Link
+                      href={`/templates/${template.id}`}
+                      className="flex items-center gap-2"
+                    >
+                      <PencilSVG />
+                      {t("edit")}
+                    </Link>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item
+                    className="flex items-center gap-2 p-2 pr-[20px] leading-none outline-none hover:cursor-pointer"
+                    onClick={() => setOpenDeleteModal(true)}
+                  >
+                    <DeleteSVG />
+                    {t("delete")}
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item
+                    className="flex items-center gap-2 p-2 pr-[20px] leading-none outline-none hover:cursor-pointer"
+                    onClick={() => {
                       clipboard.copy(template.id);
                       const msg = tmpl("clipboard");
                       setMessage(msg);
-                    },
-                  },
-                ]}
-              />
-            </DropdownMenu>
+                    }}
+                  >
+                    <ShareSVG />
+                    {t("share")}
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
           )}
         </div>
         <div className="card-body">
