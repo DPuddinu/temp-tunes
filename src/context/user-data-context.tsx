@@ -34,7 +34,7 @@ const UserDataProvider = ({ children }: { children: ReactNode }) => {
 
   api.spotify_playlist.getAll.useQuery(undefined, {
     refetchOnWindowFocus: false,
-    enabled: !playlists,
+    enabled: playlists === undefined && data?.accessToken !== undefined,
     onSuccess(data) {
       setPlaylists(data);
     },
