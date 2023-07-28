@@ -113,10 +113,8 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
 
           <DropdownMenu.Portal>
             <DropdownMenu.Content
-              className="max-w-[50vw] rounded-md border border-base-300 bg-base-200 p-2 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade sm:w-auto"
-              sideOffset={5}
-              side="bottom"
-              align="end"
+              className="max-w-[70vw] rounded-md border border-base-300 bg-base-200 p-2 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade sm:w-auto"
+              sideOffset={-145}
             >
               <DropdownMenu.Item
                 className="flex items-center gap-2 rounded-lg p-2 leading-none outline-none hover:cursor-pointer hover:bg-base-100"
@@ -149,8 +147,8 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
                 <DropdownMenu.Portal>
                   <DropdownMenu.SubContent
                     className="max-h-40 max-w-[50vw] overflow-auto rounded-md border border-base-300 bg-base-200 p-1 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade sm:max-h-96"
-                    sideOffset={8}
-                    alignOffset={-5}
+                    sideOffset={-100}
+                    alignOffset={25}
                   >
                     {paginatedData?.map((destination, i) => (
                       <>
