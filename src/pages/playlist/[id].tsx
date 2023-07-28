@@ -4,6 +4,7 @@ import { getCookie } from "cookies-next";
 import { type GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
+import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef } from "react";
 import MainLayout from "~/components/MainLayout";
@@ -23,15 +24,19 @@ const TrackRow = dynamic(() => import("~/components/ui/TrackRow"), {
 const PlaylistPage: PageWithLayout = () => {
   const { setMessage } = useToast();
 
-  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const id = searchParams.get("id");
 
   const { isLoading, data } = api.spotify_playlist.getById.useQuery(
-    { id: router.query.id?.toString() },
+    {
+      id: id,
+    },
     {
       onError() {
         setMessage(`Error: can't get playlist`);
       },
-      enabled: router.query.id !== undefined,
+      enabled: id !== null,
     }
   );
 
@@ -43,7 +48,7 @@ const PlaylistPage: PageWithLayout = () => {
 
   // INFINITE SCROLLING
   const { data: _data, fetchNextPage } = useInfiniteQuery(
-    ["query"],
+    ["playlist"],
     ({ pageParam = 1 }) => {
       return data?.tracks.slice((pageParam - 1) * 4, pageParam * 4);
     },
@@ -84,15 +89,17 @@ const PlaylistPage: PageWithLayout = () => {
             </p>
           </div>
 
-          {/* {paginatedData &&
-            paginatedData.map((track, i) => (
-              <TrackRow
-                key={track?.id ?? i}
-                track={track as Track}
-                ref={i === paginatedData.length - 1 ? ref : null}
-                options={["EDIT_TAGS", "ADD_TO_QUEUE"]}
-              />
-            ))} */}
+          {paginatedData?.map((track, i) => (
+            <>
+              <div ref={i === paginatedData.length - 1 ? ref : null}>
+                <TrackRow
+                  key={track?.id ?? i}
+                  track={track as Track}
+                  options={["EDIT_TAGS", "ADD_TO_QUEUE"]}
+                />
+              </div>
+            </>
+          ))}
         </div>
       )}
     </>
