@@ -18,9 +18,23 @@ import { ArrowDownSVG, ArrowUpSVG, DeleteSVG } from "../ui/icons";
 
 const TemplateFormSchema = z.object({
   id: z.string().optional(),
-  name: z.string().min(3).max(50),
-  description: z.string().max(150).optional(),
-  entries: TemplateEntrySchema.array().min(1),
+  name: z
+    .string()
+    .min(3, {
+      message: "name_min_len",
+    })
+    .max(50, {
+      message: "name_max_len",
+    }),
+  description: z
+    .string()
+    .max(150, {
+      message: "desc_max_len",
+    })
+    .optional(),
+  entries: TemplateEntrySchema.array().min(1, {
+    message: "entries_min_len",
+  }),
 });
 export type TemplateFormType = z.infer<typeof TemplateFormSchema>;
 
@@ -63,7 +77,7 @@ function CreateTemplate({ data }: props) {
     control,
     setValue,
     getValues,
-    formState: { isValid },
+    formState: { errors },
   } = useForm<TemplateFormType>({ resolver: zodResolver(TemplateFormSchema) });
 
   const { fields, append, remove, move, replace } = useFieldArray({
@@ -103,7 +117,7 @@ function CreateTemplate({ data }: props) {
     <>
       {mounted && (
         <form
-          className="min-h-60 w-full sm:max-w-sm flex max-w-sm flex-col justify-between gap-2 rounded-xl bg-base-300 p-2 shadow"
+          className="min-h-60 flex w-full max-w-sm flex-col justify-between gap-2 rounded-xl bg-base-300 p-2 shadow sm:max-w-sm"
           onSubmit={handleSubmit(onSubmit)}
         >
           <div className="flex w-full flex-col " ref={parent}>
@@ -118,6 +132,13 @@ function CreateTemplate({ data }: props) {
                   className="input-ghost input w-full  grow bg-base-200 text-base"
                   {...register("name")}
                 />
+                {errors?.name?.message && (
+                  <label className="label">
+                    <span className="label-text-alt text-error">
+                      {t(errors?.name?.message)}
+                    </span>
+                  </label>
+                )}
               </div>
               <div className="form-control w-full ">
                 <label className="label">
@@ -129,6 +150,13 @@ function CreateTemplate({ data }: props) {
                   className="input-ghost input w-full  grow bg-base-200 text-base"
                   {...register("description")}
                 />
+                {errors?.description?.message && (
+                  <label className="label">
+                    <span className="label-text-alt text-error">
+                      {t(errors?.description?.message)}
+                    </span>
+                  </label>
+                )}
               </div>
             </div>
             {fields.length > 0 && (
@@ -176,12 +204,22 @@ function CreateTemplate({ data }: props) {
               <span className="label-text">{t("new_entry")}</span>
             </label>
             <div className="flex gap-2">
-              <input
-                ref={entryRef}
-                type="text"
-                placeholder={t("type_here") ?? "Type here"}
-                className="input w-full  grow outline-none"
-              />
+              <div>
+                <input
+                  ref={entryRef}
+                  type="text"
+                  placeholder={t("type_here") ?? "Type here"}
+                  className="input w-full  grow outline-none"
+                />
+                {errors?.entries?.message && (
+                  <label className="label">
+                    <span className="label-text-alt text-error">
+                      {t(errors?.entries?.message)}
+                    </span>
+                  </label>
+                )}
+              </div>
+
               <button
                 type="button"
                 className="btn-circle btn bg-base-100 p-2 text-xl hover:bg-base-200"
@@ -198,7 +236,6 @@ function CreateTemplate({ data }: props) {
 
           <button
             type="submit"
-            disabled={!isValid}
             className="btn w-full bg-base-100 hover:bg-base-200"
           >
             {data ? t("update") : t("create")}

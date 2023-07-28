@@ -26,5 +26,9 @@
   "import_error": "Template non importato, riprova",
   "clipboard": "Copiato id del template, ora puoi condividerlo ❤️",
   "not_found": "Template non trovato",
-  "char_len": "L'id dovrebbe essere lungo 25 caratteri"
+  "char_len": "L'id dovrebbe essere lungo 25 caratteri",
+  "name_min_len": "Nome troppo corto",
+  "name_max_len": "Nome troppo lungo",
+  "desc_max_len": "La descrizione è troppo lunga",
+  "entries_min_len": "Aggiungi almeno una voce"
 }

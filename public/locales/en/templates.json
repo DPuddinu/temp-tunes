@@ -27,5 +27,9 @@
   "import_error": "Template import failed, try again",
   "clipboard": "Template id copied to clipboard, you can share it now ❤️",
   "not_found": "Template not found",
-  "char_len": "The id should be 25 characters long"
+  "char_len": "The id should be 25 characters long",
+  "name_min_len": "Name too short",
+  "name_max_len": "Name too long",
+  "desc_max_len": "Description too long",
+  "entries_min_len": "At least one entry should be added"
 }

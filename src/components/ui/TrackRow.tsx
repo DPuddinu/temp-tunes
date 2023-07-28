@@ -119,14 +119,14 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
               align="end"
             >
               <DropdownMenu.Item
-                className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer"
+                className="flex items-center gap-2 rounded-lg p-2 leading-none outline-none hover:cursor-pointer hover:bg-base-100"
                 onClick={() => setIsModalOpen(true)}
               >
                 <TagSVG />
                 {t("edit_tag")}
               </DropdownMenu.Item>
               <DropdownMenu.Item
-                className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer"
+                className="flex items-center gap-2 rounded-lg p-2 leading-none outline-none  hover:cursor-pointer hover:bg-base-100"
                 onClick={() =>
                   addToQueue({
                     uri: uri,
@@ -158,7 +158,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
                           <DropdownMenu.Item
                             ref={i === paginatedData.length - 1 ? _ref : null}
                             key={destination.id}
-                            className=" rounded-lg first:mt-2 last:mb-2 hover:cursor-pointer hover:border-base-300 hover:bg-base-300"
+                            className=" rounded-lg first:mt-2 last:mb-2 hover:cursor-pointer hover:bg-base-100"
                             onClick={() => {
                               if (destination?.id)
                                 addToPlaylist({

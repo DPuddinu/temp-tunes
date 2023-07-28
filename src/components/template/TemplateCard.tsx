@@ -8,7 +8,13 @@ import { useTranslation } from "react-i18next";
 import { useToast } from "~/hooks/use-toast";
 import { cn } from "~/utils/utils";
 import { DeleteTemplateModal } from "../modals/DeleteTemplateModal";
-import { ArrowSVG, DeleteSVG, PencilSVG, ShareSVG, VerticalDotsSVG } from "../ui/icons";
+import {
+  ArrowSVG,
+  DeleteSVG,
+  PencilSVG,
+  ShareSVG,
+  VerticalDotsSVG,
+} from "../ui/icons";
 
 interface cardAction {
   label: string;
@@ -66,24 +72,24 @@ const TemplateCard = ({
                   side="bottom"
                   align="end"
                 >
-                  <DropdownMenu.Item className="flex items-center gap-2 p-2 pr-[20px] leading-none outline-none hover:cursor-pointer">
+                  <DropdownMenu.Item className="flex items-center gap-2 rounded-lg p-2 pr-[20px] leading-none outline-none hover:cursor-pointer hover:bg-base-100">
                     <Link
                       href={`/templates/${template.id}`}
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-2 "
                     >
                       <PencilSVG />
                       {t("edit")}
                     </Link>
                   </DropdownMenu.Item>
                   <DropdownMenu.Item
-                    className="flex items-center gap-2 p-2 pr-[20px] leading-none outline-none hover:cursor-pointer"
+                    className="flex items-center gap-2 rounded-lg p-2 pr-[20px] leading-none outline-none hover:cursor-pointer hover:bg-base-100"
                     onClick={() => setOpenDeleteModal(true)}
                   >
                     <DeleteSVG />
                     {t("delete")}
                   </DropdownMenu.Item>
                   <DropdownMenu.Item
-                    className="flex items-center gap-2 p-2 pr-[20px] leading-none outline-none hover:cursor-pointer"
+                    className="flex items-center gap-2 rounded-lg p-2 pr-[20px] leading-none outline-none hover:cursor-pointer hover:bg-base-100"
                     onClick={() => {
                       clipboard.copy(template.id);
                       const msg = tmpl("clipboard");
