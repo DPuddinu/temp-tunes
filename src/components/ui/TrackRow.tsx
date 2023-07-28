@@ -21,11 +21,8 @@ import { FolderPlusSVG } from "./icons/FolderPlusSVG";
 
 export interface TrackProps {
   track: Track;
-  options?: TrackDropdownOptions[];
   ref?: ForwardedRef<HTMLDivElement>;
 }
-
-export type TrackDropdownOptions = "ADD_TO_QUEUE" | "EDIT_TAGS";
 
 // prettier-ignore
 const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
@@ -118,6 +115,8 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
             <DropdownMenu.Content
               className="max-w-[50vw] rounded-md border border-base-300 bg-base-200 p-2 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade sm:w-auto"
               sideOffset={5}
+              side="bottom"
+              align="end"
             >
               <DropdownMenu.Item
                 className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer"

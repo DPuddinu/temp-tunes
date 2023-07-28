@@ -95,7 +95,6 @@ const PlaylistPage: PageWithLayout = () => {
                 <TrackRow
                   key={track?.id ?? i}
                   track={track as Track}
-                  options={["EDIT_TAGS", "ADD_TO_QUEUE"]}
                 />
               </div>
             </>

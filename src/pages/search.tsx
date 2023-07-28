@@ -109,9 +109,7 @@ const Search: PageWithLayout = () => {
           </label>
         )}
       </div>
-      {loading && (
-        <LoadingScreen current={currentPlaylist} progress={progress} />
-      )}
+      {loading && <LoadingScreen current={currentPlaylist} progress={progress} />}
       {isLoading && <LoadingSpinner />}
       {data && <SearchDataTable data={data} />}
     </div>

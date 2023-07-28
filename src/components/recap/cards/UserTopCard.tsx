@@ -91,8 +91,6 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
                 <TrackRow
                   track={item as Track}
                   key={i}
-                  index={i}
-                  options={["EDIT_TAGS", "ADD_TO_QUEUE"]}
                 />
               )}
             </>

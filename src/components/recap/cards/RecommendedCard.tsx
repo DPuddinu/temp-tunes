@@ -31,7 +31,6 @@ const RecommendedCard = () => {
           <TrackRow
             key={track.id}
             track={track}
-            options={["EDIT_TAGS", "ADD_TO_QUEUE"]}
           />
         ))}
       </RecapCard.Container>
