@@ -87,7 +87,7 @@ const Search: PageWithLayout = () => {
   });
 
   const onSubmit: SubmitHandler<SearchFormSchemaType> = (data) => {
-    if (!playlists && selectedFilter === "track" ) {
+    if (!playlists && selectedFilter === "track") {
       loadLibrary();
     } else {
       mutate({
@@ -223,19 +223,18 @@ const Search: PageWithLayout = () => {
 
   return (
     <div className="flex flex-col items-center justify-center gap-2">
-      <div className=" pb-4 sm:max-w-sm md:max-w-md">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="join">
+      <div className=" w-full pb-4 sm:max-w-sm md:max-w-md">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+          <div className="join relative h-5 w-full">
             <div>
-              <div>
-                <input
-                  {...register("name")}
-                  type="text"
-                  placeholder={t("search") ?? "..."}
-                  className=" input join-item grow bg-secondary-content sm:max-w-sm"
-                />
-              </div>
+              <input
+                {...register("name")}
+                type="text"
+                placeholder={t("search") ?? "..."}
+                className="input join-item w-full grow bg-secondary-content sm:max-w-sm"
+              />
             </div>
+
             <select
               className="select-bordered select join-item border-base-300 bg-base-300"
               placeholder="Filter"
@@ -259,8 +258,8 @@ const Search: PageWithLayout = () => {
         </form>
 
         {errors.name?.message && (
-          <label className="label text-red-700">
-            <span className="label-text-alt font-bold text-error">
+          <label className="label text-error">
+            <span className="label-text-alt mt-2 font-bold text-error">
               {t(errors.name?.message ?? "Not Valid")}
             </span>
           </label>
