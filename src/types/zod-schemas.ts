@@ -4,7 +4,7 @@ export const TagType = ["track", "playlist"] as const;
 export const TagTypeEnum = z.enum(TagType);
 export type TagType = z.infer<typeof TagTypeEnum>;
 
-export const SearchTypeConst = ["track", "playlist", "tag"] as const;
+export const SearchTypeConst = ["track", "tag"] as const;
 export const SearchTypeEnum = z.enum(SearchTypeConst);
 export type SearchType = z.infer<typeof SearchTypeEnum>;
 

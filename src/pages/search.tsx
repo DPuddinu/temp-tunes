@@ -77,7 +77,7 @@ const Search: PageWithLayout = () => {
   });
 
   const onSubmit: SubmitHandler<SearchFormSchemaType> = (data) => {
-    if (firstSearch) {
+    if (firstSearch && selectedFilter === "track") {
       loadLibrary();
       setFirstSearch(false);
     } else {

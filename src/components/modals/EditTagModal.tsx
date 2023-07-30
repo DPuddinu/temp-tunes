@@ -1,3 +1,4 @@
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "next-i18next";
 import { useCallback, useEffect, useState } from "react";
@@ -23,6 +24,7 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
   const { setMessage } = useToast();
   const { tags: storeTags, setTags: setStoreTags } = useStore();
   const [tags, setTags] = useState<TagSchemaType[]>([]);
+  const [parent] = useAutoAnimate();
 
   useEffect(() => {
     if (storeTags) {
@@ -34,11 +36,10 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
   //prettier-ignore
   const {mutate } = api.tags.setTags.useMutation({
     onSuccess(data) {
+      const msg = t('updated_tags')
+      setMessage(msg);
       setStoreTags(data);
       onClose();
-       setTimeout(() => {
-         window.dispatchEvent(new Event("focus"));
-       }, 300);
     },
     onError(){
       onClose();
@@ -63,7 +64,10 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
 
   return (
     <BaseModal isOpen={isOpen} title={t("new_tag")} onClose={onClose}>
-      <div className="flex flex-row flex-wrap gap-2 overflow-hidden pb-2 pt-6">
+      <div
+        className="flex flex-row flex-wrap gap-2 overflow-hidden pb-2 pt-6"
+        ref={parent}
+      >
         {tags.map((tag, i) => (
           <div className="indicator mr-2" key={i}>
             <span

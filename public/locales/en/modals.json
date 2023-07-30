@@ -3,6 +3,7 @@
   "add_tag_track": "Add a tag for the selected Track",
   "add_tag_playlist": "Add a tag for the selected Playlist",
   "add": "Add",
+  "updated_tags": "Tags updated",
   "confirm": "Confirm",
   "cancel": "Cancel",
   "tag_errors": {

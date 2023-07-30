@@ -115,84 +115,61 @@ export const spotifyUserRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const { query, playlists } = input
+      const { query, playlists, type } = input
 
-      const tagMatches: SearchResult[] = [];
-      const playlistMatches: SearchResult[] = [];
+      switch (type) {
+        case "tag": {
+          // SEARCH BY TAGS
+          const tagMatches: SearchResult[] = [];
 
-      // SEARCH BY TAGS
-      const tagsByName = await ctx.prisma.tag.findMany({
-        where: {
-          userId: {
-            equals: ctx.session.user.id
-          },
-          name: {
-            contains: query
+          const tagsByName = await ctx.prisma.tag.findMany({
+            where: {
+              userId: {
+                equals: ctx.session.user.id
+              },
+              name: {
+                contains: query
+              }
+            }
+          }) as TagSchemaType[];
+
+          const tagsObject = createTagsObject(tagsByName)
+
+          const tracksByTags = await getTracksByIds(tagsByName.map(tag => tag.spotifyId), ctx.session.accessToken)
+          tracksByTags.forEach(t => {
+            tagMatches.push({
+              title: t.name,
+              artists: t.artists.map(artist => artist.name).join(', '),
+              tags: t.id && tagsObject[t.id] ? tagsObject[t.id]?.map(tag => tag.name).join(', ') : ''
+            })
+          })
+          return tagMatches
+        }
+        case "track": {
+          const playlistMatches: SearchResult[] = [];
+          if (playlists && playlists.length > 0) {
+            playlists.forEach((playlist) => {
+              const tracks = playlist.tracks;
+
+              tracks.forEach((track) => {
+
+                // MATCH BY TRACK NAME OR ARTIST NAME
+                // prettier-ignore
+                if (match(track.name, query) || match(track.artists.map((artist) => artist.name).join(), query)) {
+                  const newMatch: SearchResult = {
+                    title: track.name,
+                    artists: track.artists.map(artist => artist.name).join(', '),
+                    playlist: playlist.name,
+                    creator: playlist.owner.display_name,
+                  }
+                  playlistMatches.push(newMatch);
+                }
+              });
+            });
+            return playlistMatches
           }
         }
-      }) as TagSchemaType[];
-
-      const tagsObject = createTagsObject(tagsByName)
-      console.log('TAGS BY NAME ------------>')
-      console.log(tagsByName)
-      console.log('-------------------')
-      console.log('TAGS OBJECT --------------->')
-      console.log(tagsObject)
-      console.log('-------------------')
-
-      const tracksByTags = await getTracksByIds(tagsByName.map(tag => tag.spotifyId), ctx.session.accessToken)
-      console.log(tracksByTags)
-      tracksByTags.forEach(t => {
-        tagMatches.push({
-          title: t.name,
-          artists: t.artists.map(artist => artist.name).join(', '),
-          tags: t.id && tagsObject[t.id] ? tagsObject[t.id]?.map(tag => tag.name).join(', ') : ''
-        })
-      })
-      console.log('TAG MATCHES', tagMatches)
-      // -----------------
-
-      // SEARCH BY PLAYLIST
-      if (playlists && playlists.length > 0) {
-        playlists.forEach((playlist) => {
-          const tracks = playlist.tracks;
-          let newMatch: SearchResult;
-
-          tracks.forEach((track) => {
-
-            // MATCH BY TRACK NAME OR ARTIST NAME
-            // prettier-ignore
-            if (match(track.name, query) || match(track.artists.map((artist) => artist.name).join(), query)) {
-              newMatch = {
-                title: track.name,
-                artists: track.artists.map(artist => artist.name).join(', '),
-                playlist: playlist.name,
-                creator: playlist.owner.display_name,
-              }
-              console.log('MATCH BY NAME OR ARTIST', newMatch)
-              playlistMatches.push(newMatch);
-            }
-            const found = tagMatches.find(t => t.title === track.name)
-            if (found && track.id && tagsObject[track.id]) {
-              newMatch = {
-                title: track.name,
-                artists: track.artists.map(artist => artist.name).join(', '),
-                playlist: playlist.name,
-                creator: playlist.owner.display_name,
-                tags: tagsObject[track.id]?.map(tag => tag.name).join(', ') ?? ''
-              }
-              const matchIndex = tagMatches.indexOf(found)
-              tagMatches.splice(matchIndex, 1)
-              console.log(newMatch)
-              playlistMatches.push(newMatch);
-            }
-          });
-        });
-        console.log('playlistMatches', playlistMatches)
       }
-      const data = [...tagMatches, ...playlistMatches]
-
-      return data;
     }),
 });
 

@@ -12,7 +12,6 @@ const TagsCard = () => {
   const { data, isError, isLoading } = api.tags.orderTagsByName.useQuery(
     undefined,
     {
-      refetchOnWindowFocus: false,
       onError() {
         const msg = t("tags.error");
         setMessage(msg);
