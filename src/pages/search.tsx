@@ -1,26 +1,31 @@
 import MainLayout from "@components/MainLayout";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { type ColumnDef } from "@tanstack/react-table";
 import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
-import { SearchSVG } from "~/components/ui/icons/index";
+import { ArrowSVG, SearchSVG } from "~/components/ui/icons/index";
 import { usePlaylistStore } from "~/core/userStore";
 import { langKey } from "~/hooks/use-language";
 import { useLibrary } from "~/hooks/use-library";
+import {
+  type TagSearchType,
+  type TrackSearchType,
+} from "~/server/api/routers/spotify_user_router";
 import type { Language, PageWithLayout } from "~/types/page-types";
 import { type Playlist } from "~/types/spotify-types";
 import { SearchTypeConst, type SearchType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
 
 //prettier-ignore
-const SearchDataTable = dynamic(() => import("~/components/ui/SearchTable"), {loading: () => <div></div>});
+const DataTable = dynamic(() => import("~/components/ui/DataTable"), {loading: () => <div></div>});
 
 //prettier-ignore
 const LoadingScreen = dynamic(() => import("~/components/ui/LoadingPlaylistComponent"),{ loading: () => <div></div>});
@@ -34,18 +39,23 @@ const SearchFormSchema = z.object({
 type SearchFormSchemaType = z.infer<typeof SearchFormSchema>;
 
 const Search: PageWithLayout = () => {
-  const [firstSearch, setFirstSearch] = useState(true);
   const { playlists, setPlaylists } = usePlaylistStore();
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
   const [currentPlaylist, setCurrentPlaylist] = useState<string>();
   const [progress, setProgress] = useState<number>();
   const [selectedFilter, setSelectedFilter] = useState<SearchType>("track");
+  const [data, setData] = useState<typeof searchResult>(undefined);
 
   const { t } = useTranslation("search");
   // prettier-ignore
-  const { data, mutate, isLoading } = api.spotify_user.searchTracks.useMutation();
-
+  const { data: searchResult, mutate, isLoading } = api.spotify_user.searchTracks.useMutation(
+    {
+      onSuccess(data) {
+        setData(data)
+      },
+    }
+  );
   const {
     register,
     handleSubmit,
@@ -77,9 +87,8 @@ const Search: PageWithLayout = () => {
   });
 
   const onSubmit: SubmitHandler<SearchFormSchemaType> = (data) => {
-    if (firstSearch && selectedFilter === "track") {
+    if (!playlists && selectedFilter === "track" ) {
       loadLibrary();
-      setFirstSearch(false);
     } else {
       mutate({
         playlists: playlists,
@@ -88,6 +97,129 @@ const Search: PageWithLayout = () => {
       });
     }
   };
+
+  const tagColumns: ColumnDef<unknown, unknown>[] = useMemo(() => {
+    return [
+      {
+        accessorKey: "title",
+        header: ({ column }) => {
+          return (
+            <button
+              className="flex w-full items-center gap-1"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              {t("search_table_headers.title") ?? "Title"}
+              <ArrowSVG isOpen={column.getIsSorted()} />
+            </button>
+          );
+        },
+      },
+      {
+        accessorKey: "artists",
+        header: ({ column }) => {
+          return (
+            <button
+              className="flex items-center justify-center gap-1"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              {t("search_table_headers.author") ?? "Author"}
+              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
+            </button>
+          );
+        },
+      },
+      {
+        accessorKey: "tags",
+        header: ({ column }) => {
+          return (
+            <button
+              className="flex items-center justify-center gap-1"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              {t("search_table_headers.tags") ?? "Tags"}
+              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
+            </button>
+          );
+        },
+      },
+    ];
+  }, [t]);
+
+  const trackColumns: ColumnDef<unknown, unknown>[] = useMemo(() => {
+    return [
+      {
+        accessorKey: "title",
+        header: ({ column }) => {
+          return (
+            <button
+              className="flex w-full items-center gap-1"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              {t("search_table_headers.title") ?? "Title"}
+              <ArrowSVG isOpen={column.getIsSorted()} />
+            </button>
+          );
+        },
+      },
+      {
+        accessorKey: "artists",
+        header: ({ column }) => {
+          return (
+            <button
+              className="flex items-center justify-center gap-1"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              {t("search_table_headers.author") ?? "Author"}
+              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
+            </button>
+          );
+        },
+      },
+      {
+        accessorKey: "playlist",
+        header: ({ column }) => {
+          return (
+            <button
+              className="flex items-center justify-center gap-1"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              {t("search_table_headers.playlist") ?? "playlist"}
+              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
+            </button>
+          );
+        },
+      },
+
+      {
+        accessorKey: "creator",
+        header: ({ column }) => {
+          return (
+            <button
+              className="flex items-center justify-center gap-1"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              {t("search_table_headers.creator") ?? "Creator"}
+              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
+            </button>
+          );
+        },
+      },
+    ];
+  }, [t]);
 
   return (
     <div className="flex flex-col items-center justify-center gap-2">
@@ -105,18 +237,15 @@ const Search: PageWithLayout = () => {
               </div>
             </div>
             <select
-              className="select-bordered select join-item"
-              onChange={(t) => setSelectedFilter(t.currentTarget.value as SearchType)}
+              className="select-bordered select join-item border-base-300 bg-base-300"
+              placeholder="Filter"
+              onChange={(t) => {
+                setSelectedFilter(t.currentTarget.value as SearchType);
+                setData(undefined);
+              }}
             >
-              <option
-                disabled
-                selected
-                className="disabled uppercase hover:bg-white"
-              >
-                Filter
-              </option>
               {SearchTypeConst.map((type) => (
-                <option key={type} className="p-2 uppercase">
+                <option key={type} className=" ">
                   {type}
                 </option>
               ))}
@@ -141,7 +270,12 @@ const Search: PageWithLayout = () => {
         <LoadingScreen current={currentPlaylist} progress={progress} />
       )}
       {isLoading && <LoadingSpinner />}
-      {data && <SearchDataTable data={data} />}
+      {data && (
+        <DataTable
+          data={data}
+          columns={selectedFilter === "tag" ? tagColumns : trackColumns}
+        />
+      )}
     </div>
   );
 };

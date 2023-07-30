@@ -11,7 +11,7 @@ import {
 } from "@tanstack/react-table";
 import { useTranslation } from "next-i18next";
 import { useMemo, useState } from "react";
-import type { SearchResult } from "~/server/api/routers/spotify_user_router";
+import type { SearchResult, TagSearchType } from "~/server/api/routers/spotify_user_router";
 import Accordion from "./Accordion";
 import {
   Table,
@@ -28,97 +28,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-function SearchTable({ data }: { data: SearchResult[] }) {
-  const { t } = useTranslation("search");
-  const columns: ColumnDef<SearchResult>[] = useMemo(() => {
-    return [
-      {
-        accessorKey: "title",
-        header: ({ column }) => {
-          return (
-            <button
-              className="flex w-full items-center gap-1"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("search_table_headers.title") ?? "Title"}
-              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
-            </button>
-          );
-        },
-      },
-      {
-        accessorKey: "artists",
-        header: ({ column }) => {
-          return (
-            <button
-              className="flex items-center justify-center gap-1"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("search_table_headers.author") ?? "Author"}
-              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
-            </button>
-          );
-        },
-      },
-      {
-        accessorKey: "playlist",
-        header: ({ column }) => {
-          return (
-            <button
-              className="flex items-center justify-center gap-1"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("search_table_headers.playlist") ?? "playlist"}
-              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
-            </button>
-          );
-        },
-      },
-
-      {
-        accessorKey: "creator",
-        header: ({ column }) => {
-          return (
-            <button
-              className="flex items-center justify-center gap-1"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("search_table_headers.creator") ?? "Creator"}
-              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
-            </button>
-          );
-        },
-      },
-      {
-        accessorKey: "tags",
-        header: ({ column }) => {
-          return (
-            <button
-              className="flex items-center justify-center gap-1"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("search_table_headers.tags") ?? "Tags"}
-              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
-            </button>
-          );
-        },
-      },
-    ];
-  }, [t]);
-  return <DataTable columns={columns} data={data} />;
-}
-
-function DataTable<TData, TValue>({
+export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
@@ -311,4 +221,4 @@ function DataTable<TData, TValue>({
   );
 }
 
-export default SearchTable;
+export default DataTable;

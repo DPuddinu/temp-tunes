@@ -15,13 +15,19 @@ import { PlaylistSchema, SearchTypeEnum, type TagSchemaType } from "~/types/zod-
 import { spliceArray } from "~/utils/helpers";
 import { createTagsObject } from "./tags_router";
 
-export interface SearchResult {
+
+export type TagSearchType = {
+  title: string;
+  artists: string;
+  tags?: string;
+}
+export type TrackSearchType = {
   title: string;
   artists: string;
   playlist?: string;
   creator?: string;
-  tags?: string;
 }
+export type SearchResult = TrackSearchType | TagSearchType
 
 export const spotifyUserRouter = createTRPCRouter({
   getTopRated: protectedProcedure
@@ -119,9 +125,8 @@ export const spotifyUserRouter = createTRPCRouter({
 
       switch (type) {
         case "tag": {
+          const tagMatches: TagSearchType[] = [];
           // SEARCH BY TAGS
-          const tagMatches: SearchResult[] = [];
-
           const tagsByName = await ctx.prisma.tag.findMany({
             where: {
               userId: {
@@ -137,17 +142,19 @@ export const spotifyUserRouter = createTRPCRouter({
 
           const tracksByTags = await getTracksByIds(tagsByName.map(tag => tag.spotifyId), ctx.session.accessToken)
           tracksByTags.forEach(t => {
-            tagMatches.push({
-              title: t.name,
-              artists: t.artists.map(artist => artist.name).join(', '),
-              tags: t.id && tagsObject[t.id] ? tagsObject[t.id]?.map(tag => tag.name).join(', ') : ''
-            })
+            if (t.id) {
+              tagMatches.push({
+                title: t.name,
+                artists: t.artists.map(artist => artist.name).join(', '),
+                tags: tagsObject[t.id]?.map(x => x.name).join(', ')
+              })
+            }
           })
           return tagMatches
         }
         case "track": {
-          const playlistMatches: SearchResult[] = [];
-          if (playlists && playlists.length > 0) {
+          const playlistMatches: TrackSearchType[] = [];
+          if (playlists && playlists.length > 0 && type === "track") {
             playlists.forEach((playlist) => {
               const tracks = playlist.tracks;
 
@@ -156,7 +163,7 @@ export const spotifyUserRouter = createTRPCRouter({
                 // MATCH BY TRACK NAME OR ARTIST NAME
                 // prettier-ignore
                 if (match(track.name, query) || match(track.artists.map((artist) => artist.name).join(), query)) {
-                  const newMatch: SearchResult = {
+                  const newMatch: TrackSearchType = {
                     title: track.name,
                     artists: track.artists.map(artist => artist.name).join(', '),
                     playlist: playlist.name,
@@ -166,8 +173,8 @@ export const spotifyUserRouter = createTRPCRouter({
                 }
               });
             });
-            return playlistMatches
           }
+          return playlistMatches
         }
       }
     }),
