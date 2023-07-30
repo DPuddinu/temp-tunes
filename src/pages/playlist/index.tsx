@@ -4,9 +4,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
 import MainLayout from "~/components/MainLayout";
 import { PlaylistPageSkeleton } from "~/components/ui/skeletons/PlaylistPageSkeleton";
-import type { Language } from "~/core/settingsStore";
 import { langKey } from "~/hooks/use-language";
-import { type PageWithLayout } from "~/types/page-types";
+import { type Language, type PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 
 const PlaylistsPage: PageWithLayout = () => {

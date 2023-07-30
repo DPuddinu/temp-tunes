@@ -1,6 +1,12 @@
 import z from "zod";
 
 export const TagType = ["track", "playlist"] as const;
+export const TagTypeEnum = z.enum(TagType);
+export type TagType = z.infer<typeof TagTypeEnum>;
+
+export const SearchTypeConst = ["track", "playlist", "tag"] as const;
+export const SearchTypeEnum = z.enum(SearchTypeConst);
+export type SearchType = z.infer<typeof SearchTypeEnum>;
 
 export const TagSchema = z.object({
   id: z.string().optional(),
@@ -11,8 +17,7 @@ export const TagSchema = z.object({
 
 export type TagSchemaType = z.infer<typeof TagSchema>;
 
-export const TagTypeEnum = z.enum(TagType);
-export type TagType = z.infer<typeof TagTypeEnum>;
+
 
 const ImagesSchema = z.array(
   z.object({

@@ -5,7 +5,6 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
-import { Languages, type Language } from "~/core/settingsStore";
 import { langKey, useLanguage } from "~/hooks/use-language";
 import {
   FacebookSVG,
@@ -13,6 +12,7 @@ import {
   LinkedinSVG,
   TwitterSVG,
 } from "../components/ui/icons/index";
+import { Language, Languages } from "~/types/page-types";
 const Landing = () => {
   const router = useRouter();
   useEffect(() => {

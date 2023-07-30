@@ -11,7 +11,7 @@ import {
   type TopArtists,
   type TopTracks,
 } from "~/types/spotify-types";
-import { PlaylistSchema, type TagSchemaType } from "~/types/zod-schemas";
+import { PlaylistSchema, SearchTypeEnum, type TagSchemaType } from "~/types/zod-schemas";
 import { spliceArray } from "~/utils/helpers";
 import { createTagsObject } from "./tags_router";
 
@@ -111,6 +111,7 @@ export const spotifyUserRouter = createTRPCRouter({
       z.object({
         query: z.string(),
         playlists: PlaylistSchema.array().nullish(),
+        type: SearchTypeEnum
       })
     )
     .mutation(async ({ input, ctx }) => {

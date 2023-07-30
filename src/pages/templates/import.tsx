@@ -7,11 +7,10 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import MainLayout from "~/components/MainLayout";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
-import type { Language } from "~/core/settingsStore";
+import { type Language, type PageWithLayout } from "~/types/page-types";
 import { langKey } from "~/hooks/use-language";
 import { useMounted } from "~/hooks/use-mounted";
 import { useToast } from "~/hooks/use-toast";
-import type { PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 
 const FormSchema = z.object({

@@ -11,12 +11,12 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { SearchSVG } from "~/components/ui/icons/index";
-import { type Language } from "~/core/settingsStore";
 import { usePlaylistStore } from "~/core/userStore";
 import { langKey } from "~/hooks/use-language";
 import { useLibrary } from "~/hooks/use-library";
-import type { PageWithLayout } from "~/types/page-types";
+import type { Language, PageWithLayout } from "~/types/page-types";
 import { type Playlist } from "~/types/spotify-types";
+import { SearchTypeConst, type SearchType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
 
 //prettier-ignore
@@ -40,6 +40,7 @@ const Search: PageWithLayout = () => {
   const [loading, setLoading] = useState(false);
   const [currentPlaylist, setCurrentPlaylist] = useState<string>();
   const [progress, setProgress] = useState<number>();
+  const [selectedFilter, setSelectedFilter] = useState<SearchType>("track");
 
   const { t } = useTranslation("search");
   // prettier-ignore
@@ -70,6 +71,7 @@ const Search: PageWithLayout = () => {
         mutate({
           playlists: library,
           query: searchInput,
+          type: selectedFilter,
         });
     },
   });
@@ -82,24 +84,48 @@ const Search: PageWithLayout = () => {
       mutate({
         playlists: playlists,
         query: data.name,
+        type: selectedFilter,
       });
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center gap-2">
-      <div className="form-control w-full pb-4 sm:max-w-sm md:max-w-md">
+      <div className=" pb-4 sm:max-w-sm md:max-w-md">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="input-group">
-            <input
-              {...register("name")}
-              type="text"
-              placeholder={t("search") ?? "..."}
-              className="input-bordered input grow bg-secondary-content sm:max-w-sm"
-            />
-            <button type="submit" className="btn-square btn bg-base-300">
-              <SearchSVG />
-            </button>
+          <div className="join">
+            <div>
+              <div>
+                <input
+                  {...register("name")}
+                  type="text"
+                  placeholder={t("search") ?? "..."}
+                  className=" input join-item grow bg-secondary-content sm:max-w-sm"
+                />
+              </div>
+            </div>
+            <select
+              className="select-bordered select join-item"
+              onChange={(t) => setSelectedFilter(t.currentTarget.value as SearchType)}
+            >
+              <option
+                disabled
+                selected
+                className="disabled uppercase hover:bg-white"
+              >
+                Filter
+              </option>
+              {SearchTypeConst.map((type) => (
+                <option key={type} className="p-2 uppercase">
+                  {type}
+                </option>
+              ))}
+            </select>
+            <div className="indicator">
+              <button type="submit" className="join-item btn bg-base-300">
+                <SearchSVG />
+              </button>
+            </div>
           </div>
         </form>
 

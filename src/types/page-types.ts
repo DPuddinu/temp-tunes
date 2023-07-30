@@ -16,3 +16,5 @@ export type AppPropsWithLayout = AppProps & {
 export const themesList = ["dark", "light"];
 export const themes = [...themesList] as const;
 export type Theme = (typeof themes)[number];
+export const Languages = ["en", "it"] as const;
+export type Language = typeof Languages[number]

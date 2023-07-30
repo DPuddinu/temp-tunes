@@ -6,10 +6,9 @@ import MainLayout from "~/components/MainLayout";
 import CreateTemplate from "~/components/template/CreateTemplate";
 import CreateTemplateSkeleton from "~/components/template/CreateTemplateSkeleton";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
-import type { Language } from "~/core/settingsStore";
 import { langKey } from "~/hooks/use-language";
 import { useToast } from "~/hooks/use-toast";
-import { type PageWithLayout } from "~/types/page-types";
+import { type Language, type PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 
 const TemplateById: PageWithLayout = () => {

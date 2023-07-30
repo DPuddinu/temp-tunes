@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/react";
-import { createContext, type ReactNode } from "react";
+import { createContext, useEffect, type ReactNode } from "react";
 import { usePlaylistStore, useStore } from "~/core/userStore";
 import type { TagsObject } from "~/server/api/routers/tags_router";
 import { api } from "~/utils/api";

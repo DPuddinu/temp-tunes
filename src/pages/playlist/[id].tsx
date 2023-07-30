@@ -5,15 +5,13 @@ import { type GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef } from "react";
 import MainLayout from "~/components/MainLayout";
 import { PlaylistSkeleton } from "~/components/ui/skeletons/PlaylistSkeleton";
 import { SquareSkeleton } from "~/components/ui/skeletons/SquareSkeleton";
-import type { Language } from "~/core/settingsStore";
 import { langKey } from "~/hooks/use-language";
 import { useToast } from "~/hooks/use-toast";
-import type { PageWithLayout } from "~/types/page-types";
+import { type Language, type PageWithLayout } from "~/types/page-types";
 import { type Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 

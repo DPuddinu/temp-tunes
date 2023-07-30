@@ -7,10 +7,9 @@ import TemplateList from "~/components/template/TemplateList";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
 import { ErrorSVG } from "~/components/ui/icons";
 import { TemplatesSkeleton } from "~/components/ui/skeletons/TemplatesSkeleton";
-import { type Language } from "~/core/settingsStore";
 import { langKey } from "~/hooks/use-language";
 import { useToast } from "~/hooks/use-toast";
-import { type PageWithLayout } from "~/types/page-types";
+import { type Language, type PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 
 const Templates: PageWithLayout = () => {

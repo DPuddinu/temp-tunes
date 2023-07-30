@@ -10,9 +10,8 @@ import { useSwipeable } from "react-swipeable";
 import type { TimeRangeType } from "src/types/spotify-types";
 import type { RecapPropsType } from "~/components/recap/cards/UserTopCard";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
-import type { Language } from "~/core/settingsStore";
 import { langKey } from "~/hooks/use-language";
-import type { PageWithLayout } from "../types/page-types";
+import type { Language, PageWithLayout } from "../types/page-types";
 import GreetingsSkeleton from "~/components/ui/skeletons/GreetingsSkeleton";
 
 const Home: PageWithLayout = () => {

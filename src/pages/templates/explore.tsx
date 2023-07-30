@@ -5,10 +5,9 @@ import { useTranslation } from "react-i18next";
 import MainLayout from "~/components/MainLayout";
 import TemplateCard from "~/components/template/TemplateCard";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
-import type { Language } from "~/core/settingsStore";
+import { type Language, type PageWithLayout } from "~/types/page-types";
 import { langKey } from "~/hooks/use-language";
 import { useToast } from "~/hooks/use-toast";
-import type { PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 
 const Explore: PageWithLayout = () => {
