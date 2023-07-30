@@ -34,6 +34,7 @@ const SearchFormSchema = z.object({
 type SearchFormSchemaType = z.infer<typeof SearchFormSchema>;
 
 const Search: PageWithLayout = () => {
+  const [firstSearch, setFirstSearch] = useState(true);
   const { playlists, setPlaylists } = usePlaylistStore();
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
@@ -74,14 +75,15 @@ const Search: PageWithLayout = () => {
   });
 
   const onSubmit: SubmitHandler<SearchFormSchemaType> = (data) => {
-    if (!playlists) {
+    if (firstSearch) {
       loadLibrary();
-      return;
+      setFirstSearch(false);
+    } else {
+      mutate({
+        playlists: playlists,
+        query: data.name,
+      });
     }
-    mutate({
-      playlists: playlists,
-      query: data.name,
-    });
   };
 
   return (
@@ -109,7 +111,9 @@ const Search: PageWithLayout = () => {
           </label>
         )}
       </div>
-      {loading && <LoadingScreen current={currentPlaylist} progress={progress} />}
+      {loading && (
+        <LoadingScreen current={currentPlaylist} progress={progress} />
+      )}
       {isLoading && <LoadingSpinner />}
       {data && <SearchDataTable data={data} />}
     </div>

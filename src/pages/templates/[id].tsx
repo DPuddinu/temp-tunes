@@ -1,7 +1,7 @@
 import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 import MainLayout from "~/components/MainLayout";
 import CreateTemplate from "~/components/template/CreateTemplate";
 import CreateTemplateSkeleton from "~/components/template/CreateTemplateSkeleton";
@@ -13,17 +13,19 @@ import { type PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 
 const TemplateById: PageWithLayout = () => {
-  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const id = searchParams.get("id");
   const { setMessage } = useToast();
 
   const { isLoading, data: templateData } =
     api.template.getTemplateById.useQuery(
-      { id: router.query.id?.toString() ?? "" },
+      { id: id ?? "" },
       {
         onError() {
           setMessage(`Error: can't get template`);
         },
-        enabled: router.query.id !== undefined,
+        enabled: id !== undefined,
       }
     );
   return (
