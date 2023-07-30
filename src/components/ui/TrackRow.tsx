@@ -10,14 +10,15 @@ import {
   useRef,
   useState,
   type ForwardedRef,
+  useContext,
 } from "react";
 import { TagModal } from "~/components/modals/EditTagModal";
-import { usePlaylistStore } from "~/core/userStore";
 import { useToast } from "~/hooks/use-toast";
 import { type Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 import { ArrowSVG, QueueSVG, TagSVG, VerticalDotsSVG } from "./icons";
 import { FolderPlusSVG } from "./icons/FolderPlusSVG";
+import { UserDataContext } from "~/context/user-data-context";
 
 export interface TrackProps {
   track: Track;
@@ -30,7 +31,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
   const { uri, name, artists, id } = track;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { setMessage } = useToast();
-  const { playlists } = usePlaylistStore();
+  const { playlists } = useContext(UserDataContext);
 
   const { mutate: playTrack } = api.player.togglePlayPause.useMutation();
   const { mutate: addToQueue } = api.player.addToQueue.useMutation({

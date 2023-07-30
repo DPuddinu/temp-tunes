@@ -10,8 +10,7 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 import { useTranslation } from "next-i18next";
-import { useMemo, useState } from "react";
-import type { SearchResult, TagSearchType } from "~/server/api/routers/spotify_user_router";
+import { useState } from "react";
 import Accordion from "./Accordion";
 import {
   Table,
@@ -21,7 +20,6 @@ import {
   TableHeader,
   TableRow,
 } from "./TableComponent";
-import { ArrowSVG } from "./icons/index";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

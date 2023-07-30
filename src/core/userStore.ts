@@ -3,7 +3,6 @@ import { mountStoreDevtool } from "simple-zustand-devtools";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { useMounted } from "~/hooks/use-mounted";
-import type { TagsObject } from "~/server/api/routers/tags_router";
 import type { Playlist } from "~/types/spotify-types";
 
 export type PlaylistLibrary = {
@@ -12,9 +11,7 @@ export type PlaylistLibrary = {
 };
 export type UserStore = {
   user: User | undefined;
-  tags: TagsObject | undefined;
   message: string | undefined;
-  setTags: (tags: TagsObject) => void;
   setUser: (user: User) => void;
   setMessage: (message: string | undefined) => void
 };
@@ -38,10 +35,8 @@ const usePersistedStore = create<PlaylistLibrary>()(
 );
 
 const userStore = create<UserStore>()((set) => ({
-  tags: undefined,
   user: undefined,
   message: undefined,
-  setTags: (tags) => set(() => ({ tags: tags })),
   setUser: (user) => set(() => ({ user: user })),
   setMessage: (message) => {
     if (message) {

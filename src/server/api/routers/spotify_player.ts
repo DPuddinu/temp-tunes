@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { addToQueue, getDevices, getPlaybackState, nextTrack, pause, play, previousTrack, transferPlaybackTo } from "~/core/spotifyCollection";
+import { addToQueue, getDevices, getPlaybackState, play, transferPlaybackTo } from "~/core/spotifyCollection";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 interface DeviceType {

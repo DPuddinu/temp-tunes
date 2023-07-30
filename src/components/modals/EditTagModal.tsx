@@ -1,10 +1,10 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "next-i18next";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
-import { useStore } from "~/core/userStore";
+import { UserDataContext } from "~/context/user-data-context";
 import { useToast } from "~/hooks/use-toast";
 import { type TagSchemaType, type TagType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
@@ -22,7 +22,7 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
   const { t } = useTranslation("modals");
   const [removeTags, setRemoveTags] = useState<TagSchemaType[]>([]);
   const { setMessage } = useToast();
-  const { tags: storeTags, setTags: setStoreTags } = useStore();
+  const { tags: storeTags, setTags: setStoreTags } = useContext(UserDataContext);
   const [tags, setTags] = useState<TagSchemaType[]>([]);
   const [parent] = useAutoAnimate();
 

@@ -3,7 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type ColumnDef } from "@tanstack/react-table";
 import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
-import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
@@ -15,10 +14,6 @@ import { ArrowSVG, SearchSVG } from "~/components/ui/icons/index";
 import { usePlaylistStore } from "~/core/userStore";
 import { langKey } from "~/hooks/use-language";
 import { useLibrary } from "~/hooks/use-library";
-import {
-  type TagSearchType,
-  type TrackSearchType,
-} from "~/server/api/routers/spotify_user_router";
 import type { Language, PageWithLayout } from "~/types/page-types";
 import { type Playlist } from "~/types/spotify-types";
 import { SearchTypeConst, type SearchType } from "~/types/zod-schemas";
@@ -40,7 +35,6 @@ type SearchFormSchemaType = z.infer<typeof SearchFormSchema>;
 
 const Search: PageWithLayout = () => {
   const { playlists, setPlaylists } = usePlaylistStore();
-  const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
   const [currentPlaylist, setCurrentPlaylist] = useState<string>();
   const [progress, setProgress] = useState<number>();
@@ -51,6 +45,7 @@ const Search: PageWithLayout = () => {
   // prettier-ignore
   const { data: searchResult, mutate, isLoading } = api.spotify_user.searchTracks.useMutation(
     {
+      mutationKey: ["getLibrary"],
       onSuccess(data) {
         setData(data)
       },
@@ -67,7 +62,6 @@ const Search: PageWithLayout = () => {
 
   // LOADING LIBRARY
   const { loadLibrary } = useLibrary({
-    token: session?.accessToken,
     onStart: () => setLoading(true),
     onProgress: (progress: number, name: string) => {
       setCurrentPlaylist(name);

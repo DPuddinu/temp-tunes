@@ -1,24 +1,33 @@
 import { useSession } from "next-auth/react";
-import { createContext, useEffect, type ReactNode } from "react";
-import { usePlaylistStore, useStore } from "~/core/userStore";
+import { createContext, useState, type ReactNode } from "react";
+import { useStore } from "~/core/userStore";
 import type { TagsObject } from "~/server/api/routers/tags_router";
+import type { Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
+
 interface Data {
   tags: TagsObject | undefined;
+  setTags: (tags: TagsObject) => void;
+  playlists: Playlist[] | undefined;
+  setPlaylists: (playlists: Playlist[]) => void;
 }
 const initialContext: Data = {
   tags: undefined,
+  setTags: () => false,
+  playlists: undefined,
+  setPlaylists: () => false
 };
 export const UserDataContext = createContext<Data>(initialContext);
 
 const UserDataProvider = ({ children }: { children: ReactNode }) => {
   const { data } = useSession();
-  const { setTags: setStoreTags, user: storeUser, setUser } = useStore();
-  const { playlists, setPlaylists } = usePlaylistStore();
+  const { user: storeUser, setUser } = useStore();
+  const [playlists, setPlaylists] = useState<Playlist[] | undefined>(undefined)
+  const [tags, setTags] = useState<TagsObject | undefined>(undefined)
 
   // LOADING USER
   // prettier-ignore
-  const { data: user } = api.user.getUserBySpotifyId.useQuery(
+  const {} = api.user.getUserBySpotifyId.useQuery(
     undefined, 
     { 
       refetchOnWindowFocus: false, 
@@ -26,7 +35,7 @@ const UserDataProvider = ({ children }: { children: ReactNode }) => {
       onSuccess(data) {
         if (!storeUser && data) {
           setUser(data.user);
-          setStoreTags(data.tags);
+          setTags(data.tags);
         }
       }
     }
@@ -43,7 +52,10 @@ const UserDataProvider = ({ children }: { children: ReactNode }) => {
   return (
     <UserDataContext.Provider
       value={{
-        tags: user?.tags ?? {},
+        tags,
+        setTags,
+        playlists,
+        setPlaylists
       }}
     >
       {children}
