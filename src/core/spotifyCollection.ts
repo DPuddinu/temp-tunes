@@ -276,8 +276,9 @@ export type searchQueryType = {
 }
 export async function search(q: string, access_token: string) {
   const params = new URLSearchParams({
-    q: `${q} track:${q}`,
-    type: "track"
+    q: `${q}`,
+    type: "track",
+    limit: "10"
   });
   return await spotifyGET(`/search?${params.toString()}`, access_token).then((resp) => resp.json()).catch((error) => console.error(error));
 }

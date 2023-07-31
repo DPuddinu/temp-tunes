@@ -18,21 +18,21 @@ export type TemplatePage =
   | "details"
   | "create_playlist";
 
-const TemplateLayout = ({
-  children,
-  title,
-}: {
+interface props {
   children: ReactNode;
-  title: TemplatePage;
-}) => {
+  title?: TemplatePage;
+}
+const TemplateLayout = ({ children, title }: props) => {
   const { t } = useTranslation("templates");
   return (
     <>
       <section className="relative mb-16 flex flex-col justify-between">
         <Link href={"/templates"}>
-          <h1 className="mb-2 ml-2 w-fit pb-2 text-2xl font-semibold transition-transform hover:scale-105 sm:text-3xl">
-            {t(title) ?? "not found"}
-          </h1>
+          {title && (
+            <h1 className="mb-2 ml-2 w-fit pb-2 text-2xl font-semibold transition-transform hover:scale-105 sm:text-3xl">
+              {t(title) ?? "not found"}
+            </h1>
+          )}
         </Link>
         {children}
       </section>
