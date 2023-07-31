@@ -15,7 +15,9 @@ export type TemplatePage =
   | "create"
   | "import_template"
   | "explore"
-  | "details";
+  | "details"
+  | "create_playlist";
+
 const TemplateLayout = ({
   children,
   title,

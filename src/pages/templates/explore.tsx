@@ -35,8 +35,8 @@ const Explore: PageWithLayout = () => {
 
   return (
     <section className="flex flex-col justify-center gap-4">
-      {data &&
-        data.map((temp, i) => (
+      {
+        data?.map((temp, i) => (
           <TemplateCard
             key={temp.name}
             color={temp.color ?? ""}

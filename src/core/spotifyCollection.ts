@@ -239,19 +239,6 @@ export async function getPlaylistById(playlistId: string, access_token: string) 
   playlist.tracks = tracks
   return playlist
 }
-type PlayProps = {
-  uris?: string[];
-  contextUri?: string
-}
-export async function play(access_token: string, uris?: string[] | undefined | null, contextUri?: string | undefined | null) {
-  const body: PlayProps = {}
-  if (uris) body.uris = uris
-  if (contextUri) body.contextUri = contextUri
-  return await spotifyPUT({ url: '/me/player/play', access_token: access_token, body: JSON.stringify(body) })
-}
-export async function pause(access_token: string) {
-  return await spotifyPUT({ url: '/me/player/pause', access_token: access_token })
-}
 
 export async function getDevices(access_token: string) {
   return (await spotifyGET('/me/player/devices', access_token).then((resp) => resp.json()).catch((error) => console.error(error)));
@@ -275,17 +262,22 @@ export async function addToQueue(uri: string, access_token: string) {
   return await spotifyPOST({ url: `/me/player/queue?${params.toString()}`, access_token: access_token })
 }
 
-export async function nextTrack(access_token: string) {
-  const body = {}
-  return await spotifyPOST({ url: '/me/player/next', access_token: access_token, body: JSON.stringify(body) })
-}
-export async function previousTrack(access_token: string) {
-  const body = {}
-  return await spotifyPOST({ url: '/me/player/previous', access_token: access_token, body: JSON.stringify(body) })
-}
 export async function addToPlaylist(uri: string, playlistId: string, access_token: string) {
   const body = {
     uris: [uri]
   }
   return await spotifyPOST({ url: `/playlists/${playlistId}/tracks`, access_token: access_token, body: JSON.stringify(body) })
+}
+
+export type searchQueryType = {
+  tracks: {
+    items: Track[]
+  }
+}
+export async function search(q: string, access_token: string) {
+  const params = new URLSearchParams({
+    q: `${q} track:${q}`,
+    type: "track"
+  });
+  return await spotifyGET(`/search?${params.toString()}`, access_token).then((resp) => resp.json()).catch((error) => console.error(error));
 }

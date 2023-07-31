@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getTracksByIds } from "~/core/spotifyCollection";
+import { getTracksByIds, search, type searchQueryType } from "~/core/spotifyCollection";
 import { spotifyGET } from "~/core/spotifyFetch";
 import { averageMood } from "~/core/spotifyMoodAnalyze";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -178,6 +178,15 @@ export const spotifyUserRouter = createTRPCRouter({
         }
       }
     }),
+  search: protectedProcedure.input(
+    z.object({
+      query: z.string(),
+    })
+  ).query(async ({ ctx, input }) => {
+    const { query } = input;
+    const searchTrack = await search(query, ctx.session.accessToken) as searchQueryType;
+    return searchTrack.tracks.items
+  }),
 });
 
 function match(a: string, b: string): boolean {

@@ -2,7 +2,6 @@ import { useClipboard } from "@mantine/hooks";
 import { type PlaylistTemplate, type TemplateEntry } from "@prisma/client";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useToast } from "~/hooks/use-toast";
@@ -41,7 +40,6 @@ const TemplateCard = ({
 }: TemplateCardProps) => {
   const [open, setOpen] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const router = useRouter();
   const { t } = useTranslation("common");
   const { t: tmpl } = useTranslation("templates");
   const clipboard = useClipboard({ timeout: 500 });

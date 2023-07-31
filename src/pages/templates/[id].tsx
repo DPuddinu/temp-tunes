@@ -17,10 +17,11 @@ const TemplateById: PageWithLayout = () => {
   const id = searchParams.get("id");
   const { setMessage } = useToast();
 
-  const { isLoading, data: templateData } =
-    api.template.getTemplateById.useQuery(
+  // prettier-ignore
+  const { isLoading, data: templateData } = api.template.getTemplateById.useQuery(
       { id: id ?? "" },
       {
+        queryKey: ["template.getTemplateById", { id: id ?? ""}],
         onError() {
           setMessage(`Error: can't get template`);
         },
