@@ -1,36 +1,38 @@
-import { useVirtualizer, type VirtualItem } from "@tanstack/react-virtual";
-import { useRef, type ReactNode } from "react";
+import {
+  useWindowVirtualizer,
+  type VirtualItem,
+} from "@tanstack/react-virtual";
+import { useLayoutEffect, useRef, type ReactNode } from "react";
 
 interface props {
   data: unknown[];
-  className?: string;
+  height?: string;
+  width?: string;
   row: (currentVirtualItem: VirtualItem) => ReactNode;
 }
-const VirtualScroll = ({ data, className, row }: props) => {
+const VirtualScroll = ({ data, row, height }: props) => {
   const parentRef = useRef<HTMLDivElement>(null);
 
-  const rowVirtualizer = useVirtualizer({
+  const parentOffsetRef = useRef(0);
+
+  useLayoutEffect(() => {
+    parentOffsetRef.current = parentRef.current?.offsetTop ?? 0;
+  }, []);
+
+  const virtualizer = useWindowVirtualizer({
     count: data.length,
-    getScrollElement: () => parentRef.current,
     estimateSize: () => 45,
+    scrollMargin: parentOffsetRef.current,
   });
-  const items = rowVirtualizer.getVirtualItems();
+
+  const items = virtualizer.getVirtualItems();
 
   return (
-    <div
-      ref={parentRef}
-      style={{
-        height: 400,
-        width: 200,
-        contain: "strict",
-        overflowY: "auto",
-      }}
-      className={className}
-    >
+    <div ref={parentRef}>
       <div
         className="relative w-full"
         style={{
-          height: `${rowVirtualizer.getTotalSize()}px`,
+          height: height ? height : virtualizer.getTotalSize(),
         }}
       >
         <div
@@ -39,18 +41,20 @@ const VirtualScroll = ({ data, className, row }: props) => {
             top: 0,
             left: 0,
             width: "100%",
-            transform: `translateY(${items[0]?.start}px)`,
+            transform: `translateY(${
+              items[0] && items[0]?.start - virtualizer.options.scrollMargin
+            }px )`,
           }}
         >
-          {items.map((virtualItem) => (
+          {items.map((virtualRow) => (
             <>
-              {data && data[virtualItem.index] && (
+              {data && data[virtualRow.index] && (
                 <div
-                  key={virtualItem.key}
-                  ref={rowVirtualizer.measureElement}
-                  data-index={virtualItem.index}
+                  key={virtualRow.key}
+                  ref={virtualizer.measureElement}
+                  data-index={virtualRow.index}
                 >
-                  {row(virtualItem)}
+                  {row(virtualRow)}
                 </div>
               )}
             </>

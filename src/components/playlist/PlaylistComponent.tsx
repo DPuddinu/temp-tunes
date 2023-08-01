@@ -1,10 +1,8 @@
-import { useIntersection } from "@mantine/hooks";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { RenameModal } from "~/components/modals/RenamePlaylistModal";
 import { UnfollowModal } from "~/components/modals/UnfollowPlaylistModal";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
@@ -22,6 +20,7 @@ import { useToast } from "~/hooks/use-toast";
 import type { Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 import { ImageWithFallback } from "../ui/ImageWithFallback";
+import VirtualScroll from "../ui/VirtualScroll";
 
 function PlaylistComponent({
   playlist,
@@ -39,41 +38,10 @@ function PlaylistComponent({
 
   const { data: session } = useSession();
 
-  // INFINITE SCROLLING
-  const { data: _data, fetchNextPage } = useInfiniteQuery(
-    ["query"],
-    ({ pageParam = 1 }) => {
-      return data.slice((pageParam - 1) * 4, pageParam * 4);
-    },
-    {
-      getNextPageParam: (_, pages) => {
-        return pages.length + 1;
-      },
-      initialData: {
-        pages: [data.slice(0, 4)],
-        pageParams: [1],
-      },
-    }
+  const filteredPlaylists = useMemo(
+    () => data.filter((t) => t.owner?.id === session?.user?.id ?? ""),
+    [data, session]
   );
-
-  const paginatedData = useMemo(
-    () =>
-      _data?.pages
-        .flatMap((page) => page)
-        .filter((t) => t.owner?.id === session?.user?.id ?? ""),
-    [session, _data]
-  );
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { ref, entry } = useIntersection({
-    root: containerRef.current,
-    threshold: 1,
-  });
-
-  useEffect(() => {
-    if (entry?.isIntersecting) {
-      fetchNextPage();
-    }
-  }, [entry, fetchNextPage]);
 
   const { mutate: shuffle } = api.spotify_playlist.shuffle.useMutation({
     onMutate() {
@@ -145,7 +113,7 @@ function PlaylistComponent({
 
           <DropdownMenu.Portal>
             <DropdownMenu.Content
-              className="max-w-[50vw] rounded-md border-base-200 bg-base-300 p-2 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
+              className="max-w-[50vw] rounded-md border border-base-300 bg-base-200 p-2 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
               sideOffset={5}
             >
               <DropdownMenu.Item
@@ -178,31 +146,37 @@ function PlaylistComponent({
                 </DropdownMenu.SubTrigger>
                 <DropdownMenu.Portal>
                   <DropdownMenu.SubContent
-                    className="max-h-60 max-w-[50vw] overflow-auto rounded-md border-base-300 bg-base-300 p-1 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade sm:max-h-96"
-                    sideOffset={8}
-                    alignOffset={-5}
+                    className="w-56 max-w-[65vw] overflow-auto rounded-md border border-base-300 bg-base-200 p-1 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
+                    sideOffset={-100}
+                    alignOffset={25}
                   >
-                    {paginatedData?.map((destination, i) => (
-                      <>
-                        <DropdownMenu.Item
-                          ref={i === paginatedData.length - 1 ? ref : null}
-                          key={destination.id}
-                          className=" rounded-lg first:mt-2 last:mb-2 hover:cursor-pointer hover:border-none hover:bg-base-200"
-                          onClick={() =>
-                            merge({
-                              originId: playlist.id,
-                              originName: playlist.name,
-                              destinationName: destination.name,
-                              destinationId: destination.id,
-                            })
-                          }
-                        >
-                          <p className="break-normal p-2 active:border-none">
-                            {destination.name}
-                          </p>
-                        </DropdownMenu.Item>
-                      </>
-                    ))}
+                    {filteredPlaylists && (
+                      <VirtualScroll
+                        height="400px"
+                        data={filteredPlaylists}
+                        row={(virtualItem) => (
+                          <DropdownMenu.Item
+                            className=" rounded-lg first:mt-2 last:mb-2 hover:cursor-pointer hover:border-none hover:bg-base-200"
+                            onClick={() => {
+                              // prettier-ignore
+                              const current = filteredPlaylists[virtualItem.index];
+                              if (filteredPlaylists && current)
+                                merge({
+                                  originId: playlist.id,
+                                  originName: playlist.name,
+                                  destinationName: current.name,
+                                  destinationId: current.id,
+                                });
+                            }}
+                          >
+                            <p className="break-normal p-2 active:border-none">
+                              {filteredPlaylists &&
+                                filteredPlaylists[virtualItem.index]?.name}
+                            </p>
+                          </DropdownMenu.Item>
+                        )}
+                      ></VirtualScroll>
+                    )}
                   </DropdownMenu.SubContent>
                 </DropdownMenu.Portal>
               </DropdownMenu.Sub>
