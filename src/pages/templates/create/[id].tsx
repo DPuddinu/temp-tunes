@@ -238,7 +238,7 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
               </button>
             </div>
           </div>
-          <div className="flex w-full justify-evenly gap-2">
+          <div className="flex w-full justify-evenly gap-2 max-w-xs mt-2">
             <Link
               href={"/templates"}
               className="btn w-32 bg-red-500 text-black"
@@ -248,7 +248,7 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
 
             <button
               disabled={Object.values(submitTracks).length === 0}
-              className="btn w-32 bg-green-500 text-black"
+              className="btn w-32 bg-green-500 text-black disabled:border-base-200"
               onClick={() => {
                 if (templateData) {
                   mutate({
