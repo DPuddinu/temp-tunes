@@ -1,4 +1,3 @@
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import {
   useClickOutside,
   useDebouncedValue,
@@ -39,7 +38,6 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
   const [disabledSearch, setDisabledSearch] = useState(false);
   const [showData, setShowData] = useState(true);
   const dataRef = useClickOutside(() => setShowData(false));
-  const [parent] = useAutoAnimate();
   const [submitTracks, setSubmitTracks] = useState<SubmitDataType>({});
 
   const [value, setValue] = useState("");
@@ -172,37 +170,37 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
                 paginatedData.length > 0 &&
                 !!value &&
                 showData && (
-                  <div className="mt-2 w-full" ref={dataRef}>
-                    <div ref={parent} className="flex flex-col gap-2">
-                      {paginatedData?.map((data, i) => (
-                        <ul key={i}>
-                          {data && (
-                            <li
-                              ref={i === paginatedData.length - 1 ? ref : null}
-                              key={i}
-                              className="w-full rounded-lg bg-base-200 p-2 hover:cursor-pointer hover:bg-primary-focus"
-                              onClick={() => {
-                                setSubmitTracks((uris) => {
-                                  const temp = { ...uris };
-                                  if (template) {
-                                    temp[template.id] = data;
-                                  }
-                                  return temp;
-                                });
-                                setDisabledSearch(true);
-                                setValue(data.name);
-                                setSearchData([]);
-                              }}
-                            >
-                              {`${data.name} - ${data.artists
-                                .map((a) => a.name)
-                                .join(", ")}`}
-                            </li>
-                          )}
-                        </ul>
-                      ))}
-                    </div>
-
+                  <div
+                    className="mt-2 flex w-full flex-col gap-2"
+                    ref={dataRef}
+                  >
+                    {paginatedData?.map((data, i) => (
+                      <ul key={i}>
+                        {data && (
+                          <li
+                            ref={i === paginatedData.length - 1 ? ref : null}
+                            key={i}
+                            className="w-full rounded-lg bg-base-200 p-2 hover:cursor-pointer hover:bg-primary-focus"
+                            onClick={() => {
+                              setSubmitTracks((uris) => {
+                                const temp = { ...uris };
+                                if (template) {
+                                  temp[template.id] = data;
+                                }
+                                return temp;
+                              });
+                              setDisabledSearch(true);
+                              setValue(data.name);
+                              setSearchData([]);
+                            }}
+                          >
+                            {`${data.name} - ${data.artists
+                              .map((a) => a.name)
+                              .join(", ")}`}
+                          </li>
+                        )}
+                      </ul>
+                    ))}
                     {searching && !!value && (
                       <div className="mt-2 flex justify-center">
                         <LoadingSpinner />
