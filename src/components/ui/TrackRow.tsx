@@ -126,7 +126,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
                       }}
                     >
                       {rowVirtualizer.getVirtualItems().map((virtualItem) => (
-                        <div
+                        <DropdownMenu.Item
                           key={virtualItem.key}
                           style={{
                             position: "absolute",
@@ -136,29 +136,22 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
                             height: `${virtualItem.size}px`,
                             transform: `translateY(${virtualItem.start}px)`,
                           }}
+                          className=" rounded-lg first:mt-2 last:mb-2 hover:cursor-pointer hover:bg-base-100"
+                          onClick={() => {
+                            if (playlists && playlists[virtualItem.index])
+                              addToPlaylist({
+                                uri: uri,
+                                playlistId:
+                                  playlists[virtualItem.index]?.id ?? "",
+                                playlistName:
+                                  playlists[virtualItem.index]?.name ?? "",
+                              });
+                          }}
                         >
-                          <DropdownMenu.Item
-                            key={virtualItem.key}
-                            style={{
-                              height: `${virtualItem.size}px`,
-                            }}
-                            className=" rounded-lg first:mt-2 last:mb-2 hover:cursor-pointer hover:bg-base-100"
-                            onClick={() => {
-                              if (playlists && playlists[virtualItem.index])
-                                addToPlaylist({
-                                  uri: uri,
-                                  playlistId:
-                                    playlists[virtualItem.index]?.id ?? "",
-                                  playlistName:
-                                    playlists[virtualItem.index]?.name ?? "",
-                                });
-                            }}
-                          >
-                            <p className="break-normal p-2 active:border-none">
-                              {playlists && playlists[virtualItem.index]?.name}
-                            </p>
-                          </DropdownMenu.Item>
-                        </div>
+                          <p className="break-normal p-2 active:border-none">
+                            {playlists && playlists[virtualItem.index]?.name}
+                          </p>
+                        </DropdownMenu.Item>
                       ))}
                     </div>
                   </DropdownMenu.SubContent>
