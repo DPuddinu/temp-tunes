@@ -45,7 +45,7 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
   const [value, setValue] = useState("");
   const [debounced] = useDebouncedValue(value, 200);
   const [searchData, setSearchData] = useState<Track[]>([]);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLLIElement>(null);
   const { ref, entry } = useIntersection({
     root: containerRef.current,
     threshold: 1,
@@ -146,7 +146,7 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
                 <li
                   data-content={page + 1}
                   key={template.entry}
-                  className="step-primary step"
+                  className="step-primary step w-full"
                 >
                   {template.entry}
                 </li>
@@ -172,15 +172,15 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
                 paginatedData.length > 0 &&
                 !!value &&
                 showData && (
-                  <div className="mt-2 " ref={dataRef}>
+                  <div className="mt-2 w-full" ref={dataRef}>
                     <div ref={parent} className="flex flex-col gap-2">
                       {paginatedData?.map((data, i) => (
-                        <div key={i}>
+                        <ul key={i}>
                           {data && (
-                            <div
+                            <li
                               ref={i === paginatedData.length - 1 ? ref : null}
                               key={i}
-                              className="w-full rounded-lg bg-base-200 p-1 hover:cursor-pointer hover:bg-primary-focus"
+                              className="w-full rounded-lg bg-base-200 p-2 hover:cursor-pointer hover:bg-primary-focus"
                               onClick={() => {
                                 setSubmitTracks((uris) => {
                                   const temp = { ...uris };
@@ -197,9 +197,9 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
                               {`${data.name} - ${data.artists
                                 .map((a) => a.name)
                                 .join(", ")}`}
-                            </div>
+                            </li>
                           )}
-                        </div>
+                        </ul>
                       ))}
                     </div>
 
