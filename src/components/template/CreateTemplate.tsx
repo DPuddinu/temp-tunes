@@ -226,6 +226,7 @@ function CreateTemplate({ data }: props) {
                 onClick={() => {
                   if (entryRef.current !== null) {
                     append({ entry: entryRef.current.value });
+                    entryRef.current.value = "";
                   }
                 }}
               >
