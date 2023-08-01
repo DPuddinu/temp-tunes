@@ -32,9 +32,11 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
   const { data: session } = useSession();
 
   const filteredPlaylists = useMemo(
-    () => playlists?.filter((t) => t.owner?.id === session?.user?.id ?? ""),
+    () => playlists?.filter((t) => t.owner?.id === session?.user?.id),
     [playlists, session]
   ); 
+    console.log(filteredPlaylists)
+
 
   const { mutate: playTrack } = api.player.togglePlayPause.useMutation();
   const { mutate: addToQueue } = api.player.addToQueue.useMutation({
@@ -111,14 +113,14 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
                 </DropdownMenu.SubTrigger>
                 <DropdownMenu.Portal>
                   <DropdownMenu.SubContent
-                    className="max-w-[65vw] w-56 rounded-md border border-base-300 bg-base-200 p-1 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
+                    className="w-56 max-w-[65vw] rounded-md border border-base-300 bg-base-200 p-1 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
                     sideOffset={-100}
                     alignOffset={25}
                   >
                     {filteredPlaylists && (
                       <VirtualScroll
-                      height="400px"
-                      data={filteredPlaylists}
+                        height="400px"
+                        data={filteredPlaylists}
                         row={(virtualItem) => (
                           <DropdownMenu.Item
                             key={virtualItem.key}
@@ -126,7 +128,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
                             onClick={() => {
                               // prettier-ignore
                               const current = filteredPlaylists[virtualItem.index];
-                              if (playlists && current)
+                              if (current)
                                 addToPlaylist({
                                   uri: uri,
                                   playlistId: current.id,
@@ -135,7 +137,8 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
                             }}
                           >
                             <p className="break-normal p-2 active:border-none">
-                              {playlists && playlists[virtualItem.index]?.name}
+                              {filteredPlaylists &&
+                                filteredPlaylists[virtualItem.index]?.name}
                             </p>
                           </DropdownMenu.Item>
                         )}
