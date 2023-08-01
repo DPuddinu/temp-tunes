@@ -1,24 +1,20 @@
-import { useIntersection } from "@mantine/hooks";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { useTranslation } from "next-i18next";
 import {
   forwardRef,
-  useEffect,
-  useMemo,
+  useContext,
   useRef,
   useState,
-  type ForwardedRef,
-  useContext,
+  type ForwardedRef
 } from "react";
 import { TagModal } from "~/components/modals/EditTagModal";
+import { UserDataContext } from "~/context/user-data-context";
 import { useToast } from "~/hooks/use-toast";
 import { type Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 import { ArrowSVG, QueueSVG, TagSVG, VerticalDotsSVG } from "./icons";
 import { FolderPlusSVG } from "./icons/FolderPlusSVG";
-import { UserDataContext } from "~/context/user-data-context";
 
 export interface TrackProps {
   track: Track;
@@ -33,6 +29,15 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
   const { setMessage } = useToast();
   const { playlists } = useContext(UserDataContext);
 
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const rowVirtualizer = useVirtualizer({
+    count: playlists?.length ?? 0,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 35,
+  })
+
+
   const { mutate: playTrack } = api.player.togglePlayPause.useMutation();
   const { mutate: addToQueue } = api.player.addToQueue.useMutation({
     onSuccess() {
@@ -46,45 +51,6 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
       setMessage(msg);
     },
   });
-
-  const { data: session } = useSession();
-
-  // INFINITE SCROLLING
-  const { data: _data, fetchNextPage } = useInfiniteQuery(
-    ["query"],
-    ({ pageParam = 1 }) => {
-      return playlists?.slice((pageParam - 1) * 4, pageParam * 4);
-    },
-    {
-      enabled: playlists !== undefined,
-      getNextPageParam: (_, pages) => {
-        return pages.length + 1;
-      },
-      initialData: {
-        pages: [playlists?.slice(0, 4)],
-        pageParams: [1],
-      },
-    }
-  );
-
-  const paginatedData = useMemo(() =>
-      _data?.pages
-        .flatMap((page) => page)
-        .filter((t) => t?.owner?.id === session?.user?.id ?? ""),
-    [session, _data]
-  );
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { ref: _ref, entry } = useIntersection({
-    root: containerRef.current,
-    threshold: 1,
-  });
-
-  useEffect(() => {
-    if (entry?.isIntersecting) {
-      fetchNextPage();
-    }
-  }, [entry, fetchNextPage]);
 
   return (
     <div
@@ -147,33 +113,37 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
                 </DropdownMenu.SubTrigger>
                 <DropdownMenu.Portal>
                   <DropdownMenu.SubContent
+                    ref={parentRef}
                     className="max-h-52 max-w-[65vw] overflow-auto rounded-md border border-base-300 bg-base-200 p-1 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade sm:max-h-96"
                     sideOffset={-100}
                     alignOffset={25}
                   >
-                    {paginatedData?.map((destination, i) => (
-                      <>
-                        {destination && (
-                          <DropdownMenu.Item
-                            ref={i === paginatedData.length - 1 ? _ref : null}
-                            key={destination.id}
-                            className=" rounded-lg first:mt-2 last:mb-2 hover:cursor-pointer hover:bg-base-100"
-                            onClick={() => {
-                              if (destination?.id)
-                                addToPlaylist({
-                                  uri: uri,
-                                  playlistId: destination?.id,
-                                  playlistName: destination?.name,
-                                });
-                            }}
-                          >
-                            <p className="break-normal p-2 active:border-none">
-                              {destination.name}
-                            </p>
-                          </DropdownMenu.Item>
-                        )}
-                      </>
-                    ))}
+                    <div
+                      style={{
+                        height: `${rowVirtualizer.getTotalSize()}px`,
+                        width: "100%",
+                        position: "relative",
+                      }}
+                    >
+                      {rowVirtualizer.getVirtualItems().map((virtualItem) => (
+                        <DropdownMenu.Item
+                          key={virtualItem.key}
+                          className=" rounded-lg first:mt-2 last:mb-2 hover:cursor-pointer hover:bg-base-100"
+                          onClick={() => {
+                            if (playlists && playlists[virtualItem.index])
+                              addToPlaylist({
+                                uri: uri,
+                                playlistId: playlists[virtualItem.index]?.id ?? '',
+                                playlistName: playlists[virtualItem.index]?.name ?? '',
+                              });
+                          }}
+                        >
+                          <p className="break-normal p-2 active:border-none">
+                            {playlists && playlists[virtualItem.index]?.name}
+                          </p>
+                        </DropdownMenu.Item>
+                      ))}
+                    </div>
                   </DropdownMenu.SubContent>
                 </DropdownMenu.Portal>
               </DropdownMenu.Sub>
@@ -187,11 +157,11 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
           key={id}
           isOpen={isModalOpen}
           onClose={() => {
-            setIsModalOpen(false)
+            setIsModalOpen(false);
             setTimeout(() => {
               window.dispatchEvent(new Event("focus"));
-            }, 300);}
-          }
+            }, 300);
+          }}
           trackId={id}
           tagType="track"
         />
