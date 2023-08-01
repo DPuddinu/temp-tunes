@@ -140,8 +140,8 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
           <h1 className="p-2 text-2xl font-bold sm:text-4xl">
             {templateData?.name}
           </h1>
-          <div className="max-w-sm rounded-lg bg-base-300 p-2 pb-4 shadow">
-            <ul className="steps steps-horizontal">
+          <div className="w-full max-w-sm rounded-lg bg-base-300 p-2 pb-4 shadow">
+            <ul className="steps steps-horizontal w-full">
               {template && (
                 <li
                   data-content={page + 1}
@@ -211,7 +211,7 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
                   </div>
                 )}
             </div>
-            <div className="gap-2 mt-4 flex w-full justify-center">
+            <div className="mt-4 flex w-full justify-center gap-2">
               <button
                 disabled={page === 0}
                 className="btn-square join-item btn w-24"
@@ -238,7 +238,7 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
               </button>
             </div>
           </div>
-          <div className="flex w-full justify-evenly gap-2 max-w-xs mt-2">
+          <div className="mt-2 flex w-full max-w-sm justify-center gap-2">
             <Link
               href={"/templates"}
               className="btn w-32 bg-red-500 text-black"
@@ -248,7 +248,7 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
 
             <button
               disabled={Object.values(submitTracks).length === 0}
-              className="btn w-32 bg-green-500 text-black disabled:border-base-200"
+              className="btn w-32 bg-green-500 text-black"
               onClick={() => {
                 if (templateData) {
                   mutate({
@@ -258,7 +258,7 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
                 }
               }}
             >
-              {t_common("save")}
+              {t_common("create")}
             </button>
           </div>
         </section>
