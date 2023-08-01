@@ -13,6 +13,7 @@ import { UserDataContext } from "~/context/user-data-context";
 import { useToast } from "~/hooks/use-toast";
 import { type Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
+import { cn } from "~/utils/utils";
 import { ArrowSVG, QueueSVG, TagSVG, VerticalDotsSVG } from "./icons";
 import { FolderPlusSVG } from "./icons/FolderPlusSVG";
 
@@ -34,8 +35,10 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
   const rowVirtualizer = useVirtualizer({
     count: playlists?.length ?? 0,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 35,
+    estimateSize: () => 45,
   })
+
+  const items = rowVirtualizer.getVirtualItems();
 
 
   const { mutate: playTrack } = api.player.togglePlayPause.useMutation();
@@ -114,45 +117,57 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
                 <DropdownMenu.Portal>
                   <DropdownMenu.SubContent
                     ref={parentRef}
+                    style={{
+                      height: 400,
+                      width: 200,
+                      contain: "strict",
+                    }}
                     className="max-h-52 max-w-[65vw] overflow-auto rounded-md border border-base-300 bg-base-200 p-1 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade sm:max-h-96"
                     sideOffset={-100}
                     alignOffset={25}
                   >
                     <div
+                      className={cn("relative w-full")}
                       style={{
                         height: `${rowVirtualizer.getTotalSize()}px`,
-                        width: "200px",
-                        position: "relative",
                       }}
                     >
-                      {rowVirtualizer.getVirtualItems().map((virtualItem) => (
-                        <DropdownMenu.Item
-                          key={virtualItem.key}
-                          style={{
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            width: "100%",
-                            height: `${virtualItem.size}px`,
-                            transform: `translateY(${virtualItem.start}px)`,
-                          }}
-                          className=" rounded-lg first:mt-2 last:mb-2 hover:cursor-pointer hover:bg-base-100"
-                          onClick={() => {
-                            if (playlists && playlists[virtualItem.index])
-                              addToPlaylist({
-                                uri: uri,
-                                playlistId:
-                                  playlists[virtualItem.index]?.id ?? "",
-                                playlistName:
-                                  playlists[virtualItem.index]?.name ?? "",
-                              });
-                          }}
-                        >
-                          <p className="break-normal p-2 active:border-none">
-                            {playlists && playlists[virtualItem.index]?.name}
-                          </p>
-                        </DropdownMenu.Item>
-                      ))}
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          transform: `translateY(${items[0]?.start}px)`,
+                        }}
+                      >
+                        {items.map((virtualItem) => (
+                          <>
+                            {playlists && playlists[virtualItem.index] && (
+                              <DropdownMenu.Item
+                                key={virtualItem.key}
+                                ref={rowVirtualizer.measureElement}
+                                data-index={virtualItem.index}
+                                className=" rounded-lg first:mt-2 last:mb-2 hover:cursor-pointer hover:bg-base-100"
+                                onClick={() => {
+                                  const current = playlists[virtualItem.index];
+                                  if (playlists && current)
+                                    addToPlaylist({
+                                      uri: uri,
+                                      playlistId: current.id,
+                                      playlistName: current.name,
+                                    });
+                                }}
+                              >
+                                <p className="break-normal p-2 active:border-none">
+                                  {playlists &&
+                                    playlists[virtualItem.index]?.name}
+                                </p>
+                              </DropdownMenu.Item>
+                            )}
+                          </>
+                        ))}
+                      </div>
                     </div>
                   </DropdownMenu.SubContent>
                 </DropdownMenu.Portal>
