@@ -6,7 +6,7 @@ import {
   useContext,
   useRef,
   useState,
-  type ForwardedRef
+  type ForwardedRef,
 } from "react";
 import { TagModal } from "~/components/modals/EditTagModal";
 import { UserDataContext } from "~/context/user-data-context";
@@ -121,27 +121,44 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
                     <div
                       style={{
                         height: `${rowVirtualizer.getTotalSize()}px`,
-                        width: "100%",
+                        width: "200px",
                         position: "relative",
                       }}
                     >
                       {rowVirtualizer.getVirtualItems().map((virtualItem) => (
-                        <DropdownMenu.Item
+                        <div
                           key={virtualItem.key}
-                          className=" rounded-lg first:mt-2 last:mb-2 hover:cursor-pointer hover:bg-base-100"
-                          onClick={() => {
-                            if (playlists && playlists[virtualItem.index])
-                              addToPlaylist({
-                                uri: uri,
-                                playlistId: playlists[virtualItem.index]?.id ?? '',
-                                playlistName: playlists[virtualItem.index]?.name ?? '',
-                              });
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: `${virtualItem.size}px`,
+                            transform: `translateY(${virtualItem.start}px)`,
                           }}
                         >
-                          <p className="break-normal p-2 active:border-none">
-                            {playlists && playlists[virtualItem.index]?.name}
-                          </p>
-                        </DropdownMenu.Item>
+                          <DropdownMenu.Item
+                            key={virtualItem.key}
+                            style={{
+                              height: `${virtualItem.size}px`,
+                            }}
+                            className=" rounded-lg first:mt-2 last:mb-2 hover:cursor-pointer hover:bg-base-100"
+                            onClick={() => {
+                              if (playlists && playlists[virtualItem.index])
+                                addToPlaylist({
+                                  uri: uri,
+                                  playlistId:
+                                    playlists[virtualItem.index]?.id ?? "",
+                                  playlistName:
+                                    playlists[virtualItem.index]?.name ?? "",
+                                });
+                            }}
+                          >
+                            <p className="break-normal p-2 active:border-none">
+                              {playlists && playlists[virtualItem.index]?.name}
+                            </p>
+                          </DropdownMenu.Item>
+                        </div>
                       ))}
                     </div>
                   </DropdownMenu.SubContent>
