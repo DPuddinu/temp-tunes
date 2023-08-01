@@ -40,7 +40,7 @@ const PlaylistPage: PageWithLayout = () => {
     <>
       {isLoading && <PlaylistSkeleton />}
       {data && (
-        <div className="m-auto max-w-md rounded-xl bg-base-200 p-2 ">
+        <div className="m-auto flex h-full max-h-[36rem] max-w-md flex-col rounded-xl bg-base-200 p-2 ">
           <div className="p-4">
             <h1 className="my-1 text-2xl font-semibold tracking-wider">
               {data?.name}
@@ -49,12 +49,15 @@ const PlaylistPage: PageWithLayout = () => {
               {data?.owner.display_name}
             </p>
           </div>
-          <VirtualScroll
-            data={data.tracks}
-            row={(virtualItem) => (
-              <TrackRow track={data.tracks[virtualItem.index] as Track} />
-            )}
-          />
+          <div className="grow">
+            <VirtualScroll
+              height="100%"
+              data={data.tracks}
+              row={(virtualItem) => (
+                <TrackRow track={data.tracks[virtualItem.index] as Track} />
+              )}
+            />
+          </div>
         </div>
       )}
     </>
