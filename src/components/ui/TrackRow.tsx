@@ -111,7 +111,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
                 </DropdownMenu.SubTrigger>
                 <DropdownMenu.Portal>
                   <DropdownMenu.SubContent
-                    className="max-w-[65vw] overflow-auto w-56 rounded-md border border-base-300 bg-base-200 p-1 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
+                    className="max-w-[65vw] w-56 rounded-md border border-base-300 bg-base-200 p-1 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
                     sideOffset={-100}
                     alignOffset={25}
                   >
@@ -139,7 +139,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
                             </p>
                           </DropdownMenu.Item>
                         )}
-                      ></VirtualScroll>
+                      />
                     )}
                   </DropdownMenu.SubContent>
                 </DropdownMenu.Portal>

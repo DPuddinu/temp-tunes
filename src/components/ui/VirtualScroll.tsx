@@ -1,13 +1,12 @@
 import {
-  useWindowVirtualizer,
+  useVirtualizer,
   type VirtualItem,
 } from "@tanstack/react-virtual";
 import { useLayoutEffect, useRef, type ReactNode } from "react";
 
 interface props {
   data: unknown[];
-  height?: string;
-  width?: string;
+  height: string;
   row: (currentVirtualItem: VirtualItem) => ReactNode;
 }
 const VirtualScroll = ({ data, row, height }: props) => {
@@ -19,20 +18,28 @@ const VirtualScroll = ({ data, row, height }: props) => {
     parentOffsetRef.current = parentRef.current?.offsetTop ?? 0;
   }, []);
 
-  const virtualizer = useWindowVirtualizer({
+  const virtualizer = useVirtualizer({
     count: data.length,
+    getScrollElement: () => parentRef.current,
     estimateSize: () => 45,
-    scrollMargin: parentOffsetRef.current,
   });
 
   const items = virtualizer.getVirtualItems();
 
   return (
-    <div ref={parentRef}>
+    <div
+      ref={parentRef}
+      className="w-full overflow-auto"
+      style={{
+        height: height,
+        contain: "strict",
+      }}
+    >
       <div
-        className="relative w-full"
         style={{
-          height: height ? height : virtualizer.getTotalSize(),
+          height: virtualizer.getTotalSize(),
+          width: "100%",
+          position: "relative",
         }}
       >
         <div
@@ -41,9 +48,7 @@ const VirtualScroll = ({ data, row, height }: props) => {
             top: 0,
             left: 0,
             width: "100%",
-            transform: `translateY(${
-              items[0] && items[0]?.start - virtualizer.options.scrollMargin
-            }px )`,
+            transform: `translateY(${items[0] && items[0].start}px)`,
           }}
         >
           {items.map((virtualRow) => (
