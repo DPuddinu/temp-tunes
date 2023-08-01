@@ -30,8 +30,6 @@ const ImportTemplate: PageWithLayout = () => {
   const { t } = useTranslation("templates");
   const mounted = useMounted();
 
-  
-
   const {
     register,
     handleSubmit,

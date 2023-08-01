@@ -6,6 +6,7 @@
   "most_voted": "I più votati",
   "favourites": "Preferiti",
   "error": "Errore",
+  "get_error": "Qualcosa è andato storto nel caricare il template",
   "created": "Template creato",
   "updated": "Template modificato",
   "template_name": "Nome Template",
@@ -31,5 +32,6 @@
   "name_min_len": "Nome troppo corto",
   "name_max_len": "Nome troppo lungo",
   "desc_max_len": "La descrizione è troppo lunga",
-  "entries_min_len": "Aggiungi almeno una voce"
+  "entries_min_len": "Aggiungi almeno una voce",
+  "search_track": "Cerca canzone..."
 }

@@ -5,6 +5,7 @@
   "top_rated": "Top Rated",
   "most_voted": "Most Voted",
   "favourites": "Favourites",
+  "get_error": "Something went wrong, cannot get this Template",
   "error": "Errore",
   "created": "Template created",
   "updated": "Template updated",
@@ -32,5 +33,6 @@
   "name_min_len": "Name too short",
   "name_max_len": "Name too long",
   "desc_max_len": "Description too long",
-  "entries_min_len": "At least one entry should be added"
+  "entries_min_len": "At least one entry should be added",
+  "search_track": "Search track..."
 }

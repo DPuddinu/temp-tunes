@@ -72,7 +72,19 @@ export const spotifyPlaylistRouter = createTRPCRouter({
   }),
   addToPlaylist: protectedProcedure.input(z.object({ uri: z.string(), playlistId: z.string(), playlistName: z.string() })).mutation(async ({ ctx, input }) => {
     const { playlistId, uri } = input;
-    const addTo = await addToPlaylist(uri, playlistId, ctx.session.accessToken)
+    const addTo = await addToPlaylist([uri], playlistId, ctx.session.accessToken)
+    if (addTo.status !== 201) throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Something went wrong, can't add this track to the selected playlist"
+    })
+    return addTo
+  }),
+  createPlaylist: protectedProcedure.input(z.object({ name: z.string(), uris: z.string().array() })).mutation(async ({ ctx, input }) => {
+    const { name, uris } = input;
+    console.log(uris)
+    const create = await createPlaylist(ctx.session.user.id, name, ctx.session.accessToken).then((res) => res.json()) as Playlist
+    console.log(create)
+    const addTo = await addToPlaylist(uris, create.id, ctx.session.accessToken)
     if (addTo.status !== 201) throw new TRPCError({
       code: "BAD_REQUEST",
       message: "Something went wrong, can't add this track to the selected playlist"

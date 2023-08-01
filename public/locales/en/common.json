@@ -9,10 +9,16 @@
   "logout": "Log out",
   "change_theme": "Change theme",
   "create": "Create",
+  "created_playlist": "Playlist created",
+  "add_to_playlist_error": "Something went wrong, can't add this track to the selected playlist",
   "edit": "Edit",
   "share": "Share",
   "delete": "Delete",
   "update": "Update",
   "import": "Import",
-  "create_playlist": "Create playlist"
+  "create_playlist": "Create playlist",
+  "save": "Save",
+  "cancel": "Cancel",
+  "next": "Next",
+  "previous": "Previous"
 }

@@ -261,10 +261,20 @@ export async function addToQueue(uri: string, access_token: string) {
   });
   return await spotifyPOST({ url: `/me/player/queue?${params.toString()}`, access_token: access_token })
 }
+type PlayProps = {
+  uris?: string[];
+  contextUri?: string
+}
+export async function play(access_token: string, uris?: string[] | undefined | null, contextUri?: string | undefined | null) {
+  const body: PlayProps = {}
+  if (uris) body.uris = uris
+  if (contextUri) body.contextUri = contextUri
+  return await spotifyPUT({ url: '/me/player/play', access_token: access_token, body: JSON.stringify(body) })
+}
 
-export async function addToPlaylist(uri: string, playlistId: string, access_token: string) {
+export async function addToPlaylist(uris: string[], playlistId: string, access_token: string) {
   const body = {
-    uris: [uri]
+    uris
   }
   return await spotifyPOST({ url: `/playlists/${playlistId}/tracks`, access_token: access_token, body: JSON.stringify(body) })
 }
