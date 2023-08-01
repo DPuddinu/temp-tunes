@@ -35,8 +35,6 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
     () => playlists?.filter((t) => t.owner?.id === session?.user?.id),
     [playlists, session]
   ); 
-    console.log(filteredPlaylists)
-
 
   const { mutate: playTrack } = api.player.togglePlayPause.useMutation();
   const { mutate: addToQueue } = api.player.addToQueue.useMutation({
