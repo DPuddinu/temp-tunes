@@ -8,6 +8,7 @@ import { useToast } from "~/hooks/use-toast";
 import { type TagSchemaType, type TagType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
 import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
+import { LoadingSpinner } from "../ui/LoadingSpinner";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
 
@@ -36,13 +37,11 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
 
   //prettier-ignore
   const {mutate } = api.tags.setTagsByTrack.useMutation({
-    async onSuccess(data) {
-      console.log(data);
+    async onSuccess() {
       const msg = t('updated_tags')
       setMessage(msg);
       onClose();
       utils.tags.orderTagsByName.invalidate();
-      utils.tags.orderTagsByName.refetch();
     },
     onError(){
       onClose();
@@ -56,6 +55,7 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
         className="flex flex-row flex-wrap gap-2 overflow-hidden pb-2 pt-6"
         ref={parent}
       >
+        {isLoading && <LoadingSpinner />}
         {tags.map((tag, i) => (
           <div className="indicator mr-2" key={i}>
             <span

@@ -156,9 +156,6 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
           isOpen={openModal}
           onClose={() => {
             setOpenModal(false);
-            setTimeout(() => {
-              window.dispatchEvent(new Event("focus"));
-            }, 300);
           }}
           trackId={id}
           tagType="track"

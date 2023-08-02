@@ -7,6 +7,7 @@ import {
   TimeRangeEnum,
   TopTypeEnum,
   type AudioFeatures,
+  type Playlist,
   type Recommendations,
   type TopArtists,
   type TopTracks,

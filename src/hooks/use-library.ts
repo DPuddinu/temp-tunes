@@ -10,10 +10,12 @@ interface Props {
 }
 
 export const useLibrary = ({ onFinish, onStart, onProgress }: Props) => {
-  const {data} = useSession()
+  const { data } = useSession()
+
   const { mutate, isLoading, isError } = useMutation({
-    mutationKey: ["library"],
+    mutationKey: ["getLibrary"],
     mutationFn: () => {
+      console.log('1234')
       onStart();
       return getLibrary(
         data?.accessToken ?? "",

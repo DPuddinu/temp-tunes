@@ -8,21 +8,16 @@ import RecapCard from "../RecapCard";
 const TagsCard = () => {
   const { setMessage } = useToast();
   const { t } = useTranslation("home");
-    
+
   const { data, isError, isLoading } = api.tags.orderTagsByName.useQuery(
     undefined,
     {
-      queryKey: ["tags.orderTagsByName", undefined],
-      onSuccess(data) {
-        console.log(data);
-      },
       onError() {
         const msg = t("tags.error");
         setMessage(msg);
       },
     }
   );
-
 
   return (
     <RecapCard loading={isLoading} fallback={<RecapSkeleton />}>
