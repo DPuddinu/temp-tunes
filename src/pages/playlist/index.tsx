@@ -15,7 +15,7 @@ const PlaylistsPage: PageWithLayout = () => {
 
   //prettier-ignore
   const PlaylistTable = dynamic(() => import("~/components/playlist/PlaylistTable"), {loading: () => <PlaylistPageSkeleton /> });
-
+  
   return (
     <>
       {isLoading && <PlaylistPageSkeleton />}

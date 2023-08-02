@@ -32,6 +32,8 @@ function PlaylistComponent({
   const { t } = useTranslation("playlists");
   const [isLoading, setIsLoading] = useState(false);
   const { setMessage } = useToast();
+  const utils = api.useContext();
+
 
   const [renameModalOpen, setRenameModalOpen] = useState(false);
   const [unfollowModalOpen, setUnfollowModalOpen] = useState(false);
@@ -59,9 +61,8 @@ function PlaylistComponent({
     onSuccess() {
       setMessage(`${playlist.name} ${t("operations.copied")}`);
       setIsLoading(false);
-      setTimeout(() => {
-        window.dispatchEvent(new Event("focus"));
-      }, 300);
+      utils.spotify_playlist.getAll.invalidate();
+
     },
   });
   const { mutate: merge } = api.spotify_playlist.merge.useMutation({
@@ -175,7 +176,7 @@ function PlaylistComponent({
                             </p>
                           </DropdownMenu.Item>
                         )}
-                      ></VirtualScroll>
+                      />
                     )}
                   </DropdownMenu.SubContent>
                 </DropdownMenu.Portal>
@@ -206,10 +207,8 @@ function PlaylistComponent({
         playlistName={playlist.name}
         onClose={() => setUnfollowModalOpen(false)}
         onSuccess={() => {
-          setIsLoading(false);
-          setTimeout(() => {
-            window.dispatchEvent(new Event("focus"));
-          }, 300);
+          setIsLoading(false)
+          utils.spotify_playlist.getAll.invalidate();
         }}
         onConfirm={() => setIsLoading(true)}
       />
@@ -221,9 +220,8 @@ function PlaylistComponent({
         onClose={() => setRenameModalOpen(false)}
         onSuccess={() => {
           setIsLoading(false);
-          setTimeout(() => {
-            window.dispatchEvent(new Event("focus"));
-          }, 300);
+          utils.spotify_playlist.getAll.invalidate();
+
         }}
         onConfirm={() => setIsLoading(true)}
       />

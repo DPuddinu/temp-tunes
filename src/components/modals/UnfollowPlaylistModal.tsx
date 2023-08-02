@@ -17,15 +17,15 @@ export function UnfollowModal({
   onClose,
   onConfirm,
   onSuccess,
-  setIsOpen,
   playlistID,
   playlistName,
 }: Props) {
   const { t } = useTranslation("playlists");
+
   const { mutate } = api.spotify_playlist.unfollow.useMutation({
     onSuccess() {
-      setIsOpen(false);
       onSuccess();
+      onClose();
     },
   });
 

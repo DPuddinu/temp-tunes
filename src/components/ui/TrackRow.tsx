@@ -154,9 +154,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
         <TagModal
           key={id}
           isOpen={openModal}
-          onClose={() => {
-            setOpenModal(false);
-          }}
+          onClose={() => setOpenModal(false)}
           trackId={id}
           tagType="track"
         />
