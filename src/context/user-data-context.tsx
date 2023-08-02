@@ -1,19 +1,14 @@
 import { useSession } from "next-auth/react";
 import { createContext, useState, type ReactNode } from "react";
 import { useStore } from "~/core/userStore";
-import type { TagsObject } from "~/server/api/routers/tags_router";
 import type { Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 
 interface Data {
-  tags: TagsObject | undefined;
-  setTags: (tags: TagsObject) => void;
   playlists: Playlist[] | undefined;
   setPlaylists: (playlists: Playlist[]) => void;
 }
 const initialContext: Data = {
-  tags: undefined,
-  setTags: () => false,
   playlists: undefined,
   setPlaylists: () => false
 };
@@ -23,7 +18,6 @@ const UserDataProvider = ({ children }: { children: ReactNode }) => {
   const { data } = useSession();
   const { user: storeUser, setUser } = useStore();
   const [playlists, setPlaylists] = useState<Playlist[] | undefined>(undefined)
-  const [tags, setTags] = useState<TagsObject | undefined>(undefined)
 
   // LOADING USER
   // prettier-ignore
@@ -35,7 +29,6 @@ const UserDataProvider = ({ children }: { children: ReactNode }) => {
       onSuccess(data) {
         if (!storeUser && data) {
           setUser(data.user);
-          setTags(data.tags);
         }
       }
     }
@@ -52,8 +45,6 @@ const UserDataProvider = ({ children }: { children: ReactNode }) => {
   return (
     <UserDataContext.Provider
       value={{
-        tags,
-        setTags,
         playlists,
         setPlaylists
       }}

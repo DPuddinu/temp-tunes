@@ -1,5 +1,4 @@
 import { useTranslation } from "next-i18next";
-import React from "react";
 import { ExpandRow } from "~/components/ui/ExpandRow";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import { useToast } from "~/hooks/use-toast";
@@ -9,15 +8,21 @@ import RecapCard from "../RecapCard";
 const TagsCard = () => {
   const { setMessage } = useToast();
   const { t } = useTranslation("home");
+    
   const { data, isError, isLoading } = api.tags.orderTagsByName.useQuery(
     undefined,
     {
+      queryKey: ["tags.orderTagsByName", undefined],
+      onSuccess(data) {
+        console.log(data);
+      },
       onError() {
         const msg = t("tags.error");
         setMessage(msg);
       },
     }
   );
+
 
   return (
     <RecapCard loading={isLoading} fallback={<RecapSkeleton />}>

@@ -1,7 +1,7 @@
 import { getCookie, setCookie } from "cookies-next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { Language } from "~/types/page-types";
+import type { Language } from "~/types/page-types";
 export const langKey = "nsm_lang";
 
 export const useLanguage = () => {

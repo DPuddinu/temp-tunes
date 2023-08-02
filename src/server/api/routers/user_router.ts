@@ -1,7 +1,5 @@
 import { type User } from "@prisma/client";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import type { TagSchemaType } from "~/types/zod-schemas";
-import { createTagsObject } from "./tags_router";
 
 export const userRouter = createTRPCRouter({
   getUserBySpotifyId: protectedProcedure
@@ -22,11 +20,7 @@ export const userRouter = createTRPCRouter({
             id: ctx.session.user.id,
           } as User,
         });
-      const tags = await ctx.prisma.tag.findMany({
-        where: {
-          userId: user.id,
-        },
-      }) as TagSchemaType[];
-      return { user: user, tags: createTagsObject(tags) };
+      
+      return { user: user };
     }),
 });

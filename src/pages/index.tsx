@@ -12,7 +12,7 @@ import {
   LinkedinSVG,
   TwitterSVG,
 } from "../components/ui/icons/index";
-import { Language, Languages } from "~/types/page-types";
+import { type Language, Languages } from "~/types/page-types";
 const Landing = () => {
   const router = useRouter();
   useEffect(() => {

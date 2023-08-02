@@ -1,10 +1,9 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "next-i18next";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
-import { UserDataContext } from "~/context/user-data-context";
 import { useToast } from "~/hooks/use-toast";
 import { type TagSchemaType, type TagType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
@@ -20,47 +19,36 @@ type Props = {
 
 export function TagModal({ isOpen, onClose, trackId }: Props) {
   const { t } = useTranslation("modals");
-  const [removeTags, setRemoveTags] = useState<TagSchemaType[]>([]);
   const { setMessage } = useToast();
-  const { tags: storeTags, setTags: setStoreTags } = useContext(UserDataContext);
   const [tags, setTags] = useState<TagSchemaType[]>([]);
   const [parent] = useAutoAnimate();
+  const utils = api.useContext();
 
-  useEffect(() => {
-    if (storeTags) {
-      const stored = storeTags[trackId];
-      if (stored) setTags(stored);
+  const { isLoading } = api.tags.getTagsByTrack.useQuery(
+    { trackId },
+    {
+      onSuccess(data) {
+        setTags(data);
+      },
+      enabled: isOpen,
     }
-  }, [storeTags, setTags, trackId]);
+  );
 
   //prettier-ignore
-  const {mutate } = api.tags.setTags.useMutation({
-    onSuccess(data) {
+  const {mutate } = api.tags.setTagsByTrack.useMutation({
+    async onSuccess(data) {
+      console.log(data);
       const msg = t('updated_tags')
       setMessage(msg);
-      setStoreTags(data);
       onClose();
+      utils.tags.orderTagsByName.invalidate();
+      utils.tags.orderTagsByName.refetch();
     },
     onError(){
       onClose();
       setMessage(t("wrong") ?? "Something went wrong");
     }
   });
-
-  const removeTag = useCallback(
-    (i: number) => {
-      const tagToRemove = tags[i] as TagSchemaType;
-      setRemoveTags((oldTags) => {
-        return [...oldTags, tagToRemove];
-      });
-      const temp = [...tags];
-      if (i > -1) {
-        temp.splice(i, 1);
-      }
-      setTags(temp);
-    },
-    [setTags, tags]
-  );
 
   return (
     <BaseModal isOpen={isOpen} title={t("new_tag")} onClose={onClose}>
@@ -72,7 +60,13 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
           <div className="indicator mr-2" key={i}>
             <span
               className="badge indicator-item h-5 w-5 cursor-pointer pb-[2px] text-white"
-              onClick={() => removeTag(i)}
+              onClick={() => {
+                const temp = [...tags];
+                if (i > -1) {
+                  temp.splice(i, 1);
+                }
+                setTags(temp);
+              }}
             >
               <p className=" m-0 text-center">x</p>
             </span>
@@ -89,7 +83,9 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
         onTagSubmit={(tag: TagSchemaType) => setTags((tags) => [...tags, tag])}
       />
       <ConfirmButtonGroup
-        onConfirm={() => mutate({ addTags: tags, removeTags: removeTags })}
+        onConfirm={() => {
+          mutate({ tags: tags, trackId: trackId });
+        }}
         onClose={onClose}
       />
     </BaseModal>
@@ -136,16 +132,12 @@ function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
           className="input w-full "
           {...register("tag", { required: true })}
         />
-        {Object.keys(errors).length > 0 && (
-          <>
-            {Object.values(errors).map((error, i) => (
-              <label key={i} className="label text-red-700">
-                <span className="label-text-alt font-bold text-red-700">
-                  {`${t(error.message ?? "")}`}
-                </span>
-              </label>
-            ))}
-          </>
+        {errors?.tag?.message && (
+          <label className="label text-red-700">
+            <span className="label-text-alt font-bold text-red-700">
+              {`${t(errors.tag.message)}`}
+            </span>
+          </label>
         )}
       </div>
       <button

@@ -26,7 +26,7 @@ export interface TrackProps {
 const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
   const { t } = useTranslation("common");
   const { uri, name, artists, id } = track;
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [ openModal, setOpenModal] = useState(false);
   const { setMessage } = useToast();
   const { playlists } = useContext(UserDataContext);
   const { data: session } = useSession();
@@ -83,7 +83,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
             >
               <DropdownMenu.Item
                 className="flex items-center gap-2 rounded-lg p-2 leading-none outline-none hover:cursor-pointer hover:bg-base-100"
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => setOpenModal(true)}
               >
                 <TagSVG />
                 {t("edit_tag")}
@@ -153,9 +153,9 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
       {id && (
         <TagModal
           key={id}
-          isOpen={isModalOpen}
+          isOpen={openModal}
           onClose={() => {
-            setIsModalOpen(false);
+            setOpenModal(false);
             setTimeout(() => {
               window.dispatchEvent(new Event("focus"));
             }, 300);
