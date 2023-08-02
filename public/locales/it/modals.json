@@ -12,5 +12,6 @@
     "long": "Tag troppo lungo!",
     "used": "Tag già usato!"
   },
-  "wrong": "Qualcosa è andato storto"
+  "wrong": "Qualcosa è andato storto",
+  "tag_placeholder": "Scrivi qua..."
 }

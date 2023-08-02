@@ -17,7 +17,8 @@ const Explore: PageWithLayout = () => {
     undefined,
     {
       onError(err) {
-        console.log(err);
+        const msg = t(err.message);
+        setMessage(msg);
       },
     }
   );

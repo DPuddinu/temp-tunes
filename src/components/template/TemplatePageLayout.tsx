@@ -27,13 +27,11 @@ const TemplateLayout = ({ children, title }: props) => {
   return (
     <>
       <section className="relative mb-16 flex flex-col justify-between">
-        <Link href={"/templates"}>
-          {title && (
-            <h1 className="mb-2 ml-2 w-fit pb-2 text-2xl font-semibold transition-transform hover:scale-105 sm:text-3xl">
-              {t(title) ?? "not found"}
-            </h1>
-          )}
-        </Link>
+        {title && (
+          <h1 className="mb-2 ml-2 w-fit pb-2 text-2xl font-semibold transition-transform sm:text-3xl">
+            {t(title) ?? "not found"}
+          </h1>
+        )}
         {children}
       </section>
       <div className="fixed bottom-[5rem] right-5 sm:bottom-4 ">

@@ -1,5 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
+import { Drawer } from "vaul";
 import useMediaQuery from "~/hooks/use-media-query";
 
 type Props = {
@@ -104,42 +105,39 @@ const Center = ({ onClose, isOpen, description, title, children }: Props) => {
 
 const Bottom = ({ onClose, children, description, isOpen, title }: Props) => {
   return (
-    <Transition show={isOpen}>
-      <Dialog
-        as="div"
-        className="fixed bottom-0 left-0 z-10 w-screen overflow-hidden"
-        onClose={onClose}
-      >
-        <div className="flex min-h-screen items-end justify-center text-center backdrop-blur-sm">
-          <Dialog.Overlay className="fixed inset-0 z-0" />
-
-          <Transition.Child
-            as={Fragment}
-            enter="ease-in-out duration-300"
-            enterFrom="translate-y-full"
-            enterTo=""
-            leave="ease-in-out duration-200"
-            leaveFrom=""
-            leaveTo="translate-y-full"
-          >
-            <Dialog.Panel className="z-50 h-[50vh] w-full overflow-y-auto rounded-t-2xl bg-base-content p-6 text-left shadow-xl">
-              {title && (
-                <Dialog.Title className="text-xl font-bold leading-6 tracking-wide text-base-100">
-                  {title}
-                </Dialog.Title>
-              )}
+    <Drawer.Root
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          onClose();
+        }
+      }}
+    >
+      <Drawer.Trigger asChild>
+        <button></button>
+      </Drawer.Trigger>
+      <Drawer.Portal>
+        <Drawer.Overlay className="fixed inset-0 bg-black/40" />
+        <Drawer.Content className="fixed bottom-0 left-0 right-0 mt-24 flex flex-col rounded-t-[10px] bg-base-200">
+          <div className="flex-1 rounded-t-[10px] bg-base-300 p-4">
+            <div className="mx-auto mb-8 h-1.5 w-12 flex-shrink-0 rounded-full bg-base-100" />
+            <div className="mx-auto max-w-md">
+              <Drawer.Title className="mb-4 text-center font-medium">
+                {title}
+              </Drawer.Title>
               {description && (
-                <Dialog.Description className="mt-2">
+                <Drawer.Description className="mt-2">
                   <p className="text-md border-t pt-2 text-base-100">
                     {description}
                   </p>
-                </Dialog.Description>
+                </Drawer.Description>
               )}
-              <div className="h-100 pt-6">{children}</div>
-            </Dialog.Panel>
-          </Transition.Child>
-        </div>
-      </Dialog>
-    </Transition>
+              {children}
+            </div>
+          </div>
+          <div className="mt-auto bg-base-100 p-4"></div>
+        </Drawer.Content>
+      </Drawer.Portal>
+    </Drawer.Root>
   );
 };

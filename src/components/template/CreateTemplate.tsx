@@ -128,7 +128,7 @@ function CreateTemplate({ data }: props) {
                 </label>
                 <input
                   type="text"
-                  placeholder={t("type_here") ?? "Type here"}
+                  placeholder={t("type_here") ?? ""}
                   className="input-ghost input w-full  grow bg-base-200 text-base"
                   {...register("name")}
                 />
@@ -146,7 +146,7 @@ function CreateTemplate({ data }: props) {
                 </label>
                 <input
                   type="text"
-                  placeholder={t("type_here") ?? "Type here"}
+                  placeholder={t("type_here") ?? ""}
                   className="input-ghost input w-full  grow bg-base-200 text-base"
                   {...register("description")}
                 />
@@ -208,7 +208,7 @@ function CreateTemplate({ data }: props) {
                 <input
                   ref={entryRef}
                   type="text"
-                  placeholder={t("type_here") ?? "Type here"}
+                  placeholder={t("type_here") ?? ""}
                   className="input w-full  grow outline-none"
                 />
                 {errors?.entries?.message && (

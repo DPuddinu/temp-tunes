@@ -9,19 +9,17 @@ type Props = {
   template: PlaylistTemplate & {
     templateEntries: TemplateEntry[];
   };
-  onSuccess: () => void;
-  setIsOpen: (open: boolean) => void;
+  isOpen: boolean;
 } & BaseModalProps;
 
 export const DeleteTemplateModal = ({
   onClose,
-  onSuccess,
   template,
-  setIsOpen,
   isOpen,
 }: Props) => {
   const { t } = useTranslation("templates");
   const { setMessage } = useToast();
+  const utils = api.useContext();
 
   const { mutate: deleteTemplate } = api.template.deleteTemplate.useMutation({
     onError() {
@@ -31,8 +29,9 @@ export const DeleteTemplateModal = ({
     onSuccess() {
       const msg = t("delete_success");
       setMessage(msg);
-      setIsOpen(false);
-      onSuccess();
+      onClose();
+      utils.template.getCurrentUserTemplates.invalidate();
+      
     },
   });
 

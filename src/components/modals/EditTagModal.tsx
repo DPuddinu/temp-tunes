@@ -4,6 +4,7 @@ import { useTranslation } from "next-i18next";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
+import { useMounted } from "~/hooks/use-mounted";
 import { useToast } from "~/hooks/use-toast";
 import { type TagSchemaType, type TagType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
@@ -123,30 +124,34 @@ function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
       name: data.tag,
       spotifyId: trackId,
     });
-
+    const mounted = useMounted();
   return (
-    <form className="flex gap-2 pt-2" onSubmit={handleSubmit(onSubmit)}>
-      <div className="w-full ">
-        <input
-          tabIndex={-1}
-          className="input w-full "
-          {...register("tag", { required: true })}
-        />
-        {errors?.tag?.message && (
-          <label className="label text-red-700">
-            <span className="label-text-alt font-bold text-red-700">
-              {`${t(errors.tag.message)}`}
-            </span>
-          </label>
-        )}
-      </div>
-      <button
-        tabIndex={-1}
-        type="submit"
-        className="btn-circle btn border-transparent text-xl transition-transform"
-      >
-        +
-      </button>
-    </form>
+    <>
+      {mounted && (
+        <form className="flex gap-2 pt-2" onSubmit={handleSubmit(onSubmit)}>
+          <div className="w-full ">
+            <input
+              className="input w-full "
+              placeholder={t("tag_placeholder") ?? "Type here"}
+              {...register("tag", { required: true })}
+            />
+            {errors?.tag?.message && (
+              <label className="label text-red-700">
+                <span className="label-text-alt font-bold text-red-700">
+                  {`${t(errors.tag.message)}`}
+                </span>
+              </label>
+            )}
+          </div>
+          <button
+            tabIndex={-1}
+            type="submit"
+            className="btn-circle btn border-transparent text-xl transition-transform"
+          >
+            +
+          </button>
+        </form>
+      )}
+    </>
   );
 }
