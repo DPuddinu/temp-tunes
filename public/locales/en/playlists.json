@@ -4,6 +4,7 @@
     "creator": "Creator"
   },
   "confirmation": "Delete from your library?",
+  "playlist_name": "Playlist Name",
   "operations": {
     "shuffle": "Shuffle",
     "shuffled": "Shuffled",
@@ -18,7 +19,7 @@
     "confirm_1": "This operation will remove",
     "confirm_2": "from your library",
     "rename": "Rename",
-    "renamed": "Renamed",
+    "renamed": "renamed",
     "newname": "New Name"
   }
 }

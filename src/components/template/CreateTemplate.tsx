@@ -44,7 +44,9 @@ interface props {
 }
 function CreateTemplate({ data }: props) {
   const { setMessage } = useToast();
-  const { t } = useTranslation("templates");
+  const { t: t_template } = useTranslation("templates");
+
+  const { t } = useTranslation("common");
   const entryRef = useRef<HTMLInputElement>(null);
   const [parent] = useAutoAnimate();
   const [selectedRow, setSelectedRow] = useState<number | undefined>();
@@ -56,7 +58,7 @@ function CreateTemplate({ data }: props) {
       setMessage(`${t("error")}`);
     },
     onSuccess() {
-      setMessage(`${t("created")}`);
+      setMessage(`Template ${t("created")}`);
       router.push("/templates");
     },
   });
@@ -66,7 +68,7 @@ function CreateTemplate({ data }: props) {
       setMessage(`${t("error")}`);
     },
     onSuccess() {
-      setMessage(`${t("updated")}`);
+      setMessage(`Template ${t("updated")}`);
       router.push("/templates");
     },
   });
@@ -124,7 +126,9 @@ function CreateTemplate({ data }: props) {
             <div className="flex flex-col justify-between gap-2 bg-base-300">
               <div className="form-control w-full ">
                 <label className="label">
-                  <span className="label-text">{t("template_name")}</span>
+                  <span className="label-text">
+                    {t_template("template_name")}
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -142,11 +146,13 @@ function CreateTemplate({ data }: props) {
               </div>
               <div className="form-control w-full ">
                 <label className="label">
-                  <span className="label-text">{t("description")}</span>
+                  <span className="label-text">
+                    {t_template("description")}
+                  </span>
                 </label>
                 <input
                   type="text"
-                  placeholder={t("type_here") ?? ""}
+                  placeholder={t_template("type_here") ?? ""}
                   className="input-ghost input w-full  grow bg-base-200 text-base"
                   {...register("description")}
                 />
@@ -162,7 +168,7 @@ function CreateTemplate({ data }: props) {
             {fields.length > 0 && (
               <div className="form-control w-full ">
                 <label className="label pb-0">
-                  <span className="label-text">{t("entries")}</span>
+                  <span className="label-text">{t_template("entries")}</span>
                 </label>
                 <ul ref={parent} className="[&>li]:py-1">
                   {fields.map((entry, i) => (
@@ -201,14 +207,14 @@ function CreateTemplate({ data }: props) {
 
           <div className="form-control w-full ">
             <label className="label pt-0">
-              <span className="label-text">{t("new_entry")}</span>
+              <span className="label-text">{t_template("new_entry")}</span>
             </label>
             <div className="flex gap-2">
               <div>
                 <input
                   ref={entryRef}
                   type="text"
-                  placeholder={t("type_here") ?? ""}
+                  placeholder={t_template("type_here") ?? ""}
                   className="input w-full  grow outline-none"
                 />
                 {errors?.entries?.message && (

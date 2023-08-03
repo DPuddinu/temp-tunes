@@ -124,7 +124,11 @@ export const templatesRouter = createTRPCRouter({
               })
             }
           },
+          
           userId: ctx.session.user.id,
+        },
+        include: {
+          templateEntries: true
         }
       })
     }),

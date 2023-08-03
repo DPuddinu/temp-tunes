@@ -22,5 +22,10 @@
   "cancel": "Cancella",
   "next": "Prossima",
   "previous": "Precedente",
-  "creator": "Creatore"
+  "creator": "Creatore",
+  "name_min_len": "Nome troppo corto",
+  "name_max_len": "Nome troppo lungo",
+  "error": "Qualcosa è andato storto",
+  "updated": "aggiornato",
+  "confirm": "Conferma"
 }

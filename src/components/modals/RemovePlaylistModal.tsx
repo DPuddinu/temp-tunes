@@ -33,7 +33,7 @@ export function UnfollowModal({
       return { prevData };
     },
     onSuccess() {
-      const msg = `${t("removed")} ${playlistName}} ${t(
+      const msg = `${t("removed")} ${playlistName} ${t(
         "operations.confirm_2"
       )}`;
       setMessage(msg);

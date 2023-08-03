@@ -4,6 +4,7 @@
     "creator": "Creatore"
   },
   "confirmation": "Cancellare dalla propria liberia?",
+  "playlist_name": "Nome Playlist",
   "operations": {
     "shuffle": "Mischia",
     "shuffled": "Mischiata",
@@ -18,7 +19,7 @@
     "confirm_1": "Questa operazione rimuoverà",
     "confirm_2": "dalla tua libreria",
     "rename": "Rinomina",
-    "renamed": "Rinominata",
+    "renamed": "rinominata",
     "newname": "Nuovo nome"
   }
 }

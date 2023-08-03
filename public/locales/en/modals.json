@@ -4,8 +4,6 @@
   "add_tag_playlist": "Add a tag for the selected Playlist",
   "add": "Add",
   "updated_tags": "Tags updated",
-  "confirm": "Confirm",
-  "cancel": "Cancel",
   "tag_errors": {
     "generic":"Tag not valid!",
     "short":"Tag too short!",

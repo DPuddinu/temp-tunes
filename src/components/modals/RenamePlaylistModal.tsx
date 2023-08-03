@@ -1,6 +1,9 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "next-i18next";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
+import { useToast } from "~/hooks/use-toast";
 import { api } from "~/utils/api";
 import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
 import type { BaseModalProps } from "./BaseModal";
@@ -12,18 +15,41 @@ type Props = {
   playlistName: string;
 } & BaseModalProps;
 
+const RenamePlaylistSchema = z.object({
+  id: z.string(),
+  name: z
+    .string()
+    .min(3, {
+      message: "name_min_len",
+    })
+    .max(50, {
+      message: "name_max_len",
+    }),
+});
+export type RenameFormType = z.infer<typeof RenamePlaylistSchema>;
+
 export function RenameModal({
   isOpen,
   onClose,
-  onConfirm,
-  playlistID,
   playlistName,
+  playlistID,
 }: Props) {
   const { t } = useTranslation("playlists");
-  const ref = useRef<HTMLInputElement>(null);
-  const [error, setError] = useState(" ");
-  const [placeHolder, setPlaceHolder] = useState(playlistName)
+  const { t: t_common } = useTranslation("common");
+
   const utils = api.useContext().spotify_playlist.getAll;
+  const { setMessage } = useToast();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<RenameFormType>({
+    defaultValues: {
+      id: playlistID,
+    },
+    resolver: zodResolver(RenamePlaylistSchema),
+  });
 
   const { mutate } = api.spotify_playlist.rename.useMutation({
     async onMutate({ name, playlistID }) {
@@ -42,60 +68,53 @@ export function RenameModal({
     },
     onSuccess() {
       onClose();
+      setMessage(`Playlist ${t("renamed")}`);
     },
     onError(error, variables, context) {
       utils.setData(undefined, context?.prevData);
+      setMessage(`${t_common("error")}`);
     },
   });
 
+  const onSubmit: SubmitHandler<RenameFormType> = (data) => {
+    mutate({
+      name: data.name,
+      playlistID: data.id,
+    });
+  };
+
   useEffect(() => {
-    setError(validateName(playlistName));
-  }, [playlistName]);
+    if (isOpen) setValue("name", playlistName);
+  }, [setValue, playlistName, isOpen]);
+
+  useEffect(() => {
+    console.log(errors);
+  }, [errors]);
 
   return (
     <BaseModal isOpen={isOpen} title={t("operations.rename")} onClose={onClose}>
       <div className="flex h-3/4 flex-col justify-between pt-4 text-black">
         <div className="text-lg font-medium text-neutral ">
-          <div className="form-control w-full max-w-xs">
+          <form onSubmit={handleSubmit(onSubmit)}>
             <label className="label">
-              <span className="label-text">What is your name?</span>
-              <span className="label-text-alt">Top Right label</span>
+              <span className="label-text">{t("playlist_name")}</span>
             </label>
             <input
-              tabIndex={-1}
-              ref={ref}
               type="text"
               className="input-bordered input w-full max-w-xs text-white"
-              placeholder={placeHolder ?? "..."}
-              onChange={(event) => {
-                setError(validateName(event.target.value));
-                if(!!placeHolder)setPlaceHolder('')
-              }}
+              {...register("name")}
             />
-          </div>
+            {errors?.name?.message && (
+              <label className="label">
+                <span className="label-text-alt text-error">
+                  {t_common(errors.name.message)}
+                </span>
+              </label>
+            )}
+            <ConfirmButtonGroup />
+          </form>
         </div>
-        <ConfirmButtonGroup
-          disabledConfirm={!!error}
-          onConfirm={() => {
-            if (ref.current?.value) {
-              mutate({ playlistID: playlistID, name: ref.current.value });
-              onConfirm();
-            }
-          }}
-          onClose={onClose}
-        />
       </div>
     </BaseModal>
   );
-}
-
-function validateName(tagName: string) {
-  let error = "";
-  if (!z.string().min(3).safeParse(tagName).success || !tagName) {
-    error = "tag_errors.short";
-  }
-  if (!z.string().max(18).safeParse(tagName).success) {
-    error = "tag_errors.long";
-  }
-  return error;
 }

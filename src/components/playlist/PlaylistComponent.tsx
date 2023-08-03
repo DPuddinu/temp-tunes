@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { RenameModal } from "~/components/modals/RenamePlaylistModal";
-import { UnfollowModal } from "~/components/modals/UnfollowPlaylistModal";
+import { UnfollowModal } from "~/components/modals/RemovePlaylistModal";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import {
   ArrowSVG,

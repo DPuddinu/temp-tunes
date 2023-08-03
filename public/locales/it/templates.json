@@ -1,11 +1,9 @@
 {
   "my_templates": "I miei Template",
-  "create": "Crea",
   "create_playlist": "Crea Playlist",
   "top_rated": "Migliori",
   "most_voted": "I più votati",
   "favourites": "Preferiti",
-  "error": "Errore",
   "get_error": "Qualcosa è andato storto nel caricare il template",
   "created": "Template creato",
   "updated": "Template modificato",
@@ -29,8 +27,6 @@
   "clipboard": "Copiato id del template, ora puoi condividerlo ❤️",
   "not_found": "Template non trovato",
   "char_len": "L'id dovrebbe essere lungo 25 caratteri",
-  "name_min_len": "Nome troppo corto",
-  "name_max_len": "Nome troppo lungo",
   "desc_max_len": "La descrizione è troppo lunga",
   "entries_min_len": "Aggiungi almeno una voce",
   "search_track": "Cerca canzone..."

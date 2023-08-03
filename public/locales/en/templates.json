@@ -1,14 +1,11 @@
 {
   "my_templates": "My Templates",
-  "create": "Create",
   "create_playlist": "Create Playlist",
   "top_rated": "Top Rated",
   "most_voted": "Most Voted",
   "favourites": "Favourites",
   "get_error": "Something went wrong, cannot get this Template",
   "error": "Errore",
-  "created": "Template created",
-  "updated": "Template updated",
   "template_name": "Template Name",
   "type_here": "Type Here...",
   "description": "Description",
@@ -30,8 +27,6 @@
   "clipboard": "Template id copied to clipboard, you can share it now ❤️",
   "not_found": "Template not found",
   "char_len": "The id should be 25 characters long",
-  "name_min_len": "Name too short",
-  "name_max_len": "Name too long",
   "desc_max_len": "Description too long",
   "entries_min_len": "At least one entry should be added",
   "search_track": "Search track..."

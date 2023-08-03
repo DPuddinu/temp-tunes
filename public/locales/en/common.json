@@ -22,5 +22,10 @@
   "next": "Next",
   "previous": "Previous",
   "name": "Name",
-  "creator": "Creator"
+  "creator": "Creator",
+  "name_min_len": "Name too short",
+  "name_max_len": "Name too long",
+  "error": "Something went wrong",
+  "updated": "updated",
+  "confirm": "Confirm"
 }

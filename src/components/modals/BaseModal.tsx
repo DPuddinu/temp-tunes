@@ -121,7 +121,7 @@ const Bottom = ({ onClose, children, description, isOpen, title }: Props) => {
         <Drawer.Content className="fixed bottom-0 left-0 right-0 mt-24 flex flex-col rounded-t-[10px] bg-base-100">
           <div className="flex-1 rounded-t-[10px] bg-base-100 ">
             <div className="pt-4">
-              <div className="mx-auto mb-8 h-1.5 w-12 flex-shrink-0 rounded-full bg-base-300 " />
+              <div className="mx-auto mb-8 h-1.5 w-12 flex-shrink-0 rounded-full bg-base-content" />
             </div>
             <Drawer.Title className="mb-4 border-b-[1px] border-b-base-content pb-2 text-center font-medium text-base-content">
               {title}
