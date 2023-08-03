@@ -1,9 +1,12 @@
+import * as Switch from "@radix-ui/react-switch";
 import { useTheme } from "next-themes";
+import { useTranslation } from "react-i18next";
 import { useMounted } from "~/hooks/use-mounted";
 
 const ThemeSwitcher = () => {
   const { theme, setTheme } = useTheme();
   const mounted = useMounted();
+  const { t } = useTranslation("common");
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -14,20 +17,25 @@ const ThemeSwitcher = () => {
   }
 
   return (
-    <button
-      onClick={toggleTheme}
-      className="bg-base-300 focus:bg-base-300 active:!bg-base-300"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        className="h-6 w-6 stroke-base-content "
+    <form>
+      <div
+        className="flex items-center"
+        style={{ display: "flex", alignItems: "center" }}
       >
-        {theme === "dark" ? <Sun /> : <Moon />}
-      </svg>
-    </button>
+        <label className="pr-[15px] text-sm leading-none" htmlFor="theme">
+          {t("change_theme")}{" "}
+        </label>
+        <Switch.Root
+          className="relative h-[25px] w-[42px] cursor-default rounded-full bg-base-100 outline-none data-[state=checked]:bg-black"
+          id="theme"
+        >
+          <Switch.Thumb
+            className=" block h-[21px] w-[21px] translate-x-0.5 rounded-full bg-white transition-transform duration-100 will-change-transform data-[state=checked]:translate-x-[19px]"
+            onClick={toggleTheme}
+          />
+        </Switch.Root>
+      </div>
+    </form>
   );
 };
 
