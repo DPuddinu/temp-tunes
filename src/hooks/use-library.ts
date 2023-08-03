@@ -15,7 +15,6 @@ export const useLibrary = ({ onFinish, onStart, onProgress }: Props) => {
   const { mutate, isLoading, isError } = useMutation({
     mutationKey: ["getLibrary"],
     mutationFn: () => {
-      console.log('1234')
       onStart();
       return getLibrary(
         data?.accessToken ?? "",

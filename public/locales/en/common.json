@@ -20,5 +20,7 @@
   "save": "Save",
   "cancel": "Cancel",
   "next": "Next",
-  "previous": "Previous"
+  "previous": "Previous",
+  "name": "Name",
+  "creator": "Creator"
 }

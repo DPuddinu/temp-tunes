@@ -17,9 +17,10 @@
   "create_playlist": "Crea playlist",
   "created_playlist": "Playlist creata",
   "create_playlist_error": "Qualcosa è andato storto, can't add this track to the selected playlist",
-
+  "name": "Nome",
   "save": "Salva",
   "cancel": "Cancella",
   "next": "Prossima",
-  "previous": "Precedente"
+  "previous": "Precedente",
+  "creator": "Creatore"
 }

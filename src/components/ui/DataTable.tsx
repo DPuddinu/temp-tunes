@@ -11,7 +11,6 @@ import {
 } from "@tanstack/react-table";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
-import Accordion from "./Accordion";
 import {
   Table,
   TableBody,
@@ -20,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "./TableComponent";
+import AccordionComponent from "./AccordionComponent";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -52,112 +52,100 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="w-full">
-      <Accordion className="mb-6">
-        <Accordion.Header className="bg-base-200 shadow">
-          {commonTranslate("filter")}
-        </Accordion.Header>
-        <Accordion.Content>
-          <div className="flex flex-wrap gap-2 rounded-b-lg bg-base-200 p-4 md:flex-nowrap">
-            <div className="form-control w-full max-w-xs">
-              <label className="label">
-                <span className="label-text">
-                  {t("search_table_headers.title")}
-                </span>
-              </label>
-              <input
-                value={
-                  (table.getColumn("title")?.getFilterValue() as string) ?? ""
-                }
-                onChange={(event) =>
-                  table.getColumn("title")?.setFilterValue(event.target.value)
-                }
-                type="text"
-                placeholder=""
-                className="input-bordered input w-full max-w-xs"
-              />
-            </div>
-            <div className="form-control w-full max-w-xs">
-              <label className="label">
-                <span className="label-text">
-                  {t("search_table_headers.author")}
-                </span>
-              </label>
-              <input
-                value={
-                  (table.getColumn("artists")?.getFilterValue() as string) ?? ""
-                }
-                onChange={(event) => {
-                  table
-                    .getColumn("artists")
-                    ?.setFilterValue(event.target.value);
-                }}
-                type="text"
-                placeholder=""
-                className="input-bordered input w-full max-w-xs"
-              />
-            </div>
-            <div className="form-control w-full max-w-xs">
-              <label className="label">
-                <span className="label-text">
-                  {t("search_table_headers.playlist")}
-                </span>
-              </label>
-              <input
-                value={
-                  (table.getColumn("playlist")?.getFilterValue() as string) ??
-                  ""
-                }
-                onChange={(event) => {
-                  table
-                    .getColumn("playlist")
-                    ?.setFilterValue(event.target.value);
-                }}
-                type="text"
-                placeholder=""
-                className="input-bordered input w-full max-w-xs"
-              />
-            </div>
-            <div className="form-control w-full max-w-xs">
-              <label className="label">
-                <span className="label-text">
-                  {t("search_table_headers.creator")}
-                </span>
-              </label>
-              <input
-                value={
-                  (table.getColumn("creator")?.getFilterValue() as string) ?? ""
-                }
-                onChange={(event) => {
-                  table
-                    .getColumn("creator")
-                    ?.setFilterValue(event.target.value);
-                }}
-                type="text"
-                placeholder=""
-                className="input-bordered input w-full max-w-xs"
-              />
-            </div>
-            <div className="form-control w-full max-w-xs">
-              <label className="label">
-                <span className="label-text">
-                  {t("search_table_headers.tags")}
-                </span>
-              </label>
-              <input
-                value={
-                  (table.getColumn("tags")?.getFilterValue() as string) ?? ""
-                }
-                onChange={(event) => {
-                  table.getColumn("tags")?.setFilterValue(event.target.value);
-                }}
-                type="text"
-                placeholder=""
-                className="input-bordered input w-full max-w-xs"
-              />
-            </div>
+      <AccordionComponent title={commonTranslate("filter")}>
+        <div className="flex flex-wrap gap-2 rounded-b-lg bg-base-200 p-4 md:flex-nowrap">
+          <div className="form-control w-full max-w-xs">
+            <label className="label">
+              <span className="label-text">
+                {t("search_table_headers.title")}
+              </span>
+            </label>
+            <input
+              value={
+                (table.getColumn("title")?.getFilterValue() as string) ?? ""
+              }
+              onChange={(event) =>
+                table.getColumn("title")?.setFilterValue(event.target.value)
+              }
+              type="text"
+              placeholder=""
+              className="input-bordered input w-full max-w-xs"
+            />
           </div>
-        </Accordion.Content>
-      </Accordion>
+          <div className="form-control w-full max-w-xs">
+            <label className="label">
+              <span className="label-text">
+                {t("search_table_headers.author")}
+              </span>
+            </label>
+            <input
+              value={
+                (table.getColumn("artists")?.getFilterValue() as string) ?? ""
+              }
+              onChange={(event) => {
+                table.getColumn("artists")?.setFilterValue(event.target.value);
+              }}
+              type="text"
+              placeholder=""
+              className="input-bordered input w-full max-w-xs"
+            />
+          </div>
+          <div className="form-control w-full max-w-xs">
+            <label className="label">
+              <span className="label-text">
+                {t("search_table_headers.playlist")}
+              </span>
+            </label>
+            <input
+              value={
+                (table.getColumn("playlist")?.getFilterValue() as string) ?? ""
+              }
+              onChange={(event) => {
+                table.getColumn("playlist")?.setFilterValue(event.target.value);
+              }}
+              type="text"
+              placeholder=""
+              className="input-bordered input w-full max-w-xs"
+            />
+          </div>
+          <div className="form-control w-full max-w-xs">
+            <label className="label">
+              <span className="label-text">
+                {t("search_table_headers.creator")}
+              </span>
+            </label>
+            <input
+              value={
+                (table.getColumn("creator")?.getFilterValue() as string) ?? ""
+              }
+              onChange={(event) => {
+                table.getColumn("creator")?.setFilterValue(event.target.value);
+              }}
+              type="text"
+              placeholder=""
+              className="input-bordered input w-full max-w-xs"
+            />
+          </div>
+          <div className="form-control w-full max-w-xs">
+            <label className="label">
+              <span className="label-text">
+                {t("search_table_headers.tags")}
+              </span>
+            </label>
+            <input
+              value={
+                (table.getColumn("tags")?.getFilterValue() as string) ?? ""
+              }
+              onChange={(event) => {
+                table.getColumn("tags")?.setFilterValue(event.target.value);
+              }}
+              type="text"
+              placeholder=""
+              className="input-bordered input w-full max-w-xs"
+            />
+          </div>
+        </div>
+      </AccordionComponent>
 
       <Table>
         <TableHeader>
