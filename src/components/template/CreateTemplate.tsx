@@ -152,7 +152,7 @@ function CreateTemplate({ data }: props) {
                 </label>
                 <input
                   type="text"
-                  placeholder={t_template("type_here") ?? ""}
+                  placeholder={t("type_here") ?? ""}
                   className="input-ghost input w-full  grow bg-base-200 text-base"
                   {...register("description")}
                 />

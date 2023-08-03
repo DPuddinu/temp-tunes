@@ -1,4 +1,5 @@
 {
+  "add_tag": "aggiungi tag",
   "edit_tag": "Modifica tag",
   "add_to_queue": "Aggiungi in coda",
   "added_to_queue": "aggiunta in coda",
@@ -27,5 +28,6 @@
   "name_max_len": "Nome troppo lungo",
   "error": "Qualcosa è andato storto",
   "updated": "aggiornato",
-  "confirm": "Conferma"
+  "confirm": "Conferma",
+  "type_here": "Scrivi qui..."
 }

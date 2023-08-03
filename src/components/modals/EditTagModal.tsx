@@ -20,7 +20,7 @@ type Props = {
 } & BaseModalProps;
 
 export function TagModal({ isOpen, onClose, trackId }: Props) {
-  const { t } = useTranslation("modals");
+  const { t } = useTranslation("common");
   const { setMessage } = useToast();
   const [tags, setTags] = useState<TagSchemaType[]>([]);
   const [parent] = useAutoAnimate();
@@ -46,12 +46,12 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
     },
     onError(){
       onClose();
-      setMessage(t("wrong") ?? "Something went wrong");
+      setMessage(t("error") ?? "Something went wrong");
     }
   });
 
   return (
-    <BaseModal isOpen={isOpen} title={t("new_tag")} onClose={onClose}>
+    <BaseModal isOpen={isOpen} title={t("edit_tag")} onClose={onClose}>
       <div
         className="flex flex-row flex-wrap gap-2 overflow-hidden pb-2 pt-6"
         ref={parent}
@@ -108,7 +108,7 @@ interface AddTagComponentProps {
   onTagSubmit: (tag: TagSchemaType) => void;
 }
 function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
-  const { t } = useTranslation("modals");
+  const { t } = useTranslation("common");
   const tagSchema = AddTagSchema.refine((item) => !tags.includes(item.tag), {
     message: "tag_errors.used",
   });
@@ -124,17 +124,31 @@ function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
       name: data.tag,
       spotifyId: trackId,
     });
-    const mounted = useMounted();
+  const mounted = useMounted();
   return (
     <>
       {mounted && (
         <form className="flex gap-2 pt-2" onSubmit={handleSubmit(onSubmit)}>
           <div className="w-full ">
-            <input
-              className="input w-full bg-base-300"
-              placeholder={t("tag_placeholder") ?? "Type here"}
-              {...register("tag", { required: true })}
-            />
+            <label className="label">
+              <span className="label-text">{t("add_tag")}</span>
+            </label>
+            <div className="flex gap-2">
+              <input
+                tabIndex={-1}
+                className="input w-full bg-base-300"
+                placeholder={t("type_here") ?? "Type here"}
+                {...register("tag", { required: true })}
+              />
+              <button
+                tabIndex={-1}
+                type="submit"
+                className="btn-circle btn border-transparent text-xl transition-transform"
+              >
+                +
+              </button>
+            </div>
+
             {errors?.tag?.message && (
               <label className="label text-red-700">
                 <span className="label-text-alt font-bold text-red-700">
@@ -143,13 +157,6 @@ function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
               </label>
             )}
           </div>
-          <button
-            tabIndex={-1}
-            type="submit"
-            className="btn-circle btn border-transparent text-xl transition-transform"
-          >
-            +
-          </button>
         </form>
       )}
     </>

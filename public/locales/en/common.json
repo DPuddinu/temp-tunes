@@ -1,4 +1,5 @@
 {
+  "add_tag": "Add tag",
   "edit_tag": "Edit tags",
   "add_to_queue": "Add to queue",
   "added_to_queue": "added to queue",
@@ -27,5 +28,6 @@
   "name_max_len": "Name too long",
   "error": "Something went wrong",
   "updated": "updated",
-  "confirm": "Confirm"
+  "confirm": "Confirm",
+  "type_here": "Type Here..."
 }

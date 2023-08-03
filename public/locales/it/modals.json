@@ -1,11 +1,8 @@
 {
-  "new_tag": "Modifica Tag",
   "add_tag_track": "Aggiungi un Tag per il brano selezionato",
   "add_tag_playlist": "Aggiungi un Tag per la playlist selezionata",
   "add": "Aggiungi",
   "updated_tags": "Tag aggiornati",
-  "confirm": "Conferma",
-  "cancel": "Annulla",
   "tag_errors": {
     "generic": "Tag non valido!",
     "short": "Tag troppo corto!",
