@@ -6,7 +6,9 @@ function FiltersComponent<TData>({ table }: { table: Table<TData> }) {
   const { t } = useTranslation("common");
   return (
     <Accordion key="filters" className="m-auto mb-6 lg:w-3/4">
-      <Accordion.Header>{`${t("filter")}`}</Accordion.Header>
+      <Accordion.Header className="bg-base-200 shadow">{`${t(
+        "filter"
+      )}`}</Accordion.Header>
       <Accordion.Content>
         <div className="flex flex-wrap gap-2 rounded-b-lg bg-base-200 p-4 md:flex-nowrap">
           <div className="form-control w-full max-w-xs">

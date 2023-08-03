@@ -76,7 +76,7 @@ function PlaylistComponent({
   });
 
   return (
-    <div className="group flex max-h-16 items-center rounded-2xl border-base-300 bg-base-200 pr-3 shadow">
+    <div className="group flex max-h-16 items-center rounded-2xl bg-base-200 pr-3 shadow">
       <div className="h-16 w-16">
         <ImageWithFallback
           src={
@@ -114,7 +114,7 @@ function PlaylistComponent({
 
           <DropdownMenu.Portal>
             <DropdownMenu.Content
-              className="max-w-[50vw] rounded-md border border-base-300 bg-base-200 p-2 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
+              className="min-w-[10.5rem] max-w-[50vw] rounded-md border border-base-300 bg-base-200 p-2 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
               sideOffset={5}
             >
               <DropdownMenu.Item

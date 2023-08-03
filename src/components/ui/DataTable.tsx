@@ -53,7 +53,9 @@ export function DataTable<TData, TValue>({
   return (
     <div className="w-full">
       <Accordion className="mb-6">
-        <Accordion.Header>{commonTranslate("filter")}</Accordion.Header>
+        <Accordion.Header className="bg-base-200 shadow">
+          {commonTranslate("filter")}
+        </Accordion.Header>
         <Accordion.Content>
           <div className="flex flex-wrap gap-2 rounded-b-lg bg-base-200 p-4 md:flex-nowrap">
             <div className="form-control w-full max-w-xs">

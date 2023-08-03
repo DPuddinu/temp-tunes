@@ -118,9 +118,9 @@ const Bottom = ({ onClose, children, description, isOpen, title }: Props) => {
       </Drawer.Trigger>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/40" />
-        <Drawer.Content className="fixed bottom-0 left-0 right-0 mt-24 flex flex-col rounded-t-[10px] bg-base-200">
-          <div className="flex-1 rounded-t-[10px] bg-base-300 p-4">
-            <div className="mx-auto mb-8 h-1.5 w-12 flex-shrink-0 rounded-full bg-base-100" />
+        <Drawer.Content className="fixed bottom-0 left-0 right-0 mt-24 flex flex-col rounded-t-[10px] bg-base-100">
+          <div className="flex-1 rounded-t-[10px] bg-base-100 p-4">
+            <div className="mx-auto mb-8 h-1.5 w-12 flex-shrink-0 rounded-full bg-base-300" />
             <div className="mx-auto max-w-md">
               <Drawer.Title className="mb-4 text-center font-medium">
                 {title}
@@ -135,7 +135,6 @@ const Bottom = ({ onClose, children, description, isOpen, title }: Props) => {
               {children}
             </div>
           </div>
-          <div className="mt-auto bg-base-100 p-4"></div>
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>

@@ -26,6 +26,7 @@ export function UnfollowModal({
     onSuccess() {
       onSuccess();
       onClose();
+      //TODO implement optimistic update here
     },
   });
 
@@ -50,4 +51,3 @@ export function UnfollowModal({
     </BaseModal>
   );
 }
-
