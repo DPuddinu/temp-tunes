@@ -2,6 +2,7 @@ import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import MainLayout from "~/components/MainLayout";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
@@ -21,6 +22,7 @@ const TemplateCard = dynamic(
 const Explore: PageWithLayout = () => {
   const { t } = useTranslation("templates");
   const { setMessage } = useToast();
+  const router = useRouter();
   const { data, isLoading } = api.template.getExploreTemplates.useQuery(
     undefined,
     {
@@ -33,12 +35,11 @@ const Explore: PageWithLayout = () => {
 
   const { mutate } = api.template.importTemplateById.useMutation({
     onSuccess() {
-      const msg = t("import_success");
-      setMessage(msg);
+      setMessage(`${t("import_success")}`);
+      router.push('/templates')
     },
-    onError(err) {
-      const msg = t("import_error");
-      setMessage(msg);
+    onError() {
+      setMessage(`${t("import_error")}`);
     },
   });
 
@@ -62,7 +63,7 @@ const Explore: PageWithLayout = () => {
           ]}
         />
       ))}
-      {isLoading && <TemplateSkeleton/>}
+      {isLoading && <TemplateSkeleton />}
     </section>
   );
 };

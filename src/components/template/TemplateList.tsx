@@ -25,7 +25,6 @@ const TemplateList = ({
           isNew={false}
           actions={[
             {
-              disabled: false,
               label: t("create_playlist"),
               onClick: () => router.push(`/templates/create/${template.id}`),
             },

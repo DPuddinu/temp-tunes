@@ -12,26 +12,27 @@ type Props = {
   isOpen: boolean;
 } & BaseModalProps;
 
-export const DeleteTemplateModal = ({
-  onClose,
-  template,
-  isOpen,
-}: Props) => {
+export const DeleteTemplateModal = ({ onClose, template, isOpen }: Props) => {
   const { t } = useTranslation("templates");
   const { setMessage } = useToast();
-  const utils = api.useContext();
+  const utils = api.useContext().template.getUserTemplates;
 
   const { mutate: deleteTemplate } = api.template.deleteTemplate.useMutation({
-    onError() {
-      const msg = t("delete_error");
-      setMessage(msg);
+    async onMutate({ id }) {
+      await utils.cancel();
+      const prevData = utils.getData();
+
+      //prettier-ignore
+      utils.setData(undefined, (old) => old?.filter((t) => t.id !== id));
+      return { prevData };
+    },
+    onError(error, variables, context) {
+      utils.setData(undefined, context?.prevData);
+      setMessage(`${t("delete_error")}`);
     },
     onSuccess() {
-      const msg = t("delete_success");
-      setMessage(msg);
+      setMessage(`${t("delete_success")}`);
       onClose();
-      utils.template.getCurrentUserTemplates.invalidate();
-      
     },
   });
 

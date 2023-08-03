@@ -129,7 +129,7 @@ export const templatesRouter = createTRPCRouter({
       })
     }),
 
-  getCurrentUserTemplates: protectedProcedure
+  getUserTemplates: protectedProcedure
     .query(async ({ ctx }) => {
 
       return ctx.prisma.playlistTemplate.findMany({

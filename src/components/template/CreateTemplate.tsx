@@ -1,6 +1,7 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import {
   useFieldArray,
@@ -48,26 +49,25 @@ function CreateTemplate({ data }: props) {
   const [parent] = useAutoAnimate();
   const [selectedRow, setSelectedRow] = useState<number | undefined>();
   const mounted = useMounted();
+  const router = useRouter();
 
   const { mutate } = api.template.createTemplate.useMutation({
     onError() {
-      const msg = t("error");
-      setMessage(msg);
+      setMessage(`${t("error")}`);
     },
     onSuccess() {
-      const msg = t("created");
-      setMessage(msg);
+      setMessage(`${t("created")}`);
+      router.push("/templates");
     },
   });
 
   const { mutate: edit } = api.template.editTemplate.useMutation({
     onError() {
-      const msg = t("error");
-      setMessage(msg);
+      setMessage(`${t("error")}`);
     },
     onSuccess() {
-      const msg = t("updated");
-      setMessage(msg);
+      setMessage(`${t("updated")}`);
+      router.push("/templates");
     },
   });
 
