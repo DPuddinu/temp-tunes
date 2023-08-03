@@ -1,16 +1,16 @@
 export const TemplatesSkeleton = () => {
   return (
     <div className="grid animate-pulse gap-2 sm:grid-cols-2 lg:grid-cols-3">
-      <SingleSkeleton />
-      <SingleSkeleton />
-      <SingleSkeleton />
-      <SingleSkeleton />
-      <SingleSkeleton />
-      <SingleSkeleton />
+      <TemplateSkeleton />
+      <TemplateSkeleton />
+      <TemplateSkeleton />
+      <TemplateSkeleton />
+      <TemplateSkeleton />
+      <TemplateSkeleton />
     </div>
   );
 }
-const SingleSkeleton = () => {
+export const TemplateSkeleton = () => {
   return (
     <div className="rounded-box h-20 bg-base-300">
       <div className="flex h-full items-center justify-between gap-2 px-2">
@@ -19,4 +19,4 @@ const SingleSkeleton = () => {
       </div>
     </div>
   );
-}
+};

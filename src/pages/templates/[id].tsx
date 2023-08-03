@@ -1,15 +1,23 @@
 import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import MainLayout from "~/components/MainLayout";
-import CreateTemplate from "~/components/template/CreateTemplate";
 import CreateTemplateSkeleton from "~/components/template/CreateTemplateSkeleton";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
 import { langKey } from "~/hooks/use-language";
 import { useToast } from "~/hooks/use-toast";
 import { type Language, type PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
+
+const CreateTemplate = dynamic(
+  () => import("~/components/template/CreateTemplate"),
+  {
+    loading: () => <CreateTemplateSkeleton />,
+  }
+);
+
 
 const TemplateById: PageWithLayout = () => {
   const searchParams = useSearchParams();

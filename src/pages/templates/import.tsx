@@ -33,7 +33,7 @@ const ImportTemplate: PageWithLayout = () => {
   const {
     register,
     handleSubmit,
-    formState: { isValid, errors },
+    formState: { errors },
   } = useForm<FormSchemaType>({ resolver: zodResolver(FormSchema) });
 
   const { isLoading, mutate } = api.template.importTemplateById.useMutation({
@@ -74,7 +74,7 @@ const ImportTemplate: PageWithLayout = () => {
                 )}
               </div>
               <div className="indicator">
-                <button className="join-item btn">{t("import")}</button>
+                <button type="submit" className="join-item btn">{t("import")}</button>
               </div>
             </div>
           </form>

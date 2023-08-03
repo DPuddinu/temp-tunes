@@ -1,14 +1,22 @@
 import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import dynamic from "next/dynamic";
 import { useTranslation } from "react-i18next";
 import MainLayout from "~/components/MainLayout";
-import TemplateCard from "~/components/template/TemplateCard";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
-import { type Language, type PageWithLayout } from "~/types/page-types";
+import { TemplateSkeleton } from "~/components/ui/skeletons/TemplatesSkeleton";
 import { langKey } from "~/hooks/use-language";
 import { useToast } from "~/hooks/use-toast";
+import { type Language, type PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
+
+const TemplateCard = dynamic(
+  () => import("~/components/template/TemplateCard"),
+  {
+    loading: () => <TemplateSkeleton />,
+  }
+);
 
 const Explore: PageWithLayout = () => {
   const { t } = useTranslation("templates");
@@ -36,25 +44,25 @@ const Explore: PageWithLayout = () => {
 
   return (
     <section className="flex flex-col justify-center gap-4">
-      {
-        data?.map((temp, i) => (
-          <TemplateCard
-            key={temp.name}
-            color={temp.color ?? ""}
-            index={i}
-            template={temp}
-            isNew
-            actions={[
-              {
-                label: t("import"),
-                onClick: () =>
-                  mutate({
-                    id: temp.id,
-                  }),
-              },
-            ]}
-          />
-        ))}
+      {data?.map((temp, i) => (
+        <TemplateCard
+          key={temp.name}
+          color={temp.color ?? ""}
+          index={i}
+          template={temp}
+          isNew
+          actions={[
+            {
+              label: t("import"),
+              onClick: () =>
+                mutate({
+                  id: temp.id,
+                }),
+            },
+          ]}
+        />
+      ))}
+      {isLoading && <TemplateSkeleton/>}
     </section>
   );
 };
