@@ -46,7 +46,7 @@ export const spotifyPlaylistRouter = createTRPCRouter({
     const add = await addTracksToPlaylist(tracks.map(track => track.uri), destinationId, ctx.session.accessToken)
     return add
   }),
-  unfollow: protectedProcedure.input(z.object({
+  remove: protectedProcedure.input(z.object({
     playlistID: z.string(),
   })).mutation(async ({ ctx, input }) => {
     const { playlistID } = input;

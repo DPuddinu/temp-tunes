@@ -131,7 +131,7 @@ function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
         <form className="flex gap-2 pt-2" onSubmit={handleSubmit(onSubmit)}>
           <div className="w-full ">
             <input
-              className="input w-full "
+              className="input w-full bg-base-300"
               placeholder={t("tag_placeholder") ?? "Type here"}
               {...register("tag", { required: true })}
             />

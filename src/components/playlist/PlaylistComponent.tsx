@@ -32,7 +32,7 @@ function PlaylistComponent({
   const { t } = useTranslation("playlists");
   const [isLoading, setIsLoading] = useState(false);
   const { setMessage } = useToast();
-  const utils = api.useContext();
+  const utils = api.useContext().spotify_playlist.getAll;
 
 
   const [renameModalOpen, setRenameModalOpen] = useState(false);
@@ -53,16 +53,29 @@ function PlaylistComponent({
       setMessage(`${playlist.name} ${t("operations.shuffled")}`);
       setIsLoading(false);
     },
+    onError(error){
+      setMessage(`${t(error.message)}`)
+    }
   });
   const { mutate: copy } = api.spotify_playlist.copy.useMutation({
-    onMutate() {
+    async onMutate({ playlist }) {
       setIsLoading(true);
+      await utils.cancel();
+      const prevData = utils.getData();
+
+      //prettier-ignore
+      utils.setData(undefined, (old) => {
+        if(old) return [playlist, ...old]
+      });
+      return { prevData };
     },
     onSuccess() {
       setMessage(`${playlist.name} ${t("operations.copied")}`);
       setIsLoading(false);
-      utils.spotify_playlist.getAll.invalidate();
-
+    },
+    onError(error, variables, context) {
+      utils.setData(undefined, context?.prevData);
+      setMessage(`${t(error.message)}`);
     },
   });
   const { mutate: merge } = api.spotify_playlist.merge.useMutation({
@@ -72,6 +85,9 @@ function PlaylistComponent({
     onSuccess() {
       setMessage(`${playlist.name} ${t("operations.merge")}`);
       setIsLoading(false);
+    },
+    onError(error) {
+      setMessage(`${t(error.message)}`);
     },
   });
 
@@ -186,7 +202,7 @@ function PlaylistComponent({
                 onClick={() => setUnfollowModalOpen(true)}
               >
                 <DeleteSVG />
-                {t("operations.unfollow")}
+                {t("operations.remove")}
               </DropdownMenu.Item>
               <DropdownMenu.Item
                 className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer"
@@ -195,34 +211,22 @@ function PlaylistComponent({
                 <PencilSVG />
                 {t("operations.rename")}
               </DropdownMenu.Item>
-              <DropdownMenu.Sub></DropdownMenu.Sub>
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
       )}
       <UnfollowModal
         isOpen={unfollowModalOpen}
-        setIsOpen={setUnfollowModalOpen}
         playlistID={playlist.id}
         playlistName={playlist.name}
         onClose={() => setUnfollowModalOpen(false)}
-        onSuccess={() => {
-          setIsLoading(false)
-          utils.spotify_playlist.getAll.invalidate();
-        }}
         onConfirm={() => setIsLoading(true)}
       />
       <RenameModal
         isOpen={renameModalOpen}
-        setIsOpen={setRenameModalOpen}
         playlistID={playlist.id}
         playlistName={playlist.name}
         onClose={() => setRenameModalOpen(false)}
-        onSuccess={() => {
-          setIsLoading(false);
-          utils.spotify_playlist.getAll.invalidate();
-
-        }}
         onConfirm={() => setIsLoading(true)}
       />
     </div>

@@ -119,21 +119,19 @@ const Bottom = ({ onClose, children, description, isOpen, title }: Props) => {
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/40" />
         <Drawer.Content className="fixed bottom-0 left-0 right-0 mt-24 flex flex-col rounded-t-[10px] bg-base-100">
-          <div className="flex-1 rounded-t-[10px] bg-base-100 p-4">
-            <div className="mx-auto mb-8 h-1.5 w-12 flex-shrink-0 rounded-full bg-base-300" />
-            <div className="mx-auto max-w-md">
-              <Drawer.Title className="mb-4 text-center font-medium">
-                {title}
-              </Drawer.Title>
-              {description && (
-                <Drawer.Description className="mt-2">
-                  <p className="text-md border-t pt-2 text-base-100">
-                    {description}
-                  </p>
-                </Drawer.Description>
-              )}
-              {children}
+          <div className="flex-1 rounded-t-[10px] bg-base-100 ">
+            <div className="pt-4">
+              <div className="mx-auto mb-8 h-1.5 w-12 flex-shrink-0 rounded-full bg-base-300 " />
             </div>
+            <Drawer.Title className="mb-4 border-b-[1px] border-b-base-content pb-2 text-center font-medium text-base-content">
+              {title}
+            </Drawer.Title>
+            {description && (
+              <Drawer.Description className="mt-2">
+                <p className="text-md border-t pt-2 ">{description}</p>
+              </Drawer.Description>
+            )}
+            <div className="p-4 text-base-content"> {children}</div>
           </div>
         </Drawer.Content>
       </Drawer.Portal>

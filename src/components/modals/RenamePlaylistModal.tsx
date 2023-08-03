@@ -7,9 +7,7 @@ import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
 
 type Props = {
-  setIsOpen: (open: boolean) => void;
   onConfirm: () => void;
-  onSuccess: () => void;
   playlistID: string;
   playlistName: string;
 } & BaseModalProps;
@@ -18,8 +16,6 @@ export function RenameModal({
   isOpen,
   onClose,
   onConfirm,
-  onSuccess,
-  setIsOpen,
   playlistID,
   playlistName,
 }: Props) {
@@ -27,10 +23,28 @@ export function RenameModal({
   const ref = useRef<HTMLInputElement>(null);
   const [error, setError] = useState(" ");
   const [placeHolder, setPlaceHolder] = useState(playlistName)
+  const utils = api.useContext().spotify_playlist.getAll;
+
   const { mutate } = api.spotify_playlist.rename.useMutation({
+    async onMutate({ name, playlistID }) {
+      await utils.cancel();
+      const prevData = utils.getData();
+
+      //prettier-ignore
+      utils.setData(undefined, (old) => old?.map((t) => {
+        if(t.id === playlistID){
+          t.name = name;
+        }
+        return t
+      }));
+
+      return { prevData };
+    },
     onSuccess() {
-      setIsOpen(false);
-      onSuccess();
+      onClose();
+    },
+    onError(error, variables, context) {
+      utils.setData(undefined, context?.prevData);
     },
   });
 
