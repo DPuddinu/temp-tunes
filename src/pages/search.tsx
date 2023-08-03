@@ -18,6 +18,9 @@ import type { Language, PageWithLayout } from "~/types/page-types";
 import { type Playlist } from "~/types/spotify-types";
 import { SearchTypeConst, type SearchType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
+import { Listbox, Transition } from "@headlessui/react";
+import { Fragment } from "react";
+import { getTagColumns, getTrackColumns } from "~/components/search/columns";
 
 //prettier-ignore
 const DataTable = dynamic(() => import("~/components/ui/DataTable"), {loading: () => <div></div>});
@@ -93,126 +96,11 @@ const Search: PageWithLayout = () => {
   };
 
   const tagColumns: ColumnDef<unknown, unknown>[] = useMemo(() => {
-    return [
-      {
-        accessorKey: "title",
-        header: ({ column }) => {
-          return (
-            <button
-              className="flex w-full items-center gap-1"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("search_table_headers.title") ?? "Title"}
-              <ArrowSVG isOpen={column.getIsSorted()} />
-            </button>
-          );
-        },
-      },
-      {
-        accessorKey: "artists",
-        header: ({ column }) => {
-          return (
-            <button
-              className="flex items-center justify-center gap-1"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("search_table_headers.author") ?? "Author"}
-              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
-            </button>
-          );
-        },
-      },
-      {
-        accessorKey: "tags",
-        header: ({ column }) => {
-          return (
-            <button
-              className="flex items-center justify-center gap-1"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("search_table_headers.tags") ?? "Tags"}
-              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
-            </button>
-          );
-        },
-      },
-    ];
+    return getTagColumns(t);
   }, [t]);
 
   const trackColumns: ColumnDef<unknown, unknown>[] = useMemo(() => {
-    return [
-      {
-        accessorKey: "title",
-        header: ({ column }) => {
-          return (
-            <button
-              className="flex w-full items-center gap-1"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("search_table_headers.title") ?? "Title"}
-              <ArrowSVG isOpen={column.getIsSorted()} />
-            </button>
-          );
-        },
-      },
-      {
-        accessorKey: "artists",
-        header: ({ column }) => {
-          return (
-            <button
-              className="flex items-center justify-center gap-1"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("search_table_headers.author") ?? "Author"}
-              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
-            </button>
-          );
-        },
-      },
-      {
-        accessorKey: "playlist",
-        header: ({ column }) => {
-          return (
-            <button
-              className="flex items-center justify-center gap-1"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("search_table_headers.playlist") ?? "playlist"}
-              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
-            </button>
-          );
-        },
-      },
-
-      {
-        accessorKey: "creator",
-        header: ({ column }) => {
-          return (
-            <button
-              className="flex items-center justify-center gap-1"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              {t("search_table_headers.creator") ?? "Creator"}
-              <ArrowSVG isOpen={column.getIsSorted()}></ArrowSVG>
-            </button>
-          );
-        },
-      },
-    ];
+    return getTrackColumns(t);
   }, [t]);
 
   return (
@@ -220,30 +108,44 @@ const Search: PageWithLayout = () => {
       <div className=" w-full pb-4 sm:max-w-sm md:max-w-md">
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">
           <div className="join relative h-5 w-full">
-            <div>
+            <div className="h-16">
               <input
                 {...register("name")}
                 type="text"
                 placeholder={t("search") ?? "..."}
-                className="input join-item w-full grow bg-secondary-content sm:max-w-sm"
+                className="input join-item w-full grow bg-secondary-content sm:max-w-sm "
               />
             </div>
 
-            <select
-              className="select-bordered select join-item border-base-300 bg-base-300"
-              placeholder="Filter"
-              onChange={(t) => {
-                setSelectedFilter(t.currentTarget.value as SearchType);
-                setData(undefined);
-              }}
-            >
-              {SearchTypeConst.map((type) => (
-                <option key={type} className=" ">
-                  {type}
-                </option>
-              ))}
-            </select>
-            <div className="indicator">
+            <Listbox value={selectedFilter} onChange={setSelectedFilter}>
+              <div className="join-item relative ">
+                <Listbox.Button className=" h-12 w-20 cursor-pointer justify-between bg-base-300 p-2 text-left focus:outline-none sm:text-sm">
+                  <div className="flex items-center justify-between">
+                    <span>{selectedFilter}</span>
+                    <ArrowSVG />
+                  </div>
+                </Listbox.Button>
+                <Transition
+                  as={Fragment}
+                  leave="transition ease-in duration-100"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-base-300 p-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                    {SearchTypeConst.map((type) => (
+                      <Listbox.Option
+                        value={type}
+                        key={type}
+                        className="cursor-pointer relative select-none py-2 pl-2 pr-4 hover:bg-base-100 rounded-lg"
+                      >
+                        {type}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </Transition>
+              </div>
+            </Listbox>
+            <div className="indicator h-16">
               <button type="submit" className="join-item btn bg-base-300">
                 <SearchSVG />
               </button>

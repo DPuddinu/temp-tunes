@@ -1,13 +1,12 @@
 import * as Accordion from "@radix-ui/react-accordion";
-import { ArrowSVG } from "./icons";
 import { type ReactNode } from "react";
+import { ArrowSVG } from "./icons";
 
 interface AccordionProps {
-  children: ReactNode
-  title: ReactNode
+  children: ReactNode;
+  title: ReactNode;
 }
-const AccordionComponent = ({children, title}: AccordionProps) => {
-
+const AccordionComponent = ({ children, title }: AccordionProps) => {
   return (
     <Accordion.Root
       type="single"
@@ -16,7 +15,7 @@ const AccordionComponent = ({children, title}: AccordionProps) => {
       collapsible
     >
       <Accordion.Item value="item-1" className="">
-        <Accordion.Header className="flex">
+        <Accordion.Header className="flex text-xl">
           <Accordion.Trigger className="group flex flex-1 cursor-default items-center justify-between px-2">
             {title}
             <ArrowSVG
@@ -32,4 +31,4 @@ const AccordionComponent = ({children, title}: AccordionProps) => {
     </Accordion.Root>
   );
 };
-export default AccordionComponent
+export default AccordionComponent;
