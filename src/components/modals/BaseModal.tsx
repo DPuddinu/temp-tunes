@@ -104,9 +104,6 @@ const Center = ({ onClose, isOpen, description, title, children }: Props) => {
 };
 
 const Bottom = ({ onClose, children, description, isOpen, title }: Props) => {
-  usePreventScroll({
-    isDisabled: !isOpen,
-  });
   return (
     <Transition show={isOpen}>
       <Dialog
