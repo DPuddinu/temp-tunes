@@ -71,6 +71,8 @@ export function RenameModal({
       setMessage(`Playlist ${t("renamed")}`);
     },
     onError(error, variables, context) {
+      onClose();
+
       utils.setData(undefined, context?.prevData);
       setMessage(`${t_common("error")}`);
     },
@@ -111,7 +113,7 @@ export function RenameModal({
                 </span>
               </label>
             )}
-            <ConfirmButtonGroup />
+            <ConfirmButtonGroup onClose={onClose} />
           </form>
         </div>
       </div>

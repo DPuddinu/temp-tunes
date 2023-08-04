@@ -75,8 +75,6 @@ const nonTextInputTypes = new Set([
 ]);
 
 // The number of active usePreventScroll calls. Used to determine whether to revert back to the original page style/scroll position
-let preventScrollCount = 0;
-let restore: () => void;
 
 /**
  * Prevents scrolling on the document body on mount, and
@@ -91,21 +89,8 @@ export function usePreventScroll(options: PreventScrollOptions = {}) {
       return;
     }
 
-    preventScrollCount++;
-    if (preventScrollCount === 1) {
-      if (isIOS()) {
-        restore = preventScrollMobileSafari();
-      } else {
-        restore = preventScrollStandard();
-      }
-    }
-
-    return () => {
-      preventScrollCount--;
-      if (preventScrollCount === 0) {
-        restore();
-      }
-    };
+    const restore = preventScrollStandard();
+    return () => restore();
   }, [isDisabled]);
 }
 
