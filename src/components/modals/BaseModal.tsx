@@ -1,6 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import useMediaQuery from "~/hooks/use-media-query";
+import { usePreventScroll } from "~/hooks/use-prevent-scroll";
 
 type Props = {
   title: string;
@@ -103,6 +104,9 @@ const Center = ({ onClose, isOpen, description, title, children }: Props) => {
 };
 
 const Bottom = ({ onClose, children, description, isOpen, title }: Props) => {
+  usePreventScroll({
+    isDisabled: !isOpen,
+  });
   return (
     <Transition show={isOpen}>
       <Dialog
