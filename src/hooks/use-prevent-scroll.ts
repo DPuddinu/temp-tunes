@@ -113,8 +113,8 @@ export function usePreventScroll(options: PreventScrollOptions = {}) {
 // add some padding to prevent the page from shifting when the scrollbar is hidden.
 function preventScrollStandard() {
   return chain(
-    setStyle(document.documentElement, 'paddingRight', `${window.innerWidth - document.documentElement.clientWidth}px`),
-    setStyle(document.documentElement, 'overflow', 'hidden'),
+    setPaddingRight(document.documentElement, 'paddingRight', `${window.innerWidth - document.documentElement.clientWidth}px`),
+    setOverflow(document.documentElement, 'overflow', 'hidden'),
   );
 }
 
@@ -128,7 +128,7 @@ function preventScrollMobileSafari() {
       return;
     }
     if (e?.changedTouches[0]?.pageY)
-    lastY = e.changedTouches[0].pageY;
+      lastY = e.changedTouches[0].pageY;
   };
 
   const onTouchMove = (e: TouchEvent) => {
@@ -218,54 +218,50 @@ function preventScrollMobileSafari() {
   const scrollY = window.scrollY;
 
   const restoreStyles = chain(
-    setStyle(document.documentElement, 'paddingRight', `${window.innerWidth - document.documentElement.clientWidth}px`),
-    setStyle(document.documentElement, 'overflow', 'hidden'),
-    setStyle(document.body, 'marginTop', `-${scrollY}px`),
+    setPaddingRight(document.documentElement, 'paddingRight', `${window.innerWidth - document.documentElement.clientWidth}px`),
+    setOverflow(document.documentElement, 'overflow', 'hidden'),
+    setMarginTop(document.body, 'marginTop', `-${scrollY}px`),
   );
 
   // Scroll to the top. The negative margin on the body will make this appear the same.
   window.scrollTo(0, 0);
 
-  const removeEvents = chain(
-    addEvent(document, 'touchstart', onTouchStart, { passive: false, capture: true }),
-    addEvent(document, 'touchmove', onTouchMove, { passive: false, capture: true }),
-    addEvent(document, 'touchend', onTouchEnd, { passive: false, capture: true }),
-    addEvent(document, 'focus', onFocus, true),
-    addEvent(window, 'scroll', onWindowScroll),
-  );
+  document.addEventListener('touchstart', onTouchStart, { passive: false, capture: true })
+  document.addEventListener('touchmove', onTouchMove, { passive: false, capture: true })
+  document.addEventListener('touchend', onTouchEnd, { passive: false, capture: true })
+  document.addEventListener('focus', onFocus, true)
+  window.addEventListener('scroll', onWindowScroll)
 
   return () => {
     // Restore styles and scroll the page back to where it was.
     restoreStyles();
-    removeEvents();
+    document.removeEventListener('touchstart', onTouchStart)
+    document.removeEventListener('touchmove', onTouchMove)
+    document.removeEventListener('touchend', onTouchEnd)
+    document.removeEventListener('focus', onFocus)
+    window.removeEventListener('scroll', onWindowScroll)
     window.scrollTo(scrollX, scrollY);
   };
 }
 
-// Sets a CSS property on an element, and returns a function to revert it to the previous value.
-function setStyle(element: HTMLElement, style: string, value: string) {
-  const cur = element.style[style];
-  element.style[style] = value;
+function setPaddingRight(element: HTMLElement, style: string, value: string) {
+  const cur = element.style.paddingRight;
+  element.style.paddingRight = value;
 
-  return () => {
-    element.style[style] = cur;
-  };
+  return () => element.style.paddingRight = cur
+}
+function setOverflow(element: HTMLElement, style: string, value: string) {
+  const cur = element.style.overflow;
+  element.style.overflow = value;
+
+  return () => element.style.overflow = cur
 }
 
-// Adds an event listener to an element, and returns a function to remove it.
-function addEvent<K extends keyof GlobalEventHandlersEventMap>(
-  target: EventTarget,
-  event: K,
-  handler: (this: Document, ev: GlobalEventHandlersEventMap[K]) => any,
-  options?: boolean | AddEventListenerOptions,
-) {
-  // @ts-ignore
-  target.addEventListener(event, handler, options);
+function setMarginTop(element: HTMLElement, style: string, value: string) {
+  const cur = element.style.overflow;
+  element.style.overflow = value;
 
-  return () => {
-    // @ts-ignore
-    target.removeEventListener(event, handler, options);
-  };
+  return () => element.style.overflow = cur
 }
 
 function scrollIntoView(target: Element) {
@@ -282,9 +278,8 @@ function scrollIntoView(target: Element) {
         scrollable.scrollTop += targetTop - scrollableTop;
       }
     }
-
-    // @ts-ignore
-    target = scrollable.parentElement;
+    if (scrollable.parentElement)
+      target = scrollable.parentElement;
   }
 }
 
