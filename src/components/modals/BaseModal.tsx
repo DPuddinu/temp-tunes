@@ -106,6 +106,7 @@ const Center = ({ onClose, isOpen, description, title, children }: Props) => {
 const Bottom = ({ onClose, children, description, isOpen, title }: Props) => {
   return (
     <Drawer.Root
+      fixedHeight
       open={isOpen}
       onOpenChange={(open) => {
         if (!open) {
@@ -114,7 +115,6 @@ const Bottom = ({ onClose, children, description, isOpen, title }: Props) => {
       }}
     >
       <Drawer.Trigger asChild>
-        <button></button>
       </Drawer.Trigger>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/40" />
