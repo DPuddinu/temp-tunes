@@ -1,10 +1,9 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
-import { Drawer } from "vaul";
 import useMediaQuery from "~/hooks/use-media-query";
 
 type Props = {
-  title?: string | null | undefined;
+  title: string;
   description?: string;
   children?: React.ReactNode;
 } & BaseModalProps;
@@ -105,36 +104,45 @@ const Center = ({ onClose, isOpen, description, title, children }: Props) => {
 
 const Bottom = ({ onClose, children, description, isOpen, title }: Props) => {
   return (
-    <Drawer.Root
-      fixedHeight
-      open={isOpen}
-      onOpenChange={(open) => {
-        if (!open) {
-          onClose();
-        }
-      }}
-    >
-      <Drawer.Trigger asChild>
-      </Drawer.Trigger>
-      <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 bg-black/40" />
-        <Drawer.Content className="fixed bottom-0 left-0 right-0 mt-24 flex flex-col rounded-t-[10px] bg-base-100">
-          <div className="flex-1 rounded-t-[10px] bg-base-100 ">
-            <div className="pt-4">
-              <div className="mx-auto mb-8 h-1.5 w-12 flex-shrink-0 rounded-full bg-base-content" />
-            </div>
-            <Drawer.Title className="mb-4 border-b-[1px] border-b-base-content pb-2 text-center font-medium text-base-content">
-              {title}
-            </Drawer.Title>
-            {description && (
-              <Drawer.Description className="mt-2">
-                <p className="text-md border-t pt-2 ">{description}</p>
-              </Drawer.Description>
-            )}
-            <div className="p-4 text-base-content"> {children}</div>
-          </div>
-        </Drawer.Content>
-      </Drawer.Portal>
-    </Drawer.Root>
+    <Transition show={isOpen}>
+      <Dialog
+        as="div"
+        className="fixed bottom-0 left-0 z-10 w-screen overflow-hidden"
+        onClose={onClose}
+      >
+        <div className="flex min-h-screen items-end justify-center text-center backdrop-blur-sm">
+          <Dialog.Overlay className="fixed inset-0 z-0 bg-black/40" />
+
+          <Transition.Child
+            as={Fragment}
+            enter="ease-in-out duration-300"
+            enterFrom="translate-y-full"
+            enterTo=""
+            leave="ease-in-out duration-200"
+            leaveFrom=""
+            leaveTo="translate-y-full"
+          >
+            <Dialog.Panel className="z-50 w-full overflow-y-auto rounded-t-[10px] bg-base-100 text-left shadow-xl">
+              <div className="pt-4">
+                <div className="mx-auto mb-8 h-1.5 w-12 flex-shrink-0 rounded-full bg-base-content" />
+              </div>
+              {title && (
+                <Dialog.Title className="mb-4 border-b-[1px] border-b-base-content pb-2 text-center font-medium text-base-content">
+                  {title}
+                </Dialog.Title>
+              )}
+              {description && (
+                <Dialog.Description className="mt-2">
+                  <p className="text-md border-t pt-2 text-base-content ">
+                    {description}
+                  </p>
+                </Dialog.Description>
+              )}
+              <div className=" p-2 text-base-content">{children}</div>
+            </Dialog.Panel>
+          </Transition.Child>
+        </div>
+      </Dialog>
+    </Transition>
   );
 };
