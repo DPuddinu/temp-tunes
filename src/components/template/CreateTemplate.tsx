@@ -214,7 +214,7 @@ function CreateTemplate({ data }: props) {
                 <input
                   ref={entryRef}
                   type="text"
-                  placeholder={t_template("type_here") ?? ""}
+                  placeholder={t("type_here") ?? ""}
                   className="input w-full  grow outline-none"
                 />
                 {errors?.entries?.message && (

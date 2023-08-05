@@ -1,7 +1,8 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, useState, type DragEvent, type TouchEvent } from "react";
 import useMediaQuery from "~/hooks/use-media-query";
-import { usePreventScroll } from "~/hooks/use-prevent-scroll";
+
+const minSwipeDistance = 50;
 
 type Props = {
   title: string;
@@ -104,6 +105,24 @@ const Center = ({ onClose, isOpen, description, title, children }: Props) => {
 };
 
 const Bottom = ({ onClose, children, description, isOpen, title }: Props) => {
+  const [touchStart, setTouchStart] = useState<number>(0);
+  const [touchEnd, setTouchEnd] = useState<number>(0);
+
+  const onTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+    setTouchEnd(0); // otherwise the swipe is fired even with usual touch events
+    if (e.targetTouches.item(0)) setTouchStart(e.targetTouches.item(0).clientY);
+  };
+
+  const onTouchMove = (e: TouchEvent<HTMLDivElement>) =>
+    setTouchEnd(e.targetTouches.item(0).clientY);
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isSwipeDown = distance < -minSwipeDistance;
+    if (isLeftSwipe || isSwipeDown) onClose();
+  };
   return (
     <Transition show={isOpen}>
       <Dialog
@@ -123,7 +142,12 @@ const Bottom = ({ onClose, children, description, isOpen, title }: Props) => {
             leaveFrom=""
             leaveTo="translate-y-full"
           >
-            <Dialog.Panel className="z-50 w-full overflow-y-auto rounded-t-[10px] bg-base-100 text-left shadow-xl">
+            <Dialog.Panel
+              className="z-50 w-full overflow-y-auto rounded-t-[10px] bg-base-100 text-left shadow-xl"
+              onTouchStart={onTouchStart}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEnd}
+            >
               <div className="pt-4">
                 <div className="mx-auto mb-8 h-1.5 w-12 flex-shrink-0 rounded-full bg-base-content" />
               </div>
