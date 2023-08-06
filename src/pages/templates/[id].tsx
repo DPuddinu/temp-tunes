@@ -18,7 +18,6 @@ const CreateTemplate = dynamic(
   }
 );
 
-
 const TemplateById: PageWithLayout = () => {
   const searchParams = useSearchParams();
 
@@ -26,29 +25,20 @@ const TemplateById: PageWithLayout = () => {
   const { setMessage } = useToast();
 
   // prettier-ignore
-  const { isLoading, data: templateData } = api.template.getTemplateById.useQuery(
-      { id: id ?? "" },
-      {
-        queryKey: ["template.getTemplateById", { id: id ?? ""}],
-        onError() {
-          setMessage(`Error: can't get template`);
-        },
-        enabled: id !== undefined,
-      }
-    );
+  const { isLoading, data: templateData } = api.template.getById.useQuery(
+    { id: Number(id ?? -1) },
+    {
+      queryKey: ["template.getById", { id: Number(id ?? -1) }],
+      onError() {
+        setMessage(`Error: can't get template`);
+      },
+      enabled: id !== undefined,
+    }
+  );
   return (
     <section className="flex justify-center">
       {isLoading && <CreateTemplateSkeleton />}
-      {templateData && (
-        <CreateTemplate
-          data={{
-            id: templateData?.id ?? "",
-            name: templateData?.name ?? "",
-            entries: templateData?.templateEntries ?? [],
-            description: templateData?.description ?? "",
-          }}
-        />
-      )}
+      {templateData && <CreateTemplate data={templateData} />}
     </section>
   );
 };

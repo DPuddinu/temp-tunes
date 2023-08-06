@@ -2,16 +2,18 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
-  const thirtyDaySongChallenge = await prisma.playlistTemplate.create({
+  const thirtyDaySongChallenge = await prisma.template.create({
     data: {
       name: '30 Day Song Challenge',
       description: '30 songs for 30 days, each one with a unique theme',
       type: 'EXPLORE',
+      public: true,
+      userName: 'Admin',
       color: 'bg-blue-500',
       author: {
         create: {
           type: 'ADMIN',
-          name: 'Admin',
+          name: 'ThePuddu',
         }
       },
       templateEntries: {

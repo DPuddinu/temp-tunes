@@ -22,7 +22,7 @@ const TemplateList = dynamic(
 const Templates: PageWithLayout = () => {
   const { setMessage } = useToast();
   const { t } = useTranslation("templates");
-  const { data, isLoading } = api.template.getUserTemplates.useQuery(
+  const { data, isLoading } = api.template.getByCurrentUser.useQuery(
     undefined,
     {
       onError(error) {

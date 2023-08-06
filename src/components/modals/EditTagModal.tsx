@@ -39,8 +39,7 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
   //prettier-ignore
   const {mutate } = api.tags.setTagsByTrack.useMutation({
     async onSuccess() {
-      const msg = t('updated_tags')
-      setMessage(msg);
+      setMessage(`${t("updated")} tags`);
       onClose();
       utils.tags.orderTagsByName.invalidate();
     },

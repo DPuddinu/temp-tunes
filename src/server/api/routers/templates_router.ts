@@ -4,12 +4,11 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { TemplateEntrySchema, type TemplateSchemaEntryType } from "~/types/zod-schemas";
 
 export const templatesRouter = createTRPCRouter({
-
-  createTemplate: protectedProcedure.input(
+  create: protectedProcedure.input(
     z.object({
       name: z.string(),
       description: z.string().optional(),
-      entries: TemplateEntrySchema.array()
+      entries: z.string().min(3).array()
     })
   )
     .mutation(async ({ ctx, input }) => {
@@ -18,26 +17,39 @@ export const templatesRouter = createTRPCRouter({
         throw new TRPCError({ message: "Username is required", code: "BAD_REQUEST" })
       }
 
-      return await ctx.prisma.playlistTemplate.create({
+      return await ctx.prisma.template.create({
         data: {
           type: 'CUSTOM',
           userId: ctx.session.user.id,
+          public: true,
+          userName: ctx.session.user.name,
           description: description,
           name: name,
           templateEntries: {
             createMany: {
-              data: entries
+              data: entries.map(t => {
+                return {
+                  entry: t
+                }
+              })
             }
           },
+        },
+        include: {
+          templateEntries: true
         }
       })
     }),
-  editTemplate: protectedProcedure.input(
+  edit: protectedProcedure.input(
     z.object({
-      id: z.string(),
+      id: z.number(),
       name: z.string(),
       description: z.string().optional(),
-      new_entries: TemplateEntrySchema.array(),
+      new_entries: z
+        .object({
+          templateId: z.string().optional(),
+          entry: z.string().min(3),
+        }).array(),
       old_entries: TemplateEntrySchema.array(),
     })
   )
@@ -48,11 +60,11 @@ export const templatesRouter = createTRPCRouter({
         ctx.prisma.templateEntry.deleteMany({
           where: {
             id: {
-              in: old_entries.map((entry: TemplateSchemaEntryType) => entry.id ?? ''),
+              in: old_entries.map((entry: TemplateSchemaEntryType) => entry.id),
             },
           },
         }),
-        ctx.prisma.playlistTemplate.update({
+        ctx.prisma.template.update({
           where: {
             id: id
           },
@@ -73,14 +85,14 @@ export const templatesRouter = createTRPCRouter({
       ]);
       return await updateEntries
     }),
-  getTemplateById: protectedProcedure.input(
+  getById: protectedProcedure.input(
     z.object({
-      id: z.string(),
+      id: z.number(),
     })
   )
     .query(async ({ ctx, input }) => {
       const { id } = input;
-      return ctx.prisma.playlistTemplate.findFirst({
+      return ctx.prisma.template.findFirst({
         where: {
           userId: ctx.session.user.id,
           id: id
@@ -90,15 +102,15 @@ export const templatesRouter = createTRPCRouter({
         }
       })
     }),
-  importTemplateById: protectedProcedure.input(
+  importById: protectedProcedure.input(
     z.object({
-      id: z.string(),
+      id: z.number(),
     })
   )
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
 
-      const template = await ctx.prisma.playlistTemplate.findFirst({
+      const template = await ctx.prisma.template.findFirst({
         where: {
           id: id
         },
@@ -110,10 +122,12 @@ export const templatesRouter = createTRPCRouter({
         code: "BAD_REQUEST",
         message: "not_found"
       })
-      return await ctx.prisma.playlistTemplate.create({
+      return await ctx.prisma.template.create({
         data: {
           type: "CUSTOM",
           name: template?.name,
+          public: template?.public,
+          userName: template?.userName,
           description: template?.description,
           templateEntries: {
             createMany: {
@@ -124,7 +138,7 @@ export const templatesRouter = createTRPCRouter({
               })
             }
           },
-          
+
           userId: ctx.session.user.id,
         },
         include: {
@@ -133,10 +147,10 @@ export const templatesRouter = createTRPCRouter({
       })
     }),
 
-  getUserTemplates: protectedProcedure
+  getByCurrentUser: protectedProcedure
     .query(async ({ ctx }) => {
 
-      return ctx.prisma.playlistTemplate.findMany({
+      return ctx.prisma.template.findMany({
         where: {
           userId: ctx.session.user.id
         },
@@ -145,21 +159,21 @@ export const templatesRouter = createTRPCRouter({
         }
       })
     }),
-  getTemplatesByUser: protectedProcedure.input(
+  getByUser: protectedProcedure.input(
     z.object({
       userId: z.string(),
     })
   )
     .query(async ({ ctx, input }) => {
       const { userId } = input;
-      return ctx.prisma.playlistTemplate.findMany({
+      return ctx.prisma.template.findMany({
         where: {
           userId: userId
         }
       })
     }),
-  deleteTemplate: protectedProcedure.input(
-    z.object({ id: z.string(), entries: z.string().array() })
+  delete: protectedProcedure.input(
+    z.object({ id: z.number(), entries: z.number().array() })
   ).mutation(async ({ ctx, input }) => {
 
     const { id, entries } = input;
@@ -172,7 +186,7 @@ export const templatesRouter = createTRPCRouter({
           },
         },
       }),
-      ctx.prisma.playlistTemplate.delete({
+      ctx.prisma.template.delete({
         where: {
           id: id
         },
@@ -180,8 +194,18 @@ export const templatesRouter = createTRPCRouter({
     ]);
     return await deleteEntries
   }),
-  getExploreTemplates: protectedProcedure.query(async ({ ctx }) => {
-    return ctx.prisma.playlistTemplate.findMany({
+  getExplore: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.prisma.template.findMany({
+      where: {
+        type: 'EXPLORE'
+      },
+      include: {
+        templateEntries: true
+      }
+    })
+  }),
+  getLatest: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.prisma.template.findMany({
       where: {
         type: 'EXPLORE'
       },

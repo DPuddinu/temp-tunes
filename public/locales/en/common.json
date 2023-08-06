@@ -16,6 +16,7 @@
   "share": "Share",
   "delete": "Delete",
   "update": "Update",
+  "updated": "updated",
   "import": "Import",
   "create_playlist": "Create playlist",
   "save": "Save",
@@ -27,7 +28,6 @@
   "name_min_len": "Name too short",
   "name_max_len": "Name too long",
   "error": "Something went wrong",
-  "updated": "updated",
   "confirm": "Confirm",
   "type_here": "Type Here..."
 }

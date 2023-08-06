@@ -1,4 +1,4 @@
-import { type PlaylistTemplate, type TemplateEntry } from "@prisma/client";
+import { type Template, type TemplateEntry } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import TemplateCard from "./TemplateCard";
@@ -6,7 +6,7 @@ import TemplateCard from "./TemplateCard";
 const TemplateList = ({
   data,
 }: {
-  data: (PlaylistTemplate & {
+  data: (Template & {
     templateEntries: TemplateEntry[];
   })[];
 }) => {
@@ -17,7 +17,6 @@ const TemplateList = ({
       {data.map((template, i) => (
         <TemplateCard
           color={template.color}
-          isNew={false}
           actions={[
             {
               label: t("create_playlist"),

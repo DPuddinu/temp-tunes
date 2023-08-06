@@ -143,7 +143,7 @@ const Bottom = ({ onClose, children, description, isOpen, title }: Props) => {
             leaveTo="translate-y-full"
           >
             <Dialog.Panel
-              className="z-50 w-full overflow-y-auto rounded-t-[10px] bg-base-100 text-left shadow-xl"
+              className="z-50 min-h-[50vh] w-full overflow-y-auto rounded-t-[10px] bg-base-100 text-left shadow-xl"
               onTouchStart={onTouchStart}
               onTouchMove={onTouchMove}
               onTouchEnd={onTouchEnd}

@@ -57,13 +57,13 @@ export const PlaylistSchema = z.object({
 });
 
 export const TemplateEntrySchema = z.object({
-  id: z.string().optional(),
-  templateId: z.string().optional(),
+  id: z.number(),
+  templateId: z.number(),
   entry: z.string().min(3),
 })
 
 export const TemplateSchema = z.object({
-  id: z.string().optional(),
+  id: z.number(),
   userId: z.string(),
   name: z.string(),
   description: z.string().optional(),

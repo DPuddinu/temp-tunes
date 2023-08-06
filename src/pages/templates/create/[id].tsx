@@ -51,17 +51,17 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
   const mounted = useMounted();
 
   // prettier-ignore
-  const { isLoading, data: templateData } = api.template.getTemplateById.useQuery(
-      { id: id ?? "" },
-      {
-        queryKey: ["template.getTemplateById", { id: id ?? ""}],
-        onError() {
-          const msg = t('get_error')
-          setMessage(msg);
-        },
-        enabled: id !== undefined,
-      }
-    );
+  const { isLoading, data: templateData } = api.template.getById.useQuery(
+    { id: Number(id) ?? -1 },
+    {
+      queryKey: ["template.getById", { id: Number(id) ?? -1 }],
+      onError() {
+        const msg = t("get_error");
+        setMessage(msg);
+      },
+      enabled: id !== undefined,
+    }
+  );
 
   const template = useMemo(
     () => templateData?.templateEntries[page],

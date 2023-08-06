@@ -1,4 +1,4 @@
-import { type PlaylistTemplate, type TemplateEntry } from "@prisma/client";
+import { type Template, type TemplateEntry } from "@prisma/client";
 import { useTranslation } from "next-i18next";
 import { useToast } from "~/hooks/use-toast";
 import { api } from "~/utils/api";
@@ -6,7 +6,7 @@ import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
 import BaseModal, { type BaseModalProps } from "./BaseModal";
 
 type Props = {
-  template: PlaylistTemplate & {
+  template: Template & {
     templateEntries: TemplateEntry[];
   };
   isOpen: boolean;
@@ -15,9 +15,9 @@ type Props = {
 export const DeleteTemplateModal = ({ onClose, template, isOpen }: Props) => {
   const { t } = useTranslation("templates");
   const { setMessage } = useToast();
-  const utils = api.useContext().template.getUserTemplates;
+  const utils = api.useContext().template.getByCurrentUser;
 
-  const { mutate: deleteTemplate } = api.template.deleteTemplate.useMutation({
+  const { mutate: deleteTemplate } = api.template.delete.useMutation({
     async onMutate({ id }) {
       await utils.cancel();
       const prevData = utils.getData();

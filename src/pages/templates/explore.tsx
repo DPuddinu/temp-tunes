@@ -23,27 +23,24 @@ const Explore: PageWithLayout = () => {
   const { t } = useTranslation("templates");
   const { setMessage } = useToast();
   const router = useRouter();
-  const utils = api.useContext().template.getUserTemplates;
+  const utils = api.useContext().template.getByCurrentUser;
 
-  const { data, isLoading } = api.template.getExploreTemplates.useQuery(
-    undefined,
-    {
-      onError(err) {
-        const msg = t(err.message);
-        setMessage(msg);
-      },
-    }
-  );
+  const { data, isLoading } = api.template.getExplore.useQuery(undefined, {
+    onError(err) {
+      const msg = t(err.message);
+      setMessage(msg);
+    },
+  });
 
-  const { mutate } = api.template.importTemplateById.useMutation({
+  const { mutate } = api.template.importById.useMutation({
     async onSuccess(data) {
       setMessage(`${t("import_success")}`);
       utils.setData(undefined, (old) => {
-        if(old){
-          return [data, ...old]
+        if (old) {
+          return [data, ...old];
         }
       });
-      router.push('/templates')
+      router.push("/templates");
     },
     onError() {
       setMessage(`${t("import_error")}`);

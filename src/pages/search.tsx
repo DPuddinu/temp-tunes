@@ -1,4 +1,5 @@
 import MainLayout from "@components/MainLayout";
+import { Listbox, Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type ColumnDef } from "@tanstack/react-table";
 import { getCookie } from "cookies-next";
@@ -6,9 +7,10 @@ import type { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
+import { getTagColumns, getTrackColumns } from "~/components/search/columns";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { ArrowSVG, SearchSVG } from "~/components/ui/icons/index";
 import { usePlaylistStore } from "~/core/userStore";
@@ -18,9 +20,6 @@ import type { Language, PageWithLayout } from "~/types/page-types";
 import { type Playlist } from "~/types/spotify-types";
 import { SearchTypeConst, type SearchType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
-import { Listbox, Transition } from "@headlessui/react";
-import { Fragment } from "react";
-import { getTagColumns, getTrackColumns } from "~/components/search/columns";
 
 //prettier-ignore
 const DataTable = dynamic(() => import("~/components/ui/DataTable"), {loading: () => <div></div>});
@@ -136,7 +135,7 @@ const Search: PageWithLayout = () => {
                       <Listbox.Option
                         value={type}
                         key={type}
-                        className="cursor-pointer relative select-none py-2 pl-2 pr-4 hover:bg-base-100 rounded-lg"
+                        className="relative cursor-pointer select-none rounded-lg py-2 pl-2 pr-4 hover:bg-base-100"
                       >
                         {type}
                       </Listbox.Option>
@@ -165,7 +164,7 @@ const Search: PageWithLayout = () => {
         <LoadingScreen current={currentPlaylist} progress={progress} />
       )}
       {isLoading && <LoadingSpinner />}
-      {data && (
+      {data && !loading && !isLoading && (
         <DataTable
           data={data}
           columns={selectedFilter === "tag" ? tagColumns : trackColumns}

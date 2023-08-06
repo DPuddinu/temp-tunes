@@ -1,6 +1,7 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { type Template, type TemplateEntry } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -13,12 +14,11 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { useMounted } from "~/hooks/use-mounted";
 import { useToast } from "~/hooks/use-toast";
-import { TemplateEntrySchema } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
 import { ArrowDownSVG, ArrowUpSVG, DeleteSVG } from "../ui/icons";
 
 const TemplateFormSchema = z.object({
-  id: z.string().optional(),
+  id: z.number().optional(),
   name: z
     .string()
     .min(3, {
@@ -33,14 +33,19 @@ const TemplateFormSchema = z.object({
       message: "desc_max_len",
     })
     .optional(),
-  entries: TemplateEntrySchema.array().min(1, {
-    message: "entries_min_len",
-  }),
+  entries: z
+    .object({
+      entry: z.string().min(3),
+    })
+    .array()
+    .min(1, {
+      message: "entries_min_len",
+    }),
 });
 export type TemplateFormType = z.infer<typeof TemplateFormSchema>;
 
 interface props {
-  data?: TemplateFormType;
+  data?: Template & { templateEntries: TemplateEntry[] };
 }
 function CreateTemplate({ data }: props) {
   const { setMessage } = useToast();
@@ -52,18 +57,24 @@ function CreateTemplate({ data }: props) {
   const [selectedRow, setSelectedRow] = useState<number | undefined>();
   const mounted = useMounted();
   const router = useRouter();
+  const utils = api.useContext().template.getByCurrentUser;
 
-  const { mutate } = api.template.createTemplate.useMutation({
+  const { mutate } = api.template.create.useMutation({
     onError() {
       setMessage(`${t("error")}`);
     },
-    onSuccess() {
+    async onSuccess(data) {
+      utils.setData(undefined, (old) => {
+        if (old) {
+          return [...old, data];
+        }
+      });
       setMessage(`Template ${t("created")}`);
       router.push("/templates");
     },
   });
 
-  const { mutate: edit } = api.template.editTemplate.useMutation({
+  const { mutate: edit } = api.template.edit.useMutation({
     onError() {
       setMessage(`${t("error")}`);
     },
@@ -91,8 +102,8 @@ function CreateTemplate({ data }: props) {
     if (data) {
       if (data.description && !getValues().description)
         setValue("description", data.description);
-      if (data.entries && getValues().entries.length === 0)
-        replace(data.entries);
+      if (data.templateEntries && getValues().entries.length === 0)
+        replace(data.templateEntries);
       if (data.name && !getValues().name) setValue("name", data.name);
     }
   }, [data]);
@@ -101,7 +112,7 @@ function CreateTemplate({ data }: props) {
     if (data?.id) {
       edit({
         new_entries: _data.entries,
-        old_entries: data.entries,
+        old_entries: data.templateEntries,
         id: data.id,
         name: _data.name,
         description: _data.description,
@@ -110,7 +121,7 @@ function CreateTemplate({ data }: props) {
       mutate({
         name: _data.name,
         description: _data.description,
-        entries: _data.entries,
+        entries: _data.entries.map((t) => t.entry),
       });
     }
   };

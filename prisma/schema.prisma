@@ -17,7 +17,7 @@ model User {
   email             String?            @unique
   image             String?
   type              UserType
-  playlistTemplates PlaylistTemplate[]
+  playlistTemplates Template[]
   Tags              Tag[]
 }
 enum UserType {
@@ -25,17 +25,20 @@ enum UserType {
   USER
 }
 
-model PlaylistTemplate {
-  id              String          @id @default(cuid())
+model Template {
+  id              Int          @id @default(autoincrement())
   userId          String
+  userName        String
   name            String
   description     String?
   color           String?
+  public          Boolean
   type            TemplateType
   templateEntries TemplateEntry[]
   author          User            @relation(fields: [userId], references: [id])
 
   @@index([userId])
+	@@map("Template")
 }
 
 enum TemplateType {
@@ -44,11 +47,10 @@ enum TemplateType {
 }
 
 model TemplateEntry {
-  id               String           @id @default(cuid())
-  templateId       String
-  playlistTemplate PlaylistTemplate @relation(fields: [templateId], references: [id])
+  id               Int           @id @default(autoincrement())
+  templateId       Int
+  playlistTemplate Template @relation(fields: [templateId], references: [id])
   entry            String
-
   @@index([templateId])
 }
 

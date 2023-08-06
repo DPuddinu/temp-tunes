@@ -1,5 +1,5 @@
 import { useClipboard } from "@mantine/hooks";
-import { type PlaylistTemplate, type TemplateEntry } from "@prisma/client";
+import { type Template, type TemplateEntry } from "@prisma/client";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
 import { useState } from "react";
@@ -25,7 +25,7 @@ interface TemplateCardProps {
   color?: string | null;
   actions: cardAction[];
   isNew?: boolean;
-  template: PlaylistTemplate & {
+  template: Template & {
     templateEntries: TemplateEntry[];
   };
   index: number;
@@ -34,7 +34,6 @@ interface TemplateCardProps {
 const TemplateCard = ({
   actions,
   color = "bg-blue-500",
-  isNew = false,
   index,
   template,
 }: TemplateCardProps) => {
@@ -47,7 +46,7 @@ const TemplateCard = ({
 
   return (
     <>
-      <div className="card card-compact min-h-[14rem] w-full max-w-md bg-base-300 shadow-xl">
+      <div className="card-compact card min-h-[14rem] w-full max-w-md bg-base-300 shadow-xl">
         <div
           className={cn(
             "flex h-10 !justify-end rounded-t-2xl pr-2",
@@ -103,12 +102,12 @@ const TemplateCard = ({
           )}
         </div>
         <div className="card-body">
-          <h2 className="card-title">
-            {template.name}
-            {isNew && <div className="badge badge-secondary">NEW</div>}
+          <h2 className="card-title flex flex-col items-start">
+            <p> {template.name}</p>
+            <p className="text-xs">By {template.userName}</p>
           </h2>
 
-          <p>{template.description}</p>
+          <p className="mt-2">{template.description}</p>
           <p
             onClick={() => setOpen((open) => !open)}
             className="hover:cursor-pointer"

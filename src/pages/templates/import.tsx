@@ -31,7 +31,7 @@ const ImportTemplate: PageWithLayout = () => {
   const { t } = useTranslation("templates");
   const mounted = useMounted();
   const router = useRouter();
-  const utils = api.useContext().template.getUserTemplates;
+  const utils = api.useContext().template.getByCurrentUser;
 
   const {
     register,
@@ -39,7 +39,7 @@ const ImportTemplate: PageWithLayout = () => {
     formState: { errors },
   } = useForm<FormSchemaType>({ resolver: zodResolver(FormSchema) });
 
-  const { mutate } = api.template.importTemplateById.useMutation({
+  const { mutate } = api.template.importById.useMutation({
     onError(err) {
       const error = t(err.message);
       setMessage(error);
@@ -55,9 +55,9 @@ const ImportTemplate: PageWithLayout = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<FormSchemaType> = (data) => {
+  const onSubmit: SubmitHandler<FormSchemaType> = ({id}) => {
     mutate({
-      id: data.id,
+      id: Number(id),
     });
   };
 
