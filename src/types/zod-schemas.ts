@@ -8,6 +8,10 @@ export const SearchTypeConst = ["track", "tag"] as const;
 export const SearchTypeEnum = z.enum(SearchTypeConst);
 export type SearchType = z.infer<typeof SearchTypeEnum>;
 
+export const TemplateFiltersConst = ["name", "author"] as const;
+export const TemplateFilterTypeEnum = z.enum(TemplateFiltersConst);
+export type TemplateFilterType = z.infer<typeof TemplateFilterTypeEnum>;
+
 export const TagSchema = z.object({
   id: z.string().optional(),
   spotifyId: z.string(),
