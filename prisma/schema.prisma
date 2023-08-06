@@ -35,7 +35,7 @@ model Template {
   public          Boolean
   type            TemplateType
   templateEntries TemplateEntry[]
-  author          User            @relation(fields: [userId], references: [id])
+  author          User[]
 
   @@index([userId])
 	@@map("Template")

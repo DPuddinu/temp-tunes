@@ -109,44 +109,22 @@ export const templatesRouter = createTRPCRouter({
   )
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
-
-      const template = await ctx.prisma.template.findFirst({
+      return await ctx.prisma.template.update({
         where: {
           id: id
         },
-        include: {
-          templateEntries: true
-        }
-      })
-      if (!template) throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "not_found"
-      })
-      return await ctx.prisma.template.create({
         data: {
-          type: "CUSTOM",
-          name: template?.name,
-          public: template?.public,
-          userName: template?.userName,
-          description: template?.description,
-          templateEntries: {
-            createMany: {
-              data: template?.templateEntries.map(t => {
-                return {
-                  entry: t.entry
-                }
-              })
+          author: {
+            connect: {
+              id: ctx.session.user.id
             }
-          },
-
-          userId: ctx.session.user.id,
+          }
         },
         include: {
           templateEntries: true
         }
       })
     }),
-
   getByCurrentUser: protectedProcedure
     .query(async ({ ctx }) => {
 
@@ -207,11 +185,14 @@ export const templatesRouter = createTRPCRouter({
   getLatest: protectedProcedure.query(async ({ ctx }) => {
     return ctx.prisma.template.findMany({
       where: {
-        type: 'EXPLORE'
+        userId: {
+          not: ctx.session.user.id
+        }
       },
       include: {
         templateEntries: true
-      }
+      },
+      take: 20
     })
   }),
 });

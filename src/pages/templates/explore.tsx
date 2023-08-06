@@ -25,7 +25,7 @@ const Explore: PageWithLayout = () => {
   const router = useRouter();
   const utils = api.useContext().template.getByCurrentUser;
 
-  const { data, isLoading } = api.template.getExplore.useQuery(undefined, {
+  const { data, isLoading } = api.template.getLatest.useQuery(undefined, {
     onError(err) {
       const msg = t(err.message);
       setMessage(msg);

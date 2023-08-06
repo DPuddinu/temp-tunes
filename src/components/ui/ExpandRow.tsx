@@ -1,18 +1,10 @@
 import { Transition } from "@headlessui/react";
-import styled from "styled-components";
 
 interface RowValueProps {
   value: string;
   width: number;
   color: string;
 }
-const Row = styled.div<RowValueProps>`
-  &:after {
-    content: "${(p) => p.value}";
-  }
-  width: ${(p) => p.width}%;
-  background: ${(p) => p.color};
-`;
 
 export const ExpandRow = ({ color, value, width }: RowValueProps) => (
   <Transition
@@ -26,11 +18,9 @@ export const ExpandRow = ({ color, value, width }: RowValueProps) => (
     leaveFrom="w-full"
     leaveTo="w-0"
   >
-    <Row
-      className="flex items-center justify-center rounded-full px-5 py-0 text-center text-sm font-semibold text-accent-content after:flex after:items-center after:justify-center"
-      color={color}
-      value={value}
-      width={width}
-    />
+    <div
+      className="rounded-full px-5 py-0 text-center text-sm font-semibold text-accent-content flex items-center justify-center"
+      style={{width: `${width}%`, background: color}}
+    >{value}</div>
   </Transition>
 );
