@@ -231,7 +231,7 @@ function CreateTemplate({ data }: props) {
                 {errors?.entries?.message && (
                   <label className="label">
                     <span className="label-text-alt text-error">
-                      {t(errors?.entries?.message)}
+                      {t_template(errors?.entries?.message)}
                     </span>
                   </label>
                 )}

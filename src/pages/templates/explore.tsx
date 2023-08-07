@@ -59,7 +59,7 @@ const Explore: PageWithLayout = () => {
   });
 
   return (
-    <section className="flex flex-col justify-center gap-4">
+    <section className="flex w-full flex-col justify-center gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3">
       {/* {data && (
         <TemplateFilter
           selectedFilter={selectedFilter}

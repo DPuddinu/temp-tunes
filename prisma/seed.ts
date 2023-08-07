@@ -8,6 +8,7 @@ async function main() {
       description: '30 songs for 30 days, each one with a unique theme',
       type: 'EXPLORE',
       public: true,
+      userId: 'Admin',
       userName: 'Admin',
       color: 'bg-blue-500',
       author: {
@@ -114,7 +115,6 @@ async function main() {
       }
     }
   })
-
   console.log({ thirtyDaySongChallenge })
 }
 main()

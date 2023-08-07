@@ -2,7 +2,7 @@
   "name": "next-spotify-manager",
   "version": "0.1.0",
   "prisma": {
-    "seed": "ts-node --esm prisma/seed.ts"
+    "seed": "ts-node --esm prisma/seed_test.ts"
   },
   "private": true,
   "scripts": {
@@ -60,6 +60,7 @@
     "zustand": "^4.3.6"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.0.2",
     "@types/eslint": "^8.21.1",
     "@types/node": "^18.14.2",
     "@types/prettier": "^2.7.2",
