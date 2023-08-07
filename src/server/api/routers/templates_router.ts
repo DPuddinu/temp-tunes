@@ -186,7 +186,9 @@ export const templatesRouter = createTRPCRouter({
     return ctx.prisma.template.findMany({
       where: {
         userId: {
-          not: ctx.session.user.id
+          not: {
+            equals: ctx.session.user.id
+          }
         }
       },
       include: {
