@@ -12,6 +12,15 @@ export const TemplateFiltersConst = ["name", "author"] as const;
 export const TemplateFilterTypeEnum = z.enum(TemplateFiltersConst);
 export type TemplateFilterType = z.infer<typeof TemplateFilterTypeEnum>;
 
+export const TemplateFilterSchema = z.object({
+  value: z
+    .string()
+    .min(3, { message: "search_errors.short" })
+    .max(18, { message: "search_errors.long" }),
+  type: TemplateFilterTypeEnum,
+})
+export type TemplateFilterSchemaType = z.infer<typeof TemplateFilterSchema>;
+
 export const TagSchema = z.object({
   id: z.string().optional(),
   spotifyId: z.string(),

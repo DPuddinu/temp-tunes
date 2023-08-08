@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { TemplateEntrySchema, type TemplateSchemaEntryType } from "~/types/zod-schemas";
+import { TemplateEntrySchema, TemplateFilterTypeEnum, type TemplateSchemaEntryType } from "~/types/zod-schemas";
 
 export const templatesRouter = createTRPCRouter({
   create: protectedProcedure.input(
@@ -184,6 +184,10 @@ export const templatesRouter = createTRPCRouter({
   }),
   getLatest: protectedProcedure.input(
     z.object({
+      filter: z.object({
+        value: z.string(),
+        type: TemplateFilterTypeEnum
+      }).nullish(),
       limit: z.number().min(1).max(100).nullish(),
       skip: z.number().optional(),
       cursor: z.number().nullish(), // <-- "cursor" needs to exist, but can be any type
@@ -191,8 +195,7 @@ export const templatesRouter = createTRPCRouter({
   ).query(async ({ ctx, input }) => {
 
     const limit = input.limit ?? 50
-    const { cursor, skip } = input;
-
+    const { cursor, skip, filter } = input;
 
     const items = await ctx.prisma.template.findMany({
       take: limit + 1,
@@ -206,6 +209,12 @@ export const templatesRouter = createTRPCRouter({
           not: {
             equals: ctx.session.user.id
           }
+        },
+        name: {
+          contains: filter?.type === "name" ? filter?.value : undefined
+        },
+        userName: {
+          contains: filter?.type === "author" ? filter?.value : undefined
         }
       },
       include: {

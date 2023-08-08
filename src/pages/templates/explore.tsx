@@ -12,7 +12,7 @@ import { TemplateSkeleton } from "~/components/ui/skeletons/TemplatesSkeleton";
 import { langKey } from "~/hooks/use-language";
 import { useToast } from "~/hooks/use-toast";
 import { type Language, type PageWithLayout } from "~/types/page-types";
-import type { TemplateFilterType } from "~/types/zod-schemas";
+import type { TemplateFilterSchemaType, TemplateFilterType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
 
 const TemplateCard = dynamic(
@@ -35,14 +35,14 @@ const Explore: PageWithLayout = () => {
   const router = useRouter();
   const utils = api.useContext().template.getByCurrentUser;
   const [page, setPage] = useState(0);
-
+  const [filter, setFilter] = useState<TemplateFilterSchemaType>();
   // prettier-ignore
-  const [selectedFilter, setSelectedFilter] = useState<TemplateFilterType>("name");
 
   // prettier-ignore
   const { data, isLoading, fetchNextPage } = api.template.getLatest.useInfiniteQuery(
       {
         limit: 6,
+        filter: filter
       },
       {
         getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -80,13 +80,10 @@ const Explore: PageWithLayout = () => {
 
   return (
     <section className="flex flex-col gap-2">
-      {/* {data && (
-        <TemplateFilter
-          selectedFilter={selectedFilter}
-          setSelectedFilter={(t) => setSelectedFilter(t)}
-          onSubmit={() => false}
-        />
-      )} */}
+      {data && <TemplateFilter filter={filter} onSubmit={(filter) => {
+        setFilter(filter);
+        setPage(0);
+      }} />}
       <div className="flex w-full flex-col justify-center gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3">
         {_data?.map((temp, i) => (
           <TemplateCard

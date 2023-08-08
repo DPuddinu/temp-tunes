@@ -1,41 +1,28 @@
-import { Listbox, Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Fragment } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { z } from "zod";
 import {
+  TemplateFilterSchema,
   TemplateFiltersConst,
-  type TemplateFilterType,
+  type TemplateFilterSchemaType,
 } from "~/types/zod-schemas";
-import { ArrowSVG, SearchSVG } from "../ui/icons";
-
-const SearchFormSchema = z.object({
-  name: z
-    .string()
-    .min(3, { message: "search_errors.short" })
-    .max(18, { message: "search_errors.long" }),
-});
-type SearchFormSchemaType = z.infer<typeof SearchFormSchema>;
+import { SearchSVG } from "../ui/icons";
 
 interface props {
-  setSelectedFilter: (data: TemplateFilterType) => void;
-  selectedFilter: TemplateFilterType;
-  onSubmit: (data: SearchFormSchemaType) => void;
+  filter: TemplateFilterSchemaType | undefined;
+  onSubmit: (data: TemplateFilterSchemaType | undefined) => void;
 }
-const TemplateFilter = ({
-  selectedFilter,
-  setSelectedFilter,
-  onSubmit,
-}: props) => {
+const TemplateFilter = ({ onSubmit, filter }: props) => {
   const { t } = useTranslation("templates");
-
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SearchFormSchemaType>({
-    resolver: zodResolver(SearchFormSchema),
+  } = useForm<TemplateFilterSchemaType>({
+    defaultValues: {
+      type: "name",
+    },
+    resolver: zodResolver(TemplateFilterSchema),
   });
 
   return (
@@ -44,19 +31,15 @@ const TemplateFilter = ({
         <div className="join relative h-5 w-full">
           <div className="h-16">
             <input
-              {...register("name")}
+              {...register("value")}
               type="text"
               placeholder={t("search") ?? "..."}
               className="input join-item w-full grow bg-secondary-content sm:max-w-sm "
             />
           </div>
-
           <select
-            value={selectedFilter}
             className="select-bordered select w-full max-w-[8rem] rounded-none"
-            onChange={(e) =>
-              setSelectedFilter(e.target.value as TemplateFilterType)
-            }
+            {...register("type")}
           >
             {TemplateFiltersConst.map((type) => (
               <option
@@ -77,12 +60,22 @@ const TemplateFilter = ({
         </div>
       </form>
 
-      {errors.name?.message && (
+      {errors.value?.message && (
         <label className="label text-error">
           <span className="label-text-alt mt-2 font-bold text-error">
-            {t(errors.name?.message ?? "Not Valid")}
+            {t(errors.value?.message ?? "Not Valid")}
           </span>
         </label>
+      )}
+      {filter && (
+        <div className="indicator mt-8" onClick={() => onSubmit(undefined)}>
+          <span className="badge badge-secondary indicator-item h-4 text-xs font-bold cursor-pointer hover:scale-105 transition-transform">
+            x
+          </span>
+          <div className="grid  place-items-center rounded-lg bg-base-300 p-4">
+            {filter.type} : {filter.value}
+          </div>
+        </div>
       )}
     </div>
   );
