@@ -1,5 +1,4 @@
 import MainLayout from "@components/MainLayout";
-import { Listbox, Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type ColumnDef } from "@tanstack/react-table";
 import { getCookie } from "cookies-next";
@@ -7,12 +6,12 @@ import type { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
-import { Fragment, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { getTagColumns, getTrackColumns } from "~/components/search/columns";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
-import { ArrowSVG, SearchSVG } from "~/components/ui/icons/index";
+import { SearchSVG } from "~/components/ui/icons/index";
 import { usePlaylistStore } from "~/core/userStore";
 import { langKey } from "~/hooks/use-language";
 import { useLibrary } from "~/hooks/use-library";
@@ -116,34 +115,22 @@ const Search: PageWithLayout = () => {
               />
             </div>
 
-            <Listbox value={selectedFilter} onChange={setSelectedFilter}>
-              <div className="join-item relative ">
-                <Listbox.Button className=" h-12 w-20 cursor-pointer justify-between bg-base-300 p-2 text-left focus:outline-none sm:text-sm">
-                  <div className="flex items-center justify-between">
-                    <span>{selectedFilter}</span>
-                    <ArrowSVG />
-                  </div>
-                </Listbox.Button>
-                <Transition
-                  as={Fragment}
-                  leave="transition ease-in duration-100"
-                  leaveFrom="opacity-100"
-                  leaveTo="opacity-0"
+            <select
+              value={selectedFilter}
+              className="select-bordered select w-full max-w-[8rem] rounded-none"
+              onChange={(e) => setSelectedFilter(e.target.value as SearchType)}
+            >
+              {SearchTypeConst.map((type) => (
+                <option
+                  value={type}
+                  key={type}
+                  className="h-10 cursor-pointer select-none text-lg text-base-content hover:bg-base-100"
                 >
-                  <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-base-300 p-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                    {SearchTypeConst.map((type) => (
-                      <Listbox.Option
-                        value={type}
-                        key={type}
-                        className="relative cursor-pointer select-none rounded-lg py-2 pl-2 pr-4 hover:bg-base-100"
-                      >
-                        {type}
-                      </Listbox.Option>
-                    ))}
-                  </Listbox.Options>
-                </Transition>
-              </div>
-            </Listbox>
+                  {type}
+                </option>
+              ))}
+            </select>
+
             <div className="indicator h-16">
               <button type="submit" className="join-item btn bg-base-300">
                 <SearchSVG />

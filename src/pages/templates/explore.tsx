@@ -3,10 +3,11 @@ import type { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import MainLayout from "~/components/MainLayout";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
+import PaginationComponent from "~/components/ui/PaginationComponent";
 import { TemplateSkeleton } from "~/components/ui/skeletons/TemplatesSkeleton";
 import { langKey } from "~/hooks/use-language";
 import { useToast } from "~/hooks/use-toast";
@@ -33,15 +34,32 @@ const Explore: PageWithLayout = () => {
   const { setMessage } = useToast();
   const router = useRouter();
   const utils = api.useContext().template.getByCurrentUser;
+  const [page, setPage] = useState(0);
 
   // prettier-ignore
   const [selectedFilter, setSelectedFilter] = useState<TemplateFilterType>("name");
-  const { data, isLoading } = api.template.getLatest.useQuery(undefined, {
-    onError(err) {
-      const msg = t(err.message);
-      setMessage(msg);
-    },
-  });
+
+  // prettier-ignore
+  const { data, isLoading, fetchNextPage } = api.template.getLatest.useInfiniteQuery(
+      {
+        limit: 6,
+      },
+      {
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+        onError(err) {
+          const msg = t(err.message);
+          setMessage(msg);
+        },
+      }
+    );
+  const handleFetchNextPage = () => {
+    fetchNextPage();
+    setPage((prev) => prev + 1);
+  };
+
+  const handleFetchPreviousPage = () => {
+    setPage((prev) => prev - 1);
+  };
 
   const { mutate } = api.template.importById.useMutation({
     async onSuccess(data) {
@@ -58,8 +76,10 @@ const Explore: PageWithLayout = () => {
     },
   });
 
+  const _data = data?.pages[page]?.items;
+
   return (
-    <section className="flex w-full flex-col justify-center gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3">
+    <section className="flex flex-col gap-2">
       {/* {data && (
         <TemplateFilter
           selectedFilter={selectedFilter}
@@ -67,25 +87,33 @@ const Explore: PageWithLayout = () => {
           onSubmit={() => false}
         />
       )} */}
-      {data?.map((temp, i) => (
-        <TemplateCard
-          key={temp.name}
-          color={temp.color ?? ""}
-          index={i}
-          template={temp}
-          isNew
-          actions={[
-            {
-              label: t("import"),
-              onClick: () =>
-                mutate({
-                  id: temp.id,
-                }),
-            },
-          ]}
-        />
-      ))}
-      {isLoading && <TemplateSkeleton />}
+      <div className="flex w-full flex-col justify-center gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3">
+        {_data?.map((temp, i) => (
+          <TemplateCard
+            key={temp.name}
+            color={temp.color ?? ""}
+            index={i}
+            template={temp}
+            isNew
+            actions={[
+              {
+                label: t("import"),
+                onClick: () =>
+                  mutate({
+                    id: temp.id,
+                  }),
+              },
+            ]}
+          />
+        ))}
+        {isLoading && <TemplateSkeleton />}
+      </div>
+      <PaginationComponent
+        onNext={handleFetchNextPage}
+        onPrev={handleFetchPreviousPage}
+        nextDisabled={!data?.pages[page]?.nextCursor}
+        prevDisabled={page === 0}
+      />
     </section>
   );
 };
