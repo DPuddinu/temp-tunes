@@ -29,5 +29,6 @@
   "name_max_len": "Name too long",
   "error": "Something went wrong",
   "confirm": "Confirm",
-  "type_here": "Type Here..."
+  "type_here": "Type Here...",
+  "author": "Author"
 }

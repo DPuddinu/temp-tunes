@@ -14,6 +14,8 @@ interface props {
 }
 const TemplateFilter = ({ onSubmit, filter }: props) => {
   const { t } = useTranslation("templates");
+  const { t: t_common } = useTranslation("common");
+
   const {
     register,
     handleSubmit,
@@ -69,11 +71,12 @@ const TemplateFilter = ({ onSubmit, filter }: props) => {
       )}
       {filter && (
         <div className="indicator mt-8" onClick={() => onSubmit(undefined)}>
-          <span className="badge badge-secondary indicator-item h-4 text-xs font-bold cursor-pointer hover:scale-105 transition-transform">
+          <span className="badge badge-secondary indicator-item h-4 cursor-pointer text-xs font-bold transition-transform hover:scale-105">
             x
           </span>
-          <div className="grid  place-items-center rounded-lg bg-base-300 p-4">
-            {filter.type} : {filter.value}
+          <div className="grid  place-items-center rounded-lg bg-base-300 p-2">
+            {filter.type === "author" ? t_common("author") : t_common("name")} :{" "}
+            {filter.value}
           </div>
         </div>
       )}

@@ -29,5 +29,6 @@
   "error": "Qualcosa è andato storto",
   "updated": "aggiornato",
   "confirm": "Conferma",
-  "type_here": "Scrivi qui..."
+  "type_here": "Scrivi qui...",
+  "author": "Autore"
 }
