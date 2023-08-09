@@ -1,4 +1,8 @@
-/** @type {import('next-i18next').UserConfig} */
+// @ts-check
+
+/**
+ * @type {import('next-i18next').UserConfig}
+ */
 module.exports = {
   // https://www.i18next.com/overview/configuration-options#logging
   // debug: process.env.NODE_ENV === "development",

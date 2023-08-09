@@ -36,7 +36,6 @@ const Explore: PageWithLayout = () => {
   const utils = api.useContext().template.getByCurrentUser;
   const [page, setPage] = useState(0);
   const [filter, setFilter] = useState<TemplateFilterSchemaType>();
-  // prettier-ignore
 
   // prettier-ignore
   const { data, isLoading, fetchNextPage } = api.template.getLatest.useInfiniteQuery(
