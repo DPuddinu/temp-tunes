@@ -12,7 +12,7 @@ import { TemplateSkeleton } from "~/components/ui/skeletons/TemplatesSkeleton";
 import { langKey } from "~/hooks/use-language";
 import { useToast } from "~/hooks/use-toast";
 import { type Language, type PageWithLayout } from "~/types/page-types";
-import type { TemplateFilterSchemaType, TemplateFilterType } from "~/types/zod-schemas";
+import type { TemplateFilterSchemaType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
 
 const TemplateCard = dynamic(

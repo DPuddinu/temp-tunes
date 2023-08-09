@@ -1,4 +1,4 @@
-import { Quicksand } from "@next/font/google";
+import { Quicksand } from "next/font/google";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { appWithTranslation } from "next-i18next";
