@@ -28,6 +28,6 @@
   "char_len": "The id should be 25 characters long",
   "desc_max_len": "Description too long",
   "entries_min_len": "At least one entry should be added",
-  "search_track": "Search track...",
+  "search_track": "Search track..."
   
 }
