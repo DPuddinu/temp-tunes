@@ -7,10 +7,9 @@ import {
   TimeRangeEnum,
   TopTypeEnum,
   type AudioFeatures,
-  type Playlist,
   type Recommendations,
   type TopArtists,
-  type TopTracks,
+  type TopTracks
 } from "~/types/spotify-types";
 import { PlaylistSchema, SearchTypeEnum, type TagSchemaType } from "~/types/zod-schemas";
 import { spliceArray } from "~/utils/helpers";

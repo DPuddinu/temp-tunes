@@ -24,12 +24,14 @@ interface props {
 }
 const TemplateLayout = ({ children, title }: props) => {
   const { t } = useTranslation("templates");
+  const { t: t_common } = useTranslation("common");
+
   return (
     <>
       <section className="relative mb-16 flex flex-col justify-between">
         {title && (
           <h1 className="mb-2 ml-2 w-fit pb-2 text-2xl font-semibold transition-transform sm:text-3xl">
-            {t(title) ?? "not found"}
+            {t(title, { defaultValue: "not found" })}
           </h1>
         )}
         {children}
@@ -59,7 +61,7 @@ const TemplateLayout = ({ children, title }: props) => {
             </FabChild>,
             <FabChild
               key="import"
-              label={t("import")}
+              label={t_common("import")}
               disabled
               className="border-green-500 bg-green-500 hover:border-green-500  hover:bg-green-500"
             >
@@ -69,7 +71,7 @@ const TemplateLayout = ({ children, title }: props) => {
             </FabChild>,
             <FabChild
               key="create"
-              label={t("create")}
+              label={t_common("create")}
               className="border-blue-500 bg-blue-500 hover:border-blue-500 hover:bg-blue-500"
             >
               <Link href={"/templates/create"}>

@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
-import { useMounted } from "~/hooks/use-mounted";
+import resources from "~/@types/resources";
 import { useToast } from "~/hooks/use-toast";
 import { type TagSchemaType, type TagType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
@@ -45,7 +45,7 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
     },
     onError(){
       onClose();
-      setMessage(t("error") ?? "Something went wrong");
+      setMessage(t("error"));
     }
   });
 
@@ -95,8 +95,8 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
 const AddTagSchema = z.object({
   tag: z
     .string()
-    .min(3, { message: "tag_errors.short" })
-    .max(16, { message: "tag_errors.long" }),
+    .min(3, { message: resources.modals.tag_errors.short })
+    .max(16, { message: resources.modals.tag_errors.long }),
 });
 
 type AddTagSchemaType = z.infer<typeof AddTagSchema>;
@@ -108,6 +108,7 @@ interface AddTagComponentProps {
 }
 function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
   const { t } = useTranslation("common");
+  const { t: t_modals } = useTranslation("modals");
   const tagSchema = AddTagSchema.refine((item) => !tags.includes(item.tag), {
     message: "tag_errors.used",
   });
@@ -123,41 +124,40 @@ function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
       name: data.tag,
       spotifyId: trackId,
     });
-  const mounted = useMounted();
   return (
-    <>
-      {mounted && (
-        <form className="flex gap-2 pt-2" onSubmit={handleSubmit(onSubmit)}>
-          <div className="w-full ">
-            <label className="label">
-              <span className="label-text">{t("add_tag")}</span>
-            </label>
-            <div className="flex gap-2">
-              <input
-                tabIndex={-1}
-                className="input w-full bg-base-300"
-                placeholder={t("type_here") ?? "Type here"}
-                {...register("tag", { required: true })}
-              />
-              <button
-                tabIndex={-1}
-                type="submit"
-                className="btn-circle btn border-transparent text-xl transition-transform"
-              >
-                +
-              </button>
-            </div>
+    <form className="flex gap-2 pt-2" onSubmit={handleSubmit(onSubmit)}>
+      <div className="w-full ">
+        <label className="label">
+          <span className="label-text">{t("add_tag")}</span>
+        </label>
+        <div className="flex gap-2">
+          <input
+            tabIndex={-1}
+            className="input w-full bg-base-300"
+            placeholder={t("type_here", { defaultValue: "Type here..." })}
+            {...register("tag", { required: true })}
+          />
+          <button
+            tabIndex={-1}
+            type="submit"
+            className="btn-circle btn border-transparent text-xl transition-transform"
+          >
+            +
+          </button>
+        </div>
 
-            {errors?.tag?.message && (
-              <label className="label text-red-700">
-                <span className="label-text-alt font-bold text-red-700">
-                  {`${t(errors.tag.message)}`}
-                </span>
-              </label>
-            )}
-          </div>
-        </form>
-      )}
-    </>
+        {errors?.tag?.message && (
+          <label className="label text-red-700">
+            <span className="label-text-alt font-bold text-red-700">
+              {`${t_modals(
+                errors?.tag?.message === "tag_errors.short"
+                  ? "tag_errors.short"
+                  : "tag_errors.long"
+              )}`}
+            </span>
+          </label>
+        )}
+      </div>
+    </form>
   );
 }

@@ -125,17 +125,52 @@ export const templatesRouter = createTRPCRouter({
         }
       })
     }),
-  getByCurrentUser: protectedProcedure
-    .query(async ({ ctx }) => {
+  getByCurrentUser: protectedProcedure.input(
+    z.object({
+      limit: z.number().min(1).max(100).nullish(),
+      skip: z.number().optional(),
+      cursor: z.number().nullish(), // <-- "cursor" needs to exist, but can be any type
+    })
+  )
+    .query(async ({ ctx, input }) => {
+      const limit = input.limit ?? 50
+      const { cursor, skip } = input;
 
-      return ctx.prisma.template.findMany({
+      const items = await ctx.prisma.template.findMany({
+        take: limit + 1,
+        skip: skip,
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: {
+          id: 'asc',
+        },
         where: {
-          userId: ctx.session.user.id
+          OR: [
+            {
+              author: {
+                some: {
+                  id: ctx.session.user.id
+                }
+              },
+            },
+            {
+              userId: ctx.session.user.id
+            }
+          ]
         },
         include: {
           templateEntries: true
         }
       })
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (items.length > limit) {
+        const nextItem = items.pop();
+        if (nextItem)
+          nextCursor = nextItem.id;
+      }
+      return {
+        items,
+        nextCursor,
+      };
     }),
   getByUser: protectedProcedure.input(
     z.object({

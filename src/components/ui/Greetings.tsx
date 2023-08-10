@@ -33,7 +33,7 @@ function Greetings({ name, timeRange, selectTimeRange }: GreetingsProps) {
   );
 }
 
-function salute(t: TFunction) {
+function salute(t: any) {
   const hours = new Date().getHours();
   if (hours >= 0 && hours <= 12) return t("morning");
   if (hours >= 13 && hours <= 17) return t("afternoon");

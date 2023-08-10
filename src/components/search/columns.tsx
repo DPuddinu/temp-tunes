@@ -1,9 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowSVG } from "../ui/icons";
 
-export function getTagColumns(
-  t: (x: string) => string
-): ColumnDef<unknown, unknown>[] {
+export function getTagColumns(t: any): ColumnDef<unknown, unknown>[] {
   return [
     {
       accessorKey: "title",
@@ -13,7 +11,7 @@ export function getTagColumns(
             className="flex w-full items-center gap-1"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            {t("search_table_headers.title") ?? "Title"}
+            {t("search_table_headers.title")}
             <ArrowSVG isOpen={column.getIsSorted()} />
           </button>
         );
@@ -50,9 +48,7 @@ export function getTagColumns(
   ];
 }
 
-export function getTrackColumns(
-  t: (x: string) => string
-): ColumnDef<unknown, unknown>[] {
+export function getTrackColumns(t: any): ColumnDef<unknown, unknown>[] {
   return [
     {
       accessorKey: "title",

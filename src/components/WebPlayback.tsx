@@ -83,7 +83,7 @@ export const SpotifyWebPlayer = () => {
 
   return (
     <>
-      {current_track && (
+      {current_track && is_active && (
         <li>
           <div className="flex w-auto flex-col rounded-xl bg-base-200">
             {current_track && current_track.album?.images[0] ? (

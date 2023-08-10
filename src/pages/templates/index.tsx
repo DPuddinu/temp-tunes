@@ -2,9 +2,11 @@ import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import MainLayout from "~/components/MainLayout";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
+import PaginationComponent from "~/components/ui/PaginationComponent";
 import { ErrorSVG } from "~/components/ui/icons";
 import { TemplatesSkeleton } from "~/components/ui/skeletons/TemplatesSkeleton";
 import { langKey } from "~/hooks/use-language";
@@ -22,19 +24,34 @@ const TemplateList = dynamic(
 const Templates: PageWithLayout = () => {
   const { setMessage } = useToast();
   const { t } = useTranslation("templates");
-  const { data, isLoading } = api.template.getByCurrentUser.useQuery(
-    undefined,
-    {
-      onError(error) {
-        const msg = t(error.message);
-        setMessage(msg);
+  const [page, setPage] = useState(0);
+
+  const { data, isLoading, fetchNextPage } =
+    api.template.getByCurrentUser.useInfiniteQuery(
+      {
+        limit: 6,
       },
-    }
-  );
+      {
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+        onError() {
+          setMessage(t("error"));
+        },
+      }
+    );
+  const handleFetchNextPage = () => {
+    fetchNextPage();
+    setPage((prev) => prev + 1);
+  };
+
+  const handleFetchPreviousPage = () => {
+    setPage((prev) => prev - 1);
+  };
+
+  const _data = data?.pages[page]?.items;
 
   return (
     <>
-      {data && data.length === 0 && (
+      {_data?.length === 0 && (
         <div className="flex justify-center">
           <div className="max-w-xs rounded-xl bg-base-200 p-4">
             <div className="flex w-full justify-center">
@@ -44,7 +61,18 @@ const Templates: PageWithLayout = () => {
           </div>
         </div>
       )}
-      {data && <TemplateList data={data} />}
+      {_data && _data?.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <TemplateList data={_data} />
+          <PaginationComponent
+            onNext={handleFetchNextPage}
+            onPrev={handleFetchPreviousPage}
+            nextDisabled={!data?.pages[page]?.nextCursor}
+            prevDisabled={page === 0}
+          />
+        </div>
+      )}
+
       {isLoading && <TemplatesSkeleton />}
     </>
   );

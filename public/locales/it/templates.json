@@ -5,7 +5,7 @@
   "most_voted": "I più votati",
   "favourites": "Preferiti",
   "get_error": "Qualcosa è andato storto nel caricare il template",
-  "created": "Template creato",
+  "created": "{{template}} creato",
   "updated": "Template modificato",
   "template_name": "Nome Template",
   "description": "Descrizione",

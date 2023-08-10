@@ -8,6 +8,8 @@ import { api } from "~/utils/api";
 import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
+import resources from "~/@types/resources";
+const common = resources.common;
 
 type Props = {
   onConfirm: () => void;
@@ -20,10 +22,10 @@ const RenamePlaylistSchema = z.object({
   name: z
     .string()
     .min(3, {
-      message: "name_min_len",
+      message: common.name_min_len,
     })
     .max(50, {
-      message: "name_max_len",
+      message: common.name_max_len,
     }),
 });
 export type RenameFormType = z.infer<typeof RenamePlaylistSchema>;
@@ -68,7 +70,7 @@ export function RenameModal({
     },
     onSuccess() {
       onClose();
-      setMessage(`Playlist ${t("renamed")}`);
+      setMessage(`Playlist ${t("operations.renamed")}`);
     },
     onError(error, variables, context) {
       onClose();
@@ -109,7 +111,7 @@ export function RenameModal({
             {errors?.name?.message && (
               <label className="label">
                 <span className="label-text-alt text-error">
-                  {t_common(errors.name.message)}
+                  {t_common(errors.name.message === "name_min_len" ? "name_min_len" : "name_max_len")}
                 </span>
               </label>
             )}

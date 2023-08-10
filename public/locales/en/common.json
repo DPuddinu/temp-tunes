@@ -30,5 +30,6 @@
   "error": "Something went wrong",
   "confirm": "Confirm",
   "type_here": "Type Here...",
-  "author": "Author"
+  "author": "Author",
+  "search": "Search..."
 }

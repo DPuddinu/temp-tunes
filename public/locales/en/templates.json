@@ -5,6 +5,7 @@
   "most_voted": "Most Voted",
   "favourites": "Favourites",
   "get_error": "Something went wrong, cannot get this Template",
+  "created": "{{template}} created",
   "error": "Errore",
   "template_name": "Template Name",
   "description": "Description",
@@ -18,7 +19,7 @@
   "details": "Details",
   "import_template": "Import",
   "empty": "Looks like you don't have any template yet, please create some or take inspiration from the explore section",
-  "import_placeholder": "Paste template id",
+  "import_placeholder": "Paste template id...",
   "view_more": "View more...",
   "view_less": "View less...",
   "import_success": "Template imported",
@@ -29,5 +30,4 @@
   "desc_max_len": "Description too long",
   "entries_min_len": "At least one entry should be added",
   "search_track": "Search track..."
-  
 }

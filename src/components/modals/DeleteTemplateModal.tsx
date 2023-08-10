@@ -23,11 +23,16 @@ export const DeleteTemplateModal = ({ onClose, template, isOpen }: Props) => {
       const prevData = utils.getData();
 
       //prettier-ignore
-      utils.setData(undefined, (old) => old?.filter((t) => t.id !== id));
+      utils.setData({}, (old) => {
+        if(old) return {
+          items: old?.items.filter((t) => t.id !== id),
+          nextCursor: undefined
+        };
+      });
       return { prevData };
     },
     onError(error, variables, context) {
-      utils.setData(undefined, context?.prevData);
+      utils.setData({}, context?.prevData);
       setMessage(`${t("delete_error")}`);
     },
     onSuccess() {

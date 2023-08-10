@@ -33,7 +33,7 @@ const MoodCard = () => {
                 key={key}
                 color={colorsMap.get(key) ?? ""}
                 value={toPercentage(data[key])}
-                label={`${t("moodKeys." + key)}`}
+                label={t(`moodKeys.${key}`, { defaultValue: "" })}
               />
             ))}
           </div>

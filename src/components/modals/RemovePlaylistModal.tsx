@@ -19,6 +19,8 @@ export function UnfollowModal({
   playlistName,
 }: Props) {
   const { t } = useTranslation("playlists");
+  const { t: t_common } = useTranslation("common");
+
   const utils = api.useContext().spotify_playlist.getAll;
   const { setMessage } = useToast();
 
@@ -33,7 +35,7 @@ export function UnfollowModal({
       return { prevData };
     },
     onSuccess() {
-      const msg = `${t("removed")} ${playlistName} ${t(
+      const msg = `${t("operations.removed")} ${playlistName} ${t(
         "operations.confirm_2"
       )}`;
       setMessage(msg);
@@ -41,7 +43,7 @@ export function UnfollowModal({
     },
     onError(error, variables, context) {
       utils.setData(undefined, context?.prevData);
-      setMessage(`${t(error.message)}`);
+      setMessage(t_common("error"));
     },
   });
 

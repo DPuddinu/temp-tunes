@@ -3,7 +3,7 @@ import type { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import MainLayout from "~/components/MainLayout";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
@@ -31,6 +31,8 @@ const TemplateFilter = dynamic(
 
 const Explore: PageWithLayout = () => {
   const { t } = useTranslation("templates");
+  const { t: t_common } = useTranslation("common");
+
   const { setMessage } = useToast();
   const router = useRouter();
   const utils = api.useContext().template.getByCurrentUser;
@@ -45,9 +47,8 @@ const Explore: PageWithLayout = () => {
       },
       {
         getNextPageParam: (lastPage) => lastPage.nextCursor,
-        onError(err) {
-          const msg = t(err.message);
-          setMessage(msg);
+        onError() {
+          setMessage(t('error'));
         },
       }
     );
@@ -63,15 +64,18 @@ const Explore: PageWithLayout = () => {
   const { mutate } = api.template.importById.useMutation({
     async onSuccess(data) {
       setMessage(`${t("import_success")}`);
-      utils.setData(undefined, (old) => {
+      utils.setData({}, (old) => {
         if (old) {
-          return [data, ...old];
+          return {
+            items: [data, ...old.items],
+            nextCursor: undefined
+          };
         }
       });
       router.push("/templates");
     },
     onError() {
-      setMessage(`${t("import_error")}`);
+      setMessage(t("import_error"));
     },
   });
 
@@ -79,10 +83,15 @@ const Explore: PageWithLayout = () => {
 
   return (
     <section className="flex flex-col gap-2">
-      {data && <TemplateFilter filter={filter} onSubmit={(filter) => {
-        setFilter(filter);
-        setPage(0);
-      }} />}
+      {data && (
+        <TemplateFilter
+          filter={filter}
+          onSubmit={(filter) => {
+            setFilter(filter);
+            setPage(0);
+          }}
+        />
+      )}
       <div className="flex w-full flex-col justify-center gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3">
         {_data?.map((temp, i) => (
           <TemplateCard
@@ -93,7 +102,7 @@ const Explore: PageWithLayout = () => {
             isNew
             actions={[
               {
-                label: t("import"),
+                label: t_common("import"),
                 onClick: () =>
                   mutate({
                     id: temp.id,

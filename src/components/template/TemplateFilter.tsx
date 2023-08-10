@@ -35,7 +35,7 @@ const TemplateFilter = ({ onSubmit, filter }: props) => {
             <input
               {...register("value")}
               type="text"
-              placeholder={t("search") ?? "..."}
+              placeholder={t_common("search", { defaultValue: "..." })}
               className="input join-item w-full grow bg-secondary-content sm:max-w-sm "
             />
           </div>
@@ -65,7 +65,7 @@ const TemplateFilter = ({ onSubmit, filter }: props) => {
       {errors.value?.message && (
         <label className="label text-error">
           <span className="label-text-alt mt-2 font-bold text-error">
-            {t(errors.value?.message ?? "Not Valid")}
+            {t(errors.value?.message, { defaultValue: "Not Valid" })}
           </span>
         </label>
       )}

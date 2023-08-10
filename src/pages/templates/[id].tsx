@@ -3,6 +3,7 @@ import type { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import MainLayout from "~/components/MainLayout";
 import CreateTemplateSkeleton from "~/components/template/CreateTemplateSkeleton";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
@@ -20,6 +21,7 @@ const CreateTemplate = dynamic(
 
 const TemplateById: PageWithLayout = () => {
   const searchParams = useSearchParams();
+  const { t } = useTranslation("templates");
 
   const id = searchParams.get("id");
   const { setMessage } = useToast();
@@ -30,7 +32,7 @@ const TemplateById: PageWithLayout = () => {
     {
       queryKey: ["template.getById", { id: Number(id ?? -1) }],
       onError() {
-        setMessage(`Error: can't get template`);
+        setMessage(t('error'));
       },
       enabled: id !== undefined,
     }

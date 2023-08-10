@@ -30,6 +30,8 @@ function PlaylistComponent({
   data: Playlist[];
 }) {
   const { t } = useTranslation("playlists");
+  const { t: t_common } = useTranslation("common");
+
   const [isLoading, setIsLoading] = useState(false);
   const { setMessage } = useToast();
   const utils = api.useContext().spotify_playlist.getAll;
@@ -53,8 +55,8 @@ function PlaylistComponent({
       setMessage(`${playlist.name} ${t("operations.shuffled")}`);
       setIsLoading(false);
     },
-    onError(error){
-      setMessage(`${t(error.message)}`)
+    onError(){
+      setMessage(t_common('error'))
     }
   });
   const { mutate: copy } = api.spotify_playlist.copy.useMutation({
@@ -75,7 +77,7 @@ function PlaylistComponent({
     },
     onError(error, variables, context) {
       utils.setData(undefined, context?.prevData);
-      setMessage(`${t(error.message)}`);
+      setMessage(t_common("error"));
     },
   });
   const { mutate: merge } = api.spotify_playlist.merge.useMutation({
@@ -86,8 +88,8 @@ function PlaylistComponent({
       setMessage(`${playlist.name} ${t("operations.merge")}`);
       setIsLoading(false);
     },
-    onError(error) {
-      setMessage(`${t(error.message)}`);
+    onError() {
+      setMessage(t_common("error"));
     },
   });
 

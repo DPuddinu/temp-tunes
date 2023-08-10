@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
+import resources from "~/@types/resources";
 import { getTagColumns, getTrackColumns } from "~/components/search/columns";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { SearchSVG } from "~/components/ui/icons/index";
@@ -19,7 +20,6 @@ import type { Language, PageWithLayout } from "~/types/page-types";
 import { type Playlist } from "~/types/spotify-types";
 import { SearchTypeConst, type SearchType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
-
 //prettier-ignore
 const DataTable = dynamic(() => import("~/components/ui/DataTable"), {loading: () => <div></div>});
 
@@ -29,8 +29,8 @@ const LoadingScreen = dynamic(() => import("~/components/ui/LoadingPlaylistCompo
 const SearchFormSchema = z.object({
   name: z
     .string()
-    .min(3, { message: "search_errors.short" })
-    .max(18, { message: "search_errors.long" }),
+    .min(3, { message: resources.search.search_errors.short })
+    .max(18, { message: resources.search.search_errors.long }),
 });
 type SearchFormSchemaType = z.infer<typeof SearchFormSchema>;
 
@@ -110,7 +110,9 @@ const Search: PageWithLayout = () => {
               <input
                 {...register("name")}
                 type="text"
-                placeholder={t("search") ?? "..."}
+                placeholder={t("search", {
+                  defaultValue: "Search...",
+                }).toString()}
                 className="input join-item w-full grow bg-secondary-content sm:max-w-sm "
               />
             </div>
@@ -142,7 +144,7 @@ const Search: PageWithLayout = () => {
         {errors.name?.message && (
           <label className="label text-error">
             <span className="label-text-alt mt-2 font-bold text-error">
-              {t(errors.name?.message ?? "Not Valid")}
+              {t(errors.name?.message, { defaultValue: "Name too long or too small" })}
             </span>
           </label>
         )}
