@@ -186,26 +186,47 @@ export const templatesRouter = createTRPCRouter({
       })
     }),
   delete: protectedProcedure.input(
-    z.object({ id: z.number(), entries: z.number().array() })
+    z.object({ id: z.number(), entries: z.number().array(), userId: z.string() })
   ).mutation(async ({ ctx, input }) => {
 
-    const { id, entries } = input;
-    const deleteEntries = await ctx.prisma.$transaction([
-      // REMOVING ENTRIES
-      ctx.prisma.templateEntry.deleteMany({
-        where: {
-          id: {
-            in: entries,
+    const { id, entries, userId } = input;
+
+    // if the owner, delete the template
+    if (userId === ctx.session.user.id) {
+      const deleteEntries = await ctx.prisma.$transaction([
+        // REMOVING ENTRIES
+        ctx.prisma.templateEntry.deleteMany({
+          where: {
+            id: {
+              in: entries,
+            },
           },
-        },
-      }),
-      ctx.prisma.template.delete({
+        }),
+        ctx.prisma.template.delete({
+          where: {
+            id: id
+          },
+        })
+      ]);
+      return await deleteEntries
+    }
+    // otherwise, we unfollow the template
+    else {
+      console.log('UNFOLLOW-------------->')
+      return await ctx.prisma.template.update({
         where: {
           id: id
         },
+        data: {
+          author: {
+            disconnect: {
+              id: ctx.session.user.id
+            }
+          }
+        }
       })
-    ]);
-    return await deleteEntries
+    }
+
   }),
   getExplore: protectedProcedure.query(async ({ ctx }) => {
     return ctx.prisma.template.findMany({

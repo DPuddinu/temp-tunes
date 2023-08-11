@@ -105,7 +105,7 @@ const Explore: PageWithLayout = () => {
             color={temp.color ?? ""}
             index={i}
             template={temp}
-            isNew
+            showOptions={false}
             actions={[
               {
                 label: t_common("import"),

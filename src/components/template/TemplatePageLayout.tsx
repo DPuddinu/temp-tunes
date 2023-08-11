@@ -12,7 +12,7 @@ import {
 
 export type TemplatePage =
   | "my_templates"
-  | "create"
+  | "create_template"
   | "import_template"
   | "explore"
   | "details"
@@ -41,43 +41,39 @@ const TemplateLayout = ({ children, title }: props) => {
           intent={"primary"}
           size={"md"}
           options={[
-            <FabChild
-              key="myTemplates"
-              label={t("my_templates")}
-              className="border-orange-500 bg-orange-500 hover:border-orange-500 hover:bg-orange-500"
-            >
-              <Link href={"/templates"}>
+            <Link href={"/templates"} key="myTemplates">
+              <FabChild
+                label={t("my_templates")}
+                className="border-orange-500 bg-orange-500 hover:border-orange-500 hover:bg-orange-500"
+              >
                 <TemplateSVG />
-              </Link>
-            </FabChild>,
-            <FabChild
-              key="explore"
-              label={t("explore")}
-              className="border-yellow-500 bg-yellow-500 hover:border-yellow-500 hover:bg-yellow-500"
-            >
-              <Link href={"/templates/explore"}>
+              </FabChild>
+            </Link>,
+            <Link href={"/templates/explore"} key="explore">
+              <FabChild
+                label={t("explore")}
+                className="border-yellow-500 bg-yellow-500 hover:border-yellow-500 hover:bg-yellow-500"
+              >
                 <ExploreSVG />
-              </Link>
-            </FabChild>,
-            <FabChild
-              key="import"
-              label={t_common("import")}
-              disabled
-              className="border-green-500 bg-green-500 hover:border-green-500  hover:bg-green-500"
-            >
-              <Link href={"/templates/import"}>
+              </FabChild>
+            </Link>,
+            <Link href={"/templates/import"} key="import">
+              <FabChild
+                label={t_common("import")}
+                disabled
+                className="border-green-500 bg-green-500 hover:border-green-500  hover:bg-green-500"
+              >
                 <ImportSVG />
-              </Link>
-            </FabChild>,
-            <FabChild
-              key="create"
-              label={t_common("create")}
-              className="border-blue-500 bg-blue-500 hover:border-blue-500 hover:bg-blue-500"
-            >
-              <Link href={"/templates/create"}>
+              </FabChild>
+            </Link>,
+            <Link href={"/templates/create"} key="create">
+              <FabChild
+                label={t_common("create")}
+                className="border-blue-500 bg-blue-500 hover:border-blue-500 hover:bg-blue-500"
+              >
                 <CreateTemplateSVG />
-              </Link>
-            </FabChild>,
+              </FabChild>
+            </Link>,
           ]}
         >
           <PlusSVG />
@@ -102,7 +98,7 @@ const FabChild = ({
   onClick,
 }: FabChildProps) => {
   return (
-    <div className="flex items-center gap-4 hover:scale-105">
+    <div className="flex items-center gap-4 hover:scale-105" >
       <div className="rounded-md bg-neutral p-1 px-3 uppercase">{label}</div>
       <FloatingActionButton
         size={"sm"}

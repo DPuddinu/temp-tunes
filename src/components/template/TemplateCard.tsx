@@ -1,6 +1,7 @@
 import { useClipboard } from "@mantine/hooks";
 import { type Template, type TemplateEntry } from "@prisma/client";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -24,10 +25,10 @@ interface cardAction {
 interface TemplateCardProps {
   color?: string | null;
   actions: cardAction[];
-  isNew?: boolean;
   template: Template & {
     templateEntries: TemplateEntry[];
   };
+  showOptions?: boolean;
   index: number;
 }
 
@@ -36,6 +37,7 @@ const TemplateCard = ({
   color = "bg-blue-500",
   index,
   template,
+  showOptions = true
 }: TemplateCardProps) => {
   const [open, setOpen] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -43,7 +45,7 @@ const TemplateCard = ({
   const { t: tmpl } = useTranslation("templates");
   const clipboard = useClipboard({ timeout: 500 });
   const { setMessage } = useToast();
-
+  const { data: sessionData } = useSession();
   return (
     <>
       <div className="card-compact card min-h-[14rem] w-full max-w-md bg-base-300 shadow-xl">
@@ -54,21 +56,21 @@ const TemplateCard = ({
             !color && getColorByIndex(index)
           )}
         >
-          {template.type === "CUSTOM" && (
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger asChild>
-                <button aria-label="Customise options">
-                  <VerticalDotsSVG className="text-base-300" />
-                </button>
-              </DropdownMenu.Trigger>
+          {showOptions && <DropdownMenu.Root>
+            <DropdownMenu.Trigger asChild>
+              <button aria-label="Customise options">
+                <VerticalDotsSVG className="text-base-300" />
+              </button>
+            </DropdownMenu.Trigger>
 
-              <DropdownMenu.Portal>
-                <DropdownMenu.Content
-                  className=" rounded-md border border-base-300 bg-base-200 p-2 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade sm:w-auto"
-                  sideOffset={5}
-                  side="bottom"
-                  align="end"
-                >
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content
+                className=" rounded-md border border-base-300 bg-base-200 p-2 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade sm:w-auto"
+                sideOffset={5}
+                side="bottom"
+                align="end"
+              >
+                {template.userId === sessionData?.user?.id && (
                   <DropdownMenu.Item className="flex items-center gap-2 rounded-lg p-2 pr-[20px] leading-none outline-none hover:cursor-pointer hover:bg-base-100">
                     <Link
                       href={`/templates/${template.id}`}
@@ -78,28 +80,28 @@ const TemplateCard = ({
                       {t("edit")}
                     </Link>
                   </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    className="flex items-center gap-2 rounded-lg p-2 pr-[20px] leading-none outline-none hover:cursor-pointer hover:bg-base-100"
-                    onClick={() => setOpenDeleteModal(true)}
-                  >
-                    <DeleteSVG />
-                    {t("delete")}
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    className="flex items-center gap-2 rounded-lg p-2 pr-[20px] leading-none outline-none hover:cursor-pointer hover:bg-base-100"
-                    onClick={() => {
-                      clipboard.copy(template.id);
-                      const msg = tmpl("clipboard");
-                      setMessage(msg);
-                    }}
-                  >
-                    <ShareSVG />
-                    {t("share")}
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Portal>
-            </DropdownMenu.Root>
-          )}
+                )}
+                <DropdownMenu.Item
+                  className="flex items-center gap-2 rounded-lg p-2 pr-[20px] leading-none outline-none hover:cursor-pointer hover:bg-base-100"
+                  onClick={() => setOpenDeleteModal(true)}
+                >
+                  <DeleteSVG />
+                  {t("delete")}
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  className="flex items-center gap-2 rounded-lg p-2 pr-[20px] leading-none outline-none hover:cursor-pointer hover:bg-base-100"
+                  onClick={() => {
+                    clipboard.copy(template.id);
+                    const msg = tmpl("clipboard");
+                    setMessage(msg);
+                  }}
+                >
+                  <ShareSVG />
+                  {t("share")}
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>}
         </div>
         <div className="card-body">
           <h2 className="card-title flex flex-col items-start">

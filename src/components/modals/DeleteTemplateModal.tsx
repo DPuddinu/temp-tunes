@@ -45,6 +45,7 @@ export const DeleteTemplateModal = ({ onClose, template, isOpen }: Props) => {
             deleteTemplate({
               entries: template.templateEntries.map((t) => t.id),
               id: template.id,
+              userId: template.userId
             });
           }}
           onClose={onClose}
