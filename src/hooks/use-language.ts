@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { Language } from "~/types/page-types";
 export const langKey = "nsm_lang";
 const defaultLanguage: Language = "en"
+const maxAge = 60 * 60 * 24;
 
 export const useLanguage = () => {
   const router = useRouter();
@@ -11,7 +12,7 @@ export const useLanguage = () => {
 
   const setLang = (lang: Language) => {
     setLanguage(lang)
-    setCookie(langKey, lang, { maxAge: 60 * 6 * 24 });
+    setCookie(langKey, lang, { maxAge: maxAge });
     router.push({ pathname: router.route }, router.asPath, {
       locale: language,
     });
@@ -19,8 +20,11 @@ export const useLanguage = () => {
 
   useEffect(() => {
     const lang = getCookie(langKey) as Language
-    setLanguage(lang ?? defaultLanguage)
-    setCookie(langKey, lang ?? defaultLanguage, { maxAge: 60 * 6 * 24 });
+    if (lang) {
+      setLanguage(lang ?? defaultLanguage)
+      setCookie(langKey, lang ?? defaultLanguage, { maxAge: maxAge });
+    }
+
   }, [language])
 
 
