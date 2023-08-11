@@ -36,8 +36,8 @@ export const DeleteTemplateModal = ({ onClose, template, isOpen }: Props) => {
     >
       <div>
         <p className="mt-2 text-lg text-base-content">
-          <span>{`${t("confirm_delete_body")} `}</span>
-          <b>{`${template.name} `}</b>
+          <span>{t("confirm_delete_body")}</span>
+          <b>{` ${template.name} `}</b>
           <span>?</span>
         </p>
         <ConfirmButtonGroup
@@ -45,7 +45,7 @@ export const DeleteTemplateModal = ({ onClose, template, isOpen }: Props) => {
             deleteTemplate({
               entries: template.templateEntries.map((t) => t.id),
               id: template.id,
-              userId: template.userId
+              userId: template.userId,
             });
           }}
           onClose={onClose}

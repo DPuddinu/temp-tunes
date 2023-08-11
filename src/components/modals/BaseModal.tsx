@@ -82,9 +82,9 @@ const Center = ({ onClose, isOpen, description, title, children }: Props) => {
             leaveFrom="opacity-100 scale-10 0"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="m-10 mt-2 w-full max-w-lg overflow-hidden rounded-2xl bg-base-content p-6 pt-4 pb-4 text-left shadow-xl">
+            <Dialog.Panel className="m-10 mt-2 w-full max-w-lg overflow-hidden rounded-2xl bg-base-300 p-6 pt-4 pb-4 text-left shadow-xl">
               {title && (
-                <Dialog.Title className="text-xl font-bold leading-6 tracking-wide text-base-100">
+                <Dialog.Title className="text-xl font-bold leading-6 tracking-wide text-base-content">
                   {title}
                 </Dialog.Title>
               )}

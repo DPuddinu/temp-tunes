@@ -52,6 +52,7 @@ export const TrackSchema = z.object({
   duration_ms: z.number(),
   name: z.string(),
   images: ImagesSchema.optional(),
+  preview_url: z.string().optional(),
   id: z.string().nullish(),
   uri: z.string(),
 });

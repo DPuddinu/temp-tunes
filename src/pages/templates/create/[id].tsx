@@ -9,11 +9,19 @@ import type { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  createRef,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 import { useTranslation } from "react-i18next";
 import MainLayout from "~/components/MainLayout";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
+import { PauseSVG, PlaySVG } from "~/components/ui/icons";
 import { langKey } from "~/hooks/use-language";
 import { useToast } from "~/hooks/use-toast";
 import { type Language, type PageWithLayout } from "~/types/page-types";
@@ -47,6 +55,10 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
     root: containerRef.current,
     threshold: 1,
   });
+  const audioRef = useRef<RefObject<HTMLAudioElement>[]>([]);
+
+  // prettier-ignore
+  const [currentlyPlaying, setCurrentlyPlaying] = useState<RefObject<HTMLAudioElement> | undefined>(undefined);
 
   // prettier-ignore
   const { isLoading, data: templateData } = api.template.getById.useQuery(
@@ -96,18 +108,20 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
       },
     }
   );
-  const paginatedData = useMemo(
-    () => _searchData?.pages.flatMap((page) => page),
-    [_searchData]
-  );
+  const paginatedData = useMemo(() => {
+    const data = _searchData?.pages.flatMap((page) => page);
+    if (data) {
+      audioRef.current = data.map((_) => createRef<HTMLAudioElement>());
+    }
+    return data;
+  }, [_searchData]);
 
   const { mutate } = api.spotify_playlist.createPlaylist.useMutation({
     onSuccess() {
-      const msg = t_common("created_playlist");
-      setMessage(msg);
+      setMessage(t_common("created_playlist"));
     },
     onError() {
-      setMessage(t_common('error'));
+      setMessage(t_common("error"));
     },
   });
 
@@ -128,6 +142,18 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
     }
   }, [page, templateData, setValue, submitTracks]);
 
+  const onTogglePlay = (ref: RefObject<HTMLAudioElement>) => {
+    const current = currentlyPlaying?.current;
+
+    if (!current?.paused) {
+      current?.pause();
+    } else {
+      if (currentlyPlayingRef.current?.current) {
+        currentlyPlayingRef.current = ref;
+        ref.current?.play();
+      }
+    }
+  };
   return (
     <section className="flex flex-col items-center gap-2">
       <h1 className="p-2 text-2xl font-bold sm:text-4xl">
@@ -156,7 +182,7 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
               if (!showData) setShowData(true);
             }}
             type="text"
-            placeholder={t("search_track") ?? "Search Track"}
+            placeholder={t("search_track", { defaultValue: "Search Track" })}
             className=" input w-full"
             value={value}
             onChange={(event) => setValue(event.currentTarget.value)}
@@ -170,22 +196,55 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
                       ref={i === paginatedData.length - 1 ? ref : null}
                       key={i}
                       className="w-full rounded-lg bg-base-200 p-2 hover:cursor-pointer hover:bg-primary-focus"
-                      onClick={() => {
-                        setSubmitTracks((uris) => {
-                          const temp = { ...uris };
-                          if (template) {
-                            temp[template.id] = data;
-                          }
-                          return temp;
-                        });
-                        setDisabledSearch(true);
-                        setValue(data.name);
-                        setSearchData([]);
-                      }}
                     >
-                      {`${data.name} - ${data.artists
-                        .map((a) => a.name)
-                        .join(", ")}`}
+                      <div className="flex items-center justify-between">
+                        <p
+                          className="mr-2"
+                          onClick={() => {
+                            setSubmitTracks((uris) => {
+                              const temp = { ...uris };
+                              if (template) {
+                                temp[template.id] = data;
+                              }
+                              return temp;
+                            });
+                            setDisabledSearch(true);
+                            setValue(data.name);
+                            setSearchData([]);
+                          }}
+                        >{`${data.name} - ${data.artists
+                          .map((a) => a.name)
+                          .join(", ")}`}</p>
+                        {data.preview_url && (
+                          <>
+                            <audio
+                              ref={audioRef.current[i]}
+                              src={data.preview_url}
+                              onEnded={() => setCurrentlyPlaying(undefined)}
+                              onPause={() => setCurrentlyPlaying(undefined)}
+                              onPlay={() =>
+                                setCurrentlyPlaying(audioRef.current[i])
+                              }
+                            />
+                            <button
+                              className="btn-success btn-sm btn-circle btn font-bold"
+                              onClick={() => {
+                                currentlyPlaying?.current?.pause();
+
+                                if (currentlyPlaying !== audioRef.current[i]) {
+                                  audioRef.current[i]?.current?.play();
+                                }
+                              }}
+                            >
+                              {audioRef.current[i]?.current?.paused ? (
+                                <PlaySVG className="scale-75" />
+                              ) : (
+                                <PauseSVG className="scale-75" />
+                              )}
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </li>
                   )}
                 </ul>
