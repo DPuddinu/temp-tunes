@@ -142,18 +142,7 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
     }
   }, [page, templateData, setValue, submitTracks]);
 
-  const onTogglePlay = (ref: RefObject<HTMLAudioElement>) => {
-    const current = currentlyPlaying?.current;
-
-    if (!current?.paused) {
-      current?.pause();
-    } else {
-      if (currentlyPlayingRef.current?.current) {
-        currentlyPlayingRef.current = ref;
-        ref.current?.play();
-      }
-    }
-  };
+  
   return (
     <section className="flex flex-col items-center gap-2">
       <h1 className="p-2 text-2xl font-bold sm:text-4xl">
