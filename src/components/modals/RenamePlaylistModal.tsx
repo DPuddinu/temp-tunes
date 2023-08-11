@@ -74,9 +74,8 @@ export function RenameModal({
     },
     onError(error, variables, context) {
       onClose();
-
       utils.setData(undefined, context?.prevData);
-      setMessage(`${t_common("error")}`);
+      setMessage(t_common("error"));
     },
   });
 

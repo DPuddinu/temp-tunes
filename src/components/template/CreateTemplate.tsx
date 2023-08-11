@@ -65,12 +65,18 @@ function CreateTemplate({ data }: props) {
       setMessage(t("error"));
     },
     async onSuccess(data) {
-      utils.setData({}, (old) => {
+      utils.setInfiniteData({ limit: 6 }, (old) => {
         if (old) {
-          return {
-            items: [...old.items, data],
-            nextCursor: undefined,
-          };
+          const lastPage = old.pages[old.pages.length - 1];
+          if (lastPage?.items && lastPage?.items.length < 5) {
+            lastPage.items.push(data);
+          } else {
+            old.pages.push({
+              items: [data],
+              nextCursor: undefined,
+            });
+          }
+          return old;
         }
       });
       setMessage(t_template("created", { template: "Template" }));

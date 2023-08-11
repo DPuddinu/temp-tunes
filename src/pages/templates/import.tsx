@@ -45,12 +45,18 @@ const ImportTemplate: PageWithLayout = () => {
     },
     async onSuccess(data) {
       setMessage(`${t("import_success")}`);
-      utils.setData({}, (old) => {
+      utils.setInfiniteData({ limit: 6 }, (old) => {
         if (old) {
-          return {
-            items: [data, ...old.items],
-            nextCursor: undefined,
-          };
+          const lastPage = old.pages[old.pages.length - 1];
+          if (lastPage?.items && lastPage?.items.length < 5) {
+            lastPage.items.push(data);
+          } else {
+            old.pages.push({
+              items: [data],
+              nextCursor: undefined,
+            });
+          }
+          return old;
         }
       });
       router.push("/templates");
