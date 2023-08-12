@@ -133,14 +133,14 @@ function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
         <div className="flex gap-2">
           <input
             tabIndex={-1}
-            className="input w-full bg-base-300"
+            className="input w-full bg-base-100"
             placeholder={t("type_here", { defaultValue: "Type here..." })}
             {...register("tag", { required: true })}
           />
           <button
             tabIndex={-1}
             type="submit"
-            className="btn-circle btn border-transparent text-xl transition-transform"
+            className="btn-circle btn border-transparent text-xl transition-transform hover:bg-base-100"
           >
             +
           </button>
