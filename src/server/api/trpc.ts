@@ -18,7 +18,6 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { type Session } from "next-auth";
 import { getServerAuthSession } from "~/server/auth";
 import { prisma } from "../db/prisma";
-import { redis } from "./redis";
 type CreateContextOptions = {
   session: Session | null;
 };
@@ -36,8 +35,7 @@ type CreateContextOptions = {
 export const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
-    prisma,
-    redis
+    prisma
   };
 };
 

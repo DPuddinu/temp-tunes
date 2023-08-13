@@ -30,5 +30,5 @@
   "char_len": "L'id dovrebbe essere lungo 25 caratteri",
   "desc_max_len": "La descrizione è troppo lunga",
   "entries_min_len": "Aggiungi almeno una voce",
-  "search_track": "Cerca canzone..."
+  "search_track": "Cerca una canzone..."
 }
