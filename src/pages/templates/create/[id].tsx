@@ -7,17 +7,10 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import {
-  createRef,
-  forwardRef,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type RefObject,
-} from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import MainLayout from "~/components/MainLayout";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
@@ -35,6 +28,10 @@ const DEBOUNCE_TIME = 200;
 type SubmitDataType = {
   [k: string]: Track;
 };
+
+const AudioRow = dynamic(() => import("~/components/template/AudioRow"), {
+  loading: () => <div className="w-full rounded-lg bg-base-100" />,
+});
 
 const CreatePlaylistFromTemplate: PageWithLayout = () => {
   const searchParams = useSearchParams();
@@ -287,71 +284,6 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
     </>
   );
 };
-
-interface audioRowProps {
-  src: string;
-  index: number;
-  playing: boolean;
-  setPlaying(index: number): void;
-}
-const AudioRow = ({ src, index, setPlaying, playing }: audioRowProps) => {
-  const ref = useRef<HTMLAudioElement>(null);
-
-  useEffect(() => {
-    if (!playing && ref.current) {
-      ref.current.pause();
-    }
-  }, [playing, ref]);
-
-  return (
-    <>
-      <audio ref={ref} src={src} onEnded={() => setPlaying(-1)} />
-      <button
-        className="btn-success btn-sm btn-circle btn font-bold"
-        onClick={() => {
-          if (ref.current) {
-            if (playing) {
-              setPlaying(-1);
-              ref.current.pause();
-            } else {
-              setPlaying(index);
-              ref.current.play();
-            }
-          }
-        }}
-      >
-        {playing ? (
-          <PauseSVG className="scale-75" />
-        ) : (
-          <PlaySVG className="scale-75" />
-        )}
-      </button>
-    </>
-  );
-};
-
-interface AudioProps {
-  src: string;
-  onPlay: () => void;
-  onPause: () => void;
-  onEnded: () => void;
-}
-
-const Audio = forwardRef<HTMLAudioElement, AudioProps>(function AudioButtonFn(
-  { src, onEnded, onPause, onPlay },
-  ref
-) {
-  return (
-    <audio
-      src={src}
-      ref={ref}
-      onEnded={onEnded}
-      onPause={onPause}
-      onPlay={onPlay}
-    />
-  );
-});
-Audio.displayName = "Audio";
 
 CreatePlaylistFromTemplate.getLayout = (page) => (
   <MainLayout>
