@@ -3,12 +3,12 @@ import { useTranslation } from "next-i18next";
 import { useEffect } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
+import resources from "~/@types/resources";
 import { useToast } from "~/hooks/use-toast";
 import { api } from "~/utils/api";
 import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
-import resources from "~/@types/resources";
 const common = resources.common;
 
 type Props = {
@@ -90,10 +90,6 @@ export function RenameModal({
     if (isOpen) setValue("name", playlistName);
   }, [setValue, playlistName, isOpen]);
 
-  useEffect(() => {
-    console.log(errors);
-  }, [errors]);
-
   return (
     <BaseModal isOpen={isOpen} title={t("operations.rename")} onClose={onClose}>
       <div className="flex h-3/4 flex-col justify-between pt-4 text-black">
@@ -104,13 +100,13 @@ export function RenameModal({
             </label>
             <input
               type="text"
-              className="input-bordered input w-full max-w-xs text-white"
+              className="input-bordered input w-full max-w-xs bg-base-100 text-base-content"
               {...register("name")}
             />
             {errors?.name?.message && (
               <label className="label">
                 <span className="label-text-alt text-error">
-                  {t_common(errors.name.message === "name_min_len" ? "name_min_len" : "name_max_len")}
+                  {t_common(errors.name.message, { defaultValue: "Input not valid" })}
                 </span>
               </label>
             )}

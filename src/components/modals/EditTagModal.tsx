@@ -149,11 +149,9 @@ function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
         {errors?.tag?.message && (
           <label className="label text-red-700">
             <span className="label-text-alt font-bold text-red-700">
-              {`${t_modals(
-                errors?.tag?.message === "tag_errors.short"
-                  ? "tag_errors.short"
-                  : "tag_errors.long"
-              )}`}
+              {t_modals(errors?.tag?.message, {
+                defaultValue: "Input not valid",
+              })}
             </span>
           </label>
         )}

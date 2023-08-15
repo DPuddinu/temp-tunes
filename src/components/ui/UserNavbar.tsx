@@ -34,9 +34,9 @@ const UserNavbar = ({ name, image }: UserNavbarProps) => {
         <div className="dropdown-end mr-4 flex">
           <div className="dropdown-end dropdown ">
             <div className=" flex items-center gap-2 rounded pl-6">
-              <h1 className="text-sm font-medium text-primary-content">
+              <p className="text-sm font-medium text-base-content">
                 {name}
-              </h1>
+              </p>
               <label tabIndex={0} className="btn-ghost btn-circle avatar btn">
                 <div className="w-10 rounded-full">
                   {!!image ? (
