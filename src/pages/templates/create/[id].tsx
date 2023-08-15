@@ -145,7 +145,7 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
           <h1 className="p-2 text-2xl font-bold sm:text-4xl">
             {templateData?.name}
           </h1>
-          <div className="w-96 max-w-sm rounded-lg bg-base-300 p-2 pb-4 shadow">
+          <div className="w-full max-w-sm rounded-lg bg-base-300 p-2 pb-4 shadow">
             <ul className="steps steps-horizontal w-full">
               {template && (
                 <li

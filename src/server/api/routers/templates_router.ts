@@ -94,7 +94,6 @@ export const templatesRouter = createTRPCRouter({
       const { id } = input;
       return ctx.prisma.template.findFirst({
         where: {
-          userId: ctx.session.user.id,
           id: id
         },
         include: {
@@ -212,7 +211,6 @@ export const templatesRouter = createTRPCRouter({
     }
     // otherwise, we unfollow the template
     else {
-      console.log('UNFOLLOW-------------->')
       return await ctx.prisma.template.update({
         where: {
           id: id
