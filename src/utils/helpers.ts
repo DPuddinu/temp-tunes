@@ -1,3 +1,9 @@
+import { getCookie } from "cookies-next";
+import type { OptionsType } from "cookies-next/lib/types";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { langKey } from "~/hooks/use-language";
+import type { Language } from "~/types/page-types";
+
 export function spliceArray(array: unknown[], size: number) {
   const newArray = [];
   while (array.length) {
@@ -5,29 +11,14 @@ export function spliceArray(array: unknown[], size: number) {
   }
   return newArray;
 }
-export function array_move(arr: unknown[], old_index: number, new_index: number) {
-  if (new_index >= arr.length) {
-    let k = new_index - arr.length + 1;
-    while (k--) {
-      arr.push(undefined);
-    }
-  }
-  arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
-  return arr;
+
+export const getPageProps = async(translations: string[], { req, res }: OptionsType) => {
+  const language = getCookie(langKey, { req, res }) as Language;
+
+  return {
+    props: {
+      //prettier- ignore
+      ...(await serverSideTranslations(language ?? "en", translations)),
+    },
+  };
 };
-export function arrayMoveMutable(array: unknown[], fromIndex: number, toIndex: number) {
-  const startIndex = fromIndex < 0 ? array.length + fromIndex : fromIndex;
-
-  if (startIndex >= 0 && startIndex < array.length) {
-    const endIndex = toIndex < 0 ? array.length + toIndex : toIndex;
-
-    const [item] = array.splice(fromIndex, 1);
-    array.splice(endIndex, 0, item);
-  }
-}
-
-export function arrayMoveImmutable(array: unknown[], fromIndex: number, toIndex: number) {
-  array = [...array];
-  arrayMoveMutable(array, fromIndex, toIndex);
-  return array;
-}

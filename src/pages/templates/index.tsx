@@ -1,8 +1,4 @@
-import { type Template, type TemplateEntry } from "@prisma/client";
-import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
-import { getSession } from "next-auth/react";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,11 +7,10 @@ import TemplateLayout from "~/components/template/TemplatePageLayout";
 import PaginationComponent from "~/components/ui/PaginationComponent";
 import { ErrorSVG } from "~/components/ui/icons";
 import { TemplatesSkeleton } from "~/components/ui/skeletons/TemplatesSkeleton";
-import { langKey } from "~/hooks/use-language";
 import { useToast } from "~/hooks/use-toast";
-import { ssgInit } from "~/server/ssg-init";
-import { type Language, type PageWithLayout } from "~/types/page-types";
+import { type PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
+import { getPageProps } from "~/utils/helpers";
 
 const TemplateList = dynamic(
   () => import("~/components/template/TemplateList"),
@@ -24,15 +19,7 @@ const TemplateList = dynamic(
   }
 );
 
-export type firstPageProps = {
-  firstPageData: {
-    items: (Template & {
-      templateEntries: TemplateEntry[];
-    })[];
-    nextCursor: number | null;
-  };
-};
-const Templates: PageWithLayout = ({ firstPageData }: firstPageProps) => {
+const Templates: PageWithLayout = () => {
   const { setMessage } = useToast();
   const { t } = useTranslation("templates");
   const [page, setPage] = useState(0);
@@ -47,19 +34,6 @@ const Templates: PageWithLayout = ({ firstPageData }: firstPageProps) => {
         onError() {
           setMessage(t("error"));
         },
-        initialData: {
-          pageParams: [],
-          pages: [
-            {
-              items: firstPageData.items,
-              nextCursor: firstPageData.nextCursor
-                ? firstPageData.nextCursor
-                : undefined,
-            },
-          ],
-        },
-        refetchOnWindowFocus: true,
-        refetchOnMount: true,
       }
     );
   const handleFetchNextPage = () => {
@@ -112,24 +86,5 @@ Templates.getLayout = (page) => (
 export default Templates;
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const language = getCookie(langKey, { req, res }) as Language;
-
-  const session = await getSession({ req });
-  const ssg = await ssgInit(session);
-
-  const templateData = await ssg.template.getByCurrentUser.fetch({ limit: 6 });
-  const data = {
-    items: templateData.items,
-    nextCursor: templateData.nextCursor ? templateData.nextCursor : null,
-  };
-  return {
-    props: {
-      firstPageData: data,
-      //prettier- ignore
-      ...(await serverSideTranslations(language ?? "en", [
-        "templates",
-        "common",
-      ])),
-    },
-  };
+  return getPageProps(["templates", "common"], { req, res });
 };

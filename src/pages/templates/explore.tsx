@@ -1,7 +1,4 @@
-import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
-import { getSession } from "next-auth/react";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -10,13 +7,11 @@ import MainLayout from "~/components/MainLayout";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
 import PaginationComponent from "~/components/ui/PaginationComponent";
 import { TemplateSkeleton } from "~/components/ui/skeletons/TemplatesSkeleton";
-import { langKey } from "~/hooks/use-language";
 import { useToast } from "~/hooks/use-toast";
-import { ssgInit } from "~/server/ssg-init";
-import { type Language, type PageWithLayout } from "~/types/page-types";
+import { type PageWithLayout } from "~/types/page-types";
 import type { TemplateFilterSchemaType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
-import type { firstPageProps } from ".";
+import { getPageProps } from "~/utils/helpers";
 
 const TemplateCard = dynamic(
   () => import("~/components/template/TemplateCard"),
@@ -32,7 +27,7 @@ const TemplateFilter = dynamic(
   }
 );
 
-const Explore: PageWithLayout = ({ firstPageData }: firstPageProps) => {
+const Explore: PageWithLayout = () => {
   const { t } = useTranslation("templates");
   const { t: t_common } = useTranslation("common");
 
@@ -43,28 +38,15 @@ const Explore: PageWithLayout = ({ firstPageData }: firstPageProps) => {
   const [filter, setFilter] = useState<TemplateFilterSchemaType>();
 
   // prettier-ignore
-  const { data, isLoading, fetchNextPage } =
-    api.template.getLatest.useInfiniteQuery(
+  const { data, isLoading, fetchNextPage } = api.template.getLatest.useInfiniteQuery(
       {
         limit: 6,
-        skip: 6,
-        filter: filter,
+        filter: filter
       },
       {
-        initialData: {
-          pageParams: [],
-          pages: [
-            {
-              items: firstPageData.items,
-              nextCursor: firstPageData.nextCursor
-                ? firstPageData.nextCursor
-                : undefined,
-            },
-          ],
-        },
         getNextPageParam: (lastPage) => lastPage.nextCursor,
         onError() {
-          setMessage(t("error"));
+          setMessage(t('error'));
         },
       }
     );
@@ -151,23 +133,5 @@ Explore.getLayout = (page) => (
 export default Explore;
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const language = getCookie(langKey, { req, res }) as Language;
-  const session = await getSession({ req });
-  const ssg = await ssgInit(session);
-
-  const templateData = await ssg.template.getLatest.fetch({ limit: 6 });
-  const data = {
-    items: templateData.items,
-    nextCursor: templateData.nextCursor ? templateData.nextCursor : null,
-  };
-  return {
-    props: {
-      firstPageData: data,
-      //prettier- ignore
-      ...(await serverSideTranslations(language ?? "en", [
-        "templates",
-        "common",
-      ])),
-    },
-  };
+  return getPageProps(["templates", "common"], { req, res });
 };

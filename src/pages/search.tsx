@@ -1,10 +1,8 @@
 import MainLayout from "@components/MainLayout";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type ColumnDef } from "@tanstack/react-table";
-import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
@@ -14,12 +12,13 @@ import { getTagColumns, getTrackColumns } from "~/components/search/columns";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { SearchSVG } from "~/components/ui/icons/index";
 import { usePlaylistStore } from "~/core/userStore";
-import { langKey } from "~/hooks/use-language";
 import { useLibrary } from "~/hooks/use-library";
-import type { Language, PageWithLayout } from "~/types/page-types";
+import type { PageWithLayout } from "~/types/page-types";
 import { type Playlist } from "~/types/spotify-types";
 import { SearchTypeConst, type SearchType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
+import { getPageProps } from "~/utils/helpers";
+
 //prettier-ignore
 const DataTable = dynamic(() => import("~/components/ui/DataTable"), {loading: () => <div></div>});
 
@@ -113,7 +112,7 @@ const Search: PageWithLayout = () => {
                 placeholder={t("search", {
                   defaultValue: "Search...",
                 }).toString()}
-                className="input join-item w-full grow bg-secondary-content sm:max-w-sm "
+                className="join-item input w-full grow bg-secondary-content sm:max-w-sm "
               />
             </div>
 
@@ -144,7 +143,9 @@ const Search: PageWithLayout = () => {
         {errors.name?.message && (
           <label className="label text-error">
             <span className="label-text-alt mt-2 font-bold text-error">
-              {t(errors.name?.message, { defaultValue: "Name too long or too small" })}
+              {t(errors.name?.message, {
+                defaultValue: "Name too long or too small",
+              })}
             </span>
           </label>
         )}
@@ -164,13 +165,7 @@ const Search: PageWithLayout = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const language = getCookie(langKey, { req, res }) as Language;
-  return {
-    props: {
-      //prettier- ignore
-      ...(await serverSideTranslations(language, ["search", "common"])),
-    },
-  };
+  return getPageProps(["search", "common"], { req, res });
 };
 
 Search.getLayout = (page) => <MainLayout>{page}</MainLayout>;

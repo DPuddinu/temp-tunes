@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState, type DragEvent, type TouchEvent } from "react";
+import { Fragment, useState, type TouchEvent } from "react";
 import useMediaQuery from "~/hooks/use-media-query";
 
 const minSwipeDistance = 50;

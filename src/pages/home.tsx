@@ -1,18 +1,16 @@
 import MainLayout from "@components/MainLayout";
 import { useOs } from "@mantine/hooks";
-import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { useSwipeable } from "react-swipeable";
 import type { TimeRangeType } from "src/types/spotify-types";
 import type { RecapPropsType } from "~/components/recap/cards/UserTopCard";
-import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
-import { langKey } from "~/hooks/use-language";
-import type { Language, PageWithLayout } from "../types/page-types";
 import GreetingsSkeleton from "~/components/ui/skeletons/GreetingsSkeleton";
+import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
+import { getPageProps } from "~/utils/helpers";
+import type { PageWithLayout } from "../types/page-types";
 
 const Home: PageWithLayout = () => {
   const { data: sessionData } = useSession();
@@ -126,19 +124,9 @@ Home.getLayout = (page) => <MainLayout>{page}</MainLayout>;
 export default Home;
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const language = getCookie(langKey, { req, res }) as Language;
-
-  return {
-    props: {
-      //prettier- ignore
-      ...(await serverSideTranslations(language ?? "en", [
-        "home",
-        "common",
-        "modals",
-      ])),
-    },
-  };
+  return getPageProps(["home", "common","modals"], { req, res });
 };
+
 
 function scrollTo(targetId: string) {
   document

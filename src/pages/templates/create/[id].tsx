@@ -3,25 +3,22 @@ import {
   useDebouncedValue,
   useIntersection,
 } from "@mantine/hooks";
-import type { Template, TemplateEntry } from "@prisma/client";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
-import { getSession } from "next-auth/react";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import MainLayout from "~/components/MainLayout";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
-import { langKey } from "~/hooks/use-language";
+import CreatePlaylistSkeleton from "~/components/ui/skeletons/CreatePlaylistSkeleton";
 import { useToast } from "~/hooks/use-toast";
-import { ssgInit } from "~/server/ssg-init";
-import { type Language, type PageWithLayout } from "~/types/page-types";
+import { type PageWithLayout } from "~/types/page-types";
 import { type Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
+import { getPageProps } from "~/utils/helpers";
 
 const DEBOUNCE_TIME = 200;
 
@@ -33,12 +30,9 @@ const AudioRow = dynamic(() => import("~/components/template/AudioRow"), {
   loading: () => <div className="w-full rounded-lg bg-base-100" />,
 });
 
-type props = {
-  templateData: Template & { templateEntries: TemplateEntry[]}
-}
-const CreatePlaylistFromTemplate: PageWithLayout = ({
-  templateData,
-}: props) => {
+const CreatePlaylistFromTemplate: PageWithLayout = () => {
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
   const { t } = useTranslation("templates");
   const { t: t_common } = useTranslation("common");
 
@@ -60,6 +54,19 @@ const CreatePlaylistFromTemplate: PageWithLayout = ({
 
   // prettier-ignore
   const [currentlyPlaying, setCurrentlyPlaying] = useState<number>();
+
+  // prettier-ignore
+  const { isLoading, data: templateData } = api.template.getById.useQuery(
+    { id: Number(id) ?? -1 },
+    {
+      queryKey: ["template.getById", { id: Number(id) ?? -1 }],
+      onError() {
+        const msg = t("get_error");
+        setMessage(msg);
+      },
+      enabled: id !== undefined,
+    }
+  );
 
   const template = useMemo(
     () => templateData?.templateEntries[page],
@@ -129,6 +136,7 @@ const CreatePlaylistFromTemplate: PageWithLayout = ({
 
   return (
     <>
+      {isLoading && <CreatePlaylistSkeleton />}
       {templateData && (
         <section className="flex flex-col items-center gap-2">
           <h1 className="p-2 text-2xl font-bold sm:text-4xl">
@@ -223,7 +231,7 @@ const CreatePlaylistFromTemplate: PageWithLayout = ({
             <div className="mt-4 flex w-full justify-center gap-2">
               <button
                 disabled={page === 0}
-                className="btn-square join-item btn w-24"
+                className="join-item btn-square btn w-24"
                 onClick={() => {
                   setPage((page) => page - 1);
                   setDisabledSearch(true);
@@ -235,7 +243,7 @@ const CreatePlaylistFromTemplate: PageWithLayout = ({
               </button>
               <button
                 disabled={page + 1 === templateData?.templateEntries.length}
-                className="btn-square join-item btn w-24"
+                className="join-item btn-square btn w-24"
                 onClick={() => {
                   setPage((page) => page + 1);
                   setDisabledSearch(true);
@@ -250,14 +258,14 @@ const CreatePlaylistFromTemplate: PageWithLayout = ({
           <div className="mt-2 flex w-full max-w-sm justify-center gap-2">
             <Link
               href={"/templates"}
-              className="btn w-32 bg-red-500 text-black"
+              className="btn w-32 bg-red-500 text-black hover:bg-red-400"
             >
               {t_common("cancel")}
             </Link>
 
             <button
               disabled={Object.values(submitTracks).length === 0}
-              className="btn w-32 bg-green-500 text-black"
+              className="btn w-32 bg-green-500 text-black hover:bg-green-400"
               onClick={() => {
                 mutate({
                   name: templateData.name,
@@ -281,26 +289,6 @@ CreatePlaylistFromTemplate.getLayout = (page) => (
 );
 export default CreatePlaylistFromTemplate;
 
-export const getServerSideProps: GetServerSideProps = async ({
-  req,
-  res,
-  params,
-}) => {
-  const language = getCookie(langKey, { req, res }) as Language;
-  const session = await getSession({ req });
-  const ssg = await ssgInit(session);
-
-  const id = Number(params?.id) ?? -1;
-
-  const templateData = await ssg.template.getById.fetch({ id });
-  return {
-    props: {
-      templateData: templateData,
-      //prettier- ignore
-      ...(await serverSideTranslations(language ?? "en", [
-        "templates",
-        "common",
-      ])),
-    },
-  };
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  return getPageProps(["templates", "common"], { req, res });
 };

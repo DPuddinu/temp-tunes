@@ -1,4 +1,4 @@
-import { useTranslation, type TFunction } from "next-i18next";
+import { useTranslation } from "next-i18next";
 import type { TimeRangeType } from "~/types/spotify-types";
 import { TimeRangeArray } from "~/types/spotify-types";
 

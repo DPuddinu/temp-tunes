@@ -1,18 +1,19 @@
-import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
 import { signIn } from "next-auth/react";
 import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
-import { langKey, useLanguage } from "~/hooks/use-language";
+import { useLanguage } from "~/hooks/use-language";
+import styles from "~/styles/index.module.css";
+import { Languages, type Language } from "~/types/page-types";
+import { getPageProps } from "~/utils/helpers";
+import { cn } from "~/utils/utils";
 import {
-  FacebookSVG,
   InstagramSVG,
   LinkedinSVG,
   TwitterSVG,
 } from "../components/ui/icons/index";
-import { type Language, Languages } from "~/types/page-types";
+
 const Landing = () => {
   const router = useRouter();
   useEffect(() => {
@@ -46,7 +47,12 @@ const Features = () => {
   const { t } = useTranslation("landing");
   return (
     <section className="flex grow flex-col text-center text-gray-800 md:text-left">
-      <div className=" diagonal grid grow place-items-center p-10 pb-16 text-white">
+      <div
+        className={cn(
+          "grid grow place-items-center p-10 pb-16 text-white",
+          styles.diagonal
+        )}
+      >
         <div className="grid gap-2 text-center">
           <h1 className="mb-2 text-2xl font-extrabold">{t("create")}</h1>
           <h2 className="text-xl">{t("templates-1")}</h2>
@@ -61,11 +67,16 @@ const Features = () => {
           <h2 className="text-xl">{t("stats-3")}</h2>
         </div>
       </div>
-      <div className="diagonal-green grid flex-grow place-items-center p-10  pb-16 text-white">
+      <div
+        className={cn(
+          "grid flex-grow place-items-center p-10  pb-16 text-white",
+          styles.diagonalgreen
+        )}
+      >
         <div className="grid gap-2 text-center">
           <h1 className="mb-2 text-2xl font-extrabold ">{t("surprise")}</h1>
           <h2 className="text-xl">{t("share")}</h2>
-        </div>{" "}
+        </div>
       </div>
       <div className="mb-8 flex w-full grow items-center justify-center">
         <button
@@ -90,9 +101,7 @@ const Footer = () => {
           Dario Puddinu
         </span>
         <span className="inline-flex w-32 items-center justify-around sm:mt-0">
-          <a className="text-gray-400">
-            <FacebookSVG />
-          </a>
+          
           <a className="ml-3 text-gray-400">
             <TwitterSVG />
           </a>
@@ -125,11 +134,6 @@ const Footer = () => {
   );
 };
 
-//prettier-ignore
-export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
-  const language = getCookie(langKey, { req, res }) as Language;
-  return {
-    props: {
-      ...(await serverSideTranslations(language ?? "en", ["landing"]))},
-  };
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  return getPageProps(["landing"], { req, res });
 };

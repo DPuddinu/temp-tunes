@@ -1,7 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -9,10 +7,10 @@ import { z } from "zod";
 import resources from "~/@types/resources";
 import MainLayout from "~/components/MainLayout";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
-import { langKey } from "~/hooks/use-language";
 import { useToast } from "~/hooks/use-toast";
-import { type Language, type PageWithLayout } from "~/types/page-types";
+import { type PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
+import { getPageProps } from "~/utils/helpers";
 const FormSchema = z.object({
   id: z
     .string()
@@ -97,15 +95,5 @@ ImportTemplate.getLayout = (page) => (
 export default ImportTemplate;
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const language = getCookie(langKey, { req, res }) as Language;
-
-  return {
-    props: {
-      // prettier-ignore
-      ...(await serverSideTranslations(language ?? "en", [
-        "templates",
-        "common",
-      ])),
-    },
-  };
+  return getPageProps(["templates", "common"], { req, res });
 };

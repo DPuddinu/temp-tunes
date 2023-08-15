@@ -6,7 +6,6 @@ import { ThemeProvider } from "next-themes";
 import { type AppType } from "next/app";
 import UserDataProvider from "~/context/user-data-context";
 import "~/styles/globals.css";
-import "~/styles/index.css";
 import { api } from "~/utils/api";
 import { themesList, type AppPropsWithLayout } from "../types/page-types";
 const akshar = Quicksand({ subsets: ["latin"] });
