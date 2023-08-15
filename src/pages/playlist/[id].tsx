@@ -1,44 +1,27 @@
 import { getCookie } from "cookies-next";
 import { type GetServerSideProps } from "next";
+import { getSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
-import { useSearchParams } from "next/navigation";
 import MainLayout from "~/components/MainLayout";
 import VirtualScroll from "~/components/ui/VirtualScroll";
-import { PlaylistSkeleton } from "~/components/ui/skeletons/PlaylistSkeleton";
 import { SquareSkeleton } from "~/components/ui/skeletons/SquareSkeleton";
 import { langKey } from "~/hooks/use-language";
-import { useToast } from "~/hooks/use-toast";
+import { ssgInit } from "~/server/ssg-init";
 import { type Language, type PageWithLayout } from "~/types/page-types";
-import { type Track } from "~/types/spotify-types";
-import { api } from "~/utils/api";
+import { type Playlist, type Track } from "~/types/spotify-types";
 
 const TrackRow = dynamic(() => import("~/components/ui/TrackRow"), {
   loading: () => <SquareSkeleton />,
 });
 
-const PlaylistPage: PageWithLayout = () => {
-  const { setMessage } = useToast();
+interface props {
+  data: Playlist;
+}
 
-  const searchParams = useSearchParams();
-
-  const id = searchParams.get("id");
-
-  const { isLoading, data } = api.spotify_playlist.getById.useQuery(
-    {
-      id: id,
-    },
-    {
-      onError() {
-        setMessage(`Error: can't get playlist`);
-      },
-      enabled: id !== null,
-    }
-  );
-
+const PlaylistPage: PageWithLayout = ({ data }: props) => {
   return (
     <>
-      {isLoading && <PlaylistSkeleton />}
       {data && (
         <div className="m-auto flex h-full max-h-[36rem] max-w-md flex-col rounded-xl bg-base-200 p-2 ">
           <div className="p-4">
@@ -67,12 +50,25 @@ const PlaylistPage: PageWithLayout = () => {
 export default PlaylistPage;
 PlaylistPage.getLayout = (page) => <MainLayout>{page}</MainLayout>;
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  res,
+  params,
+}) => {
   const language = getCookie(langKey, { req, res }) as Language;
+  const session = await getSession({ req });
+  const ssg = await ssgInit(session);
+
+  const id = params?.id;
+  let data: Playlist | undefined = undefined;
+  if (id) {
+    data = await ssg.spotify_playlist.getById.fetch({ id: id.toString() });
+  }
   return {
     props: {
+      data: data,
       //prettier- ignore
-      ...(await serverSideTranslations(language, [
+      ...(await serverSideTranslations(language ?? "en", [
         "playlists",
         "common",
         "modals",

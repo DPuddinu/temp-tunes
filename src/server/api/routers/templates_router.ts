@@ -128,7 +128,7 @@ export const templatesRouter = createTRPCRouter({
     z.object({
       limit: z.number().min(1).max(100).nullish(),
       skip: z.number().optional(),
-      cursor: z.number().nullish(), // <-- "cursor" needs to exist, but can be any type
+      cursor: z.number().nullish(),
     })
   )
     .query(async ({ ctx, input }) => {

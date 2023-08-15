@@ -3,22 +3,22 @@ import {
   useDebouncedValue,
   useIntersection,
 } from "@mantine/hooks";
+import type { Template, TemplateEntry } from "@prisma/client";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getCookie } from "cookies-next";
 import type { GetServerSideProps } from "next";
+import { getSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import MainLayout from "~/components/MainLayout";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
-import { PauseSVG, PlaySVG } from "~/components/ui/icons";
-import CreatePlaylistSkeleton from "~/components/ui/skeletons/CreatePlaylistSkeleton";
 import { langKey } from "~/hooks/use-language";
 import { useToast } from "~/hooks/use-toast";
+import { ssgInit } from "~/server/ssg-init";
 import { type Language, type PageWithLayout } from "~/types/page-types";
 import { type Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
@@ -33,9 +33,12 @@ const AudioRow = dynamic(() => import("~/components/template/AudioRow"), {
   loading: () => <div className="w-full rounded-lg bg-base-100" />,
 });
 
-const CreatePlaylistFromTemplate: PageWithLayout = () => {
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
+type props = {
+  templateData: Template & { templateEntries: TemplateEntry[]}
+}
+const CreatePlaylistFromTemplate: PageWithLayout = ({
+  templateData,
+}: props) => {
   const { t } = useTranslation("templates");
   const { t: t_common } = useTranslation("common");
 
@@ -57,19 +60,6 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
 
   // prettier-ignore
   const [currentlyPlaying, setCurrentlyPlaying] = useState<number>();
-
-  // prettier-ignore
-  const { isLoading, data: templateData } = api.template.getById.useQuery(
-    { id: Number(id) ?? -1 },
-    {
-      queryKey: ["template.getById", { id: Number(id) ?? -1 }],
-      onError() {
-        const msg = t("get_error");
-        setMessage(msg);
-      },
-      enabled: id !== undefined,
-    }
-  );
 
   const template = useMemo(
     () => templateData?.templateEntries[page],
@@ -139,7 +129,6 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
 
   return (
     <>
-      {isLoading && <CreatePlaylistSkeleton />}
       {templateData && (
         <section className="flex flex-col items-center gap-2">
           <h1 className="p-2 text-2xl font-bold sm:text-4xl">
@@ -292,11 +281,21 @@ CreatePlaylistFromTemplate.getLayout = (page) => (
 );
 export default CreatePlaylistFromTemplate;
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  res,
+  params,
+}) => {
   const language = getCookie(langKey, { req, res }) as Language;
+  const session = await getSession({ req });
+  const ssg = await ssgInit(session);
 
+  const id = Number(params?.id) ?? -1;
+
+  const templateData = await ssg.template.getById.fetch({ id });
   return {
     props: {
+      templateData: templateData,
       //prettier- ignore
       ...(await serverSideTranslations(language ?? "en", [
         "templates",

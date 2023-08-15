@@ -43,22 +43,9 @@ const ImportTemplate: PageWithLayout = () => {
     onError() {
       setMessage(t("error"));
     },
-    async onSuccess(data) {
-      setMessage(`${t("import_success")}`);
-      utils.setInfiniteData({ limit: 6 }, (old) => {
-        if (old) {
-          const lastPage = old.pages[old.pages.length - 1];
-          if (lastPage?.items && lastPage?.items.length < 5) {
-            lastPage.items.push(data);
-          } else {
-            old.pages.push({
-              items: [data],
-              nextCursor: undefined,
-            });
-          }
-          return old;
-        }
-      });
+    async onSuccess() {
+      setMessage(t("import_success"));
+      utils.invalidate();
       router.push("/templates");
     },
   });
@@ -75,7 +62,7 @@ const ImportTemplate: PageWithLayout = () => {
         <div className="join w-full ">
           <div className="form-control w-full max-w-xs">
             <input
-              className="input-bordered input join-item grow bg-white "
+              className="input-bordered join-item input grow bg-white "
               placeholder={t("import_placeholder", {
                 defaultValue: "Paste template id...",
               })}

@@ -60,7 +60,6 @@ const TemplateLayout = ({ children, title }: props) => {
             <Link href={"/templates/import"} key="import">
               <FabChild
                 label={t_common("import")}
-                disabled
                 className="border-green-500 bg-green-500 hover:border-green-500  hover:bg-green-500"
               >
                 <ImportSVG />

@@ -170,7 +170,7 @@ const TemplateCard = ({
 
 export default TemplateCard;
 
-const Colors = {
+export const TemplateColors = {
   red: "bg-red-500 hover:bg-red-500",
   orange: "bg-orange-500 hover:bg-orange-500",
   amber: "bg-amber-500 hover:bg-amber-500",
@@ -192,8 +192,8 @@ const Colors = {
 
 function getColorByIndex(index: number): string {
   let temp = index;
-  const colors = Object.values(Colors);
+  const colors = Object.values(TemplateColors);
   while (temp > colors.length) temp -= colors.length;
 
-  return colors[temp] ?? Colors.blue;
+  return colors[temp] ?? TemplateColors.blue;
 }
