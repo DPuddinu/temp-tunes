@@ -23,16 +23,14 @@ export const itemsPerPageOptions = ["5", "10", "15", "20"];
 export const totalItems = 50;
 const itemsPerPage = 5;
 
-//TODO create proper skeleton
-const TrackRow = dynamic(
-  () => import("~/components/ui/TrackRow"),
-  {
-    loading: () => <SquareSkeleton />,
-  }
-);
+const TrackRow = dynamic(() => import("~/components/ui/TrackRow"), {
+  loading: () => <SquareSkeleton />,
+});
 
 const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
   const { t } = useTranslation("home");
+  const { t: t_common } = useTranslation("common");
+
   const [selectedType, setSelectedType] = useState<TopType>("tracks");
   const [selectedPage, setSelectedPage] = useState(0);
 
@@ -51,6 +49,8 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
   useEffect(() => {
     setSelectedPage(0);
   }, [timeRange]);
+
+  const _data = data?.items[selectedPage];
 
   return (
     <RecapCard
@@ -72,9 +72,8 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
             <p
               key={type}
               className={`${
-                selectedType === type
-                  ? "border border-transparent border-b-base-content"
-                  : ""
+                selectedType === type &&
+                "border border-transparent border-b-base-content"
               } pb-2 md:text-lg`}
             >
               {t(getTranslationByType(type))}
@@ -83,18 +82,15 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
         ))}
       </div>
       <RecapCard.Container error={isError}>
-        {data?.items[selectedPage]?.map((item, i) => (
-            <>
-              {selectedType === "artists" ? (
-                <ArtistRow artist={item as Artist} key={i} />
-              ) : (
-                <TrackRow
-                  track={item as Track}
-                  key={i}
-                />
-              )}
-            </>
-          ))}
+        {_data?.map((item, i) => (
+          <>
+            {selectedType === "artists" ? (
+              <ArtistRow artist={item as Artist} key={i} />
+            ) : (
+              <TrackRow track={item as Track} key={i} />
+            )}
+          </>
+        ))}
         {data && data.totalItems > itemsPerPage && (
           <PaginationComponent
             key={"pagination"}
@@ -111,6 +107,11 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
               })
             }
           />
+        )}
+        {!_data && (
+          <div className="grid place-content-center pt-4">
+            {t_common("empty")}
+          </div>
         )}
       </RecapCard.Container>
     </RecapCard>

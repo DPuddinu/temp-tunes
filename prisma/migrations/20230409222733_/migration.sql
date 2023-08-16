@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `tag` ADD COLUMN `spotifyName` VARCHAR(191) NOT NULL DEFAULT '';

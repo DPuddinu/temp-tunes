@@ -1,6 +1,6 @@
 {
   "name": "next-spotify-manager",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "prisma": {
     "seedTest": "ts-node --esm prisma/seed_test.ts",
     "seed": "ts-node --esm prisma/seed.ts"

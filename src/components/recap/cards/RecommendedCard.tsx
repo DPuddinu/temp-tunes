@@ -16,7 +16,7 @@ const RecommendedCard = () => {
   //prettier-ignore
   const { data, isLoading, isError } = api.spotify_user.getRecommendedations.useQuery(undefined, {refetchOnWindowFocus: false});
   const { t } = useTranslation("home");
-
+  const { t: t_common } = useTranslation("common");
   return (
     <RecapCard
       key={"card-recommended"}
@@ -28,11 +28,13 @@ const RecommendedCard = () => {
       </RecapCard.Header>
       <RecapCard.Container key={"container-recommended"} error={isError}>
         {data?.tracks.map((track) => (
-          <TrackRow
-            key={track.id}
-            track={track}
-          />
+          <TrackRow key={track.id} track={track} />
         ))}
+        {data?.tracks.length === 0 && (
+          <div className="grid place-content-center pt-4">
+            {t_common("empty")}
+          </div>
+        )}{" "}
       </RecapCard.Container>
     </RecapCard>
   );

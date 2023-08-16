@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import { SpotifyWebPlayer } from "../WebPlayback";
 import { ImageWithFallback } from "./ImageWithFallback";
-import { ErrorSVG, MenuSVG } from "./icons";
+import { ErrorSVG, MenuSVG, UserSVG } from "./icons";
 import { RoundSkeleton } from "./skeletons/RoundSkeleton";
 
 interface UserNavbarProps {
@@ -34,11 +34,9 @@ const UserNavbar = ({ name, image }: UserNavbarProps) => {
         <div className="dropdown-end mr-4 flex">
           <div className="dropdown-end dropdown ">
             <div className=" flex items-center gap-2 rounded pl-6">
-              <p className="text-sm font-medium text-base-content">
-                {name}
-              </p>
+              <p className="text-sm font-medium text-base-content">{name}</p>
               <label tabIndex={0} className="btn-ghost btn-circle avatar btn">
-                <div className="w-10 rounded-full">
+                <div className="h-10 w-10 bg-base-100 shadow rounded-full">
                   {!!image ? (
                     <ImageWithFallback
                       priority
@@ -50,7 +48,7 @@ const UserNavbar = ({ name, image }: UserNavbarProps) => {
                       className="flex h-full w-full items-center justify-center bg-base-100"
                     />
                   ) : (
-                    <RoundSkeleton />
+                    <UserSVG />
                   )}
                 </div>
               </label>

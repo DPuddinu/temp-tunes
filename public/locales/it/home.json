@@ -25,7 +25,7 @@
     "energy": "Energia"
   },
   "tags": {
-    "error": "Oops, c'è stato un errore caricando i tag :(",
+    "error": "Oops, c'è stato un errore caricando i tag",
     "empty": "Non hai ancora associato tag ad alcuna canzone",
     "most_used": "I tuoi tag più usati"
   }
