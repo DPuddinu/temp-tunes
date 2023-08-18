@@ -164,8 +164,8 @@ const Search: PageWithLayout = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  return getPageProps(["search", "common"], { req, res });
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return getPageProps(["search", "common"], context);
 };
 
 Search.getLayout = (page) => <MainLayout>{page}</MainLayout>;

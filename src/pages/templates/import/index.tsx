@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
-import resources from "~/@types/resources";
 import MainLayout from "~/components/MainLayout";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
 import { useToast } from "~/hooks/use-toast";
@@ -12,18 +11,15 @@ import { type PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 import { getPageProps } from "~/utils/helpers";
 const FormSchema = z.object({
-  id: z
-    .string()
-    .min(25, {
-      message: resources.templates.char_len,
-    })
-    .max(25, {
-      message: resources.templates.char_len,
-    }),
+  id: z.string(),
 });
 type FormSchemaType = z.infer<typeof FormSchema>;
 
-const ImportTemplate: PageWithLayout = () => {
+interface props {
+  id?: string;
+}
+
+export const ImportTemplateForm = ({ id }: props) => {
   const { setMessage } = useToast();
   const { t } = useTranslation("templates");
   const { t: t_common } = useTranslation("common");
@@ -35,7 +31,12 @@ const ImportTemplate: PageWithLayout = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormSchemaType>({ resolver: zodResolver(FormSchema) });
+  } = useForm<FormSchemaType>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      id: id,
+    },
+  });
 
   const { mutate } = api.template.importById.useMutation({
     onError() {
@@ -60,7 +61,7 @@ const ImportTemplate: PageWithLayout = () => {
         <div className="join w-full ">
           <div className="form-control w-full max-w-xs">
             <input
-              className="input-bordered join-item input grow bg-white "
+              className="input-bordered input join-item grow bg-white "
               placeholder={t("import_placeholder", {
                 defaultValue: "Paste template id...",
               })}
@@ -85,6 +86,9 @@ const ImportTemplate: PageWithLayout = () => {
     </div>
   );
 };
+const ImportTemplate: PageWithLayout = () => {
+  return <ImportTemplateForm />;
+};
 
 ImportTemplate.getLayout = (page) => (
   <MainLayout>
@@ -94,6 +98,6 @@ ImportTemplate.getLayout = (page) => (
 
 export default ImportTemplate;
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  return getPageProps(["templates", "common"], { req, res });
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return getPageProps(["templates", "common"], context);
 };

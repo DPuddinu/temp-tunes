@@ -3,7 +3,7 @@ import { Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type Template, type TemplateEntry } from "@prisma/client";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   useFieldArray,
   useForm,
@@ -64,21 +64,8 @@ function CreateTemplate({ data }: props) {
     onError() {
       setMessage(t("error"));
     },
-    async onSuccess(data) {
-      utils.setInfiniteData({ limit: 6 }, (old) => {
-        if (old) {
-          const lastPage = old.pages[old.pages.length - 1];
-          if (lastPage?.items && lastPage?.items.length < 5) {
-            lastPage.items.push(data);
-          } else {
-            old.pages.push({
-              items: [data],
-              nextCursor: undefined,
-            });
-          }
-          return old;
-        }
-      });
+    async onSuccess() {
+      utils.invalidate();
       setMessage(t_template("created", { template: "Template" }));
       router.push("/templates");
     },
@@ -86,7 +73,7 @@ function CreateTemplate({ data }: props) {
 
   const { mutate: edit } = api.template.edit.useMutation({
     onError() {
-      setMessage(`${t("error")}`);
+      setMessage(t("error"));
     },
     onSuccess() {
       setMessage(`Template ${t("updated")}`);
@@ -98,25 +85,21 @@ function CreateTemplate({ data }: props) {
     register,
     handleSubmit,
     control,
-    setValue,
-    getValues,
     formState: { errors },
-  } = useForm<TemplateFormType>({ resolver: zodResolver(TemplateFormSchema) });
+  } = useForm<TemplateFormType>({
+    resolver: zodResolver(TemplateFormSchema),
+    defaultValues: {
+      description: data?.description ? data.description : undefined,
+      name: data?.name,
+      entries: data?.templateEntries,
+    },
+  });
 
-  const { fields, append, remove, move, replace } = useFieldArray({
+  const { fields, append, remove, move } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
     name: "entries", // unique name for your Field Array
   });
 
-  useEffect(() => {
-    if (data) {
-      if (data.description && !getValues().description)
-        setValue("description", data.description);
-      if (data.templateEntries && getValues().entries.length === 0)
-        replace(data.templateEntries);
-      if (data.name && !getValues().name) setValue("name", data.name);
-    }
-  }, [data]);
 
   const onSubmit: SubmitHandler<TemplateFormType> = (_data) => {
     if (data?.id) {

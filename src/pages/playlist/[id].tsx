@@ -66,6 +66,6 @@ const PlaylistPage: PageWithLayout = () => {
 export default PlaylistPage;
 PlaylistPage.getLayout = (page) => <MainLayout>{page}</MainLayout>;
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  return getPageProps(["playlists", "common", "modals"], { req, res });
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return getPageProps(["playlists", "common", "modals"], context);
 };
