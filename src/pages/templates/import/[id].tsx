@@ -1,6 +1,5 @@
 import type { GetServerSideProps } from "next";
 import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/router";
 import MainLayout from "~/components/MainLayout";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
 import type { PageWithLayout } from "~/types/page-types";
@@ -9,7 +8,6 @@ import { ImportTemplateForm } from ".";
 
 const ImportTemplateById: PageWithLayout = () => {
   const searchParams = useSearchParams();
-  const router = useRouter();
   // console.log(router.route);
 
   const id = searchParams.get("id");

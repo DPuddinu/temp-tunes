@@ -16,6 +16,16 @@ export function spliceArray(array: unknown[], size: number) {
   return newArray;
 }
 
+function redirectTo(url: string) {
+  console.log(url);
+  return {
+    redirect: {
+      destination: url,
+      permanent: false,
+    },
+  }
+}
+
 export const getPageProps = async (translations: string[], { req, res, params }: GetServerSidePropsContext) => {
 
   const language = getCookie(langKey, { req, res }) as Language;
@@ -24,34 +34,22 @@ export const getPageProps = async (translations: string[], { req, res, params }:
   const redirectUrl = getCookie(redirectKey, { req, res }) as string;
 
   if (!session && url && pages.filter(page => url.includes(page.url)).length > 0) {
+    console.log('saving url', url);
     setCookie(redirectKey, url, { req, res })
   }
 
   if (session && redirectUrl) {
+    console.log('deleting url', redirectUrl);
     deleteCookie(redirectKey, { req, res })
-    return {
-      redirect: {
-        destination: redirectUrl,
-        permanent: false,
-      },
-    }
+    return redirectTo(redirectUrl)
   }
 
   if (url?.includes("callbackUrl") || params?.callbackUrl && session) {
-    return {
-      redirect: {
-        destination: '/home',
-        permanent: false,
-      },
-    }
+    return redirectTo('/home')
   }
-  if (session?.tokenExpired || !session && url !== '/') {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    }
+  if (session?.tokenExpired && url !== '/') {
+    console.log('expired, redirecting to ------->', url)
+    return redirectTo('/')
   }
 
   return {

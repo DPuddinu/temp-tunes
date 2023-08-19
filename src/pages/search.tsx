@@ -1,29 +1,28 @@
 import MainLayout from "@components/MainLayout";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type ColumnDef } from "@tanstack/react-table";
 import type { GetServerSideProps } from "next";
 import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import resources from "~/@types/resources";
 import { getTagColumns, getTrackColumns } from "~/components/search/columns";
-import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import { SearchSVG } from "~/components/ui/icons/index";
 import { usePlaylistStore } from "~/core/userStore";
-import { useLibrary } from "~/hooks/use-library";
 import type { PageWithLayout } from "~/types/page-types";
 import { type Playlist } from "~/types/spotify-types";
 import { SearchTypeConst, type SearchType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
 import { getPageProps } from "~/utils/helpers";
 
-//prettier-ignore
-const DataTable = dynamic(() => import("~/components/ui/DataTable"), {loading: () => <div></div>});
+const LoadingSpinner = dynamic(() => import("~/components/ui/LoadingSpinner"));
 
 //prettier-ignore
-const LoadingScreen = dynamic(() => import("~/components/ui/LoadingPlaylistComponent"),{ loading: () => <div></div>});
+const DataTable = dynamic(() => import("~/components/ui/DataTable"));
+
+//prettier-ignore
+const SearchResult = dynamic(() => import("~/components/search/SearchResult"));
 
 const SearchFormSchema = z.object({
   name: z
@@ -35,9 +34,7 @@ type SearchFormSchemaType = z.infer<typeof SearchFormSchema>;
 
 const Search: PageWithLayout = () => {
   const { playlists, setPlaylists } = usePlaylistStore();
-  const [loading, setLoading] = useState(false);
-  const [currentPlaylist, setCurrentPlaylist] = useState<string>();
-  const [progress, setProgress] = useState<number>();
+  const [loadLibrary, setLoadLibrary] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState<SearchType>("track");
   const [data, setData] = useState<typeof searchResult>(undefined);
 
@@ -45,7 +42,6 @@ const Search: PageWithLayout = () => {
   // prettier-ignore
   const { data: searchResult, mutate, isLoading } = api.spotify_user.searchTracks.useMutation(
     {
-      mutationKey: ["getLibrary"],
       onSuccess(data) {
         setData(data)
       },
@@ -61,28 +57,10 @@ const Search: PageWithLayout = () => {
   });
 
   // LOADING LIBRARY
-  const { loadLibrary } = useLibrary({
-    onStart: () => setLoading(true),
-    onProgress: (progress: number, name: string) => {
-      setCurrentPlaylist(name);
-      setProgress(progress);
-    },
-    onFinish: (library: Playlist[]) => {
-      setLoading(false);
-      setPlaylists(library);
-      const searchInput = getValues().name;
-      if (searchInput)
-        mutate({
-          playlists: library,
-          query: searchInput,
-          type: selectedFilter,
-        });
-    },
-  });
-
   const onSubmit: SubmitHandler<SearchFormSchemaType> = (data) => {
-    if (!playlists && selectedFilter === "track") {
-      loadLibrary();
+    setLoadLibrary(true);
+
+    if (playlists && !loadLibrary && selectedFilter === "track") {
     } else {
       mutate({
         playlists: playlists,
@@ -91,14 +69,6 @@ const Search: PageWithLayout = () => {
       });
     }
   };
-
-  const tagColumns: ColumnDef<unknown, unknown>[] = useMemo(() => {
-    return getTagColumns(t);
-  }, [t]);
-
-  const trackColumns: ColumnDef<unknown, unknown>[] = useMemo(() => {
-    return getTrackColumns(t);
-  }, [t]);
 
   return (
     <div className="flex flex-col items-center justify-center gap-2">
@@ -111,8 +81,8 @@ const Search: PageWithLayout = () => {
                 type="text"
                 placeholder={t("search", {
                   defaultValue: "Search...",
-                }).toString()}
-                className="join-item input w-full grow bg-secondary-content sm:max-w-sm "
+                })}
+                className="input join-item w-full grow bg-secondary-content sm:max-w-sm "
               />
             </div>
 
@@ -150,14 +120,29 @@ const Search: PageWithLayout = () => {
           </label>
         )}
       </div>
-      {loading && (
-        <LoadingScreen current={currentPlaylist} progress={progress} />
+      {!playlists && loadLibrary && (
+        <SearchResult
+          enabled={!playlists}
+          onFinish={(playlists: Playlist[]) => {
+            setPlaylists(playlists);
+            const input = getValues().name;
+            if (!!input) {
+              mutate({
+                playlists: playlists,
+                query: input,
+                type: selectedFilter,
+              });
+            }
+          }}
+        />
       )}
       {isLoading && <LoadingSpinner />}
-      {data && !loading && !isLoading && (
+      {data && data.length > 0 && !isLoading && (
         <DataTable
           data={data}
-          columns={selectedFilter === "tag" ? tagColumns : trackColumns}
+          columns={
+            selectedFilter === "tag" ? getTagColumns(t) : getTrackColumns(t)
+          }
         />
       )}
     </div>

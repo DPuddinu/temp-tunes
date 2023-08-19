@@ -12,7 +12,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import MainLayout from "~/components/MainLayout";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
-import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import CreatePlaylistSkeleton from "~/components/ui/skeletons/CreatePlaylistSkeleton";
 import { useToast } from "~/hooks/use-toast";
 import { type PageWithLayout } from "~/types/page-types";
@@ -25,6 +24,8 @@ const DEBOUNCE_TIME = 200;
 type SubmitDataType = {
   [k: string]: Track;
 };
+
+const LoadingSpinner = dynamic(() => import("~/components/ui/LoadingSpinner"));
 
 const AudioRow = dynamic(() => import("~/components/template/AudioRow"), {
   loading: () => <div className="w-full rounded-lg bg-base-100" />,
@@ -231,7 +232,7 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
             <div className="mt-4 flex w-full justify-center gap-2">
               <button
                 disabled={page === 0}
-                className="join-item btn-square btn w-24"
+                className="btn-square join-item btn w-24"
                 onClick={() => {
                   setPage((page) => page - 1);
                   setDisabledSearch(true);
@@ -243,7 +244,7 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
               </button>
               <button
                 disabled={page + 1 === templateData?.templateEntries.length}
-                className="join-item btn-square btn w-24"
+                className="btn-square join-item btn w-24"
                 onClick={() => {
                   setPage((page) => page + 1);
                   setDisabledSearch(true);

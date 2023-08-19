@@ -9,9 +9,11 @@ import { useToast } from "~/hooks/use-toast";
 import { type TagSchemaType, type TagType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
 import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
-import { LoadingSpinner } from "../ui/LoadingSpinner";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
+import dynamic from "next/dynamic";
+
+const LoadingSpinner = dynamic(() => import("~/components/ui/LoadingSpinner"));
 
 type Props = {
   trackId: string;

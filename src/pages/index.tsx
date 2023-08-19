@@ -1,9 +1,7 @@
 import type { GetServerSideProps } from "next";
-import { getServerSession } from "next-auth";
 import { signIn } from "next-auth/react";
 import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useLanguage } from "~/hooks/use-language";
 import styles from "~/styles/index.module.css";
 import { Languages, type Language } from "~/types/page-types";
