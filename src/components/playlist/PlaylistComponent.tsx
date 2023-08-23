@@ -3,8 +3,8 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { RenameModal } from "~/components/modals/RenamePlaylistModal";
 import { UnfollowModal } from "~/components/modals/RemovePlaylistModal";
+import { RenameModal } from "~/components/modals/RenamePlaylistModal";
 import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import {
   ArrowSVG,
@@ -36,7 +36,6 @@ function PlaylistComponent({
   const { setMessage } = useToast();
   const utils = api.useContext().spotify_playlist.getAll;
 
-
   const [renameModalOpen, setRenameModalOpen] = useState(false);
   const [unfollowModalOpen, setUnfollowModalOpen] = useState(false);
 
@@ -55,9 +54,9 @@ function PlaylistComponent({
       setMessage(`${playlist.name} ${t("operations.shuffled")}`);
       setIsLoading(false);
     },
-    onError(){
-      setMessage(t_common('error'))
-    }
+    onError() {
+      setMessage(t_common("error"));
+    },
   });
   const { mutate: copy } = api.spotify_playlist.copy.useMutation({
     async onMutate({ playlist }) {
@@ -135,15 +134,17 @@ function PlaylistComponent({
               className="min-w-[10.5rem] max-w-[50vw] rounded-md border border-base-300 bg-base-200 p-2 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
               sideOffset={5}
             >
-              <DropdownMenu.Item
-                className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer"
-                onClick={() => {
-                  shuffle({ playlist: playlist });
-                }}
-              >
-                <ShuffleSVG />
-                {t("operations.shuffle")}
-              </DropdownMenu.Item>
+              {playlist.owner.id === session?.user?.id && (
+                <DropdownMenu.Item
+                  className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer"
+                  onClick={() => {
+                    shuffle({ playlist: playlist });
+                  }}
+                >
+                  <ShuffleSVG />
+                  {t("operations.shuffle")}
+                </DropdownMenu.Item>
+              )}
               <DropdownMenu.Item
                 className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer"
                 onClick={() => {
@@ -206,13 +207,15 @@ function PlaylistComponent({
                 <DeleteSVG />
                 {t("operations.remove")}
               </DropdownMenu.Item>
-              <DropdownMenu.Item
-                className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer"
-                onClick={() => setRenameModalOpen(true)}
-              >
-                <PencilSVG />
-                {t("operations.rename")}
-              </DropdownMenu.Item>
+              {playlist.owner.id === session?.user?.id && (
+                <DropdownMenu.Item
+                  className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer"
+                  onClick={() => setRenameModalOpen(true)}
+                >
+                  <PencilSVG />
+                  {t("operations.rename")}
+                </DropdownMenu.Item>
+              )}
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>

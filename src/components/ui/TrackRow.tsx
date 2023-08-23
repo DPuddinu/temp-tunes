@@ -39,8 +39,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
   const { mutate: playTrack } = api.player.togglePlayPause.useMutation();
   const { mutate: addToQueue } = api.player.addToQueue.useMutation({
     onSuccess() {
-      const msg = `${name} ${t("added_to_queue")}`;
-      setMessage(msg);
+      setMessage(t("added_to_queue"));
     },
   });
   const { mutate: addToPlaylist } = api.spotify_playlist.addToPlaylist.useMutation({
@@ -59,9 +58,9 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
         <div
           className="flex grow flex-col gap-1"
           onClick={() => {
-            playTrack({
+            {if(uri)playTrack({
               uris: [uri],
-            });
+            })}
           }}
         >
           <p className="font-medium ">{name}</p>
@@ -71,7 +70,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
         </div>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
-            <button aria-label="Customise options">
+            <button>
               <VerticalDotsSVG />
             </button>
           </DropdownMenu.Trigger>

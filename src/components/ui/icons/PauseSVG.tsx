@@ -7,8 +7,8 @@ export const PauseSVG = ({ className }: { className?: string }) => {
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth={1.5}
-      stroke="black"
-      className={cn("h-6 w-6", className)}
+      stroke="currentColor"
+      className={cn("h-6 w-6 text-base-content", className)}
     >
       <path
         strokeLinecap="round"

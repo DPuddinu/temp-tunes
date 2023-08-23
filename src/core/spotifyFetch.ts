@@ -22,7 +22,7 @@ const spotifyGET = async (
   url: string,
   access_token: string,
 ) => {
-  
+
   return await fetch(`${baseUrl}${url}`, {
     headers: { ...authHeaders(access_token) },
   });
@@ -39,32 +39,32 @@ const spotifyPOST = ({ url, body, access_token }: ISpotifyBody) => {
     method: "POST",
   });
 }
-  
 
-const spotifyPUT = ({ url, body, access_token }: ISpotifyBody) =>{
+
+const spotifyPUT = ({ url, body, access_token }: ISpotifyBody) => {
   if (body) return fetch(`${baseUrl}${url}`, {
     headers: { ...authHeaders(access_token) },
     method: "PUT",
     body,
   });
-  else fetch(`${baseUrl}${url}`, {
+  else return fetch(`${baseUrl}${url}`, {
     headers: { ...authHeaders(access_token) },
     method: "PUT",
   });
 }
 
-const spotifyDELETE = ({ url, body, access_token }: ISpotifyBody ) =>{
-  if(body)return fetch(`${baseUrl}${url}`, {
+const spotifyDELETE = ({ url, body, access_token }: ISpotifyBody) => {
+  if (body) return fetch(`${baseUrl}${url}`, {
     headers: { ...authHeaders(access_token) },
     method: "DELETE",
     body,
   });
-  else fetch(`${baseUrl}${url}`, {
+  else return fetch(`${baseUrl}${url}`, {
     headers: { ...authHeaders(access_token) },
     method: "DELETE",
   });
 }
-  
 
-export { authHeaders, spotifyGET, spotifyPOST, spotifyPUT, spotifyDELETE };
+
+export { authHeaders, spotifyDELETE, spotifyGET, spotifyPOST, spotifyPUT };
 

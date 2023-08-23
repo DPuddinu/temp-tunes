@@ -16,8 +16,6 @@ export interface TrackPlaybackType {
 }
 
 export const SpotifyWebPlayer = () => {
-  // prettier-ignore
-
   const { data: session } = useSession();
   const [spotifyPlayer, setSpotifyPlayer] = useState<
     Spotify.Player | undefined
@@ -130,7 +128,7 @@ export const SpotifyWebPlayer = () => {
                 </button>
 
                 <button
-                  className="btn-sm btn  bg-base-300"
+                  className="btn-sm btn bg-base-300"
                   onClick={() => {
                     if (is_paused) spotifyPlayer.togglePlay();
                     else spotifyPlayer.pause();
