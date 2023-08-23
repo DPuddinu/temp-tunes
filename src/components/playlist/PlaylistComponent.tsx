@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { UnfollowModal } from "~/components/modals/RemovePlaylistModal";
 import { RenameModal } from "~/components/modals/RenamePlaylistModal";
-import { LoadingSpinner } from "~/components/ui/LoadingSpinner";
 import {
   ArrowSVG,
   CopySVG,
@@ -21,6 +20,9 @@ import type { Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 import { ImageWithFallback } from "../ui/ImageWithFallback";
 import VirtualScroll from "../ui/VirtualScroll";
+import dynamic from "next/dynamic";
+
+const LoadingSpinner = dynamic(() => import("~/components/ui/LoadingSpinner"));
 
 function PlaylistComponent({
   playlist,

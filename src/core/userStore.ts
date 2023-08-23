@@ -1,4 +1,3 @@
-import type { User } from "@prisma/client";
 import { mountStoreDevtool } from "simple-zustand-devtools";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
@@ -10,9 +9,7 @@ export type PlaylistLibrary = {
   setPlaylists: (playlists: Playlist[]) => void;
 };
 export type UserStore = {
-  user: User | undefined;
   message: string | undefined;
-  setUser: (user: User) => void;
   setMessage: (message: string | undefined) => void
 };
 
@@ -28,16 +25,14 @@ const usePersistedStore = create<PlaylistLibrary>()(
       setPlaylists: (playlists) => set(() => ({ playlists: playlists })),
     }),
     {
-      name: "nsm-storage", // name of the item in the storage (must be unique)
+      name: "nsm-storage", 
       storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'sessionStorage' is used
     }
   )
 );
 
 const userStore = create<UserStore>()((set) => ({
-  user: undefined,
   message: undefined,
-  setUser: (user) => set(() => ({ user: user })),
   setMessage: (message) => {
     if (message) {
       set(() => ({ message: message }))

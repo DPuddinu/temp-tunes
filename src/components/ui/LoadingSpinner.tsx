@@ -1,9 +1,9 @@
 import { cn } from "~/utils/utils";
 
-interface Props{
-  className?: string
+interface Props {
+  className?: string;
 }
-export function LoadingSpinner({className}: Props) {
+function LoadingSpinner({ className }: Props) {
   return (
     <div role="status" className={cn("grid place-items-end", className)}>
       <svg
@@ -26,3 +26,4 @@ export function LoadingSpinner({className}: Props) {
     </div>
   );
 }
+export default LoadingSpinner;

@@ -123,10 +123,9 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
 Home.getLayout = (page) => <MainLayout>{page}</MainLayout>;
 export default Home;
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  return getPageProps(["home", "common","modals"], { req, res });
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return getPageProps(["home", "common", "modals"], context);
 };
-
 
 function scrollTo(targetId: string) {
   document

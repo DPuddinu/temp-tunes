@@ -1,8 +1,7 @@
 import type { GetServerSideProps } from "next";
 import { signIn } from "next-auth/react";
 import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useLanguage } from "~/hooks/use-language";
 import styles from "~/styles/index.module.css";
 import { Languages, type Language } from "~/types/page-types";
@@ -15,12 +14,6 @@ import {
 } from "../components/ui/icons/index";
 
 const Landing = () => {
-  const router = useRouter();
-  useEffect(() => {
-    if (router.asPath.includes("callbackUrl")) {
-      router.push("/home");
-    }
-  }, [router]);
 
   return (
     <>
@@ -101,7 +94,6 @@ const Footer = () => {
           Dario Puddinu
         </span>
         <span className="inline-flex w-32 items-center justify-around sm:mt-0">
-          
           <a className="ml-3 text-gray-400">
             <TwitterSVG />
           </a>
@@ -134,6 +126,6 @@ const Footer = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  return getPageProps(["landing"], { req, res });
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return getPageProps(["landing"], context);
 };

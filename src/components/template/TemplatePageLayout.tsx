@@ -97,7 +97,7 @@ const FabChild = ({
   onClick,
 }: FabChildProps) => {
   return (
-    <div className="flex items-center gap-4 hover:scale-105" >
+    <div className="flex items-center gap-4 hover:scale-105">
       <div className="rounded-md bg-neutral p-1 px-3 uppercase">{label}</div>
       <FloatingActionButton
         size={"sm"}

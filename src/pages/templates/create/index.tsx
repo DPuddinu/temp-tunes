@@ -20,6 +20,6 @@ Templates.getLayout = (page) => (
 );
 export default Templates;
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  return getPageProps(["templates", "common"], { req, res });
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return getPageProps(["templates", "common"], context);
 };

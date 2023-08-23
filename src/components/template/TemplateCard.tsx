@@ -3,6 +3,7 @@ import { type Template, type TemplateEntry } from "@prisma/client";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useToast } from "~/hooks/use-toast";
@@ -46,9 +47,11 @@ const TemplateCard = ({
   const clipboard = useClipboard({ timeout: 500 });
   const { setMessage } = useToast();
   const { data: sessionData } = useSession();
+  const router = useRouter();
+
   return (
     <>
-      <div className="card card-compact h-fit min-h-[14rem] w-full max-w-md bg-base-300 shadow-xl">
+      <div className="card-compact card h-fit min-h-[14rem] w-full max-w-md bg-base-300 shadow-xl">
         <div
           className={cn(
             "flex h-10 !justify-end rounded-t-2xl pr-2",
@@ -92,7 +95,9 @@ const TemplateCard = ({
                   <DropdownMenu.Item
                     className="flex items-center gap-2 rounded-lg p-2 pr-[20px] leading-none outline-none hover:cursor-pointer hover:bg-base-100"
                     onClick={() => {
-                      clipboard.copy(template.id);
+                      clipboard.copy(
+                        `${window.location.origin}/templates/import/${template.id}`
+                      );
                       const msg = tmpl("clipboard");
                       setMessage(msg);
                     }}
@@ -149,7 +154,6 @@ const TemplateCard = ({
                   "btn text-black",
                   !color && getColorByIndex(index),
                   color,
-                  color && `hover:${color}`,
                   action.disabled && "disabled"
                 )}
                 onClick={action.onClick}
