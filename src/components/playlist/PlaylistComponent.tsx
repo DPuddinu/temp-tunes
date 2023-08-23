@@ -20,6 +20,7 @@ import { api } from "~/utils/api";
 import { ImageWithFallback } from "../ui/ImageWithFallback";
 import VirtualScroll from "../ui/VirtualScroll";
 import dynamic from "next/dynamic";
+import { RenameModal } from "../modals/RenamePlaylistModal";
 
 const LoadingSpinner = dynamic(() => import("~/components/ui/LoadingSpinner"));
 
