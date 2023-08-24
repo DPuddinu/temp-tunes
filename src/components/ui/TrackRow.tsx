@@ -81,14 +81,14 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
               sideOffset={-145}
             >
               <DropdownMenu.Item
-                className="flex items-center gap-2 rounded-lg p-2 leading-none outline-none hover:cursor-pointer hover:bg-base-100"
+                className="flex items-center gap-2 rounded-lg p-2 leading-none outline-none hover:cursor-pointer hover:rounded-lg hover:bg-base-200"
                 onClick={() => setOpenModal(true)}
               >
                 <TagSVG />
                 {t("edit_tag")}
               </DropdownMenu.Item>
               <DropdownMenu.Item
-                className="flex items-center gap-2 rounded-lg p-2 leading-none outline-none  hover:cursor-pointer hover:bg-base-100"
+                className="flex items-center gap-2 rounded-lg p-2 leading-none outline-none  hover:cursor-pointer hover:rounded-lg hover:bg-base-200"
                 onClick={() =>
                   addToQueue({
                     uri: uri,
@@ -99,7 +99,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
                 {t("add_to_queue")}
               </DropdownMenu.Item>
               <DropdownMenu.Sub>
-                <DropdownMenu.SubTrigger className="group relative flex select-none items-center rounded-md p-2 leading-none outline-none hover:cursor-pointer data-[state=open]:bg-base-100">
+                <DropdownMenu.SubTrigger className="group relative flex select-none items-center rounded-md p-2 leading-none outline-none hover:cursor-pointer hover:rounded-lg hover:bg-base-200 data-[state=open]:bg-base-200">
                   <div className="flex items-center gap-2">
                     <FolderPlusSVG />
                     {t("add_to_playlist")}
@@ -121,7 +121,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
                         row={(virtualItem) => (
                           <DropdownMenu.Item
                             key={virtualItem.key}
-                            className=" rounded-lg first:mt-2 last:mb-2 hover:cursor-pointer hover:bg-base-100"
+                            className="flex items-center gap-2 rounded-lg bg-base-100 p-2  leading-none outline-none first:mt-2 last:mb-2  hover:cursor-pointer  hover:rounded-lg hover:bg-base-200 "
                             onClick={() => {
                               // prettier-ignore
                               const current = filteredPlaylists[virtualItem.index];

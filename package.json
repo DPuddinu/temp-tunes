@@ -1,6 +1,6 @@
 {
   "name": "next-spotify-manager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "prisma": {
     "seedTest": "ts-node --esm prisma/seed_test.ts",
     "seed": "ts-node --esm prisma/seed.ts"
@@ -11,14 +11,15 @@
     "build": "prisma generate && next build",
     "lint": "next lint",
     "start": "next start",
-    "start-prisma-studio": "pnpx prisma studio",
-    "prisma-align": "pnpx prisma db push",
-    "update-prisma-schema": "pnpx prisma migrate dev",
+    "start-prisma-studio-dev": "env-cmd -f ./.env.development pnpx prisma studio",
+    "start-prisma-studio-prod": "env-cmd -f ./.env.production pnpx prisma studio",
+    "prisma-align-dev": "env-cmd -f ./.env.development pnpx prisma db push",
+    "prisma-align-prod": " env-cmd -f ./.env.production pnpx prisma db push",
     "prisma-generate-client": "pnpx prisma generate",
     "tailwind": "pnpx tailwindcss -i ./src/styles/globals.css -o ./src/styles/tailwind.css --watch",
     "postinstall": "prisma generate",
-    "seed": "prisma db seed",
-    "analyze": "cross-env ANALYZE=true pnpm run build"
+    "seed-dev": "env-cmd -f ./.env.development prisma db seed",
+    "seed-production": "env-cmd -f ./.env.production prisma db seed"
   },
   "dependencies": {
     "@formkit/auto-animate": "1.0.0-beta.6",
@@ -42,7 +43,7 @@
     "cookies-next": "^2.1.2",
     "cross-env": "^7.0.3",
     "cva": "npm:class-variance-authority@^0.6.1",
-    "dotenv": "^16.0.3",
+    "env-cmd": "^10.1.0",
     "i18next": "23.4.1",
     "next": "^13.2.3",
     "next-auth": "^4.22.1",

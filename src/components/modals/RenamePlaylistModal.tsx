@@ -59,12 +59,17 @@ export function RenameModal({
       const prevData = utils.getData();
 
       //prettier-ignore
-      utils.setData(undefined, (old) => old?.map((t) => {
-        if(t.id === playlistID){
-          t.name = name;
+      utils.setData(undefined, (old) => {
+        if(old){
+          const newList = old.map((t) => {
+          if(t.id === playlistID){
+            t.name = name;
+          }
+            return t
+          })
+          return newList;
         }
-        return t
-      }));
+      });
 
       return { prevData };
     },
@@ -106,7 +111,9 @@ export function RenameModal({
             {errors?.name?.message && (
               <label className="label">
                 <span className="label-text-alt text-error">
-                  {t_common(errors.name.message, { defaultValue: "Input not valid" })}
+                  {t_common(errors.name.message, {
+                    defaultValue: "Input not valid",
+                  })}
                 </span>
               </label>
             )}

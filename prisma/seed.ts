@@ -10,7 +10,7 @@ async function main() {
   //     public: true,
   //     userId: 'Admin',
   //     userName: 'Admin',
-  //     color: TemplateColors.blue,
+  //     color: "bg-cyan-500 hover:bg-cyan-400",
   //     templateEntries: {
   //       createMany: {
   //         data: [
@@ -118,7 +118,7 @@ async function main() {
       public: true,
       userId: 'Admin',
       userName: 'Admin',
-      color: "bg-cyan-500",
+      color: "bg-cyan-500 hover:bg-cyan-400",
       templateEntries: {
         createMany: {
           data: [
@@ -154,6 +154,7 @@ async function main() {
       }
     }
   })
+  console.log(freshWater)
 }
 main()
   .then(async () => {

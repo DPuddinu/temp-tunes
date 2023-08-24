@@ -49,7 +49,7 @@ const TemplateCard = ({
 
   return (
     <>
-      <div className="card card-compact h-fit min-h-[14rem] w-full max-w-md bg-base-300 shadow-xl">
+      <div className="card-compact card h-fit min-h-[14rem] w-full max-w-md bg-base-300 shadow-xl">
         <div
           className={cn(
             "flex h-10 !justify-end rounded-t-2xl pr-2",
@@ -150,8 +150,8 @@ const TemplateCard = ({
                 key={action.label}
                 className={cn(
                   "btn text-black",
-                  !color && getColorByIndex(index),
                   color,
+                  !color && getColorByIndex(index),
                   action.disabled && "disabled"
                 )}
                 onClick={action.onClick}
@@ -175,23 +175,23 @@ const TemplateCard = ({
 export default TemplateCard;
 
 export const TemplateColors = {
-  red: "bg-red-500 hover:bg-red-500",
-  orange: "bg-orange-500 hover:bg-orange-500",
-  amber: "bg-amber-500 hover:bg-amber-500",
-  yellow: "bg-yellow-500 hover:bg-yellow-500",
-  lime: "bg-lime-500 hover:bg-lime-500",
-  green: "bg-green-500 hover:bg-green-500",
-  emerald: "bg-emerald-500 hover:bg-emerald-500",
-  teal: "bg-teal-500 hover:bg-teal-500",
-  cyan: "bg-cyan-500 hover:bg-cyan-500",
-  sky: "bg-sky-500 hover:bg-sky-500",
-  blue: "bg-blue-500 hover:bg-blue-500",
-  indigo: "bg-indigo-500 hover:bg-indigo-500",
-  violet: "bg-violet-500 hover:bg-violet-500",
-  purple: "bg-purple-500 hover:bg-purple-500",
-  fuchsia: "bg-fuchsia-500 hover:bg-fuchsia-500",
-  pink: "bg-pink-500 hover:bg-pink-500",
-  rose: "bg-rose-500 hover:bg-rose-500",
+  red: "bg-red-500 hover:bg-red-400",
+  orange: "bg-orange-500 hover:bg-orange-400",
+  amber: "bg-amber-500 hover:bg-amber-400",
+  yellow: "bg-yellow-500 hover:bg-yellow-400",
+  lime: "bg-lime-500 hover:bg-lime-400",
+  green: "bg-green-500 hover:bg-green-400",
+  emerald: "bg-emerald-500 hover:bg-emerald-400",
+  teal: "bg-teal-500 hover:bg-teal-400",
+  cyan: "bg-cyan-500 hover:bg-cyan-400",
+  sky: "bg-sky-500 hover:bg-sky-400",
+  blue: "bg-blue-500 hover:bg-blue-400",
+  indigo: "bg-indigo-500 hover:bg-indigo-400",
+  violet: "bg-violet-500 hover:bg-violet-400",
+  purple: "bg-purple-500 hover:bg-purple-400",
+  fuchsia: "bg-fuchsia-500 hover:bg-fuchsia-400",
+  pink: "bg-pink-500 hover:bg-pink-400",
+  rose: "bg-rose-500 hover:bg-rose-400",
 };
 
 function getColorByIndex(index: number): string {

@@ -62,23 +62,12 @@ function PlaylistComponent({
     },
   });
   const { mutate: copy } = api.spotify_playlist.copy.useMutation({
-    async onMutate({ playlist }) {
-      setIsLoading(true);
-      await utils.cancel();
-      const prevData = utils.getData();
-
-      //prettier-ignore
-      utils.setData(undefined, (old) => {
-        if(old) return [playlist, ...old]
-      });
-      return { prevData };
-    },
     onSuccess() {
       setMessage(`${playlist.name} ${t("operations.copied")}`);
+      utils.invalidate()
       setIsLoading(false);
     },
     onError(error, variables, context) {
-      utils.setData(undefined, context?.prevData);
       setMessage(t_common("error"));
     },
   });
@@ -139,7 +128,7 @@ function PlaylistComponent({
             >
               {playlist.owner.id === session?.user?.id && (
                 <DropdownMenu.Item
-                  className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer"
+                  className="flex items-center gap-2 rounded-lg p-2 leading-none outline-none hover:cursor-pointer hover:bg-base-200"
                   onClick={() => {
                     shuffle({ playlist: playlist });
                   }}
@@ -149,7 +138,7 @@ function PlaylistComponent({
                 </DropdownMenu.Item>
               )}
               <DropdownMenu.Item
-                className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer"
+                className="flex items-center gap-2 rounded-lg p-2 leading-none outline-none hover:cursor-pointer hover:bg-base-200"
                 onClick={() => {
                   copy({ playlist: playlist });
                 }}
@@ -179,7 +168,7 @@ function PlaylistComponent({
                         data={filteredPlaylists}
                         row={(virtualItem) => (
                           <DropdownMenu.Item
-                            className=" rounded-lg first:mt-2 last:mb-2 hover:cursor-pointer hover:border-none hover:bg-base-200"
+                            className=" rounded-lg first:mt-2 last:mb-2 hover:cursor-pointer hover:rounded-lg hover:border-none hover:bg-base-200"
                             onClick={() => {
                               // prettier-ignore
                               const current = filteredPlaylists[virtualItem.index];
@@ -204,16 +193,16 @@ function PlaylistComponent({
                 </DropdownMenu.Portal>
               </DropdownMenu.Sub>
               <DropdownMenu.Item
-                className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer"
-                onClick={() => setOpenModal('unfollow')}
+                className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer hover:rounded-lg hover:bg-base-200"
+                onClick={() => setOpenModal("unfollow")}
               >
                 <DeleteSVG />
                 {t("operations.remove")}
               </DropdownMenu.Item>
               {playlist.owner.id === session?.user?.id && (
                 <DropdownMenu.Item
-                  className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer"
-                  onClick={() => setOpenModal('rename')}
+                  className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer hover:rounded-lg hover:bg-base-200"
+                  onClick={() => setOpenModal("rename")}
                 >
                   <PencilSVG />
                   {t("operations.rename")}
@@ -224,14 +213,14 @@ function PlaylistComponent({
         </DropdownMenu.Root>
       )}
       <UnfollowModal
-        isOpen={openModal === 'unfollow'}
+        isOpen={openModal === "unfollow"}
         playlistID={playlist.id}
         playlistName={playlist.name}
         onClose={() => setOpenModal(null)}
         onConfirm={() => setIsLoading(true)}
       />
       <RenameModal
-        isOpen={openModal === 'rename'}
+        isOpen={openModal === "rename"}
         playlistID={playlist.id}
         playlistName={playlist.name}
         onClose={() => setOpenModal(null)}
