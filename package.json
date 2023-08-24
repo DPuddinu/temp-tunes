@@ -1,5 +1,5 @@
 {
-  "name": "next-spotify-manager",
+  "name": "temptunes",
   "version": "1.0.1",
   "prisma": {
     "seedTest": "ts-node --esm prisma/seed_test.ts",

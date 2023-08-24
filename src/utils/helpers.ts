@@ -17,7 +17,7 @@ export function spliceArray(array: unknown[], size: number) {
 }
 
 function redirectTo(url: string) {
-  console.log(url);
+  console.log("redirecting to --> ", url);
   return {
     redirect: {
       destination: url,
@@ -47,8 +47,8 @@ export const getPageProps = async (translations: string[], { req, res, params }:
   if (url?.includes("callbackUrl") || params?.callbackUrl && session) {
     return redirectTo('/home')
   }
-  if (session?.tokenExpired && url !== '/') {
-    console.log('expired, redirecting to ------->', url)
+  if (session && session.tokenExpired && url !== '/') {
+    console.log('expired token', url)
     return redirectTo('/')
   }
 

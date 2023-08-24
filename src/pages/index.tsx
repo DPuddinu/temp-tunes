@@ -18,11 +18,10 @@ const Landing = () => {
       <main className="flex min-h-screen flex-col bg-zinc-800">
         <section className="flex grow flex-col pb-0">
           <div className="p-10 sm:p-16">
-            <h1 className="tracking-super-wide m-0 text-center text-2xl font-bold sm:mb-16 sm:text-6xl md:text-5xl">
-              <span className="text-slate-100 ">Next </span>
-              <span className="text-primary">Spotify </span>
-              <span className="text-slate-100 ">Manager</span>
-            </h1>
+            <p className="tracking-super-wide m-0 text-center text-2xl font-bold sm:mb-16 sm:text-6xl md:text-5xl">
+              <span className="text-slate-100 ">Temp</span>
+              <span className="text-primary">Tunes </span>
+            </p>
           </div>
           <Features />
         </section>
@@ -45,17 +44,17 @@ const Features = () => {
         )}
       >
         <div className="grid gap-2 text-center">
-          <h1 className="mb-2 text-2xl font-extrabold">{t("create")}</h1>
-          <h2 className="text-xl">{t("templates-1")}</h2>
-          <h2 className="text-xl">{t("templates-2")}</h2>
+          <p className="mb-2 text-2xl font-extrabold">{t("create")}</p>
+          <p className="text-xl">{t("templates-1")}</p>
+          <p className="text-xl">{t("templates-2")}</p>
         </div>
       </div>
       <div className="grid grow place-items-center p-10 pt-16 pb-16 font-medium text-white">
         <div className="grid gap-2 text-center">
-          <h1 className="mb-2 text-2xl font-extrabold">{t("explore")}</h1>
-          <h2 className="text-xl">{t("stats-1")}</h2>
-          <h2 className="text-xl">{t("stats-2")}</h2>
-          <h2 className="text-xl">{t("stats-3")}</h2>
+          <p className="mb-2 text-2xl font-extrabold">{t("explore")}</p>
+          <p className="text-xl">{t("stats-1")}</p>
+          <p className="text-xl">{t("stats-2")}</p>
+          <p className="text-xl">{t("stats-3")}</p>
         </div>
       </div>
       <div
@@ -65,13 +64,13 @@ const Features = () => {
         )}
       >
         <div className="grid gap-2 text-center">
-          <h1 className="mb-2 text-2xl font-extrabold ">{t("surprise")}</h1>
-          <h2 className="text-xl">{t("share")}</h2>
+          <p className="mb-2 text-2xl font-extrabold ">{t("surprise")}</p>
+          <p className="text-xl">{t("share")}</p>
         </div>
       </div>
       <div className="mb-8 flex w-full grow items-center justify-center">
         <button
-          className="mt-16 w-52 rounded-full bg-primary px-10 py-3 font-semibold  text-gray-900 no-underline"
+          className="mt-16 w-52 rounded-full bg-primary px-10 py-3 font-bold text-white "
           onClick={() => signIn("spotify", { callbackUrl: `/home` })}
         >
           {t("getstarted")}
