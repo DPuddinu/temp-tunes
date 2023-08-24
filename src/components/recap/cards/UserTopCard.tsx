@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import { SquareSkeleton } from "~/components/ui/skeletons/SquareSkeleton";
+import UserDataProvider from "~/context/user-data-context";
 import {
   TopTypeArray,
   type Artist,
@@ -82,15 +83,18 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
         ))}
       </div>
       <RecapCard.Container error={isError}>
-        {_data?.map((item, i) => (
-          <>
-            {selectedType === "artists" ? (
-              <ArtistRow artist={item as Artist} key={i} />
-            ) : (
-              <TrackRow track={item as Track} key={i} />
-            )}
-          </>
-        ))}
+        <UserDataProvider>
+          {_data?.map((item, i) => (
+            <>
+              {selectedType === "artists" ? (
+                <ArtistRow artist={item as Artist} key={i} />
+              ) : (
+                <TrackRow track={item as Track} key={i} />
+              )}
+            </>
+          ))}
+        </UserDataProvider>
+
         {data && data.totalItems > itemsPerPage && (
           <PaginationComponent
             key={"pagination"}

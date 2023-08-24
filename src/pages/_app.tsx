@@ -1,10 +1,9 @@
-import { Quicksand } from "next/font/google";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { appWithTranslation } from "next-i18next";
 import { ThemeProvider } from "next-themes";
 import { type AppType } from "next/app";
-import UserDataProvider from "~/context/user-data-context";
+import { Quicksand } from "next/font/google";
 import "~/styles/globals.css";
 import { api } from "~/utils/api";
 import { themesList, type AppPropsWithLayout } from "../types/page-types";
@@ -19,14 +18,12 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <ThemeProvider themes={themesList} defaultTheme={"dark"}>
-        <UserDataProvider>
           <style jsx global>{`
             html {
               font-family: ${akshar.style.fontFamily};
             }
           `}</style>
           {getLayout(<Component {...pageProps} />)}
-        </UserDataProvider>
       </ThemeProvider>
     </SessionProvider>
   );

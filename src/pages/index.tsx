@@ -1,7 +1,6 @@
 import type { GetServerSideProps } from "next";
 import { signIn } from "next-auth/react";
 import { useTranslation } from "next-i18next";
-import { useRef } from "react";
 import { useLanguage } from "~/hooks/use-language";
 import styles from "~/styles/index.module.css";
 import { Languages, type Language } from "~/types/page-types";
@@ -14,7 +13,6 @@ import {
 } from "../components/ui/icons/index";
 
 const Landing = () => {
-
   return (
     <>
       <main className="flex min-h-screen flex-col bg-zinc-800">
@@ -85,27 +83,31 @@ const Features = () => {
 
 const Footer = () => {
   const { language, setLanguage } = useLanguage();
-  const ref = useRef<HTMLSelectElement>(null);
 
   return (
     <footer className="mb-10 pb-4 text-gray-400">
-      <div className=" flex flex-col items-center justify-center gap-5 ">
+      <div className="flex flex-col items-center justify-center gap-5 ">
         <span className="text-center text-sm text-gray-400 ">
           Dario Puddinu
         </span>
-        <span className="inline-flex w-32 items-center justify-around sm:mt-0">
-          <a className="ml-3 text-gray-400">
+        <span className="inline-flex items-center gap-4 sm:mt-0">
+          <a href="https://twitter.com/PudduThe/" className=" text-gray-400">
             <TwitterSVG />
           </a>
-          <a className="ml-3 text-gray-400">
+          <a
+            href="https://www.instagram.com/thepuddu/"
+            className=" text-gray-400"
+          >
             <InstagramSVG />
           </a>
-          <a className="ml-3 text-gray-400">
+          <a
+            href="https://www.linkedin.com/in/dario-puddinu-2b1056160/"
+            className=" text-gray-400"
+          >
             <LinkedinSVG />
           </a>
         </span>
         <select
-          ref={ref}
           value={language}
           className="select-bordered select select-sm w-32 bg-base-200 bg-opacity-30"
           onChange={(e) => setLanguage(e.target.value as Language)}
@@ -114,7 +116,6 @@ const Footer = () => {
             <option
               value={lang}
               key={lang}
-              selected={lang === ref.current?.value}
               className="bg-base-300 focus:bg-red-200"
             >
               {lang}

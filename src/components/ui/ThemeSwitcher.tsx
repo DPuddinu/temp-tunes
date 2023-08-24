@@ -23,7 +23,7 @@ const ThemeSwitcher = () => {
         style={{ display: "flex", alignItems: "center" }}
       >
         <label className="pr-[15px] text-sm leading-none" htmlFor="theme">
-          {t("change_theme")}{" "}
+          {t("change_theme")}
         </label>
         <Switch.Root
           className="relative h-[25px] w-[42px] cursor-default rounded-full bg-base-100 outline-none data-[state=checked]:bg-black"

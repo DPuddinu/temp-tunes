@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import { useStore } from "~/core/userStore";
 import { HomeSVG, PlaylistSVG, SearchSVG, TemplateSVG } from "./ui/icons/index";
 import NavbarSkeleton from "./ui/skeletons/NavbarSkeleton";
@@ -31,14 +31,9 @@ const Toast = dynamic(() => import("./ui/Toast"), {
 });
 
 const MainLayout = ({ children }: { children: ReactNode }) => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const { message } = useStore();
-  const router = useRouter();
   const openDrawer = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (session?.tokenExpired || status === "unauthenticated") router.push("/");
-  }, [router, session, status]);
 
   return (
     <div className="drawer overflow-hidden">

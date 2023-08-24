@@ -3,7 +3,6 @@ import { type Template, type TemplateEntry } from "@prisma/client";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useToast } from "~/hooks/use-toast";
@@ -47,11 +46,10 @@ const TemplateCard = ({
   const clipboard = useClipboard({ timeout: 500 });
   const { setMessage } = useToast();
   const { data: sessionData } = useSession();
-  const router = useRouter();
 
   return (
     <>
-      <div className="card-compact card h-fit min-h-[14rem] w-full max-w-md bg-base-300 shadow-xl">
+      <div className="card card-compact h-fit min-h-[14rem] w-full max-w-md bg-base-300 shadow-xl">
         <div
           className={cn(
             "flex h-10 !justify-end rounded-t-2xl pr-2",
@@ -69,7 +67,7 @@ const TemplateCard = ({
 
               <DropdownMenu.Portal>
                 <DropdownMenu.Content
-                  className=" rounded-md border border-base-300 bg-base-200 p-2 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade sm:w-auto"
+                  className=" rounded-md border border-base-300 bg-base-100 p-2 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade sm:w-auto"
                   sideOffset={5}
                   side="bottom"
                   align="end"

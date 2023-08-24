@@ -1,6 +1,7 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { UnfollowModal } from "~/components/modals/RemovePlaylistModal";
@@ -17,12 +18,13 @@ import {
 import { useToast } from "~/hooks/use-toast";
 import type { Playlist } from "~/types/spotify-types";
 import { api } from "~/utils/api";
+import { RenameModal } from "../modals/RenamePlaylistModal";
 import { ImageWithFallback } from "../ui/ImageWithFallback";
 import VirtualScroll from "../ui/VirtualScroll";
-import dynamic from "next/dynamic";
-import { RenameModal } from "../modals/RenamePlaylistModal";
 
 const LoadingSpinner = dynamic(() => import("~/components/ui/LoadingSpinner"));
+
+type selectedModal = 'rename' | 'unfollow' | null;
 
 function PlaylistComponent({
   playlist,
@@ -38,8 +40,7 @@ function PlaylistComponent({
   const { setMessage } = useToast();
   const utils = api.useContext().spotify_playlist.getAll;
 
-  const [renameModalOpen, setRenameModalOpen] = useState(false);
-  const [unfollowModalOpen, setUnfollowModalOpen] = useState(false);
+  const [openModal, setOpenModal] = useState<selectedModal>(null);
 
   const { data: session } = useSession();
 
@@ -133,7 +134,7 @@ function PlaylistComponent({
 
           <DropdownMenu.Portal>
             <DropdownMenu.Content
-              className="min-w-[10.5rem] max-w-[50vw] rounded-md border border-base-300 bg-base-200 p-2 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
+              className="min-w-[10.5rem] max-w-[50vw] rounded-md border border-base-300 bg-base-100 p-2 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
               sideOffset={5}
             >
               {playlist.owner.id === session?.user?.id && (
@@ -168,7 +169,7 @@ function PlaylistComponent({
                 </DropdownMenu.SubTrigger>
                 <DropdownMenu.Portal>
                   <DropdownMenu.SubContent
-                    className="w-56 max-w-[65vw] overflow-auto rounded-md border border-base-300 bg-base-200 p-1 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
+                    className="w-56 max-w-[65vw] overflow-auto rounded-md border border-base-300 bg-base-100 p-1 will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
                     sideOffset={-100}
                     alignOffset={25}
                   >
@@ -204,7 +205,7 @@ function PlaylistComponent({
               </DropdownMenu.Sub>
               <DropdownMenu.Item
                 className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer"
-                onClick={() => setUnfollowModalOpen(true)}
+                onClick={() => setOpenModal('unfollow')}
               >
                 <DeleteSVG />
                 {t("operations.remove")}
@@ -212,7 +213,7 @@ function PlaylistComponent({
               {playlist.owner.id === session?.user?.id && (
                 <DropdownMenu.Item
                   className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer"
-                  onClick={() => setRenameModalOpen(true)}
+                  onClick={() => setOpenModal('rename')}
                 >
                   <PencilSVG />
                   {t("operations.rename")}
@@ -223,17 +224,17 @@ function PlaylistComponent({
         </DropdownMenu.Root>
       )}
       <UnfollowModal
-        isOpen={unfollowModalOpen}
+        isOpen={openModal === 'unfollow'}
         playlistID={playlist.id}
         playlistName={playlist.name}
-        onClose={() => setUnfollowModalOpen(false)}
+        onClose={() => setOpenModal(null)}
         onConfirm={() => setIsLoading(true)}
       />
       <RenameModal
-        isOpen={renameModalOpen}
+        isOpen={openModal === 'rename'}
         playlistID={playlist.id}
         playlistName={playlist.name}
-        onClose={() => setRenameModalOpen(false)}
+        onClose={() => setOpenModal(null)}
         onConfirm={() => setIsLoading(true)}
       />
     </div>
