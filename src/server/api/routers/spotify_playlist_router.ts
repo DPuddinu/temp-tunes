@@ -1,9 +1,10 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { addToPlaylist, addTracksToPlaylist, createPlaylist, getPlaylistById, getPlaylistTracks, getUserPlaylists, removeTracksFromPlaylist, renamePlaylist, unfollowPlaylist } from "~/core/spotifyCollection";
+import { addToPlaylist, addTracksToPlaylist, createPlaylist, getPlaylistById, removeTracksFromPlaylist, renamePlaylist, unfollowPlaylist } from "~/core/spotifyCollection";
 import { type Playlist } from "~/types/spotify-types";
 import { PlaylistSchema } from "~/types/zod-schemas";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { getPlaylistTracks, getUserPlaylists } from "~/core/searchQueries";
 
 export const spotifyPlaylistRouter = createTRPCRouter({
   getAll: protectedProcedure

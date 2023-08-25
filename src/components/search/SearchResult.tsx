@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { getLibrary } from "~/core/spotifyCollection";
 import type {
   Playlist
 } from "~/types/spotify-types";
+import { getLibrary } from "../../core/searchQueries";
 import LoadingScreen from "../ui/LoadingPlaylistComponent";
 
 interface props {
@@ -18,7 +18,7 @@ const SearchResult = ({ enabled, onFinish }: props) => {
 
   const { data } = useSession();
 
-  const {} = useQuery({
+  useQuery({
     queryFn: () => {
       setLoading(true);
       return getLibrary(

@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import useMediaQuery from "~/hooks/use-media-query";
 
 export type BaseModalProps = {
-  title: string;
+  title?: string;
   description?: string;
   children?: React.ReactNode;
   isOpen?: boolean;

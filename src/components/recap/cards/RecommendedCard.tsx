@@ -5,16 +5,15 @@ import { SquareSkeleton } from "~/components/ui/skeletons/SquareSkeleton";
 import { api } from "~/utils/api";
 import RecapCard from "../RecapCard";
 
-const TrackRow = dynamic(
-  () => import("~/components/ui/TrackRow"),
-  {
-    loading: () => <SquareSkeleton />,
-  }
-);
+const TrackRow = dynamic(() => import("~/components/ui/TrackRow"), {
+  loading: () => <SquareSkeleton />,
+});
 
 const RecommendedCard = () => {
   //prettier-ignore
-  const { data, isLoading, isError } = api.spotify_user.getRecommendedations.useQuery(undefined, {refetchOnWindowFocus: false});
+  const { data, isLoading, isError } = api.spotify_user.getRecommendedations.useQuery();
+  const { data: playlists } = api.spotify_playlist.getAll.useQuery();
+
   const { t } = useTranslation("home");
   const { t: t_common } = useTranslation("common");
   return (
@@ -28,7 +27,7 @@ const RecommendedCard = () => {
       </RecapCard.Header>
       <RecapCard.Container key={"container-recommended"} error={isError}>
         {data?.tracks.map((track) => (
-          <TrackRow key={track.id} track={track} />
+          <TrackRow key={track.id} track={track} playlists={playlists} />
         ))}
         {data?.tracks.length === 0 && (
           <div className="grid place-content-center pt-4">

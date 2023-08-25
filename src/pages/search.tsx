@@ -1,12 +1,12 @@
 import MainLayout from "@components/MainLayout";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { GetServerSideProps } from "next";
-import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
-import { getTagColumns, getTrackColumns } from "~/components/search/columns";
+import { searchResources as t } from "~/@types/resources";
+import { getTagColumns, getTrackColumns } from "~/components/search/Columns";
 import { SearchSVG } from "~/components/ui/icons/index";
 import { usePlaylistStore } from "~/core/userStore";
 import type { PageWithLayout } from "~/types/page-types";
@@ -26,8 +26,8 @@ const SearchResult = dynamic(() => import("~/components/search/SearchResult"));
 const SearchFormSchema = z.object({
   name: z
     .string()
-    .min(3, { message: "search_errors.short" })
-    .max(18, { message: "search_errors.long" }),
+    .min(3, { message: t.search_errors.short })
+    .max(18, { message: t.search_errors.long }),
 });
 type SearchFormSchemaType = z.infer<typeof SearchFormSchema>;
 
@@ -37,7 +37,6 @@ const Search: PageWithLayout = () => {
   const [selectedFilter, setSelectedFilter] = useState<SearchType>("track");
   const [data, setData] = useState<typeof searchResult>(undefined);
 
-  const { t } = useTranslation("search");
   // prettier-ignore
   const { data: searchResult, mutate, isLoading } = api.spotify_user.searchTracks.useMutation(
     {
@@ -78,9 +77,7 @@ const Search: PageWithLayout = () => {
               <input
                 {...register("name")}
                 type="text"
-                placeholder={t("search", {
-                  defaultValue: "Search...",
-                })}
+                placeholder={t.search}
                 className="input join-item w-full grow bg-secondary-content sm:max-w-sm "
               />
             </div>
@@ -112,9 +109,7 @@ const Search: PageWithLayout = () => {
         {errors.name?.message && (
           <label className="label text-error">
             <span className="label-text-alt mt-2 font-bold text-error">
-              {t(errors.name?.message, {
-                defaultValue: "Name too long or too small",
-              })}
+              {errors.name?.message}
             </span>
           </label>
         )}
