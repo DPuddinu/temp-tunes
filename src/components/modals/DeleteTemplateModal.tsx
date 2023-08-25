@@ -1,9 +1,10 @@
 import { type Template, type TemplateEntry } from "@prisma/client";
-import { useTranslation } from "next-i18next";
+import resources from "~/@types/resources";
 import { useToast } from "~/hooks/use-toast";
 import { api } from "~/utils/api";
 import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
 import BaseModal, { type BaseModalProps } from "./BaseModal";
+const t = resources.templates;
 
 type Props = {
   template: Template & {
@@ -13,16 +14,15 @@ type Props = {
 } & BaseModalProps;
 
 export const DeleteTemplateModal = ({ onClose, template, isOpen }: Props) => {
-  const { t } = useTranslation("templates");
   const { setMessage } = useToast();
   const utils = api.useContext().template.getByCurrentUser;
 
   const { mutate: deleteTemplate } = api.template.delete.useMutation({
     onError() {
-      setMessage(t("delete_error"));
+      setMessage(t.delete_error);
     },
     async onSuccess() {
-      setMessage(t("delete_success"));
+      setMessage(t.delete_success);
       utils.invalidate();
       onClose();
     },
@@ -32,11 +32,11 @@ export const DeleteTemplateModal = ({ onClose, template, isOpen }: Props) => {
     <BaseModal
       onClose={onClose}
       isOpen={isOpen}
-      title={t("confirm_delete_title")}
+      title={t.confirm_delete_title}
     >
       <div>
         <p className="mt-2 text-lg text-base-content">
-          <span>{t("confirm_delete_body")}</span>
+          <span>{t.confirm_delete_body}</span>
           <b>{` ${template.name} `}</b>
           <span>?</span>
         </p>

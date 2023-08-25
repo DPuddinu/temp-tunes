@@ -1,34 +1,31 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useSession } from "next-auth/react";
-import { useTranslation } from "next-i18next";
 import {
-  forwardRef,
-  useContext,
   useMemo,
   useState,
   type ForwardedRef,
 } from "react";
 import { TagModal } from "~/components/modals/EditTagModal";
-import { UserDataContext } from "~/context/user-data-context";
 import { useToast } from "~/hooks/use-toast";
-import { type Track } from "~/types/spotify-types";
+import { type Playlist, type Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 import VirtualScroll from "./VirtualScroll";
 import { ArrowSVG, QueueSVG, TagSVG, VerticalDotsSVG } from "./icons";
 import { FolderPlusSVG } from "./icons/FolderPlusSVG";
+import resources from "~/@types/resources";
+const t = resources.common;
 
 export interface TrackProps {
   track: Track;
+  playlists: Playlist[] | undefined;
   ref?: ForwardedRef<HTMLDivElement>;
 }
 
 // prettier-ignore
-const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
-  const { t } = useTranslation("common");
+const TrackRow = ({ track, playlists }: TrackProps) => {
   const { uri, name, artists, id } = track;
   const [ openModal, setOpenModal] = useState(false);
   const { setMessage } = useToast();
-  const { playlists } = useContext(UserDataContext);
   const { data: session } = useSession();
 
   const filteredPlaylists = useMemo(
@@ -39,21 +36,18 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
   const { mutate: playTrack } = api.player.togglePlayPause.useMutation();
   const { mutate: addToQueue } = api.player.addToQueue.useMutation({
     onSuccess() {
-      setMessage(t("added_to_queue"));
+      setMessage(t.added_to_queue);
     },
   });
   const { mutate: addToPlaylist } = api.spotify_playlist.addToPlaylist.useMutation({
     onSuccess(data, variables) {
-      const msg = `${name} ${t("added_to")} ${variables.playlistName}`;
+      const msg = `${name} ${t.added_to} ${variables.playlistName}`;
       setMessage(msg);
     },
   });
 
   return (
-    <div
-      className="group flex rounded-xl px-3 text-accent-content hover:cursor-pointer hover:bg-neutral"
-      ref={ref}
-    >
+    <div className="group flex rounded-xl px-3 text-accent-content hover:cursor-pointer hover:bg-neutral">
       <div className="flex grow items-center justify-between p-2 hover:text-primary-content">
         <div
           className="flex grow flex-col gap-1"
@@ -85,7 +79,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
                 onClick={() => setOpenModal(true)}
               >
                 <TagSVG />
-                {t("edit_tag")}
+                {t.edit_tag}
               </DropdownMenu.Item>
               <DropdownMenu.Item
                 className="flex items-center gap-2 rounded-lg p-2 leading-none outline-none  hover:cursor-pointer hover:rounded-lg hover:bg-base-200"
@@ -96,13 +90,13 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
                 }
               >
                 <QueueSVG />
-                {t("add_to_queue")}
+                {t.add_to_queue}
               </DropdownMenu.Item>
-              <DropdownMenu.Sub>
+              {playlists && <DropdownMenu.Sub>
                 <DropdownMenu.SubTrigger className="group relative flex select-none items-center rounded-md p-2 leading-none outline-none hover:cursor-pointer hover:rounded-lg hover:bg-base-200 data-[state=open]:bg-base-200">
                   <div className="flex items-center gap-2">
                     <FolderPlusSVG />
-                    {t("add_to_playlist")}
+                    {t.add_to_playlist}
                   </div>
                   <div className="group-data-[disabled]:text-mauve ml-auto pl-[20px]">
                     <ArrowSVG className="-rotate-90" />
@@ -143,8 +137,7 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
                     )}
                   </DropdownMenu.SubContent>
                 </DropdownMenu.Portal>
-              </DropdownMenu.Sub>
-              <DropdownMenu.Sub></DropdownMenu.Sub>
+              </DropdownMenu.Sub>}
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
@@ -160,8 +153,6 @@ const TrackRow = forwardRef<HTMLDivElement, TrackProps>(({ track }, ref) => {
       )}
     </div>
   );
-}
-);
-TrackRow.displayName = "TrackRow";
+};
 
 export default TrackRow;

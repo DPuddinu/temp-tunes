@@ -3,7 +3,6 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import { SquareSkeleton } from "~/components/ui/skeletons/SquareSkeleton";
-import UserDataProvider from "~/context/user-data-context";
 import {
   TopTypeArray,
   type Artist,
@@ -35,6 +34,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
   const [selectedType, setSelectedType] = useState<TopType>("tracks");
   const [selectedPage, setSelectedPage] = useState(0);
 
+  const {data: playlists} = api.spotify_playlist.getAll.useQuery();
   const { data, isLoading, isError } = api.spotify_user.getTopRated.useQuery(
     {
       type: selectedType,
@@ -83,17 +83,15 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
         ))}
       </div>
       <RecapCard.Container error={isError}>
-        <UserDataProvider>
           {_data?.map((item, i) => (
             <>
               {selectedType === "artists" ? (
                 <ArtistRow artist={item as Artist} key={i} />
               ) : (
-                <TrackRow track={item as Track} key={i} />
+                <TrackRow track={item as Track} playlists={playlists} key={i} />
               )}
             </>
           ))}
-        </UserDataProvider>
 
         {data && data.totalItems > itemsPerPage && (
           <PaginationComponent

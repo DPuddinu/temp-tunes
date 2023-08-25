@@ -1,9 +1,11 @@
-import { useTranslation } from "next-i18next";
+import resources from "~/@types/resources";
 import { useToast } from "~/hooks/use-toast";
 import { api } from "~/utils/api";
 import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
+const commonRes = resources.common;
+const playlistRes = resources.playlists;
 
 type Props = {
   onConfirm: () => void;
@@ -18,9 +20,6 @@ export function UnfollowModal({
   playlistID,
   playlistName,
 }: Props) {
-  const { t } = useTranslation("playlists");
-  const { t: t_common } = useTranslation("common");
-
   const utils = api.useContext().spotify_playlist.getAll;
   const { setMessage } = useToast();
 
@@ -35,26 +34,28 @@ export function UnfollowModal({
       return { prevData };
     },
     onSuccess() {
-      const msg = `${t("operations.removed")} ${playlistName} ${t(
-        "operations.confirm_2"
-      )}`;
+      const msg = `${playlistRes.operations.removed} ${playlistName} ${playlistRes.operations.confirm_2}`;
       setMessage(msg);
       onClose();
     },
     onError(error, variables, context) {
       utils.setData(undefined, context?.prevData);
-      setMessage(t_common("error"));
+      setMessage(commonRes.error);
     },
   });
 
   return (
-    <BaseModal isOpen={isOpen} title={t("confirmation")} onClose={onClose}>
+    <BaseModal
+      isOpen={isOpen}
+      title={playlistRes.confirmation}
+      onClose={onClose}
+    >
       <div className="flex h-3/4 flex-col justify-between pt-4 ">
         <div className="text-lg font-medium text-base-content">
           <p>
-            {`${t("operations.confirm_1")} `}
+            {`${playlistRes.operations.confirm_1} `}
             <span className="font-bold">{playlistName}</span>
-            {` ${t("operations.confirm_2")}.`}
+            {` ${playlistRes.operations.confirm_2}.`}
           </p>
         </div>
         <ConfirmButtonGroup

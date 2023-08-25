@@ -1,6 +1,6 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslation } from "next-i18next";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
@@ -11,7 +11,6 @@ import { api } from "~/utils/api";
 import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
-import dynamic from "next/dynamic";
 
 const LoadingSpinner = dynamic(() => import("~/components/ui/LoadingSpinner"));
 
@@ -22,7 +21,6 @@ type Props = {
 } & BaseModalProps;
 
 export function TagModal({ isOpen, onClose, trackId }: Props) {
-  const { t } = useTranslation("common");
   const { setMessage } = useToast();
   const [tags, setTags] = useState<TagSchemaType[]>([]);
   const [parent] = useAutoAnimate();
@@ -41,18 +39,22 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
   //prettier-ignore
   const {mutate } = api.tags.setTagsByTrack.useMutation({
     async onSuccess() {
-      setMessage(`${t("updated")} tags`);
+      setMessage(`${resources.common.updated} tags`);
       onClose();
       utils.tags.orderTagsByName.invalidate();
     },
     onError(){
       onClose();
-      setMessage(t("error"));
+      setMessage(resources.common.error);
     }
   });
 
   return (
-    <BaseModal isOpen={isOpen} title={t("edit_tag")} onClose={onClose}>
+    <BaseModal
+      isOpen={isOpen}
+      title={resources.common.edit_tag}
+      onClose={onClose}
+    >
       <div
         className="flex flex-row flex-wrap gap-2 overflow-hidden pb-2 pt-6"
         ref={parent}
@@ -109,10 +111,8 @@ interface AddTagComponentProps {
   onTagSubmit: (tag: TagSchemaType) => void;
 }
 function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
-  const { t } = useTranslation("common");
-  const { t: t_modals } = useTranslation("modals");
   const tagSchema = AddTagSchema.refine((item) => !tags.includes(item.tag), {
-    message: "tag_errors.used",
+    message: resources.modals.tag_errors.used,
   });
   const {
     register,
@@ -130,13 +130,13 @@ function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
     <form className="flex gap-2 pt-2" onSubmit={handleSubmit(onSubmit)}>
       <div className="w-full ">
         <label className="label">
-          <span className="label-text">{t("add_tag")}</span>
+          <span className="label-text">{resources.common.add_tag}</span>
         </label>
         <div className="flex gap-2">
           <input
             tabIndex={-1}
             className="input w-full bg-base-100"
-            placeholder={t("type_here", { defaultValue: "Type here..." })}
+            placeholder={resources.common.type_here}
             {...register("tag", { required: true })}
           />
           <button
@@ -151,9 +151,7 @@ function AddTagComponent({ tags, onTagSubmit, trackId }: AddTagComponentProps) {
         {errors?.tag?.message && (
           <label className="label text-red-700">
             <span className="label-text-alt font-bold text-red-700">
-              {t_modals(errors?.tag?.message, {
-                defaultValue: "Input not valid",
-              })}
+              {errors?.tag?.message}
             </span>
           </label>
         )}

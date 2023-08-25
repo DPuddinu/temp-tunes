@@ -12,12 +12,7 @@ import { type PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 import { getPageProps } from "~/utils/helpers";
 
-const TemplateList = dynamic(
-  () => import("~/components/template/TemplateList"),
-  {
-    loading: () => <TemplatesSkeleton />,
-  }
-);
+const TemplateList = dynamic(() => import("~/components/template/TemplateList"),{loading: () => <TemplatesSkeleton />});
 
 const Templates: PageWithLayout = () => {
   const { setMessage } = useToast();
@@ -34,6 +29,7 @@ const Templates: PageWithLayout = () => {
         onError() {
           setMessage(t("error"));
         },
+        refetchOnMount: true
       }
     );
   const handleFetchNextPage = () => {

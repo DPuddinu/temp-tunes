@@ -6,7 +6,6 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
-import resources from "~/@types/resources";
 import { getTagColumns, getTrackColumns } from "~/components/search/columns";
 import { SearchSVG } from "~/components/ui/icons/index";
 import { usePlaylistStore } from "~/core/userStore";
@@ -27,8 +26,8 @@ const SearchResult = dynamic(() => import("~/components/search/SearchResult"));
 const SearchFormSchema = z.object({
   name: z
     .string()
-    .min(3, { message: resources.search.search_errors.short })
-    .max(18, { message: resources.search.search_errors.long }),
+    .min(3, { message: "search_errors.short" })
+    .max(18, { message: "search_errors.long" }),
 });
 type SearchFormSchemaType = z.infer<typeof SearchFormSchema>;
 

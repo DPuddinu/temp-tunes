@@ -111,9 +111,7 @@ export function RenameModal({
             {errors?.name?.message && (
               <label className="label">
                 <span className="label-text-alt text-error">
-                  {t_common(errors.name.message, {
-                    defaultValue: "Input not valid",
-                  })}
+                  {errors.name.message}
                 </span>
               </label>
             )}

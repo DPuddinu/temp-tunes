@@ -7,6 +7,7 @@ import { langKey } from "~/hooks/use-language";
 import { authOptions } from "~/server/auth";
 import type { Language } from "~/types/page-types";
 const redirectKey = 'redirectUrl';
+const authKey = 'next-auth.session-token'
 
 export function spliceArray(array: unknown[], size: number) {
   const newArray = [];
@@ -47,9 +48,9 @@ export const getPageProps = async (translations: string[], { req, res, params }:
   if (url?.includes("callbackUrl") || params?.callbackUrl && session) {
     return redirectTo('/home')
   }
-  if (session && session.tokenExpired && url !== '/') {
-    console.log('expired token', url)
-    return redirectTo('/')
+  if (session?.tokenExpired) {
+    console.log('expired token or session undefined')
+    deleteCookie(authKey, { req, res })
   }
 
   return {

@@ -58,14 +58,12 @@ function CreateTemplate({ data }: props) {
   const [parent] = useAutoAnimate();
   const [selectedRow, setSelectedRow] = useState<number | undefined>();
   const router = useRouter();
-  const utils = api.useContext().template.getByCurrentUser;
 
   const { mutate } = api.template.create.useMutation({
     onError() {
       setMessage(t("error"));
     },
-    async onSuccess() {
-      utils.invalidate();
+    onSuccess() {
       setMessage(t_template("created", { template: "Template" }));
       router.push("/templates");
     },
@@ -100,7 +98,6 @@ function CreateTemplate({ data }: props) {
     name: "entries", // unique name for your Field Array
   });
 
-
   const onSubmit: SubmitHandler<TemplateFormType> = (_data) => {
     if (data?.id) {
       edit({
@@ -118,7 +115,6 @@ function CreateTemplate({ data }: props) {
       });
     }
   };
-
   return (
     <form
       className="min-h-60 flex w-full max-w-sm flex-col justify-between gap-2 rounded-xl bg-base-300 p-2 shadow sm:max-w-sm"
@@ -220,9 +216,7 @@ function CreateTemplate({ data }: props) {
             {errors?.entries?.message && (
               <label className="label">
                 <span className="label-text-alt text-error">
-                  {t_template(errors?.entries?.message, {
-                    defaultValue: "error",
-                  })}
+                  {errors?.entries?.message}
                 </span>
               </label>
             )}
