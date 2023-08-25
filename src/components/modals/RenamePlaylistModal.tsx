@@ -3,13 +3,11 @@ import { useTranslation } from "next-i18next";
 import { useEffect } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
-import resources from "~/@types/resources";
 import { useToast } from "~/hooks/use-toast";
 import { api } from "~/utils/api";
 import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
-const common = resources.common;
 
 type Props = {
   onConfirm: () => void;
@@ -22,10 +20,10 @@ const RenamePlaylistSchema = z.object({
   name: z
     .string()
     .min(3, {
-      message: common.name_min_len,
+      message: "name_min_len",
     })
     .max(50, {
-      message: common.name_max_len,
+      message: "name_max_len",
     }),
 });
 export type RenameFormType = z.infer<typeof RenamePlaylistSchema>;
@@ -111,7 +109,9 @@ export function RenameModal({
             {errors?.name?.message && (
               <label className="label">
                 <span className="label-text-alt text-error">
-                  {errors.name.message}
+                  {t_common(errors.name.message, {
+                    defaultValue: "Input not valid",
+                  })}
                 </span>
               </label>
             )}

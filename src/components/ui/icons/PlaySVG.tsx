@@ -4,10 +4,10 @@ export const PlaySVG = ({ className }: { className?: string }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
+      fill="black"
       viewBox="0 0 24 24"
       strokeWidth={1.5}
-      stroke="currentColor"
+      stroke="black"
       className={cn("h-6 w-6 text-base-content", className)}
     >
       <path

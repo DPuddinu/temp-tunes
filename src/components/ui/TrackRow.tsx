@@ -1,5 +1,6 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
 import {
   useMemo,
   useState,
@@ -12,8 +13,6 @@ import { api } from "~/utils/api";
 import VirtualScroll from "./VirtualScroll";
 import { ArrowSVG, QueueSVG, TagSVG, VerticalDotsSVG } from "./icons";
 import { FolderPlusSVG } from "./icons/FolderPlusSVG";
-import resources from "~/@types/resources";
-const t = resources.common;
 
 export interface TrackProps {
   track: Track;
@@ -23,6 +22,7 @@ export interface TrackProps {
 
 // prettier-ignore
 const TrackRow = ({ track, playlists }: TrackProps) => {
+  const { t } = useTranslation("common");
   const { uri, name, artists, id } = track;
   const [ openModal, setOpenModal] = useState(false);
   const { setMessage } = useToast();
@@ -36,12 +36,12 @@ const TrackRow = ({ track, playlists }: TrackProps) => {
   const { mutate: playTrack } = api.player.togglePlayPause.useMutation();
   const { mutate: addToQueue } = api.player.addToQueue.useMutation({
     onSuccess() {
-      setMessage(t.added_to_queue);
+      setMessage(t("added_to_queue"));
     },
   });
   const { mutate: addToPlaylist } = api.spotify_playlist.addToPlaylist.useMutation({
     onSuccess(data, variables) {
-      const msg = `${name} ${t.added_to} ${variables.playlistName}`;
+      const msg = `${name} ${t("added_to")} ${variables.playlistName}`;
       setMessage(msg);
     },
   });
@@ -79,7 +79,7 @@ const TrackRow = ({ track, playlists }: TrackProps) => {
                 onClick={() => setOpenModal(true)}
               >
                 <TagSVG />
-                {t.edit_tag}
+                {t("edit_tag")}
               </DropdownMenu.Item>
               <DropdownMenu.Item
                 className="flex items-center gap-2 rounded-lg p-2 leading-none outline-none  hover:cursor-pointer hover:rounded-lg hover:bg-base-200"
@@ -90,13 +90,13 @@ const TrackRow = ({ track, playlists }: TrackProps) => {
                 }
               >
                 <QueueSVG />
-                {t.add_to_queue}
+                {t("add_to_queue")}
               </DropdownMenu.Item>
               {playlists && <DropdownMenu.Sub>
                 <DropdownMenu.SubTrigger className="group relative flex select-none items-center rounded-md p-2 leading-none outline-none hover:cursor-pointer hover:rounded-lg hover:bg-base-200 data-[state=open]:bg-base-200">
                   <div className="flex items-center gap-2">
                     <FolderPlusSVG />
-                    {t.add_to_playlist}
+                    {t("add_to_playlist")}
                   </div>
                   <div className="group-data-[disabled]:text-mauve ml-auto pl-[20px]">
                     <ArrowSVG className="-rotate-90" />

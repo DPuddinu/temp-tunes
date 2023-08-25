@@ -1,4 +1,4 @@
-import { type Template, type TemplateEntry } from "@prisma/client";
+import type { Template, TemplateEntry } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import TemplateCard from "./TemplateCard";

@@ -12,27 +12,24 @@ import {
 } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
-import resources from "~/@types/resources";
 import { useToast } from "~/hooks/use-toast";
 import { api } from "~/utils/api";
 import { ArrowDownSVG, ArrowUpSVG, DeleteSVG } from "../ui/icons";
-const commonResources = resources.common;
-const templateResources = resources.templates;
 
 const TemplateFormSchema = z.object({
   id: z.number().optional(),
   name: z
     .string()
     .min(3, {
-      message: commonResources.name_min_len,
+      message: "name_min_len",
     })
     .max(50, {
-      message: commonResources.name_max_len,
+      message: "name_max_len",
     }),
   description: z
     .string()
     .max(150, {
-      message: templateResources.desc_max_len,
+      message: "desc_max_len",
     })
     .optional(),
   entries: z
@@ -41,7 +38,7 @@ const TemplateFormSchema = z.object({
     })
     .array()
     .min(1, {
-      message: templateResources.entries_min_len,
+      message: "entries_min_len",
     }),
 });
 export type TemplateFormType = z.infer<typeof TemplateFormSchema>;
@@ -216,7 +213,7 @@ function CreateTemplate({ data }: props) {
             {errors?.entries?.message && (
               <label className="label">
                 <span className="label-text-alt text-error">
-                  {errors?.entries?.message}
+                  {t_template(errors?.entries?.message, { defaultValue: 'Required entries '})}
                 </span>
               </label>
             )}
