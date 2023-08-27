@@ -11,6 +11,7 @@ import {
 } from "@tanstack/react-table";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
+import AccordionComponent from "./AccordionComponent";
 import {
   Table,
   TableBody,
@@ -19,7 +20,6 @@ import {
   TableHeader,
   TableRow,
 } from "./TableComponent";
-import AccordionComponent from "./AccordionComponent";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -31,7 +31,7 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const { t } = useTranslation("search");
-  const { t: commonTranslate } = useTranslation("common");
+  const { t: ct } = useTranslation("common");
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -51,10 +51,10 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="w-full">
-      <AccordionComponent title={commonTranslate("filter")}>
+    <div className="w-full lg:w-3/4">
+      <AccordionComponent title={ct("filter")}>
         <div className="flex flex-wrap gap-2 rounded-b-lg bg-base-200 p-4 md:flex-nowrap">
-          <div className="form-control w-full max-w-xs">
+          <div className="form-control w-full">
             <label className="label">
               <span className="label-text">
                 {t("search_table_headers.title")}

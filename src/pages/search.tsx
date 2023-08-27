@@ -57,9 +57,8 @@ const Search: PageWithLayout = () => {
 
   // LOADING LIBRARY
   const onSubmit: SubmitHandler<SearchFormSchemaType> = (data) => {
-    setLoadLibrary(true);
-
-    if (playlists && !loadLibrary && selectedFilter === "track") {
+    if (!playlists && selectedFilter === "track") {
+      setLoadLibrary(true);
     } else {
       mutate({
         playlists: playlists,

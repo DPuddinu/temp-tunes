@@ -11,7 +11,7 @@ const AccordionComponent = ({ children, title }: AccordionProps) => {
     <Accordion.Root
       type="single"
       key="filters"
-      className="m-auto mb-6 rounded-lg bg-base-200 p-2 shadow sm:text-xl lg:w-3/4"
+      className="m-auto mb-6 rounded-lg bg-base-200 p-2 shadow sm:text-xl "
       collapsible
     >
       <Accordion.Item value="item-1" className="">
