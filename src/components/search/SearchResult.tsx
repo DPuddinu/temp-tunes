@@ -6,15 +6,16 @@ import type {
 } from "~/types/spotify-types";
 import { getLibrary } from "../../core/searchQueries";
 import LoadingScreen from "../ui/LoadingPlaylistComponent";
+import { usePlaylistStore } from "~/core/userStore";
 
 interface props {
-  enabled: boolean;
   onFinish: (playlists: Playlist[]) => void;
 }
-const SearchResult = ({ enabled, onFinish }: props) => {
+const SearchResult = ({ onFinish }: props) => {
   const [loading, setLoading] = useState(false);
   const [currentPlaylist, setCurrentPlaylist] = useState<string>();
   const [progress, setProgress] = useState<number>();
+  const { setPlaylists } = usePlaylistStore();
 
   const { data } = useSession();
 
@@ -29,11 +30,12 @@ const SearchResult = ({ enabled, onFinish }: props) => {
         },
         (playlists: Playlist[]) => {
           setLoading(false);
+          setPlaylists(playlists);
           onFinish(playlists);
         }
       );
     },
-    enabled: enabled && data?.accessToken !== undefined,
+    enabled: data?.accessToken !== undefined,
   });
 
   return (

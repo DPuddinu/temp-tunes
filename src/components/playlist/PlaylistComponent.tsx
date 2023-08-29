@@ -67,7 +67,7 @@ function PlaylistComponent({
       utils.invalidate()
       setIsLoading(false);
     },
-    onError(error, variables, context) {
+    onError() {
       setMessage(t_common("error"));
     },
   });
