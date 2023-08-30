@@ -1,6 +1,7 @@
 import type { GetServerSideProps } from "next";
 import { signIn } from "next-auth/react";
 import { useTranslation } from "next-i18next";
+import { useSearchParams } from "next/navigation";
 import { useLanguage } from "~/hooks/use-language";
 import styles from "~/styles/index.module.css";
 import { Languages, type Language } from "~/types/page-types";
@@ -35,6 +36,9 @@ export default Landing;
 
 const Features = () => {
   const { t } = useTranslation("landing");
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
+
   return (
     <section className="flex grow flex-col text-center text-gray-800 md:text-left">
       <div
@@ -71,7 +75,9 @@ const Features = () => {
       <div className="mb-8 flex w-full grow items-center justify-center">
         <button
           className="mt-16 w-52 rounded-full bg-primary px-10 py-3 font-bold text-white "
-          onClick={() => signIn("spotify", { callbackUrl: `/home` })}
+          onClick={() =>
+            signIn("spotify", { callbackUrl: callbackUrl ?? "/home" })
+          }
         >
           {t("getstarted")}
         </button>

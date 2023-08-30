@@ -1,6 +1,5 @@
 import { useTranslation } from "next-i18next";
-import { useToast } from "~/hooks/use-toast";
-import { api } from "~/utils/api";
+import { usePlaylistOperations } from "~/hooks/use-playlist-operation";
 import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
@@ -19,33 +18,8 @@ export function UnfollowModal({
   playlistName,
 }: Props) {
   const { t } = useTranslation("playlists");
-  const { t: t_common } = useTranslation("common");
 
-  const utils = api.useContext().spotify_playlist.getAll;
-  const { setMessage } = useToast();
-
-  const { mutate } = api.spotify_playlist.remove.useMutation({
-    async onMutate({ playlistID }) {
-      await utils.cancel();
-      const prevData = utils.getData();
-
-      //prettier-ignore
-      utils.setData(undefined, (old) => old?.filter((t) => t.id !== playlistID));
-
-      return { prevData };
-    },
-    onSuccess() {
-      const msg = `${t("operations.removed")} ${playlistName} ${t(
-        "operations.confirm_2"
-      )}`;
-      setMessage(msg);
-      onClose();
-    },
-    onError(error, variables, context) {
-      utils.setData(undefined, context?.prevData);
-      setMessage(t_common("error"));
-    },
-  });
+  const {remove} = usePlaylistOperations(playlistName);
 
   return (
     <BaseModal isOpen={isOpen} title={t("confirmation")} onClose={onClose}>
@@ -59,7 +33,7 @@ export function UnfollowModal({
         </div>
         <ConfirmButtonGroup
           onConfirm={() => {
-            mutate({ playlistID: playlistID });
+            remove.mutate({ playlistID: playlistID });
             onConfirm();
           }}
           onClose={onClose}

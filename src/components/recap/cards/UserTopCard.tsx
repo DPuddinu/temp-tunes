@@ -11,6 +11,7 @@ import {
   type Track,
 } from "~/types/spotify-types";
 import { api } from "~/utils/api";
+import { cn } from "~/utils/utils";
 import { ArtistRow } from "../../ui/ArtistRow";
 import PaginationComponent from "../../ui/PaginationComponent";
 import RecapCard from "../RecapCard";
@@ -34,7 +35,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
   const [selectedType, setSelectedType] = useState<TopType>("tracks");
   const [selectedPage, setSelectedPage] = useState(0);
 
-  const {data: playlists} = api.spotify_playlist.getAll.useQuery();
+  const { data: playlists } = api.spotify_playlist.getAll.useQuery();
   const { data, isLoading, isError } = api.spotify_user.getTopRated.useQuery(
     {
       type: selectedType,
@@ -55,8 +56,7 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
 
   return (
     <RecapCard
-      key={"card-top-rated"}
-      intent={"active"}
+      key="card-top-rated"
       loading={isLoading}
       fallback={<RecapSkeleton />}
     >
@@ -68,14 +68,14 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
               setSelectedType(type);
               setSelectedPage(0);
             }}
-            active={selectedType === type}
           >
             <p
               key={type}
-              className={`${
+              className={cn(
+                "pb-2 md:text-lg",
                 selectedType === type &&
-                "border border-transparent border-b-base-content"
-              } pb-2 md:text-lg`}
+                  "border border-transparent border-b-base-content"
+              )}
             >
               {t(getTranslationByType(type))}
             </p>
@@ -83,15 +83,15 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
         ))}
       </div>
       <RecapCard.Container error={isError}>
-          {_data?.map((item, i) => (
-            <>
-              {selectedType === "artists" ? (
-                <ArtistRow artist={item as Artist} key={i} />
-              ) : (
-                <TrackRow track={item as Track} playlists={playlists} key={i} />
-              )}
-            </>
-          ))}
+        {_data?.map((item, i) => (
+          <>
+            {selectedType === "artists" ? (
+              <ArtistRow artist={item as Artist} key={i} />
+            ) : (
+              <TrackRow track={item as Track} playlists={playlists} key={i} />
+            )}
+          </>
+        ))}
 
         {data && data.totalItems > itemsPerPage && (
           <PaginationComponent

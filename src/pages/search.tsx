@@ -20,7 +20,7 @@ const SearchDataTable = dynamic(
 );
 
 //prettier-ignore
-const SearchResult = dynamic(() => import("~/components/search/SearchResult"));
+const SearchTrack = dynamic(() => import("~/components/search/SearchTrack"));
 
 const Search: PageWithLayout = () => {
   const { playlists } = usePlaylistStore();
@@ -50,7 +50,7 @@ const Search: PageWithLayout = () => {
     <div className="flex flex-col items-center justify-center gap-2">
       <SearchForm onSubmit={onSubmit} />
       {query?.filterType === "track" && !playlists && (
-        <SearchResult
+        <SearchTrack
           onFinish={(playlists: Playlist[]) => {
             mutate({
               playlists: playlists,

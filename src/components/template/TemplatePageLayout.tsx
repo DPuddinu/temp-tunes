@@ -9,6 +9,7 @@ import {
   PlusSVG,
   TemplateSVG,
 } from "../ui/icons";
+import { cn } from "~/utils/utils";
 
 export type TemplatePage =
   | "my_templates"
@@ -38,8 +39,6 @@ const TemplateLayout = ({ children, title }: props) => {
       </section>
       <div className="fixed bottom-[5rem] right-5 sm:bottom-4 ">
         <FloatingActionButton
-          intent={"primary"}
-          size={"md"}
           options={[
             <Link href={"/templates"} key="myTemplates">
               <FabChild
@@ -100,9 +99,8 @@ const FabChild = ({
     <div className="flex items-center gap-4 hover:scale-105">
       <div className="rounded-md bg-neutral p-1 px-3 uppercase">{label}</div>
       <FloatingActionButton
-        size={"sm"}
         disabled={disabled}
-        className={className}
+        className={cn('btn-sm text-xl', className)}
         onClick={onClick}
       >
         {children}

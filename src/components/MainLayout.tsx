@@ -61,7 +61,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
         </nav>
         <main className="grow p-4 pb-20 sm:pb-6">
           {children}
-          {!!message && <Toast intent={"primary"} message={message} />}
+          {!!message && <Toast message={message} />}
         </main>
         <BottomNavigation />
       </div>

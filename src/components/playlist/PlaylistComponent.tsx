@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { UnfollowModal } from "~/components/modals/RemovePlaylistModal";
 import {
   ArrowSVG,
@@ -15,16 +15,15 @@ import {
   ShuffleSVG,
   VerticalDotsSVG,
 } from "~/components/ui/icons";
-import { useToast } from "~/hooks/use-toast";
+import { usePlaylistOperations } from "~/hooks/use-playlist-operation";
 import type { Playlist } from "~/types/spotify-types";
-import { api } from "~/utils/api";
 import { RenameModal } from "../modals/RenamePlaylistModal";
 import { ImageWithFallback } from "../ui/ImageWithFallback";
 import VirtualScroll from "../ui/VirtualScroll";
 
 const LoadingSpinner = dynamic(() => import("~/components/ui/LoadingSpinner"));
 
-type selectedModal = 'rename' | 'unfollow' | null;
+type selectedModal = "rename" | "unfollow" | null;
 
 function PlaylistComponent({
   playlist,
@@ -34,14 +33,9 @@ function PlaylistComponent({
   data: Playlist[];
 }) {
   const { t } = useTranslation("playlists");
-  const { t: t_common } = useTranslation("common");
 
   const [isLoading, setIsLoading] = useState(false);
-  const { setMessage } = useToast();
-  const utils = api.useContext().spotify_playlist.getAll;
-
   const [openModal, setOpenModal] = useState<selectedModal>(null);
-
   const { data: session } = useSession();
 
   const filteredPlaylists = useMemo(
@@ -49,40 +43,7 @@ function PlaylistComponent({
     [data, session]
   );
 
-  const { mutate: shuffle } = api.spotify_playlist.shuffle.useMutation({
-    onMutate() {
-      setIsLoading(true);
-    },
-    onSuccess() {
-      setMessage(`${playlist.name} ${t("operations.shuffled")}`);
-      setIsLoading(false);
-    },
-    onError() {
-      setMessage(t_common("error"));
-    },
-  });
-  const { mutate: copy } = api.spotify_playlist.copy.useMutation({
-    onSuccess() {
-      setMessage(`${playlist.name} ${t("operations.copied")}`);
-      utils.invalidate()
-      setIsLoading(false);
-    },
-    onError() {
-      setMessage(t_common("error"));
-    },
-  });
-  const { mutate: merge } = api.spotify_playlist.merge.useMutation({
-    onMutate() {
-      setIsLoading(true);
-    },
-    onSuccess() {
-      setMessage(`${playlist.name} ${t("operations.merge")}`);
-      setIsLoading(false);
-    },
-    onError() {
-      setMessage(t_common("error"));
-    },
-  });
+  const { shuffle, copy, merge } = usePlaylistOperations(playlist.name);
 
   return (
     <div className="group flex max-h-16 items-center rounded-2xl bg-base-200 pr-3 shadow">
@@ -127,25 +88,23 @@ function PlaylistComponent({
               sideOffset={5}
             >
               {playlist.owner.id === session?.user?.id && (
-                <DropdownMenu.Item
-                  className="flex items-center gap-2 rounded-lg p-2 leading-none outline-none hover:cursor-pointer hover:bg-base-200"
+                <MenuItem
                   onClick={() => {
-                    shuffle({ playlist: playlist });
+                    shuffle.mutate({ playlist: playlist });
                   }}
                 >
                   <ShuffleSVG />
                   {t("operations.shuffle")}
-                </DropdownMenu.Item>
+                </MenuItem>
               )}
-              <DropdownMenu.Item
-                className="flex items-center gap-2 rounded-lg p-2 leading-none outline-none hover:cursor-pointer hover:bg-base-200"
+              <MenuItem
                 onClick={() => {
-                  copy({ playlist: playlist });
+                  copy.mutate({ playlist: playlist });
                 }}
               >
                 <CopySVG />
                 {t("operations.copy")}
-              </DropdownMenu.Item>
+              </MenuItem>
               <DropdownMenu.Sub>
                 <DropdownMenu.SubTrigger className="group relative flex select-none items-center rounded-md p-2 leading-none outline-none hover:cursor-pointer data-[state=open]:bg-base-200">
                   <div className="flex items-center gap-2">
@@ -168,12 +127,12 @@ function PlaylistComponent({
                         data={filteredPlaylists}
                         row={(virtualItem) => (
                           <DropdownMenu.Item
-                            className=" rounded-lg first:mt-2 last:mb-2 hover:cursor-pointer hover:rounded-lg hover:border-none hover:bg-base-200"
+                            className="rounded-lg first:mt-2 last:mb-2 hover:cursor-pointer hover:rounded-lg hover:border-none hover:bg-base-200"
                             onClick={() => {
                               // prettier-ignore
                               const current = filteredPlaylists[virtualItem.index];
                               if (filteredPlaylists && current)
-                                merge({
+                                merge.mutate({
                                   originId: playlist.id,
                                   originName: playlist.name,
                                   destinationName: current.name,
@@ -192,21 +151,15 @@ function PlaylistComponent({
                   </DropdownMenu.SubContent>
                 </DropdownMenu.Portal>
               </DropdownMenu.Sub>
-              <DropdownMenu.Item
-                className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer hover:rounded-lg hover:bg-base-200"
-                onClick={() => setOpenModal("unfollow")}
-              >
+              <MenuItem onClick={() => setOpenModal("unfollow")}>
                 <DeleteSVG />
                 {t("operations.remove")}
-              </DropdownMenu.Item>
+              </MenuItem>
               {playlist.owner.id === session?.user?.id && (
-                <DropdownMenu.Item
-                  className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer hover:rounded-lg hover:bg-base-200"
-                  onClick={() => setOpenModal("rename")}
-                >
+                <MenuItem onClick={() => setOpenModal("rename")}>
                   <PencilSVG />
                   {t("operations.rename")}
-                </DropdownMenu.Item>
+                </MenuItem>
               )}
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
@@ -221,7 +174,7 @@ function PlaylistComponent({
       />
       <RenameModal
         isOpen={openModal === "rename"}
-        playlistID={playlist.id}
+        playlistId={playlist.id}
         playlistName={playlist.name}
         onClose={() => setOpenModal(null)}
         onConfirm={() => setIsLoading(true)}
@@ -230,3 +183,18 @@ function PlaylistComponent({
   );
 }
 export default PlaylistComponent;
+
+interface MenuItemProps {
+  onClick: () => void;
+  children: ReactNode;
+}
+const MenuItem = ({ children, onClick }: MenuItemProps) => {
+  return (
+    <DropdownMenu.Item
+      className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer hover:rounded-lg hover:bg-base-200"
+      onClick={onClick}
+    >
+      {children}
+    </DropdownMenu.Item>
+  );
+};

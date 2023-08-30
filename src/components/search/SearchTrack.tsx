@@ -11,7 +11,7 @@ import { usePlaylistStore } from "~/core/userStore";
 interface props {
   onFinish: (playlists: Playlist[]) => void;
 }
-const SearchResult = ({ onFinish }: props) => {
+const SearchTrack = ({ onFinish }: props) => {
   const [loading, setLoading] = useState(false);
   const [currentPlaylist, setCurrentPlaylist] = useState<string>();
   const [progress, setProgress] = useState<number>();
@@ -47,4 +47,4 @@ const SearchResult = ({ onFinish }: props) => {
   );
 };
 
-export default SearchResult;
+export default SearchTrack;

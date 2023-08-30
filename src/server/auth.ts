@@ -4,6 +4,7 @@ import {
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
+import { type DefaultJWT } from "next-auth/jwt";
 import SpotifyProvider from "next-auth/providers/spotify";
 
 import { env } from "~/env.mjs";
@@ -26,6 +27,13 @@ declare module "next-auth" {
   }
 }
 
+declare module "next-auth/jwt" {
+  interface JWT extends DefaultJWT {
+    accessToken?: string;
+    refreshToken?: string;
+    expiresIn: Date;
+  }
+}
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
@@ -34,7 +42,6 @@ declare module "next-auth" {
 export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({ session, token }) {
-      const now = new Date();
       if (session.user) {
         session.user.id = token.userId as string;
       }
@@ -42,15 +49,17 @@ export const authOptions: NextAuthOptions = {
       session.refreshToken = token.refreshToken as string;
       session.expiresIn = token.expiresIn as Date;
       //prettier-ignore
-      session.tokenExpired = now.getTime() > new Date(session.expiresIn).getTime() + 3600 * 1000;
+      session.tokenExpired = isTokenExpired(new Date(session.expiresIn));
       return session;
     },
     async jwt({ token, account }) {
       // Persist the OAuth access_token and or the user id to the token right after signin
       if (account) {
+        const expireDate = new Date();
+        expireDate.setSeconds(expireDate.getSeconds() + 3600)
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
-        token.expiresIn = new Date();
+        token.expiresIn = expireDate;
         token.userId = account.providerAccountId;
       }
       return token;
@@ -91,3 +100,7 @@ export const getServerAuthSession = (ctx: {
 }) => {
   return getServerSession(ctx.req, ctx.res, authOptions);
 };
+
+export function isTokenExpired(expiresIn: Date) {
+  return new Date() > new Date(expiresIn)
+}

@@ -1,20 +1,17 @@
 import { Transition } from "@headlessui/react";
 import { useClickOutside } from "@mantine/hooks";
-import { type VariantProps } from "cva";
 import { useState, type ReactNode } from "react";
 import { cn } from "~/utils/utils";
-import { FloatingActionButtonCVA } from "../cva/FloatingActionButtonCva";
+
 type props = {
   options?: ReactNode[];
   children: ReactNode;
   disabled?: boolean;
   className?: string;
   onClick?: () => void;
-} & VariantProps<typeof FloatingActionButtonCVA>;
+}
 
 const FloatingActionButton = ({
-  intent,
-  size,
   options,
   onClick,
   children,
@@ -39,7 +36,9 @@ const FloatingActionButton = ({
         >
           <div className="mb-2 mr-2 flex flex-col items-end gap-4">
             {options?.map((option, i) => (
-              <div key={i} onClick={() => setOpen(false)}>{option}</div>
+              <div key={i} onClick={() => setOpen(false)}>
+                {option}
+              </div>
             ))}
           </div>
         </Transition>
@@ -55,7 +54,7 @@ const FloatingActionButton = ({
       >
         <button
           className={cn(
-            FloatingActionButtonCVA({ intent, size }),
+            "btn-primary btn-md btn-circle btn text-2xl transition-transform hover:scale-105 hover:cursor-pointer",
             disabled && "disabled hover:!cursor-not-allowed",
             open && "rotate-45",
             className

@@ -3,15 +3,14 @@ import { useTranslation } from "next-i18next";
 import { useEffect } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
-import { useToast } from "~/hooks/use-toast";
-import { api } from "~/utils/api";
+import { usePlaylistOperations } from "~/hooks/use-playlist-operation";
 import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
 
 type Props = {
   onConfirm: () => void;
-  playlistID: string;
+  playlistId: string;
   playlistName: string;
 } & BaseModalProps;
 
@@ -32,13 +31,11 @@ export function RenameModal({
   isOpen,
   onClose,
   playlistName,
-  playlistID,
+  playlistId,
 }: Props) {
   const { t } = useTranslation("playlists");
   const { t: t_common } = useTranslation("common");
 
-  const utils = api.useContext().spotify_playlist.getAll;
-  const { setMessage } = useToast();
   const {
     register,
     handleSubmit,
@@ -46,44 +43,15 @@ export function RenameModal({
     formState: { errors },
   } = useForm<RenameFormType>({
     defaultValues: {
-      id: playlistID,
+      id: playlistId,
     },
     resolver: zodResolver(RenamePlaylistSchema),
   });
 
-  const { mutate } = api.spotify_playlist.rename.useMutation({
-    async onMutate({ name, playlistID }) {
-      await utils.cancel();
-      const prevData = utils.getData();
-
-      //prettier-ignore
-      utils.setData(undefined, (old) => {
-        if(old){
-          const newList = old.map((t) => {
-          if(t.id === playlistID){
-            t.name = name;
-          }
-            return t
-          })
-          return newList;
-        }
-      });
-
-      return { prevData };
-    },
-    onSuccess() {
-      onClose();
-      setMessage(`Playlist ${t("operations.renamed")}`);
-    },
-    onError(error, variables, context) {
-      onClose();
-      utils.setData(undefined, context?.prevData);
-      setMessage(t_common("error"));
-    },
-  });
+  const {rename} = usePlaylistOperations(playlistName);
 
   const onSubmit: SubmitHandler<RenameFormType> = (data) => {
-    mutate({
+    rename.mutate({
       name: data.name,
       playlistID: data.id,
     });
