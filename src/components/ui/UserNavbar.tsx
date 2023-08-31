@@ -1,9 +1,9 @@
 import { signOut } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { SpotifyWebPlayer } from "../WebPlayback";
-import { ImageWithFallback } from "./ImageWithFallback";
-import { ErrorSVG, MenuSVG, UserSVG } from "./icons";
+import { MenuSVG, UserSVG } from "./icons";
 import { RoundSkeleton } from "./skeletons/RoundSkeleton";
 
 interface UserNavbarProps {
@@ -38,13 +38,13 @@ const UserNavbar = ({ name, image }: UserNavbarProps) => {
               <label tabIndex={0} className="btn-ghost btn-circle avatar btn">
                 <div className="h-10 w-10 bg-base-100 shadow rounded-full">
                   {!!image ? (
-                    <ImageWithFallback
+                    <Image
+                      alt="user"
                       priority
                       src={image}
                       height={40}
                       width={40}
                       quality={60}
-                      fallback={<ErrorSVG />}
                       className="flex h-full w-full items-center justify-center bg-base-100"
                     />
                   ) : (

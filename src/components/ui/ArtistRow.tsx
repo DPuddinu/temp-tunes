@@ -1,6 +1,5 @@
+import Image from "next/image";
 import type { Artist } from "~/types/spotify-types";
-import { ImageWithFallback } from "./ImageWithFallback";
-import { ErrorSVG } from "./icons";
 
 interface Props {
   artist: Artist;
@@ -13,10 +12,10 @@ export const ArtistRow = ({ artist }: Props) => {
       style={{ gridTemplateColumns: "1fr 6fr" }}
     >
       {artist.images && artist.images[0]?.url ? (
-        <ImageWithFallback
+        <Image
+          alt="artist"
           src={artist.images[0].url}
           className="aspect-square rounded-lg object-contain"
-          fallback={<ErrorSVG />}
           height={64}
           width={64}
           quality={60}

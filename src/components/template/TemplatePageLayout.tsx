@@ -1,7 +1,7 @@
 import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { useMounted } from "~/hooks/use-mounted";
 import {
   CreateTemplateSVG,

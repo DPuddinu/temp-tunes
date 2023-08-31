@@ -2,22 +2,21 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState, type ReactNode } from "react";
 import {
   ArrowSVG,
   CopySVG,
   DeleteSVG,
-  ErrorSVG,
   MergeSVG,
   PencilSVG,
   ShuffleSVG,
-  VerticalDotsSVG,
+  VerticalDotsSVG
 } from "~/components/ui/icons";
 import { UnfollowModal } from "~/components/ui/modals/RemovePlaylistModal";
 import { usePlaylistOperations } from "~/hooks/use-playlist-operation";
 import type { Playlist } from "~/types/spotify-types";
-import { ImageWithFallback } from "../ui/ImageWithFallback";
 import VirtualScroll from "../ui/VirtualScroll";
 import { RenameModal } from "../ui/modals/RenamePlaylistModal";
 
@@ -48,14 +47,10 @@ function PlaylistComponent({
   return (
     <div className="group flex max-h-16 items-center rounded-2xl bg-base-200 pr-3 shadow">
       <div className="h-16 w-16">
-        <ImageWithFallback
+        <Image
+          alt="album"
           src={
             playlist.images && playlist.images[0] ? playlist.images[0].url : ""
-          }
-          fallback={
-            <div className="flex aspect-square h-full w-full items-center justify-center rounded-xl bg-base-200 bg-opacity-50">
-              <ErrorSVG />
-            </div>
           }
           quality={60}
           height={80}

@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
-import { ImageWithFallback } from "./ui/ImageWithFallback";
 import { MusicalNoteSVG, PauseSVG, PlaySVG } from "./ui/icons";
 
 export interface TrackPlaybackType {
@@ -87,7 +87,8 @@ export const SpotifyWebPlayer = () => {
             {current_track && current_track.album?.images[0] ? (
               <>
                 <div className="flex w-full max-w-[160px] justify-center gap-2">
-                  <ImageWithFallback
+                  <Image
+                    alt="author"
                     src={current_track.album?.images[0].url}
                     className="rounded-md object-contain"
                     width={64}
