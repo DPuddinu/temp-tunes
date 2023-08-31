@@ -1,9 +1,13 @@
 import type { GetServerSideProps } from "next";
-import MainLayout from "~/components/MainLayout";
-import CreateTemplate from "~/components/template/CreateTemplate";
-import TemplateLayout from "~/components/template/TemplatePageLayout";
+import dynamic from "next/dynamic";
+import MainLayout from "~/components/ui/layouts/MainLayout";
+import TemplateLayout from "~/components/ui/layouts/TemplateLayout";
 import { type PageWithLayout } from "~/types/page-types";
 import { getPageProps } from "~/utils/helpers";
+
+const CreateTemplate = dynamic(
+  () => import("~/components/template/CreateTemplate")
+);
 
 const Templates: PageWithLayout = () => {
   return (

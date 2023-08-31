@@ -1,11 +1,11 @@
 import type { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import { useState } from "react";
-import { useTranslation } from "next-i18next";
-import MainLayout from "~/components/MainLayout";
-import TemplateLayout from "~/components/template/TemplatePageLayout";
+import TemplateLayout from "~/components/ui/layouts/TemplateLayout";
 import PaginationComponent from "~/components/ui/Pagination";
 import { ErrorSVG } from "~/components/ui/icons";
+import MainLayout from "~/components/ui/layouts/MainLayout";
 import { TemplatesSkeleton } from "~/components/ui/skeletons/TemplatesSkeleton";
 import { useToast } from "~/hooks/use-toast";
 import { type PageWithLayout } from "~/types/page-types";

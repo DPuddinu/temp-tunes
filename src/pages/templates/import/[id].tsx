@@ -1,18 +1,20 @@
 import type { GetServerSideProps } from "next";
+import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import MainLayout from "~/components/MainLayout";
-import TemplateLayout from "~/components/template/TemplatePageLayout";
+import MainLayout from "~/components/ui/layouts/MainLayout";
+import TemplateLayout from "~/components/ui/layouts/TemplateLayout";
 import type { PageWithLayout } from "~/types/page-types";
 import { getPageProps } from "~/utils/helpers";
-import { ImportTemplateForm } from ".";
+
+const ImportTemplateForm = dynamic(
+  () => import("~/components/template/ImportTemplateForm")
+);
 
 const ImportTemplateById: PageWithLayout = () => {
   const searchParams = useSearchParams();
-  // console.log(router.route);
 
   const id = searchParams.get("id");
-  // console.log(id);
-  return <>{id ? <ImportTemplateForm id={id} /> : <ImportTemplateForm />}</>;
+  return <ImportTemplateForm id={id} />;
 };
 
 ImportTemplateById.getLayout = (page) => (

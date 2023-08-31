@@ -1,11 +1,9 @@
-import MainLayout from "@components/MainLayout";
 import type { GetServerSideProps } from "next";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { type SubmitHandler } from "react-hook-form";
-import SearchForm, {
-  type SearchFormSchemaType,
-} from "~/components/search/SearchForm";
+import { type SearchFormSchemaType } from "~/components/search/SearchForm";
+import MainLayout from "~/components/ui/layouts/MainLayout";
 import { usePlaylistStore } from "~/core/userStore";
 import type { PageWithLayout } from "~/types/page-types";
 import { type Playlist } from "~/types/spotify-types";
@@ -18,6 +16,8 @@ const LoadingSpinner = dynamic(() => import("~/components/ui/LoadingSpinner"));
 const SearchDataTable = dynamic(
   () => import("~/components/search/SearchDataTable")
 );
+
+const SearchForm = dynamic(() => import("~/components/search/SearchForm"));
 
 //prettier-ignore
 const SearchTrack = dynamic(() => import("~/components/search/SearchTrack"));

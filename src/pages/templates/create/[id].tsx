@@ -5,13 +5,13 @@ import {
 } from "@mantine/hooks";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useTranslation } from "next-i18next";
-import MainLayout from "~/components/MainLayout";
-import TemplateLayout from "~/components/template/TemplatePageLayout";
+import MainLayout from "~/components/ui/layouts/MainLayout";
+import TemplateLayout from "~/components/ui/layouts/TemplateLayout";
 import CreatePlaylistSkeleton from "~/components/ui/skeletons/CreatePlaylistSkeleton";
 import { useToast } from "~/hooks/use-toast";
 import { type PageWithLayout } from "~/types/page-types";

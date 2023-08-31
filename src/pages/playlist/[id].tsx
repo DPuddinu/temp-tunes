@@ -1,8 +1,8 @@
 import { type GetServerSideProps } from "next";
+import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import { useTranslation } from "next-i18next";
-import MainLayout from "~/components/MainLayout";
+import MainLayout from "~/components/ui/layouts/MainLayout";
 import { PlaylistSkeleton } from "~/components/ui/skeletons/PlaylistSkeleton";
 import { SquareSkeleton } from "~/components/ui/skeletons/SquareSkeleton";
 import { useToast } from "~/hooks/use-toast";

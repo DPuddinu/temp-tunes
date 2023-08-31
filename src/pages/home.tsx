@@ -1,9 +1,9 @@
-import MainLayout from "@components/MainLayout";
 import type { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import type { TimeRangeType } from "src/types/spotify-types";
+import MainLayout from "~/components/ui/layouts/MainLayout";
 import GreetingsSkeleton from "~/components/ui/skeletons/GreetingsSkeleton";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import { getPageProps } from "~/utils/helpers";
@@ -36,7 +36,7 @@ const Home: PageWithLayout = () => {
   );
 };
 //prettier-ignore
-const Greetings = dynamic(() => import("~/components/ui/Greetings"), {
+const Greetings = dynamic(() => import("~/components/home/Greetings"), {
   loading: () => <GreetingsSkeleton />,
 });
 
@@ -46,4 +46,3 @@ export default Home;
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return getPageProps(["home", "common", "modals"], context);
 };
-

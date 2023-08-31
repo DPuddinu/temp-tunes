@@ -1,6 +1,6 @@
 import type { GetServerSideProps } from "next";
 import dynamic from "next/dynamic";
-import MainLayout from "~/components/MainLayout";
+import MainLayout from "~/components/ui/layouts/MainLayout";
 import { PlaylistPageSkeleton } from "~/components/ui/skeletons/PlaylistPageSkeleton";
 import { type PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
@@ -13,7 +13,7 @@ const PlaylistsPage: PageWithLayout = () => {
 
   //prettier-ignore
   const PlaylistTable = dynamic(() => import("~/components/playlist/PlaylistTable"), {loading: () => <PlaylistPageSkeleton /> });
-  
+
   return (
     <>
       {isLoading && <PlaylistPageSkeleton />}
