@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { usePlaylistOperations } from "~/hooks/use-playlist-operation";
-import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
+import { ConfirmButtonGroup } from "../ConfirmationButtonGroup";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
 
@@ -48,7 +48,7 @@ export function RenameModal({
     resolver: zodResolver(RenamePlaylistSchema),
   });
 
-  const {rename} = usePlaylistOperations(playlistName);
+  const { rename } = usePlaylistOperations(playlistName);
 
   const onSubmit: SubmitHandler<RenameFormType> = (data) => {
     rename.mutate({

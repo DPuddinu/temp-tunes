@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import { SquareSkeleton } from "~/components/ui/skeletons/SquareSkeleton";
 import { api } from "~/utils/api";
-import RecapCard from "../RecapCard";
+import RecapCard from "./RecapCard";
 
 const TrackRow = dynamic(() => import("~/components/ui/TrackRow"), {
   loading: () => <SquareSkeleton />,
@@ -33,7 +33,7 @@ const RecommendedCard = () => {
           <div className="grid place-content-center pt-4">
             {t_common("empty")}
           </div>
-        )}{" "}
+        )}
       </RecapCard.Container>
     </RecapCard>
   );

@@ -12,9 +12,9 @@ import {
 } from "~/types/spotify-types";
 import { api } from "~/utils/api";
 import { cn } from "~/utils/utils";
-import { ArtistRow } from "../../ui/ArtistRow";
-import PaginationComponent from "../../ui/PaginationComponent";
-import RecapCard from "../RecapCard";
+import { ArtistRow } from "../ui/ArtistRow";
+import PaginationComponent from "../ui/Pagination";
+import RecapCard from "./RecapCard";
 
 export type RecapPropsType = {
   timeRange: TimeRangeType;

@@ -1,10 +1,10 @@
 import type { GetServerSideProps } from "next";
 import dynamic from "next/dynamic";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import MainLayout from "~/components/MainLayout";
 import TemplateLayout from "~/components/template/TemplatePageLayout";
-import PaginationComponent from "~/components/ui/PaginationComponent";
+import PaginationComponent from "~/components/ui/Pagination";
 import { ErrorSVG } from "~/components/ui/icons";
 import { TemplatesSkeleton } from "~/components/ui/skeletons/TemplatesSkeleton";
 import { useToast } from "~/hooks/use-toast";
@@ -12,7 +12,10 @@ import { type PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
 import { getPageProps } from "~/utils/helpers";
 
-const TemplateList = dynamic(() => import("~/components/template/TemplateList"),{loading: () => <TemplatesSkeleton />});
+const TemplateList = dynamic(
+  () => import("~/components/template/TemplateList"),
+  { loading: () => <TemplatesSkeleton /> }
+);
 
 const Templates: PageWithLayout = () => {
   const { setMessage } = useToast();
@@ -29,7 +32,7 @@ const Templates: PageWithLayout = () => {
         onError() {
           setMessage(t("error"));
         },
-        refetchOnMount: true
+        refetchOnMount: true,
       }
     );
   const handleFetchNextPage = () => {

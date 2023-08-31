@@ -1,6 +1,6 @@
 import { type Table } from "@tanstack/react-table";
 import { useTranslation } from "next-i18next";
-import AccordionComponent from "../ui/AccordionComponent";
+import AccordionComponent from "../ui/Accordion";
 
 function FiltersComponent<TData>({ table }: { table: Table<TData> }) {
   const { t } = useTranslation("common");

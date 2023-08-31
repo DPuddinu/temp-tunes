@@ -3,9 +3,9 @@ export function LinkedinSVG() {
     <svg
       fill="currentColor"
       stroke="currentColor"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="0"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="0"
       className="h-5 w-5"
       viewBox="0 0 24 24"
     >

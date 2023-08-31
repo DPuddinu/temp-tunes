@@ -1,6 +1,6 @@
 import { useTranslation } from "next-i18next";
 import { usePlaylistOperations } from "~/hooks/use-playlist-operation";
-import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
+import { ConfirmButtonGroup } from "../ConfirmationButtonGroup";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
 
@@ -19,7 +19,7 @@ export function UnfollowModal({
 }: Props) {
   const { t } = useTranslation("playlists");
 
-  const {remove} = usePlaylistOperations(playlistName);
+  const { remove } = usePlaylistOperations(playlistName);
 
   return (
     <BaseModal isOpen={isOpen} title={t("confirmation")} onClose={onClose}>

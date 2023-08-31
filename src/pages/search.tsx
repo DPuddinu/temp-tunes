@@ -29,7 +29,6 @@ const Search: PageWithLayout = () => {
   // prettier-ignore
   const { data, mutate, isLoading } = api.spotify_user.searchTracks.useMutation();
 
-  // LOADING LIBRARY
   const onSubmit: SubmitHandler<SearchFormSchemaType> = (data) => {
     setQuery(data);
     const mutationObject = {

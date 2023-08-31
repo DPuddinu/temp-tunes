@@ -3,7 +3,7 @@ import { ExpandRow } from "~/components/ui/ExpandRow";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import { useToast } from "~/hooks/use-toast";
 import { api } from "~/utils/api";
-import RecapCard from "../RecapCard";
+import RecapCard from "./RecapCard";
 
 const TagsCard = () => {
   const { setMessage } = useToast();
@@ -13,8 +13,7 @@ const TagsCard = () => {
     undefined,
     {
       onError() {
-        const msg = t("tags.error");
-        setMessage(msg);
+        setMessage(t("tags.error"));
       },
     }
   );
@@ -28,28 +27,27 @@ const TagsCard = () => {
             <p>{t("tags.empty")}</p>
           </div>
         )}
-        {data &&
-          data.map((tag) => (
-            <div
-              key={tag.name}
-              className="flex w-full justify-between gap-2 p-4 font-medium"
-            >
-              <p>{tag.name}</p>
-              <div className="flex w-1/2 flex-row-reverse">
-                <ExpandRow
-                  color={getColorByValue(
-                    tag._count.name,
-                    data[0]?._count.name ?? 0
-                  )}
-                  value={`${tag._count.name}`}
-                  width={getWidthByValue(
-                    tag._count.name,
-                    data[0]?._count.name ?? 0
-                  )}
-                />
-              </div>
+        {data?.map((tag) => (
+          <div
+            key={tag.name}
+            className="flex w-full justify-between gap-2 p-4 font-medium"
+          >
+            <p>{tag.name}</p>
+            <div className="flex w-1/2 flex-row-reverse">
+              <ExpandRow
+                color={getColorByValue(
+                  tag._count.name,
+                  data[0]?._count.name ?? 0
+                )}
+                value={`${tag._count.name}`}
+                width={getWidthByValue(
+                  tag._count.name,
+                  data[0]?._count.name ?? 0
+                )}
+              />
             </div>
-          ))}
+          </div>
+        ))}
       </RecapCard.Container>
     </RecapCard>
   );

@@ -1,5 +1,4 @@
 import type { PropsWithChildren, ReactNode } from "react";
-import { cn } from "~/utils/utils";
 
 type RecapHeaderType = {
   onClick?: () => void;
@@ -25,10 +24,7 @@ RecapCard.Header = function RecapCardHeader({
 }: RecapHeaderType) {
   return (
     <div
-      className={cn(
-        "flex items-center justify-center p-4 pb-0 text-center text-lg font-medium tracking-wide text-base-content hover:cursor-pointer",
-        
-      )}
+      className="flex items-center justify-center p-4 pb-0 text-center text-lg font-medium tracking-wide text-base-content hover:cursor-pointer"
       onClick={onClick}
       key={"RecapHeader"}
     >

@@ -3,7 +3,7 @@ import { ExpandRow } from "~/components/ui/ExpandRow";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import type { Mood } from "~/types/spotify-types";
 import { api } from "~/utils/api";
-import RecapCard from "../RecapCard";
+import RecapCard from "./RecapCard";
 
 interface MoodRowProps {
   color: string;

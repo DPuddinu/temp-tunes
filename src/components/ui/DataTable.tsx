@@ -11,7 +11,7 @@ import {
 } from "@tanstack/react-table";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
-import AccordionComponent from "./AccordionComponent";
+import AccordionComponent from "./Accordion";
 import {
   Table,
   TableBody,
@@ -19,7 +19,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./TableComponent";
+} from "./Table";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

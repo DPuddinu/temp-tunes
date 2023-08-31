@@ -10,7 +10,7 @@ import {
   type SubmitHandler,
   type UseFormRegister,
 } from "react-hook-form";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import { z } from "zod";
 import { useToast } from "~/hooks/use-toast";
 import { api } from "~/utils/api";

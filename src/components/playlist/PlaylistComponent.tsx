@@ -4,7 +4,6 @@ import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useMemo, useState, type ReactNode } from "react";
-import { UnfollowModal } from "~/components/modals/RemovePlaylistModal";
 import {
   ArrowSVG,
   CopySVG,
@@ -15,11 +14,12 @@ import {
   ShuffleSVG,
   VerticalDotsSVG,
 } from "~/components/ui/icons";
+import { UnfollowModal } from "~/components/ui/modals/RemovePlaylistModal";
 import { usePlaylistOperations } from "~/hooks/use-playlist-operation";
 import type { Playlist } from "~/types/spotify-types";
-import { RenameModal } from "../modals/RenamePlaylistModal";
 import { ImageWithFallback } from "../ui/ImageWithFallback";
 import VirtualScroll from "../ui/VirtualScroll";
+import { RenameModal } from "../ui/modals/RenamePlaylistModal";
 
 const LoadingSpinner = dynamic(() => import("~/components/ui/LoadingSpinner"));
 
@@ -185,10 +185,10 @@ function PlaylistComponent({
 export default PlaylistComponent;
 
 interface MenuItemProps {
-  onClick: () => void;
+  onClick?: () => void;
   children: ReactNode;
 }
-const MenuItem = ({ children, onClick }: MenuItemProps) => {
+export const MenuItem = ({ children, onClick }: MenuItemProps) => {
   return (
     <DropdownMenu.Item
       className="flex items-center gap-2 p-2 leading-none outline-none hover:cursor-pointer hover:rounded-lg hover:bg-base-200"

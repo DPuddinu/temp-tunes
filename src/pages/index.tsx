@@ -38,7 +38,6 @@ const Features = () => {
   const { t } = useTranslation("landing");
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
-
   return (
     <section className="flex grow flex-col text-center text-gray-800 md:text-left">
       <div

@@ -1,16 +1,16 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "next-i18next";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { useToast } from "~/hooks/use-toast";
 import { type TagSchemaType, type TagType } from "~/types/zod-schemas";
 import { api } from "~/utils/api";
-import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
+import { ConfirmButtonGroup } from "../ConfirmationButtonGroup";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
-import dynamic from "next/dynamic";
 
 const LoadingSpinner = dynamic(() => import("~/components/ui/LoadingSpinner"));
 

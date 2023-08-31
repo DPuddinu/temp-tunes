@@ -8,9 +8,9 @@ import {
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { type Playlist } from "~/types/spotify-types";
-import PaginationComponent from "../ui/PaginationComponent";
-import FiltersComponent from "./PlaylistTableFilterComponent";
+import PaginationComponent from "../ui/Pagination";
 import TableBodyComponent from "./PlaylistTableBodyComponent";
+import FiltersComponent from "./PlaylistTableFilterComponent";
 
 function PlaylistTable({ data }: { data: Playlist[] }) {
   const columns: ColumnDef<Playlist>[] = useMemo(() => {

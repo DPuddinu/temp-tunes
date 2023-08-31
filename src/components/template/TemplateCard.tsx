@@ -4,10 +4,10 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import { useToast } from "~/hooks/use-toast";
 import { cn } from "~/utils/utils";
-import { DeleteTemplateModal } from "../modals/DeleteTemplateModal";
+import { MenuItem } from "../playlist/PlaylistComponent";
 import {
   ArrowSVG,
   DeleteSVG,
@@ -15,7 +15,7 @@ import {
   ShareSVG,
   VerticalDotsSVG,
 } from "../ui/icons";
-
+import { DeleteTemplateModal } from "../ui/modals/DeleteTemplateModal";
 interface cardAction {
   label: string;
   onClick: () => void;
@@ -73,7 +73,7 @@ const TemplateCard = ({
                   align="end"
                 >
                   {template.userId === sessionData?.user?.id && (
-                    <DropdownMenu.Item className="flex items-center gap-2 rounded-lg p-2 pr-[20px] leading-none outline-none hover:cursor-pointer hover:bg-base-100">
+                    <MenuItem>
                       <Link
                         href={`/templates/${template.id}`}
                         className="flex items-center gap-2 "
@@ -81,28 +81,28 @@ const TemplateCard = ({
                         <PencilSVG />
                         {t("edit")}
                       </Link>
-                    </DropdownMenu.Item>
+                    </MenuItem>
                   )}
-                  <DropdownMenu.Item
-                    className="flex items-center gap-2 rounded-lg p-2 pr-[20px] leading-none outline-none hover:cursor-pointer hover:bg-base-100"
-                    onClick={() => setOpenDeleteModal(true)}
-                  >
+                  <MenuItem onClick={() => setOpenDeleteModal(true)}>
                     <DeleteSVG />
                     {t("delete")}
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    className="flex items-center gap-2 rounded-lg p-2 pr-[20px] leading-none outline-none hover:cursor-pointer hover:bg-base-100"
-                    onClick={() => {
-                      clipboard.copy(
-                        `${window.location.origin}/templates/import/${template.id}`
-                      );
-                      const msg = tmpl("clipboard");
-                      setMessage(msg);
-                    }}
-                  >
-                    <ShareSVG />
-                    {t("share")}
-                  </DropdownMenu.Item>
+                  </MenuItem>
+                  <MenuItem>
+                    <Link
+                      href={`/templates/${template.id}`}
+                      className="flex items-center gap-2 "
+                      onClick={() => {
+                        clipboard.copy(
+                          `${window.location.origin}/templates/import/${template.id}`
+                        );
+                        const msg = tmpl("clipboard");
+                        setMessage(msg);
+                      }}
+                    >
+                      <ShareSVG />
+                      {t("share")}
+                    </Link>
+                  </MenuItem>
                 </DropdownMenu.Content>
               </DropdownMenu.Portal>
             </DropdownMenu.Root>

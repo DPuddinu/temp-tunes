@@ -4,6 +4,7 @@ export default withAuth({
   callbacks: {
     authorized({ token }) {
       const expired = token === null || new Date() > new Date(token.expiresIn)
+      console.log('EXPIRED -------------->', expired);
       return !expired
     },
   },

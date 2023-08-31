@@ -2,7 +2,7 @@ import { type Template, type TemplateEntry } from "@prisma/client";
 import { useTranslation } from "next-i18next";
 import { useToast } from "~/hooks/use-toast";
 import { api } from "~/utils/api";
-import { ConfirmButtonGroup } from "../ui/ConfirmationButtonGroup";
+import { ConfirmButtonGroup } from "../ConfirmationButtonGroup";
 import BaseModal, { type BaseModalProps } from "./BaseModal";
 
 type Props = {

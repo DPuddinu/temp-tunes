@@ -1,12 +1,8 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
-import {
-  useMemo,
-  useState,
-  type ForwardedRef,
-} from "react";
-import { TagModal } from "~/components/modals/EditTagModal";
+import { useMemo, useState, type ForwardedRef } from "react";
+import { TagModal } from "~/components/ui/modals/EditTagModal";
 import { useToast } from "~/hooks/use-toast";
 import { type Playlist, type Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
