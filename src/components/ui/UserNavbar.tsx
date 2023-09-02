@@ -18,7 +18,6 @@ const ThemeSwitcher = dynamic(() => import("./ThemeSwitcher"), {
 
 const UserNavbar = ({ name, image }: UserNavbarProps) => {
   const { t } = useTranslation("common");
-
   return (
     <div className="navbar h-16 bg-base-300 shadow">
       <div className="flex w-full justify-end sm:justify-between">

@@ -39,7 +39,7 @@ function PlaylistTable({ data }: { data: Playlist[] }) {
   });
 
   return (
-    <>
+    <div className="lg:w-3/4">
       <FiltersComponent table={table} />
       <TableBodyComponent table={table} data={data as Playlist[]} />
       <PaginationComponent
@@ -48,7 +48,7 @@ function PlaylistTable({ data }: { data: Playlist[] }) {
         nextDisabled={!table.getCanNextPage()}
         prevDisabled={!table.getCanPreviousPage()}
       />
-    </>
+    </div>
   );
 }
 export default PlaylistTable;

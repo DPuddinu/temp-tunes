@@ -15,10 +15,10 @@ const PlaylistsPage: PageWithLayout = () => {
   const PlaylistTable = dynamic(() => import("~/components/playlist/PlaylistTable"), {loading: () => <PlaylistPageSkeleton /> });
 
   return (
-    <>
+    <div className="w-full flex justify-center">
       {isLoading && <PlaylistPageSkeleton />}
       {data && <PlaylistTable data={data} />}
-    </>
+    </div>
   );
 };
 

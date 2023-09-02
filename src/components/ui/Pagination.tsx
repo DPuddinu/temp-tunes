@@ -11,7 +11,7 @@ const PaginationComponent = ({
   onPrev,
 }: PropsPagination) => {
   return (
-    <div className="btn-group m-auto flex justify-center lg:w-3/4">
+    <div className="btn-group m-auto flex justify-center">
       <div className="flex">
         <button
           className="btn border-none hover:bg-neutral disabled:bg-base-200 disabled:bg-opacity-50 disabled:border-base-200"

@@ -10,7 +10,7 @@ function TableBodyComponent<TData>({
   data: Playlist[];
 }) {
   return (
-    <div className="m-auto mb-6 flex w-full flex-col gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:w-3/4">
+    <div className="m-auto mb-6 flex w-full flex-col gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3">
       {table.getRowModel().rows?.length ? (
         table
           .getRowModel()

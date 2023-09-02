@@ -1,11 +1,11 @@
-import { Transition } from "@headlessui/react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useState, type ReactNode } from "react";
 import { cn } from "~/utils/utils";
 import Fab from "./Fab";
 import { PlusSVG } from "./icons";
-
-const animationDuration = 60;
+import { m } from "framer-motion";
+import { LazyMotion, domAnimation } from "framer-motion";
+const animationDuration = 0.1;
 
 interface props {
   options: ReactNode[];
@@ -14,7 +14,7 @@ const FabGroup = ({ options }: props) => {
   const [show, setShow] = useState(false);
   const [open, setOpen] = useState(false);
   return (
-    <>
+    <LazyMotion features={domAnimation}>
       <DropdownMenu.Root modal={false} open={open}>
         <DropdownMenu.Trigger>
           <Fab
@@ -33,37 +33,27 @@ const FabGroup = ({ options }: props) => {
           className=" translate-y- relative mb-2 mr-2 flex flex-col-reverse items-end gap-4"
         >
           {options?.map((option, i) => (
-            <>
-              <Transition
-                style={{ transitionDelay: `${animationDuration * (i + 1)}ms` }}
-                appear={true}
-                show={show}
-                enter="ease-in-out duration-300 transition-all"
-                enterFrom="opacity-0 scale-0 translate-y-full"
-                enterTo="opacity-100"
-              >
-                <Transition.Child
-                  style={{
-                    transitionDelay: `${
-                      animationDuration * (options.length - i + 1)
-                    }ms`,
-                  }}
-                  leave="ease-in-out duration-200 transition-all "
-                  leaveFrom="opacity-100"
-                  leaveTo="opacity-0 scale-0 translate-x-full"
-                  afterLeave={() => setOpen(false)}
-                >
-                  {option}
-                </Transition.Child>
-              </Transition>
-            </>
+            <m.div
+              onAnimationComplete={() => {
+                if (!show && i === 0) setOpen(false);
+              }}
+              transition={{
+                ease: "easeInOut",
+                delay: show
+                  ? animationDuration * (i + 1)
+                  : animationDuration * (options.length - i + 1),
+              }}
+              initial={{ opacity: 0 }}
+              animate={show ? { opacity: 1 } : { opacity: 0 }}
+              key={i}
+            >
+              {option}
+            </m.div>
           ))}
         </DropdownMenu.Content>
       </DropdownMenu.Root>
-    </>
+    </LazyMotion>
   );
 };
-
-
 
 export default FabGroup;
