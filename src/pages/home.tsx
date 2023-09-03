@@ -9,9 +9,25 @@ import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import { getPageProps } from "~/utils/helpers";
 import type { PageWithLayout } from "../types/page-types";
 
+//prettier-ignore
 const Recap = dynamic(() => import("~/components/home/Recap"), {
-  loading: () => <RecapSkeleton />,
+  loading: () => (
+    <div className="h-full p-2">
+      <div className="sm:hidden">
+        <RecapSkeleton />
+      </div>
+      <div className="hidden h-full sm:grid sm:grid-cols-2 sm:gap-2 lg:grid-cols-3">
+        <RecapSkeleton />
+        <RecapSkeleton />
+        <RecapSkeleton />
+        <RecapSkeleton />
+      </div>
+    </div>
+  ),
 });
+
+//prettier-ignore
+const Greetings = dynamic(() => import("~/components/home/Greetings"), {loading: () => <GreetingsSkeleton />});
 
 const Home: PageWithLayout = () => {
   const { data: sessionData } = useSession();
@@ -35,10 +51,6 @@ const Home: PageWithLayout = () => {
     </section>
   );
 };
-//prettier-ignore
-const Greetings = dynamic(() => import("~/components/home/Greetings"), {
-  loading: () => <GreetingsSkeleton />,
-});
 
 Home.getLayout = (page) => <MainLayout>{page}</MainLayout>;
 export default Home;

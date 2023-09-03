@@ -1,5 +1,5 @@
+import { useMediaQuery } from "@mantine/hooks";
 import dynamic from "next/dynamic";
-import useMediaQuery from "~/hooks/use-media-query";
 
 export type BaseModalProps = {
   title?: string;

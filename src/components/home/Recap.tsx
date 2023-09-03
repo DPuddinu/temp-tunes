@@ -1,4 +1,4 @@
-import { useOs } from "@mantine/hooks";
+import { useMediaQuery, useOs } from "@mantine/hooks";
 import dynamic from "next/dynamic";
 import { useMemo, type ReactNode } from "react";
 import type { RecapPropsType } from "~/components/home/UserTopCard";
@@ -17,10 +17,11 @@ const TagsCard = dynamic(() => import("~/components/home/TagsCard"),{loading: ()
 const RecommendedCard = dynamic(() => import("~/components/home/RecommendedCard"),{loading: () => <RecapSkeleton />});
 
 //prettier-ignore
-const MobileCarousel = dynamic(() => import("./RecapMobile"),{loading: () => <RecapSkeleton />});
+const MobileCarousel = dynamic(() => import("./MobileCarousel"),{loading: () => <RecapSkeleton />});
 
 const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
-  const os = useOs();
+  const matches = useMediaQuery("(max-width: 425px)");
+
   const cards: ReactNode[] = useMemo(
     () => [
       <TopRatedCard timeRange={timeRange} key={"topRatedCard"} />,
@@ -32,15 +33,17 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
   );
 
   return (
-    <>
-      {os === "android" || os === "ios" ? (
-        <MobileCarousel cards={cards} />
+    <div className="h-full p-2">
+      {matches ? (
+        <>
+          <MobileCarousel cards={cards} />
+        </>
       ) : (
-        <section className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="grid h-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {cards.map((card) => card)}
         </section>
       )}
-    </>
+    </div>
   );
 };
 

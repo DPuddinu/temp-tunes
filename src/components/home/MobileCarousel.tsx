@@ -29,11 +29,11 @@ const MobileCarousel = ({ cards }: props) => {
   });
 
   return (
-    <div className="flex h-full flex-col justify-between gap-2 p-2">
+    <div className="flex h-full flex-col justify-between gap-2 ">
       <div className="carousel rounded-box w-full grow sm:hidden" {...handlers}>
-        {cards?.map((card, i) => (
+        {cards.map((card, i) => (
           <div
-            className="carousel-item w-full touch-none touch-pan-y justify-center mx-1"
+            className="carousel-item mx-1 w-full touch-none touch-pan-y justify-center"
             key={i}
             id={`item-${i}`}
           >
@@ -41,7 +41,7 @@ const MobileCarousel = ({ cards }: props) => {
           </div>
         ))}
       </div>
-      <div className="flex items-start justify-center gap-1 pt-2">
+      <div className="flex items-start justify-center gap-1 pt-4 sm:hidden">
         {cards?.map((_, i) => (
           <div
             key={i}
