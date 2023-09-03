@@ -1,11 +1,14 @@
 import { type Playlist, type Track } from "~/types/spotify-types";
 import { api } from "~/utils/api";
-import TrackRow from "../ui/TrackRow";
 import VirtualScroll from "../ui/VirtualScroll";
+import dynamic from "next/dynamic";
 
 interface props {
   data: Playlist;
 }
+
+const TrackRow = dynamic(() => import("~/components/ui/TrackRow"));
+
 const PlaylistDetails = ({ data }: props) => {
   const { data: playlists } = api.spotify_playlist.getAll.useQuery();
 

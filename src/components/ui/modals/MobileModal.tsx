@@ -1,5 +1,6 @@
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { motion, useAnimate } from "framer-motion";
+import { useEffect, useState } from "react";
 import type { BaseModalProps } from "./BaseModal";
 
 const closeAnimation = { translateY: "100%" };
@@ -13,9 +14,21 @@ const MobileModal = ({
   title,
 }: BaseModalProps) => {
   const [scope, animate] = useAnimate();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (open && !isOpen) {
+      animate(scope.current, closeAnimation).then(() => {
+        onClose();
+        setOpen(false);
+      });
+    } else {
+      setOpen(isOpen);
+    }
+  }, [animate, isOpen, onClose, scope, setOpen, open]);
 
   return (
-    <AlertDialog.Root open={isOpen}>
+    <AlertDialog.Root open={open}>
       <AlertDialog.Overlay className="fixed inset-0 z-0 h-full bg-black/40" />
       <AlertDialog.Content className="fixed bottom-0 left-0 z-50 w-screen overflow-hidden">
         <div className="relative h-screen ">

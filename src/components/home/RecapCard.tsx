@@ -1,20 +1,31 @@
-import type { PropsWithChildren, ReactNode } from "react";
+import type { ReactNode } from "react";
 
 type RecapHeaderType = {
   onClick?: () => void;
   active?: boolean;
-} & PropsWithChildren;
+  children: ReactNode;
+};
 type RecapCardProps = {
   loading?: boolean;
   fallback: ReactNode;
-} & PropsWithChildren;
-type RecapContainerProps = { error: boolean } & PropsWithChildren;
+  children: ReactNode;
+};
+type RecapContainerProps = {
+  error: boolean;
+  children: ReactNode;
+};
 
 const RecapCard = ({ children, loading, fallback }: RecapCardProps) => {
   return (
-    <div className="w-full max-w-[40rem] overflow-clip rounded-xl bg-base-300 shadow sm:mt-8 ">
-      {loading ? fallback : children}
-    </div>
+    <>
+      {loading ? (
+        fallback
+      ) : (
+        <div className="flex w-full flex-col overflow-clip rounded-xl bg-base-300 bg-opacity-75 border-opacity-75 shadow ">
+          {children}
+        </div>
+      )}
+    </>
   );
 };
 
@@ -26,7 +37,6 @@ RecapCard.Header = function RecapCardHeader({
     <div
       className="flex items-center justify-center p-4 pb-0 text-center text-lg font-medium tracking-wide text-base-content hover:cursor-pointer"
       onClick={onClick}
-      key={"RecapHeader"}
     >
       {children}
     </div>
@@ -39,7 +49,7 @@ RecapCard.Container = function RecapContainer({
 }: RecapContainerProps) {
   return (
     <>
-      {children && <div className="flex flex-col p-2">{children}</div>}
+      <div className="flex grow flex-col p-2">{children}</div>
       {error && <h1>Error!</h1>}
     </>
   );

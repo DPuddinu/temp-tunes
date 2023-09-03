@@ -1,6 +1,6 @@
 const GreetingsSkeleton = () => {
   return (
-    <div className="mb-4 flex flex-col gap-2 sm:max-w-sm">
+    <div className="mb-4 flex flex-col gap-2 p-2 sm:max-w-sm">
       <div className="flex h-16 w-full animate-pulse flex-col gap-2 rounded-xl bg-base-300 p-2 [&>div]:rounded-2xl">
         <div className="h-8 w-3/4 bg-base-200"></div>
         <div className="h-8 w-1/2 bg-base-200"></div>

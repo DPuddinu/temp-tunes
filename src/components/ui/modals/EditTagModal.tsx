@@ -1,7 +1,6 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "next-i18next";
-import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
@@ -11,8 +10,6 @@ import { api } from "~/utils/api";
 import { ConfirmButtonGroup } from "../ConfirmationButtonGroup";
 import type { BaseModalProps } from "./BaseModal";
 import BaseModal from "./BaseModal";
-
-const LoadingSpinner = dynamic(() => import("~/components/ui/LoadingSpinner"));
 
 type Props = {
   trackId: string;
@@ -27,7 +24,7 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
   const [parent] = useAutoAnimate();
   const utils = api.useContext();
 
-  const { isLoading } = api.tags.getTagsByTrack.useQuery(
+  api.tags.getTagsByTrack.useQuery(
     { trackId },
     {
       onSuccess(data) {
@@ -53,10 +50,9 @@ export function TagModal({ isOpen, onClose, trackId }: Props) {
   return (
     <BaseModal isOpen={isOpen} title={t("edit_tag")} onClose={onClose}>
       <div
-        className="flex flex-row flex-wrap gap-2 overflow-hidden pb-2 pt-6"
+        className="flex flex-row flex-wrap gap-2 overflow-hidden pt-4"
         ref={parent}
       >
-        {isLoading && <LoadingSpinner />}
         {tags.map((tag, i) => (
           <div className="indicator mr-2" key={i}>
             <span

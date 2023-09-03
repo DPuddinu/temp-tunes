@@ -1,10 +1,9 @@
 import type { GetServerSideProps } from "next";
+import MainLayout from "~/components/layouts/MainLayout";
+import TemplateLayout from "~/components/layouts/TemplateLayout";
 import ImportTemplateForm from "~/components/template/ImportTemplateForm";
-import MainLayout from "~/components/ui/layouts/MainLayout";
-import TemplateLayout from "~/components/ui/layouts/TemplateLayout";
 import { type PageWithLayout } from "~/types/page-types";
 import { getPageProps } from "~/utils/helpers";
-
 
 const ImportTemplate: PageWithLayout = () => {
   return <ImportTemplateForm />;

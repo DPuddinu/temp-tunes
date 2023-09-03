@@ -2,7 +2,7 @@ import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
-import { SquareSkeleton } from "~/components/ui/skeletons/SquareSkeleton";
+import { TrackSkeleton } from "~/components/ui/skeletons/TrackSkeleton";
 import {
   TopTypeArray,
   type Artist,
@@ -24,9 +24,8 @@ export const itemsPerPageOptions = ["5", "10", "15", "20"];
 export const totalItems = 50;
 const itemsPerPage = 5;
 
-const TrackRow = dynamic(() => import("~/components/ui/TrackRow"), {
-  loading: () => <SquareSkeleton />,
-});
+//prettier-ignore
+const TrackRow = dynamic(() => import("~/components/ui/TrackRow"), {loading: () => <TrackSkeleton />});
 
 const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
   const { t } = useTranslation("home");
@@ -94,21 +93,22 @@ const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
         ))}
 
         {data && data.totalItems > itemsPerPage && (
-          <PaginationComponent
-            key={"pagination"}
-            nextDisabled={selectedPage + 1 > data.items.length - 1}
-            prevDisabled={selectedPage - 1 < 0}
-            onNext={() =>
-              setSelectedPage((page) => {
-                return page + 1;
-              })
-            }
-            onPrev={() =>
-              setSelectedPage((page) => {
-                return page - 1;
-              })
-            }
-          />
+          <div className="fle-col flex grow justify-end pt-2">
+            <PaginationComponent
+              nextDisabled={selectedPage + 1 > data.items.length - 1}
+              prevDisabled={selectedPage - 1 < 0}
+              onNext={() =>
+                setSelectedPage((page) => {
+                  return page + 1;
+                })
+              }
+              onPrev={() =>
+                setSelectedPage((page) => {
+                  return page - 1;
+                })
+              }
+            />
+          </div>
         )}
         {!_data && (
           <div className="grid place-content-center pt-4">

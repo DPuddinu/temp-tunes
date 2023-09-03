@@ -19,7 +19,7 @@ function Greetings({ name, timeRange, selectTimeRange }: GreetingsProps) {
       </div>
       <p className="mt-2 font-medium text-base-content">{t("recap.title")}</p>
       <select
-        className="select select-sm mt-4 w-32 bg-base-300"
+        className="select select-sm mt-4 w-32 bg-base-300 bg-opacity-75"
         value={timeRange}
         onChange={(e) => selectTimeRange(e.target.value as TimeRangeType)}
       >

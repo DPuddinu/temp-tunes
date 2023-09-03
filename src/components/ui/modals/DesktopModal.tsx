@@ -1,6 +1,6 @@
-import React, { Fragment } from 'react'
-import type { BaseModalProps } from './BaseModal';
-import { Dialog, Transition } from '@headlessui/react';
+import { Dialog, Transition } from "@headlessui/react";
+import React, { Fragment } from "react";
+import type { BaseModalProps } from "./BaseModal";
 
 const DesktopModal = ({
   onClose,
@@ -16,7 +16,7 @@ const DesktopModal = ({
         className="fixed inset-0 z-10 overflow-y-auto "
         onClose={onClose}
       >
-        <div className="flex min-h-screen place-items-center justify-center text-center backdrop-blur-sm">
+        <div className="flex min-h-screen place-items-center justify-center bg-black/40 text-center">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -26,7 +26,7 @@ const DesktopModal = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Dialog.Overlay className="fixed inset-0" />
+            <Dialog.Overlay className="fixed inset-0 bg-black/40" />
           </Transition.Child>
 
           <Transition.Child
@@ -60,4 +60,4 @@ const DesktopModal = ({
   );
 };
 
-export default DesktopModal
+export default DesktopModal;

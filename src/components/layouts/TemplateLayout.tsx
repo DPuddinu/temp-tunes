@@ -7,13 +7,13 @@ import {
   ExploreSVG,
   ImportSVG,
   TemplateSVG,
-} from "../icons";
-import { RoundSkeleton } from "../skeletons/RoundSkeleton";
+} from "../ui/icons";
+import { RoundSkeleton } from "../ui/skeletons/RoundSkeleton";
 
-const FabGroup = dynamic(() => import("../FabGroup"), {
+const FabGroup = dynamic(() => import("../ui/FabGroup"), {
   loading: () => <RoundSkeleton />,
 });
-const FabChild = dynamic(() => import("../FabChild"), {
+const FabChild = dynamic(() => import("../ui/FabChild"), {
   loading: () => <RoundSkeleton />,
 });
 

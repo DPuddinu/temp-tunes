@@ -61,7 +61,7 @@ const TemplateCard = ({
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
                 <button aria-label="Customise options">
-                  <VerticalDotsSVG className="text-base-300" />
+                  <VerticalDotsSVG className="stroke-neutral-900" />
                 </button>
               </DropdownMenu.Trigger>
 
@@ -110,14 +110,14 @@ const TemplateCard = ({
         </div>
         <div className="card-body">
           <h2 className="card-title flex flex-col items-start">
-            <p> {template.name}</p>
+            <p className="font-bold"> {template.name}</p>
             <p className="text-xs">By {template.userName}</p>
           </h2>
 
-          <p className="mt-2">{template.description}</p>
+          <p className="mt-2 font-semibold">{template.description}</p>
           <p
             onClick={() => setOpen((open) => !open)}
-            className="hover:cursor-pointer"
+            className="hover:cursor-pointer font-bold"
           >
             {open ? tmpl("view_less") : tmpl("view_more")}
           </p>
@@ -149,7 +149,7 @@ const TemplateCard = ({
                 disabled={action.disabled}
                 key={action.label}
                 className={cn(
-                  "btn text-black",
+                  "btn text-black border-none",
                   color,
                   !color && getColorByIndex(index),
                   action.disabled && "disabled"

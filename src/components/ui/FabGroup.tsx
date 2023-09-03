@@ -1,11 +1,10 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import { useState, type ReactNode } from "react";
 import { cn } from "~/utils/utils";
 import Fab from "./Fab";
 import { PlusSVG } from "./icons";
-import { m } from "framer-motion";
-import { LazyMotion, domAnimation } from "framer-motion";
-const animationDuration = 0.1;
+const animationDuration = 0.08;
 
 interface props {
   options: ReactNode[];

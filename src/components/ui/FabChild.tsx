@@ -18,7 +18,7 @@ const FabChild = function Child({
 }: FabChildProps) {
   return (
     <div className="flex items-center gap-4 hover:-translate-x-1 hover:scale-105">
-      <div className="rounded-md bg-neutral p-1 px-3 uppercase">{label}</div>
+      <div className="rounded-md bg-base-200 p-1 px-3 uppercase">{label}</div>
       <Fab
         size="sm"
         disabled={disabled}

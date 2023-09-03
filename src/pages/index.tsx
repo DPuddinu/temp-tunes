@@ -113,15 +113,11 @@ const Footer = () => {
         </span>
         <select
           value={language}
-          className="select-bordered select select-sm w-32 bg-base-200 bg-opacity-30"
+          className="select-bordered select select-sm w-32 bg-base-200 bg-opacity-30 "
           onChange={(e) => setLanguage(e.target.value as Language)}
         >
           {Languages.map((lang) => (
-            <option
-              value={lang}
-              key={lang}
-              className="bg-base-300 focus:bg-red-200"
-            >
+            <option value={lang} key={lang}>
               {lang}
             </option>
           ))}

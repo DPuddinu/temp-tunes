@@ -48,7 +48,6 @@ const config = {
   plugins: [require("daisyui")],
   daisyui: {
     themes: [
-      "dark",
       {
         light: {
           // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -56,6 +55,18 @@ const config = {
           "base-100": "#e2e8f0",
           "base-200": "#cbd5e1",
           "base-300": "#94a3b8",
+          "base-content": "#475569",
+          neutral: "#94a3b8",
+        },
+        dark: {
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          ...require("daisyui/src/theming/themes")["[data-theme=dark]"],
+          "base-100": "#4b5563",
+          "base-200": "#374151",
+          "base-300": "#1f2937",
+          "base-content": "#d4d4d4",
+          neutral: "#1f2937",
+          primary: "#16a34a",
         },
       },
     ],

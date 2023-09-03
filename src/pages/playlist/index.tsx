@@ -1,6 +1,6 @@
 import type { GetServerSideProps } from "next";
 import dynamic from "next/dynamic";
-import MainLayout from "~/components/ui/layouts/MainLayout";
+import MainLayout from "~/components/layouts/MainLayout";
 import { PlaylistPageSkeleton } from "~/components/ui/skeletons/PlaylistPageSkeleton";
 import { type PageWithLayout } from "~/types/page-types";
 import { api } from "~/utils/api";
@@ -15,7 +15,7 @@ const PlaylistsPage: PageWithLayout = () => {
   const PlaylistTable = dynamic(() => import("~/components/playlist/PlaylistTable"), {loading: () => <PlaylistPageSkeleton /> });
 
   return (
-    <div className="w-full flex justify-center">
+    <div className="flex w-full justify-center">
       {isLoading && <PlaylistPageSkeleton />}
       {data && <PlaylistTable data={data} />}
     </div>

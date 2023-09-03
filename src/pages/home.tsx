@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import type { TimeRangeType } from "src/types/spotify-types";
-import MainLayout from "~/components/ui/layouts/MainLayout";
+import MainLayout from "~/components/layouts/MainLayout";
 import GreetingsSkeleton from "~/components/ui/skeletons/GreetingsSkeleton";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
 import { getPageProps } from "~/utils/helpers";
@@ -19,7 +19,7 @@ const Home: PageWithLayout = () => {
   const [timeRange, setTimeRange] = useState<TimeRangeType>("short_term");
 
   return (
-    <section>
+    <section className="flex h-full flex-col">
       {sessionData?.user?.name ? (
         <>
           <Greetings

@@ -39,7 +39,7 @@ function PlaylistTable({ data }: { data: Playlist[] }) {
   });
 
   return (
-    <div className="lg:w-3/4">
+    <div className="w-full lg:w-3/4">
       <FiltersComponent table={table} />
       <TableBodyComponent table={table} data={data as Playlist[]} />
       <PaginationComponent

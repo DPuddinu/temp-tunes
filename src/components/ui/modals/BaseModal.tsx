@@ -5,7 +5,7 @@ export type BaseModalProps = {
   title?: string;
   description?: string;
   children?: React.ReactNode;
-  isOpen?: boolean;
+  isOpen: boolean;
   isLoading?: boolean;
   onClose: () => void;
 };

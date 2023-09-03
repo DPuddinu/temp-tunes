@@ -9,6 +9,7 @@ import { api } from "~/utils/api";
 import VirtualScroll from "./VirtualScroll";
 import { ArrowSVG, QueueSVG, TagSVG, VerticalDotsSVG } from "./icons";
 import { FolderPlusSVG } from "./icons/FolderPlusSVG";
+import { TrackSkeleton } from "./skeletons/TrackSkeleton";
 
 export interface TrackProps {
   track: Track;
@@ -43,7 +44,7 @@ const TrackRow = ({ track, playlists }: TrackProps) => {
   });
 
   return (
-    <div className="group flex rounded-xl px-3 text-accent-content hover:cursor-pointer hover:bg-neutral">
+    <div className="group flex rounded-xl px-3 text-accent-content hover:cursor-pointer hover:bg-base-200">
       <div className="flex grow items-center justify-between p-2 hover:text-primary-content">
         <div
           className="flex grow flex-col gap-1"

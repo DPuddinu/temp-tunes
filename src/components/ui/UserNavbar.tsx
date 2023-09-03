@@ -2,7 +2,6 @@ import { signOut } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { SpotifyWebPlayer } from "../WebPlayback";
 import { MenuSVG, UserSVG } from "./icons";
 import { RoundSkeleton } from "./skeletons/RoundSkeleton";
 
@@ -35,7 +34,7 @@ const UserNavbar = ({ name, image }: UserNavbarProps) => {
             <div className=" flex items-center gap-2 rounded pl-6">
               <p className="text-sm font-medium text-base-content">{name}</p>
               <label tabIndex={0} className="btn-ghost btn-circle avatar btn">
-                <div className="h-10 w-10 bg-base-100 shadow rounded-full">
+                <div className="h-10 w-10 rounded-full bg-base-100 shadow">
                   {!!image ? (
                     <Image
                       alt="user"
@@ -57,12 +56,10 @@ const UserNavbar = ({ name, image }: UserNavbarProps) => {
               tabIndex={0}
               className="menu-compact dropdown-content menu rounded-box z-40 mt-3 w-52 border border-base-100 bg-base-300 p-2 shadow-lg"
             >
-              <SpotifyWebPlayer />
-
-              <li className="flex flex-row items-center">
+              <li className="w-full active:bg-base-300">
                 <ThemeSwitcher />
               </li>
-              <li>
+              <li className="font-semibold">
                 <a onClick={() => signOut({ callbackUrl: "/" })}>
                   {t("logout")}
                 </a>

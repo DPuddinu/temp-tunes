@@ -5,9 +5,14 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useRef, type ReactNode } from "react";
 import { useStore } from "~/core/userStore";
-import { HomeSVG, PlaylistSVG, SearchSVG, TemplateSVG } from "../icons/index";
-import NavbarSkeleton from "../skeletons/NavbarSkeleton";
-import { RoundSkeleton } from "../skeletons/RoundSkeleton";
+import {
+  HomeSVG,
+  PlaylistSVG,
+  SearchSVG,
+  TemplateSVG,
+} from "../ui/icons/index";
+import NavbarSkeleton from "../ui/skeletons/NavbarSkeleton";
+import { RoundSkeleton } from "../ui/skeletons/RoundSkeleton";
 
 type PageType = "Home" | "Search" | "Playlists" | "Templates";
 interface Page {
@@ -23,10 +28,10 @@ export const pages: Page[] = [
   { url: "/templates", name: "Templates", icon: <TemplateSVG /> },
 ];
 
-const UserNavbar = dynamic(() => import("../UserNavbar"), {
+const UserNavbar = dynamic(() => import("../ui/UserNavbar"), {
   loading: () => <NavbarSkeleton />,
 });
-const Toast = dynamic(() => import("../Toast"), {
+const Toast = dynamic(() => import("../ui/Toast"), {
   loading: () => <RoundSkeleton />,
 });
 
