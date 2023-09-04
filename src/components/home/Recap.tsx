@@ -1,4 +1,4 @@
-import { useMediaQuery, useOs } from "@mantine/hooks";
+import { useMediaQuery } from "@mantine/hooks";
 import dynamic from "next/dynamic";
 import { useMemo, type ReactNode } from "react";
 import type { RecapPropsType } from "~/components/home/UserTopCard";

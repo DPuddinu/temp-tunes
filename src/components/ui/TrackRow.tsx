@@ -9,7 +9,6 @@ import { api } from "~/utils/api";
 import VirtualScroll from "./VirtualScroll";
 import { ArrowSVG, QueueSVG, TagSVG, VerticalDotsSVG } from "./icons";
 import { FolderPlusSVG } from "./icons/FolderPlusSVG";
-import { TrackSkeleton } from "./skeletons/TrackSkeleton";
 
 export interface TrackProps {
   track: Track;

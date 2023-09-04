@@ -2,7 +2,7 @@ import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
-import { TrackSkeleton } from "~/components/ui/skeletons/TrackSkeleton";
+import { RectangleSkeleton } from "~/components/ui/skeletons/RectangleSkeleton";
 import {
   TopTypeArray,
   type Artist,
@@ -25,7 +25,7 @@ export const totalItems = 50;
 const itemsPerPage = 5;
 
 //prettier-ignore
-const TrackRow = dynamic(() => import("~/components/ui/TrackRow"), {loading: () => <TrackSkeleton />});
+const TrackRow = dynamic(() => import("~/components/ui/TrackRow"), {loading: () => <RectangleSkeleton />});
 
 const UserTopCard = ({ timeRange = "short_term" }: RecapPropsType) => {
   const { t } = useTranslation("home");

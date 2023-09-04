@@ -6,7 +6,6 @@ import type {
 } from "~/types/spotify-types";
 import { getLibrary } from "../../core/searchQueries";
 import LoadingScreen from "../ui/LoadingPlaylist";
-import { usePlaylistStore } from "~/core/userStore";
 
 interface props {
   onFinish: (playlists: Playlist[]) => void;

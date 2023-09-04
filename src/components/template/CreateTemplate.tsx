@@ -1,20 +1,16 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type Template, type TemplateEntry } from "@prisma/client";
+import { Reorder } from "framer-motion";
+import { useTranslation } from "next-i18next";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
-import {
-  useFieldArray,
-  useForm,
-  type SubmitHandler,
-  type UseFormRegister,
-} from "react-hook-form";
-import { useTranslation } from "next-i18next";
+import { useFieldArray, useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { useToast } from "~/hooks/use-toast";
 import { api } from "~/utils/api";
-import { ArrowDownSVG, ArrowUpSVG, DeleteSVG } from "../ui/icons";
+import { RectangleSkeleton } from "../ui/skeletons/RectangleSkeleton";
 
 const TemplateFormSchema = z.object({
   id: z.number().optional(),
@@ -41,7 +37,12 @@ const TemplateFormSchema = z.object({
       message: "entries_min_len",
     }),
 });
+
 export type TemplateFormType = z.infer<typeof TemplateFormSchema>;
+
+const EntryRow = dynamic(() => import("./EntryRow"), {
+  loading: () => <RectangleSkeleton />,
+});
 
 interface props {
   data?: Template & { templateEntries: TemplateEntry[] };
@@ -80,6 +81,8 @@ function CreateTemplate({ data }: props) {
     register,
     handleSubmit,
     control,
+    setValue,
+    getValues,
     formState: { errors },
   } = useForm<TemplateFormType>({
     resolver: zodResolver(TemplateFormSchema),
@@ -90,7 +93,7 @@ function CreateTemplate({ data }: props) {
     },
   });
 
-  const { fields, append, remove, move } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
     name: "entries", // unique name for your Field Array
   });
@@ -163,7 +166,14 @@ function CreateTemplate({ data }: props) {
             <label className="label pb-0">
               <span className="label-text">{t_template("entries")}</span>
             </label>
-            <ul ref={parent} className="[&>li]:py-1">
+            {/* <Reorder.Group
+              axis="y"
+              onReorder={(entries) => console.log(entries)}
+              values={fields.map((field) => field.entry)}
+              ref={parent}
+              className="[&>li]:py-1"
+            > */}
+            <>
               {fields.map((entry, i) => (
                 <EntryRow
                   register={register}
@@ -175,25 +185,14 @@ function CreateTemplate({ data }: props) {
                   setOpen={() =>
                     setSelectedRow((row) => (row === i ? undefined : i))
                   }
-                  onMoveUp={() => {
-                    if (i - 1 >= 0) {
-                      move(i, i - 1);
-                      setSelectedRow(i - 1);
-                    }
-                  }}
-                  onMoveDown={() => {
-                    if (i + 1 <= fields.length - 1) {
-                      move(i, i + 1);
-                      setSelectedRow(i + 1);
-                    }
-                  }}
                   onDelete={() => {
                     remove(i);
                     setSelectedRow(undefined);
                   }}
                 />
               ))}
-            </ul>
+            </>
+            {/* </Reorder.Group> */}
           </div>
         )}
       </div>
@@ -213,7 +212,9 @@ function CreateTemplate({ data }: props) {
             {errors?.entries?.message && (
               <label className="label">
                 <span className="label-text-alt text-error">
-                  {t_template(errors?.entries?.message, { defaultValue: 'Required entries '})}
+                  {t_template(errors?.entries?.message, {
+                    defaultValue: "Required entries ",
+                  })}
                 </span>
               </label>
             )}
@@ -243,63 +244,5 @@ function CreateTemplate({ data }: props) {
     </form>
   );
 }
-
-interface EntryRow {
-  name: string;
-  open: boolean;
-  register: UseFormRegister<TemplateFormType>;
-  id: string;
-  index: number;
-  setOpen: () => void;
-  onDelete: () => void;
-  onMoveUp: () => void;
-  onMoveDown: () => void;
-}
-const EntryRow = ({
-  name,
-  open,
-  setOpen,
-  onDelete,
-  onMoveUp,
-  onMoveDown,
-  index,
-  id,
-  register,
-}: EntryRow) => {
-  return (
-    <li key={id} className="flex items-center gap-2">
-      <input
-        className="btn grow bg-base-100 outline-none hover:bg-base-200"
-        onClick={setOpen}
-        type="text"
-        defaultValue={name}
-        placeholder={"name"}
-        {...register(`entries.${index}.entry`)}
-      />
-
-      <Transition
-        show={open}
-        enter=" transition-transform duration-75"
-        enterFrom="w-0 hidden"
-        enterTo="w-auto block"
-        leave="transition-transform duration-150"
-        leaveFrom="w-auto block"
-        leaveTo="w-0 hidden"
-      >
-        <div className="h-100 rounded-box relative flex gap-2 p-2">
-          <span className="hover:cursor-pointer" onClick={onDelete}>
-            <DeleteSVG />
-          </span>
-          <span className="hover:cursor-pointer" onClick={onMoveUp}>
-            <ArrowUpSVG />
-          </span>
-          <span className="hover:cursor-pointer" onClick={onMoveDown}>
-            <ArrowDownSVG />
-          </span>
-        </div>
-      </Transition>
-    </li>
-  );
-};
 
 export default CreateTemplate;

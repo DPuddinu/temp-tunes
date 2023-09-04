@@ -3,8 +3,8 @@ import { motion, useAnimate } from "framer-motion";
 import { useEffect, useState } from "react";
 import type { BaseModalProps } from "./BaseModal";
 
-const closeAnimation = { translateY: "100%" };
-const initAnimation = { translateY: 0 };
+const closeAnimation = { transform: "translateY: 100%" };
+const initAnimation = { transform: "translateY: 0" };
 
 const MobileModal = ({
   onClose,
