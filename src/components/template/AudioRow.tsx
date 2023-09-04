@@ -7,7 +7,7 @@ interface audioRowProps {
   playing: boolean;
   setPlaying(index: number): void;
 }
-const AudioRow = ({ src, index, setPlaying, playing }: audioRowProps) => {
+const AudioPreview = ({ src, index, setPlaying, playing }: audioRowProps) => {
   const ref = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
@@ -42,4 +42,4 @@ const AudioRow = ({ src, index, setPlaying, playing }: audioRowProps) => {
     </>
   );
 };
-export default AudioRow
+export default AudioPreview;

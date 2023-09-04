@@ -30,8 +30,8 @@ const SearchForm = ({ onSubmit }: props) => {
   });
 
   return (
-    <div className=" w-full pb-4 sm:max-w-sm md:max-w-md">
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+    <div className=" w-full pb-4 sm:max-w-sm md:max-w-md flex justify-center">
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="join relative h-5 w-full">
           <div className="h-16">
             <input
