@@ -2,8 +2,8 @@ import { signOut } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { MenuSVG, UserSVG } from "./icons";
-import { RoundSkeleton } from "./skeletons/RoundSkeleton";
+import { MenuSVG, UserSVG } from "../ui/icons";
+import { RoundSkeleton } from "../ui/skeletons/RoundSkeleton";
 
 interface UserNavbarProps {
   name: string;
@@ -11,7 +11,7 @@ interface UserNavbarProps {
 }
 
 //prettier-ignore
-const ThemeSwitcher = dynamic(() => import("./ThemeSwitcher"), {
+const ThemeSwitcher = dynamic(() => import("../ui/ThemeSwitcher"), {
   loading: () => <RoundSkeleton />,
 });
 

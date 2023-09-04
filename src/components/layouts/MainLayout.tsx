@@ -1,3 +1,5 @@
+import { useMediaQuery } from "@mantine/hooks";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import Head from "next/head";
@@ -5,45 +7,34 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useRef, type ReactNode } from "react";
 import { useStore } from "~/core/userStore";
-import {
-  HomeSVG,
-  PlaylistSVG,
-  SearchSVG,
-  TemplateSVG,
-} from "../ui/icons/index";
+import { useMounted } from "~/hooks/use-mounted";
+import BottomNavigationSkeleton from "../ui/skeletons/BottomNavigationSkeleton";
 import NavbarSkeleton from "../ui/skeletons/NavbarSkeleton";
 import { RoundSkeleton } from "../ui/skeletons/RoundSkeleton";
+import { pages } from "./pages";
 
-type PageType = "Home" | "Search" | "Playlists" | "Templates";
-interface Page {
-  url: string;
-  name: PageType;
-  icon: ReactNode;
-}
-
-export const pages: Page[] = [
-  { url: "/home", name: "Home", icon: <HomeSVG /> },
-  { url: "/search", name: "Search", icon: <SearchSVG /> },
-  { url: "/playlist", name: "Playlists", icon: <PlaylistSVG /> },
-  { url: "/templates", name: "Templates", icon: <TemplateSVG /> },
-];
-
-const UserNavbar = dynamic(() => import("../ui/UserNavbar"), {
+const UserNavbar = dynamic(() => import("./UserNavbar"), {
   loading: () => <NavbarSkeleton />,
 });
 const Toast = dynamic(() => import("../ui/Toast"), {
   loading: () => <RoundSkeleton />,
+});
+const BottomNavigation = dynamic(() => import("./BottomNavigation"), {
+  loading: () => <BottomNavigationSkeleton />,
 });
 
 const MainLayout = ({ children }: { children: ReactNode }) => {
   const { data: session } = useSession();
   const { message } = useStore();
   const openDrawer = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  const matches = useMediaQuery("(max-width: 425px)");
+  const mounted = useMounted();
 
   return (
     <div className="drawer overflow-hidden">
       <Head>
-        <title>Next Spotify Manager</title>
+        <title>TempTunes</title>
         <meta name="description" content="A very cool Spotify Manager" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -64,11 +55,24 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
             <NavbarSkeleton />
           )}
         </nav>
-        <main className="grow p-4 pb-20 sm:pb-6">
-          {children}
-          {!!message && <Toast message={message} />}
-        </main>
-        <BottomNavigation />
+        <LazyMotion features={domAnimation}>
+          <m.main
+            key={router.asPath}
+            className="grow p-4 pb-20 sm:pb-6"
+            initial={mounted && { x: 100, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: 100, opacity: 0 }}
+            transition={{
+              type: "spring",
+              stiffness: 260,
+              damping: 20,
+            }}
+          >
+            {children}
+            {!!message && <Toast message={message} />}
+          </m.main>
+        </LazyMotion>
+        {matches && <BottomNavigation />}
       </div>
       <div className="drawer-side">
         <label htmlFor="my-drawer-2" className="drawer-overlay " />
@@ -90,28 +94,6 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
         </ul>
       </div>
     </div>
-  );
-};
-
-const BottomNavigation = () => {
-  const router = useRouter();
-  return (
-    <footer className="btm-nav min-h-16 bg-base-300 sm:hidden">
-      {pages.map((page, i) => (
-        <Link key={i} href={page.url} className="btm-nav">
-          <button
-            key={i}
-            className={`${
-              router.route.includes(page.url)
-                ? "border-t-2 bg-base-100"
-                : " bg-base-300"
-            } flex h-full w-full items-center justify-center`}
-          >
-            {page.icon}
-          </button>
-        </Link>
-      ))}
-    </footer>
   );
 };
 
