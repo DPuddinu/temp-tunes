@@ -14,11 +14,11 @@ const SearchFormSchema = z.object({
     .string()
     .min(3, { message: "search_errors.short" })
     .max(18, { message: "search_errors.long" }),
-  filterType: SearchTypeEnum
+  filterType: SearchTypeEnum,
 });
 export type SearchFormSchemaType = z.infer<typeof SearchFormSchema>;
 
-const SearchForm = ({onSubmit}: props) => {
+const SearchForm = ({ onSubmit }: props) => {
   const { t } = useTranslation("search");
 
   const {
@@ -40,7 +40,7 @@ const SearchForm = ({onSubmit}: props) => {
               placeholder={t("search", {
                 defaultValue: "Search...",
               })}
-              className="input join-item w-full grow bg-secondary-content sm:max-w-sm "
+              className="input join-item w-full grow bg-secondary-content text-black font-semibold sm:max-w-sm "
             />
           </div>
 

@@ -23,7 +23,7 @@ const SearchForm = dynamic(() => import("~/components/search/SearchForm"));
 const SearchTrack = dynamic(() => import("~/components/search/SearchTrack"));
 
 const Search: PageWithLayout = () => {
-  const { playlists } = usePlaylistStore();
+  const { playlists, setPlaylists } = usePlaylistStore();
   const [query, setQuery] = useState<SearchFormSchemaType>();
 
   // prettier-ignore
@@ -51,6 +51,7 @@ const Search: PageWithLayout = () => {
       {query?.filterType === "track" && !playlists && (
         <SearchTrack
           onFinish={(playlists: Playlist[]) => {
+            setPlaylists(playlists);
             mutate({
               playlists: playlists,
               query: query.name,
@@ -60,7 +61,7 @@ const Search: PageWithLayout = () => {
         />
       )}
       {isLoading && <LoadingSpinner />}
-      {data && query && !isLoading && (
+      {data && data.length > 0 && query && !isLoading && (
         <SearchDataTable data={data} filterType={query.filterType} />
       )}
     </div>

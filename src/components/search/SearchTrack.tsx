@@ -15,7 +15,6 @@ const SearchTrack = ({ onFinish }: props) => {
   const [loading, setLoading] = useState(false);
   const [currentPlaylist, setCurrentPlaylist] = useState<string>();
   const [progress, setProgress] = useState<number>();
-  const { setPlaylists } = usePlaylistStore();
 
   const { data } = useSession();
 
@@ -30,7 +29,6 @@ const SearchTrack = ({ onFinish }: props) => {
         },
         (playlists: Playlist[]) => {
           setLoading(false);
-          setPlaylists(playlists);
           onFinish(playlists);
         }
       );
