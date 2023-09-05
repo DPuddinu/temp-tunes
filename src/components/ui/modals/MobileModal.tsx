@@ -2,8 +2,8 @@ import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { motion, useAnimate } from "framer-motion";
 import type { BaseModalProps } from "./BaseModal";
 
-const closeAnimation = { transform: "translateY(100%)" };
-const initAnimation = { transform: "translateY(0)" };
+const closeAnimation = { translateY: "100%" };
+const initAnimation = { translateY: 0 };
 
 const MobileModal = ({
   onClose,
