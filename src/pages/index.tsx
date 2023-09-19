@@ -15,20 +15,18 @@ import {
 
 const Landing = () => {
   return (
-    <>
-      <main className="flex min-h-screen flex-col bg-zinc-800">
-        <section className="flex grow flex-col pb-0">
-          <div className="p-10 sm:p-16">
-            <p className="tracking-super-wide m-0 text-center text-2xl font-bold sm:mb-16 sm:text-6xl md:text-5xl">
-              <span className="text-slate-100 ">Temp</span>
-              <span className="text-primary">Tunes </span>
-            </p>
-          </div>
-          <Features />
-        </section>
-        <Footer />
-      </main>
-    </>
+    <main className="flex min-h-screen flex-col bg-zinc-800">
+      <section className="flex grow flex-col pb-0">
+        <div className="p-10 sm:p-16">
+          <p className="tracking-super-wide m-0 text-center text-2xl font-bold sm:mb-16 sm:text-6xl md:text-5xl">
+            <span className="text-slate-100 ">Temp</span>
+            <span className="text-primary">Tunes </span>
+          </p>
+        </div>
+        <Features />
+      </section>
+      <Footer />
+    </main>
   );
 };
 

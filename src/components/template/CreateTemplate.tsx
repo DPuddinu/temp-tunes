@@ -1,7 +1,6 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type Template, type TemplateEntry } from "@prisma/client";
-import { Reorder } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -81,8 +80,6 @@ function CreateTemplate({ data }: props) {
     register,
     handleSubmit,
     control,
-    setValue,
-    getValues,
     formState: { errors },
   } = useForm<TemplateFormType>({
     resolver: zodResolver(TemplateFormSchema),

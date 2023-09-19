@@ -66,10 +66,10 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
   }, [page, templateData, submitTracks]);
 
   return (
-    <>
+    <section className="flex flex-col items-center gap-2 p-4">
       {isLoading && <CreatePlaylistSkeleton />}
       {templateData && (
-        <section className="flex flex-col items-center gap-2">
+        <>
           <h1 className="p-2 text-2xl font-bold sm:text-4xl">
             {templateData?.name}
           </h1>
@@ -142,9 +142,9 @@ const CreatePlaylistFromTemplate: PageWithLayout = () => {
               {t_common("create")}
             </button>
           </div>
-        </section>
+        </>
       )}
-    </>
+    </section>
   );
 };
 

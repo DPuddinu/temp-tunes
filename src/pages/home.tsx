@@ -1,8 +1,6 @@
 import type { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
-import { useState } from "react";
-import type { TimeRangeType } from "src/types/spotify-types";
 import MainLayout from "~/components/layouts/MainLayout";
 import GreetingsSkeleton from "~/components/ui/skeletons/GreetingsSkeleton";
 import { RecapSkeleton } from "~/components/ui/skeletons/RecapSkeleton";
@@ -32,18 +30,15 @@ const Greetings = dynamic(() => import("~/components/home/Greetings"), {loading:
 const Home: PageWithLayout = () => {
   const { data: sessionData } = useSession();
   // prettier-ignore
-  const [timeRange, setTimeRange] = useState<TimeRangeType>("short_term");
 
   return (
-    <section className="flex h-full flex-col">
+    <section className="flex flex-col">
       {sessionData?.user?.name ? (
         <>
           <Greetings
-            name={sessionData?.user?.name}
-            timeRange={timeRange}
-            selectTimeRange={setTimeRange}
+            name={sessionData.user.name}
           />
-          <Recap timeRange={timeRange} />
+          <Recap/>
         </>
       ) : (
         <GreetingsSkeleton />

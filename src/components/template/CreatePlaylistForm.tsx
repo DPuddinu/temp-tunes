@@ -12,7 +12,6 @@ import LoadingSpinner from "../ui/LoadingSpinner";
 import AudioRow from "./AudioRow";
 const DEBOUNCE_TIME = 200;
 
-
 interface props {
   initialValue?: string;
   disabled: boolean;
@@ -124,7 +123,7 @@ const CreatePlaylistForm = ({
                 >
                   <div className="flex items-center justify-between">
                     <p
-                      className="mr-2"
+                      className="mr-2 w-full"
                       onClick={() => {
                         onSelected(data);
                         setDisabledSearch(true);

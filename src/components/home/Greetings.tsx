@@ -1,13 +1,9 @@
 import { useTranslation } from "next-i18next";
-import type { TimeRangeType } from "~/types/spotify-types";
-import { TimeRangeArray } from "~/types/spotify-types";
 
 type GreetingsProps = {
-  name: string | undefined | null;
-  timeRange: TimeRangeType;
-  selectTimeRange: (range: TimeRangeType) => void;
+  name: string;
 };
-function Greetings({ name, timeRange, selectTimeRange }: GreetingsProps) {
+function Greetings({ name }: GreetingsProps) {
   const { t } = useTranslation("home");
 
   return (
@@ -17,18 +13,6 @@ function Greetings({ name, timeRange, selectTimeRange }: GreetingsProps) {
           {`${salute(t)} ${name}`}&nbsp;
         </h2>
       </div>
-      <p className="mt-2 font-medium text-base-content">{t("recap.title")}</p>
-      <select
-        className="select select-sm mt-4 w-32 bg-base-300 bg-opacity-75"
-        value={timeRange}
-        onChange={(e) => selectTimeRange(e.target.value as TimeRangeType)}
-      >
-        {TimeRangeArray.map((range, i) => (
-          <option className="mt-1 p-1" key={i} value={range}>
-            {t(range)}
-          </option>
-        ))}
-      </select>
     </div>
   );
 }

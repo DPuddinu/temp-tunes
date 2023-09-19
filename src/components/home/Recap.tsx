@@ -1,7 +1,8 @@
 import { useMediaQuery } from "@mantine/hooks";
+import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
-import { useMemo, type ReactNode } from "react";
-import type { RecapPropsType } from "~/components/home/UserTopCard";
+import { useMemo, useState, type ReactNode } from "react";
+import { TimeRangeArray, type TimeRangeType } from "~/types/spotify-types";
 import { RecapSkeleton } from "../ui/skeletons/RecapSkeleton";
 
 //prettier-ignore
@@ -19,8 +20,10 @@ const RecommendedCard = dynamic(() => import("~/components/home/RecommendedCard"
 //prettier-ignore
 const MobileCarousel = dynamic(() => import("./MobileCarousel"),{loading: () => <RecapSkeleton />});
 
-const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
+const Recap = () => {
   const matches = useMediaQuery("(max-width: 425px)");
+  const [timeRange, setTimeRange] = useState<TimeRangeType>("short_term");
+  const { t } = useTranslation("home");
 
   const cards: ReactNode[] = useMemo(
     () => [
@@ -34,6 +37,21 @@ const Recap = ({ timeRange = "short_term" }: RecapPropsType) => {
 
   return (
     <div className="h-full p-2">
+      <div className="pb-2">
+        <p className="mt-2 font-medium text-base-content">{t("recap.title")}</p>
+        <select
+          className="select select-sm mt-4 w-32 bg-base-300 bg-opacity-75"
+          value={timeRange}
+          onChange={(e) => setTimeRange(e.target.value as TimeRangeType)}
+        >
+          {TimeRangeArray.map((range, i) => (
+            <option className="mt-1 p-1" key={i} value={range}>
+              {t(range)}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {matches ? (
         <>
           <MobileCarousel cards={cards} />

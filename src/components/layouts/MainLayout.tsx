@@ -23,6 +23,7 @@ const BottomNavigation = dynamic(() => import("./BottomNavigation"), {
   loading: () => <BottomNavigationSkeleton />,
 });
 
+
 const MainLayout = ({ children }: { children: ReactNode }) => {
   const { data: session } = useSession();
   const { message } = useStore();
@@ -30,7 +31,6 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const matches = useMediaQuery("(max-width: 425px)");
   const mounted = useMounted();
-
   return (
     <div className="drawer overflow-hidden">
       <Head>
@@ -55,23 +55,30 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
             <NavbarSkeleton />
           )}
         </nav>
-        <LazyMotion features={domAnimation}>
-          <m.main
-            key={router.asPath}
-            className="grow p-4 pb-20 sm:pb-6"
-            initial={mounted && { x: 100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 100, opacity: 0 }}
-            transition={{
-              type: "spring",
-              stiffness: 260,
-              damping: 20,
-            }}
-          >
+        {isPage(router.asPath) ? (
+          <LazyMotion features={domAnimation}>
+            <m.main
+              key={router.asPath}
+              className="grow p-4 pb-20 sm:pb-6"
+              initial={mounted && { x: 100, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: 100, opacity: 0 }}
+              transition={{
+                type: "spring",
+                stiffness: 260,
+                damping: 20,
+              }}
+            >
+              {children}
+              {!!message && <Toast message={message} />}
+            </m.main>
+          </LazyMotion>
+        ) : (
+          <>
             {children}
             {!!message && <Toast message={message} />}
-          </m.main>
-        </LazyMotion>
+          </>
+        )}
         {matches && <BottomNavigation />}
       </div>
       <div className="drawer-side">
@@ -98,3 +105,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
 };
 
 export default MainLayout;
+
+function isPage(path: string) {
+  return pages.find((p) => p.url === path);
+}

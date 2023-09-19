@@ -29,7 +29,6 @@ const TrackRow = ({ track, playlists }: TrackProps) => {
     [playlists, session]
   ); 
 
-  const { mutate: playTrack } = api.player.togglePlayPause.useMutation();
   const { mutate: addToQueue } = api.player.addToQueue.useMutation({
     onSuccess() {
       setMessage(t("added_to_queue"));
@@ -45,14 +44,7 @@ const TrackRow = ({ track, playlists }: TrackProps) => {
   return (
     <div className="group flex rounded-xl px-3 text-accent-content hover:cursor-pointer hover:bg-base-200">
       <div className="flex grow items-center justify-between p-2 hover:text-primary-content">
-        <div
-          className="flex grow flex-col gap-1"
-          onClick={() => {
-            {if(uri)playTrack({
-              uris: [uri],
-            })}
-          }}
-        >
+        <div className="flex grow flex-col gap-1">
           <p className="font-medium ">{name}</p>
           <p className="text-sm font-medium text-base-content">
             {artists?.map((artist) => artist.name).join(", ")}
